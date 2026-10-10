@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 23:29">
+<meta name="published" content="2026-10-11 00:06">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -159,8 +159,21 @@ button{cursor:pointer}
 .skel i:nth-child(1){width:42%;height:14px}.skel i:nth-child(2){width:88%}.skel i:nth-child(3){width:64%}
 @keyframes pulse{50%{opacity:.45}}
 .thumb{flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
+.poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
+.row.film{align-items:flex-start}
+.acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+button.pill{border:0;cursor:pointer}
+.stars{display:flex}
+.acts+.stars{margin-top:8px}
+.row.film:has(>.btn.x) .stars{margin-right:-56px}
+.st{position:relative;display:grid;place-items:center;width:44px;height:44px;font-size:22px;line-height:1;color:var(--muted)}
+.st.on{color:var(--mark)}
+.st.half{background:linear-gradient(90deg,var(--mark) 50%,var(--muted) 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.st button{position:absolute;top:0;bottom:0;left:0;width:50%;padding:0;border:0;background:none}
+.st button+button{left:50%}
 .pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 8px;border:1px solid var(--line);border-radius:9px;background:none;color:var(--muted);font-size:12px}
 .pg .i{width:14px;height:14px}
+.row.film .pg{min-height:44px}
 .pr .pg{margin-top:4px}
 .lnk{color:var(--link);font-weight:600;text-decoration:none}
 .card ul{margin:0;padding:2px 14px 14px 32px}
@@ -303,7 +316,8 @@ button{cursor:pointer}
   var BASE = 'https://ssfkoyyhxqcmjokdxkpn.supabase.co/functions/v1/';
   var ERRORS = {
     closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
-    'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля'
+    'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля',
+    'no such film': 'Нет такого фильма'
   };
 
   var toastEl = document.getElementById('toast');
@@ -427,13 +441,14 @@ button{cursor:pointer}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other four in a sheet.
-  // From 900 px: all eight in a left rail. The tab is kept in localStorage and,
+  // Phone: four tabs and «Ещё» in a bottom bar, the other five in a sheet.
+  // From 900 px: all nine in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var MORE = ['stats', 'wish', 'feed', 'news'];
+    ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['feed', 'news', 'Новости'],
+    ['news', 'sparkles', 'Что нового']];
+  var MORE = ['stats', 'wish', 'cinema', 'feed', 'news'];
   var NAMES = {};
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date');
@@ -1397,6 +1412,138 @@ button{cursor:pointer}
     load();
   }
 
+  // --- cinema ---
+  // The cinema function's lists through miniapp?action=cinema; marks and
+  // ratings go to the webhook (film_mark, film_rate), then the tab reloads.
+  function rateText(r) { return String(r).replace('.', ','); }
+  function cinemaView() {
+    var body = el('div', 'cols');
+    main.appendChild(body);
+    function poster(url) {
+      if (!/^https?:\/\//i.test(String(url || ''))) return null;
+      var e = el('img', 'poster');
+      e.alt = '';
+      e.loading = 'lazy';
+      e.referrerPolicy = 'no-referrer';
+      e.src = url;
+      e.onerror = function () { e.style.display = 'none'; };
+      return e;
+    }
+    function act(params, done) {
+      haptic();
+      api('telegram-webhook', params).then(function () { toast(done); load(); }, noop);
+    }
+    function btn(ic, s, fn) {
+      var b = label(el('button', 'pg'), ic, s);
+      b.type = 'button';
+      b.onclick = fn;
+      return b;
+    }
+    // Five stars, each tapped on its left half (x,5) or right half (x).
+    function starBar(id, rating) {
+      var bar = el('div', 'stars');
+      bar.setAttribute('role', 'group');
+      bar.setAttribute('aria-label', 'Оценка');
+      for (var k = 1; k <= 5; k++) {
+        var st = el('span', 'st' + (rating >= k ? ' on' : rating >= k - 0.5 ? ' half' : ''), '★');
+        [k * 10 - 5, k * 10].forEach(function (t) {
+          var b = el('button');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'Оценка ' + rateText(t / 10));
+          b.onclick = function () { act({ action: 'film_rate', film: id, tenths: t }, '⭐ ' + rateText(t / 10) + ' — записал'); };
+          st.appendChild(b);
+        });
+        bar.appendChild(st);
+      }
+      return bar;
+    }
+    function name(f) {
+      var t = el('div', 't');
+      if (/^https?:\/\//i.test(String(f.link || ''))) {
+        var a = el('a', 'lnk', f.display);
+        a.href = f.link;
+        a.onclick = function (ev) { ev.preventDefault(); openLink(f.link); };
+        t.appendChild(a);
+      } else text(t, f.display);
+      if (f.ukrainian) t.appendChild(document.createTextNode(' 🇺🇦'));
+      return t;
+    }
+    function premiere(f) {
+      var pills = el('div', 'acts');
+      (f.sale || []).forEach(function (s) {
+        var p = s.url ? el('button', 'pill acc', s.cinema) : pill(s.cinema);
+        if (s.url) {
+          p.type = 'button';
+          p.onclick = function () { openLink(s.url); };
+        }
+        pills.appendChild(p);
+      });
+      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+        el('div', 'mu', 'с ' + dm(f.release_date)),
+        f.sale && f.sale.length ? pills : null,
+        add(el('div', 'acts'),
+          btn('check', 'Смотрел', function () { act({ action: 'film_mark', film: f.id, mark: 'w' }, 'Отмечено: смотрел'); }),
+          btn('x', 'Не интересно', function () { act({ action: 'film_mark', film: f.id, mark: 'x' }, 'Отмечено: не интересно'); })),
+        starBar(f.id, f.rating)));
+    }
+    function render(j) {
+      if (current !== 'cinema') return;
+      clear(body);
+      var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
+      var watched = j.watched || [], early = j.early || [], prem = j.premieres || [];
+      if (!prem.length && !early.length && !shows.length && !watched.length) {
+        return add(body, state('film', 'Премьер на две недели пока нет'));
+      }
+      var c = mkCard('film', 'Премьеры', 'ближайшие 14 дней');
+      if (!prem.length) c.appendChild(el('div', 'row small mu', 'Новых премьер нет'));
+      prem.forEach(function (f) { c.appendChild(premiere(f)); });
+      body.appendChild(c);
+      if (early.length) {
+        c = mkCard('calendar', 'Предпремьеры');
+        early.forEach(function (e) {
+          var r = add(el('div', 'row film'), poster(e.film.poster), add(el('span', 'tx'), name(e.film),
+            el('div', 'mu', whenW(e.date) + ' · ' + e.cinema)));
+          if (e.url) r.appendChild(btn('link', 'билеты', function () { openLink(e.url); }));
+          c.appendChild(r);
+        });
+        body.appendChild(c);
+      }
+      if (shows.length) {
+        c = mkCard('clock', 'Мои сеансы');
+        shows.forEach(function (s) {
+          c.appendChild(hrow(s.film, whenW(s.starts_at) + ' · ' + [s.cinema, s.hall].filter(Boolean).join(', ')));
+        });
+        body.appendChild(c);
+      }
+      if (watched.length) {
+        c = mkCard('check', 'Смотрел');
+        watched.forEach(function (w) {
+          var tx = add(el('span', 'tx'), el('div', 't', w.display),
+            el('div', 'mu', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : '') + (w.rating != null ? ' · ⭐ ' + rateText(w.rating) : '')),
+            w.id ? starBar(w.id, w.rating) : null);
+          var r = add(el('div', 'row film'), poster(w.poster), tx);
+          if (w.id && w.source === 'mark') {
+            var x = add(el('button', 'btn ghost x'), icon('x'));
+            x.type = 'button';
+            x.setAttribute('aria-label', 'Снять отметку');
+            x.onclick = function () { act({ action: 'film_mark', film: w.id, mark: 'clear' }, 'Отметка снята'); };
+            r.appendChild(x);
+          }
+          c.appendChild(r);
+        });
+        body.appendChild(c);
+      }
+      if (j.skipped) body.appendChild(el('p', 'mu', '🚫 не интересно: ' + j.skipped));
+    }
+    function load() {
+      if (!body.firstChild) add(body, skeleton(2));
+      api('miniapp', { action: 'cinema' }, 25000, true).then(render, function (e) {
+        if (!e.login && current === 'cinema') failed(body, load);
+      });
+    }
+    load();
+  }
+
   // --- news feed ---
   var STREAMS = [['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
   var SOURCES = {
@@ -1489,7 +1636,7 @@ button{cursor:pointer}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    feed: feedView, news: newsView
+    cinema: cinemaView, feed: feedView, news: newsView
   };
   if (browser && !login) loginCard();
   else start();
