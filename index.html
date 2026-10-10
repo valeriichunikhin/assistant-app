@@ -1,1 +1,462 @@
-<!doctype html><meta charset="utf-8"><title>assistant</title><p>placeholder
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Помощник</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0f171f;--fg:#e6edf3;--mu:#8b98a5;--ac:#c1f354;--card:#162130;--line:#223040}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent;padding:0 12px calc(24px + env(safe-area-inset-bottom))}
+button,input{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0 8px}
+.tabs{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px}
+.tabs button{flex:1;min-height:44px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600}
+.tabs button.on{background:var(--ac);color:var(--bg)}
+.head{color:var(--mu);font-size:14px;margin:6px 2px 8px}
+.bar{display:flex;gap:8px;margin-bottom:10px}
+.bar input{flex:1;min-width:0;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);outline:none}
+.bar input:focus{border-color:var(--ac)}
+.bar button,.btn{min-height:44px;min-width:44px;padding:0 14px;border:0;border-radius:10px;background:var(--ac);color:var(--bg);font-weight:700}
+.btn.ghost{background:var(--card);color:var(--fg);border:1px solid var(--line);font-weight:600}
+.btn.warn{background:#3a2a1a;color:#ffcf7a;border:1px solid #6a4a20}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.card h3{margin:0;padding:12px 12px 4px;font-size:16px}
+.card .sub{padding:0 12px 8px;color:var(--mu);font-size:14px}
+.row{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;border-top:1px solid var(--line);cursor:pointer}
+.row:first-child{border-top:0}
+.row .mk{flex:none;width:24px;text-align:center}
+.row .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.row .pr{flex:none;text-align:right;font-variant-numeric:tabular-nums}
+.row .old{color:var(--mu);text-decoration:line-through;font-size:13px;display:block}
+.row.done .tx{color:var(--mu);text-decoration:line-through}
+.mu{color:var(--mu);font-size:14px}
+.foot{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.foot .btn{flex:1}
+.empty{color:var(--mu);text-align:center;padding:32px 12px}
+.acc{color:var(--ac);font-weight:600}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;padding:0 12px 10px;color:var(--mu);font-size:13px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#2a3a4c;color:var(--fg);border-radius:10px;padding:12px 14px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
+#toast.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script>
+(function () {
+  var app = document.getElementById('app');
+  function text(e, s) { e.textContent = s == null ? '' : String(s); return e; }
+  function el(tag, cls, s) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (s != null) text(e, s);
+    return e;
+  }
+  function add(parent) {
+    for (var i = 1; i < arguments.length; i++) if (arguments[i]) parent.appendChild(arguments[i]);
+    return parent;
+  }
+  function clear(e) { while (e.firstChild) e.removeChild(e.firstChild); return e; }
+
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (!tg || !tg.initData) {
+    add(app, el('p', 'empty', 'Открой из Telegram: /app в личке с ботом'));
+    return;
+  }
+  try { tg.ready(); } catch (e) {}
+  try { tg.expand(); } catch (e) {}
+  try { tg.setHeaderColor('#0f171f'); } catch (e) {}
+  try { tg.setBackgroundColor('#0f171f'); } catch (e) {}
+
+  // The page is hosted off supabase.co, so the functions are named in full.
+  var BASE = 'https://ssfkoyyhxqcmjokdxkpn.supabase.co/functions/v1/';
+  var ERRORS = { closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено' };
+
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+  function toast(s) {
+    text(toastEl, s || 'Не получилось, попробуй ещё раз');
+    toastEl.className = 'on';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
+  }
+  function api(fn, params) {
+    var opts = { method: 'POST', headers: { 'x-tma-init-data': tg.initData } };
+    if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(15000);
+    return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
+      .then(function (r) {
+        return r.json().then(function (j) {
+          if (!r.ok || (j && j.ok === false)) {
+            var err = new Error((j && j.error) || String(r.status));
+            err.code = j && j.error;
+            throw err;
+          }
+          return j;
+        });
+      })
+      .catch(function (e) {
+        toast(ERRORS[e && e.code]);
+        throw e;
+      });
+  }
+  function haptic() {
+    try { tg.HapticFeedback.impactOccurred('light'); } catch (e) {}
+  }
+  function store(k, v) {
+    try {
+      if (v === undefined) return localStorage.getItem(k);
+      localStorage.setItem(k, v);
+    } catch (e) {}
+    return null;
+  }
+  function zl(v) {
+    return v == null || v === '' ? '—' : Number(v).toFixed(2).replace('.', ',');
+  }
+  function dm(d) { return d ? d.slice(8, 10) + '.' + d.slice(5, 7) : ''; }
+  function plain(html) {
+    return String(html || '').replace(/<[^>]*>/g, '')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  }
+  function noop() {}
+
+  // --- tabs ---
+  var TABS = [['list', '🛒 Список'], ['picks', '🏷️ Акции'], ['prices', '📈 Цены']];
+  var top = el('div', 'top');
+  var tabs = el('div', 'tabs');
+  var main = el('div');
+  var buttons = {};
+  var current = null;
+  TABS.forEach(function (t) {
+    var b = el('button', '', t[1]);
+    b.type = 'button';
+    b.onclick = function () { show(t[0]); };
+    buttons[t[0]] = b;
+    tabs.appendChild(b);
+  });
+  add(app, add(top, tabs), main);
+
+  function show(tab) {
+    if (!VIEWS[tab]) tab = 'list';
+    current = tab;
+    store('tab', tab);
+    for (var k in buttons) buttons[k].className = k === tab ? 'on' : '';
+    hideBack();
+    clear(main);
+    VIEWS[tab]();
+  }
+
+  // --- list ---
+  var draft = '';
+  function listView() {
+    var head = el('div', 'head', '…');
+    var bar = el('form', 'bar');
+    var input = el('input');
+    input.placeholder = 'Добавить…';
+    input.value = draft;
+    input.enterKeyHint = 'done';
+    input.oninput = function () { draft = input.value; };
+    var plus = el('button', '', '+');
+    plus.type = 'submit';
+    bar.onsubmit = function (ev) {
+      ev.preventDefault();
+      var s = input.value.trim();
+      if (!s) return;
+      api('telegram-webhook', { action: 'add', text: s }).then(function () {
+        draft = '';
+        input.value = '';
+        load();
+      }, noop);
+    };
+    var body = el('div');
+    add(main, head, add(bar, input, plus), body);
+    var items = [];
+    var confirmTimer = null;
+
+    function render() {
+      // A re-render replaces the button, so an armed «Точно?» must not survive it.
+      clearTimeout(confirmTimer);
+      confirmTimer = null;
+      if (current !== 'list') return;
+      var open = items.filter(function (i) { return !i.done; }).length;
+      text(head, 'осталось ' + open + ' · куплено ' + (items.length - open));
+      clear(body);
+      if (!items.length) return add(body, el('p', 'empty', 'Пусто. Напиши, что добавить.'));
+      var card = el('div', 'card');
+      items.forEach(function (i) {
+        var row = el('div', 'row' + (i.done ? ' done' : ''));
+        add(row, el('span', 'mk', i.done ? '✅' : '⬜'), el('span', 'tx', i.text));
+        row.onclick = function () {
+          haptic();
+          api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) {
+            i.done = j.done;
+            render();
+          }, noop);
+        };
+        card.appendChild(row);
+      });
+      var bought = items.length - open;
+      if (bought) {
+        var foot = el('div', 'foot');
+        var btn = el('button', 'btn ghost', '🧹 Убрать купленное');
+        btn.type = 'button';
+        btn.onclick = function () {
+          if (!confirmTimer) {
+            text(btn, 'Точно? Убрать ' + bought);
+            btn.className = 'btn warn';
+            confirmTimer = setTimeout(function () {
+              confirmTimer = null;
+              text(btn, '🧹 Убрать купленное');
+              btn.className = 'btn ghost';
+            }, 3000);
+            return;
+          }
+          clearTimeout(confirmTimer);
+          confirmTimer = null;
+          api('telegram-webhook', { action: 'clear' }).then(load, noop);
+        };
+        card.appendChild(add(foot, btn));
+      }
+      body.appendChild(card);
+    }
+    function load() {
+      api('telegram-webhook', { action: 'items' }).then(function (j) {
+        items = j.items || [];
+        render();
+      }, noop);
+    }
+    load();
+  }
+
+  // --- picks ---
+  var pickQuery = '';
+  function picksView() {
+    var bar = el('div', 'bar');
+    var input = el('input');
+    input.placeholder = 'Поиск по акциям';
+    input.type = 'search';
+    input.value = pickQuery;
+    input.oninput = function () { pickQuery = input.value; render(); };
+    var body = el('div');
+    add(main, add(bar, input), body);
+    var batches = null;
+
+    function drop(b) {
+      batches = batches.filter(function (x) { return x !== b; });
+      render();
+    }
+    function render() {
+      if (current !== 'picks' || !batches) return;
+      clear(body);
+      var q = pickQuery.trim().toLowerCase();
+      var shown = 0;
+      batches.forEach(function (b) {
+        var cs = b.candidates || [];
+        var hits = cs.filter(function (c) {
+          return !q || (c.label + ' ' + plain(c.line)).toLowerCase().indexOf(q) >= 0;
+        });
+        if (q && !hits.length) return;
+        shown++;
+        var sel = cs.filter(function (c) { return c.selected; }).length;
+        var card = el('div', 'card');
+        add(card, el('h3', '', (b.chain === 'Aldi' ? '🅰️ ' : '🐞 ') + b.title),
+          el('div', 'sub', 'выбрано ' + sel + ' из ' + cs.length));
+        hits.forEach(function (c) {
+          var row = el('div', 'row');
+          var tx = el('span', 'tx');
+          add(tx, el('b', '', c.label), el('div', 'mu', plain(c.line)));
+          var pr = el('span', 'pr');
+          if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
+          if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
+          add(row, el('span', 'mk', c.selected ? '✅' : '⬜'), tx, pr);
+          row.onclick = function () {
+            haptic();
+            api('telegram-webhook', { action: 'pick', id: c.id }).then(function (j) {
+              c.selected = j.selected;
+              render();
+            }, function (e) { if (e.code === 'closed') drop(b); });
+          };
+          card.appendChild(row);
+        });
+        var foot = el('div', 'foot');
+        var done = el('button', 'btn', '✅ Готово → в список');
+        var skip = el('button', 'btn ghost', '✖️ Пропустить');
+        done.type = skip.type = 'button';
+        done.onclick = function () {
+          api('telegram-webhook', { action: 'pick_done', batch: b.id }).then(function (j) {
+            toast('Добавил ' + j.added);
+            drop(b);
+          }, function (e) { if (e.code === 'closed') drop(b); });
+        };
+        skip.onclick = function () {
+          api('telegram-webhook', { action: 'pick_skip', batch: b.id }).then(function () {
+            drop(b);
+          }, function (e) { if (e.code === 'closed') drop(b); });
+        };
+        card.appendChild(add(foot, done, skip));
+        body.appendChild(card);
+      });
+      if (!shown) add(body, el('p', 'empty', q ? 'Ничего не нашлось' : 'Открытых партий нет'));
+    }
+    api('telegram-webhook', { action: 'picks' }).then(function (j) {
+      batches = j.batches || [];
+      render();
+    }, noop);
+  }
+
+  // --- prices ---
+  var priceQuery = '';
+  var backHandler = null;
+  function hideBack() {
+    if (!backHandler) return;
+    try { tg.BackButton.offClick(backHandler); tg.BackButton.hide(); } catch (e) {}
+    backHandler = null;
+  }
+  var CHAIN = { Biedronka: '🐞 Biedronka', Aldi: '🅰️ Aldi' };
+  var SRC = { leaflet: 'газетка', 'aldi-json': 'Aldi', receipt: 'чек' };
+  var COLOR = { leaflet: '#c1f354', 'aldi-json': '#7cc4ff', receipt: '#ffffff' };
+
+  function pricesView() {
+    var list = el('div');
+    var bar = el('div', 'bar');
+    var input = el('input');
+    input.placeholder = 'Товар, от 2 букв';
+    input.type = 'search';
+    input.value = priceQuery;
+    var results = el('div');
+    var product = el('div');
+    add(main, add(list, add(bar, input), results), product);
+    var timer = null;
+    var seq = 0;
+
+    function search() {
+      var q = priceQuery.trim();
+      var mine = ++seq;
+      if (q.length < 2) return clear(results);
+      api('miniapp', { action: 'prices', q: q }).then(function (j) {
+        if (mine !== seq || current !== 'prices') return;
+        clear(results);
+        var rows = j.rows || [];
+        if (!rows.length) return add(results, el('p', 'empty', 'Ничего не нашлось'));
+        var card = el('div', 'card');
+        rows.forEach(function (r) {
+          var row = el('div', 'row');
+          var tx = el('span', 'tx');
+          add(tx, el('b', '', r.product_name + (r.size ? ' · ' + r.size : '')),
+            el('div', 'mu', (CHAIN[r.chain] || r.chain) + ' · мин 90 дн: ' + zl(r.min_90d) +
+              ' · ' + r.n + ' наблюдений'));
+          add(row, tx, el('span', 'pr', zl(r.last_price) + ' zł'));
+          row.onclick = function () { open(r); };
+          card.appendChild(row);
+        });
+        results.appendChild(card);
+      }, noop);
+    }
+    input.oninput = function () {
+      priceQuery = input.value;
+      clearTimeout(timer);
+      timer = setTimeout(search, 300);
+    };
+
+    function back() {
+      hideBack();
+      clear(product);
+      list.style.display = '';
+    }
+    function open(r) {
+      list.style.display = 'none';
+      clear(product);
+      var card = el('div', 'card');
+      add(card, el('h3', '', r.product_name + (r.size ? ' · ' + r.size : '')),
+        el('div', 'sub', CHAIN[r.chain] || r.chain));
+      var inner = el('div', 'sub', '…');
+      add(product, add(card, inner));
+      backHandler = back;
+      try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
+      api('miniapp', { action: 'series', chain: r.chain, key: r.product_key }).then(function (j) {
+        if (backHandler !== back) return;
+        card.removeChild(inner);
+        drawProduct(card, j.rows || [], j.stats || {});
+      }, noop);
+    }
+    if (priceQuery.trim().length >= 2) search();
+  }
+
+  function svg(tag, attrs, s) {
+    var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (s != null) text(e, s);
+    return e;
+  }
+  function chart(rows, minLine) {
+    var W = 320, H = 170, L = 40, R = 10, T = 10, B = 24;
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    if (!rows.length) return box;
+    var ts = rows.map(function (r) { return Date.parse(r.observed_on + 'T00:00:00Z'); });
+    var ps = rows.map(function (r) { return Number(r.price); });
+    var t0 = Math.min.apply(null, ts), t1 = Math.max.apply(null, ts);
+    var lo = Math.min.apply(null, ps), hi = Math.max.apply(null, ps);
+    if (minLine != null) { lo = Math.min(lo, minLine); hi = Math.max(hi, minLine); }
+    var pad = (hi - lo) * 0.1 || hi * 0.1 || 1;
+    lo -= pad;
+    hi += pad;
+    function x(t) { return t1 === t0 ? (L + W - R) / 2 : L + (t - t0) / (t1 - t0) * (W - L - R); }
+    function y(p) { return T + (hi - p) / (hi - lo) * (H - T - B); }
+    add(box,
+      svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, stroke: '#223040' }),
+      svg('text', { x: L - 4, y: T + 8, fill: '#8b98a5', 'font-size': 10, 'text-anchor': 'end' }, zl(hi)),
+      svg('text', { x: L - 4, y: H - B, fill: '#8b98a5', 'font-size': 10, 'text-anchor': 'end' }, zl(lo)));
+    if (minLine != null) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(minLine), y2: y(minLine), stroke: '#c1f354',
+        'stroke-dasharray': '4 3', 'stroke-opacity': 0.7 }));
+    }
+    var pts = rows.map(function (r, i) { return x(ts[i]).toFixed(1) + ',' + y(ps[i]).toFixed(1); });
+    add(box, svg('polyline', { points: pts.join(' '), fill: 'none', stroke: '#8b98a5', 'stroke-width': 1.5 }));
+    rows.forEach(function (r, i) {
+      add(box, svg('circle', { cx: x(ts[i]), cy: y(ps[i]), r: 3.5, fill: COLOR[r.source] || '#ffffff' }));
+    });
+    var mid = rows.length >> 1;
+    var labels = [[0, 'start'], [rows.length - 1, 'end']];
+    var md = rows[mid].observed_on;
+    if (rows.length > 2 && md !== rows[0].observed_on && md !== rows[rows.length - 1].observed_on) {
+      labels.splice(1, 0, [mid, 'middle']);
+    }
+    if (t1 === t0) labels = [[0, 'middle']];
+    labels.forEach(function (l) {
+      var xx = l[1] === 'start' ? L : l[1] === 'end' ? W - R : x(ts[l[0]]);
+      add(box, svg('text', { x: xx, y: H - 8, fill: '#8b98a5', 'font-size': 10, 'text-anchor': l[1] },
+        dm(rows[l[0]].observed_on)));
+    });
+    return box;
+  }
+  function drawProduct(card, rows, s) {
+    if (!rows.length) return add(card, el('p', 'empty', 'Наблюдений нет'));
+    add(card, chart(rows, s.min_90d));
+    var legend = el('div', 'legend');
+    ['leaflet', 'aldi-json', 'receipt'].forEach(function (k) {
+      var it = el('span');
+      var dot = el('span', 'dot');
+      dot.style.background = COLOR[k];
+      add(legend, add(it, dot, document.createTextNode(SRC[k])));
+    });
+    card.appendChild(legend);
+    add(card, el('div', 'sub', 'последняя ' + zl(s.last) + ' (' + dm(s.last_on) + ') · мин 90 дн ' +
+      zl(s.min_90d) + (s.min_on ? ' (' + dm(s.min_on) + ')' : '') + ' · медиана ' + zl(s.median_90d) +
+      ' · ' + (s.n_90d || 0) + ' набл.'));
+    if (s.best_now) add(card, el('div', 'sub acc', '🏆 лучшая сейчас'));
+    rows.slice(-10).reverse().forEach(function (r) {
+      add(card, el('div', 'row', dm(r.observed_on) + ' · ' + zl(r.price) + ' zł · ' +
+        (SRC[r.source] || r.source) + (r.mechanic ? ' · ' + r.mechanic : '')));
+    });
+  }
+
+  var VIEWS = { list: listView, picks: picksView, prices: pricesView };
+  show(store('tab') || 'list');
+})();
+</script>
+</body>
+</html>
