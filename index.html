@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 20:43">
+<meta name="published" content="2026-10-10 21:20">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -183,6 +183,11 @@ svg{display:block;width:100%;height:auto}
   // renderGenshin, the Sunday report).
   var WEEK = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
   var KINDS = { new: 'новых игр', freed: 'освободилось мест', list: 'списков', digest: 'сводок' };
+  // Shortcuts' workout types, by a word of the name, as the morning brief names them.
+  var WORKOUTS = [[/volleyball/i, '🏐 Волейбол'], [/tennis/i, '🎾 Теннис'], [/running/i, '🏃 Бег'],
+    [/walking/i, '🚶 Ходьба'], [/cycling/i, '🚴 Велосипед'], [/strength/i, '🏋️ Силовая'], [/^other$/i, '🏅 Другое']];
+  function grouped(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  function sleepLine(min) { return Math.floor(min / 60) + ' ч ' + ('0' + min % 60).slice(-2) + ' мин'; }
   // Year, month, day, hour and minute of a moment in Warsaw.
   function wp(ts) {
     var o = {};
@@ -231,6 +236,22 @@ svg{display:block;width:100%;height:auto}
     }
     function down(title) { card(title + ' — недоступно'); }
     function morning(m, today) {
+      // Google Calendar today and tomorrow, from the mail bridge; hidden when
+      // empty or the key is missing (an older morning). An event begun on an
+      // earlier day is today's: «до 01:00» when it ends today, else all day.
+      if (m.calendar === null) down('📅 Календарь');
+      else if (m.calendar && m.calendar.length) {
+        card('📅 Календарь', null, capped(m.calendar.map(function (e) {
+          var p = wp(e.starts_at), date = p.year + '-' + p.month + '-' + p.day;
+          var q = e.ends_at && wp(e.ends_at), end = q && q.year + '-' + q.month + '-' + q.day;
+          var ongoing = date < today;
+          var time = e.all_day || (ongoing && end !== today) ? 'весь день' : ongoing ? 'до ' + q.hour + ':' + q.minute : p.hour + ':' + p.minute;
+          if (!e.all_day && !ongoing && e.ends_at && e.ends_at !== e.starts_at) time += '–' + q.hour + ':' + q.minute;
+          return hrow(e.title || 'без названия', [ongoing || date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), time,
+            e.location].filter(Boolean).join(' · '));
+        }), 6));
+      }
+
       if (!m.deadlines && !m.payments && !m.parcels) down('📅 Сроки и посылки');
       else {
         var due = [];
@@ -331,6 +352,28 @@ svg{display:block;width:100%;height:auto}
             return hrow(r.title || r.item_id, 'до ' + whenW(r.ends_at), null,
               'https://www.hoyolab.com/article/' + r.item_id);
           }));
+      }
+
+      // Yesterday from the Shortcuts automation; hidden when it did not post
+      // or the key is missing (an older morning).
+      var h = m.health;
+      if (h) {
+        var ws = h.workouts || [], timed = ws.filter(function (w) { return w.minutes != null; });
+        var mins = h.exercise_min != null ? h.exercise_min
+          : timed.length ? timed.reduce(function (a, w) { return a + w.minutes; }, 0) : null;
+        var parts = [h.steps != null ? grouped(h.steps) + ' ' + plural(h.steps, ['шаг', 'шага', 'шагов']) : '',
+          mins != null ? mins + ' мин тренировок' : '', h.sleep_min != null ? 'сон ' + sleepLine(h.sleep_min) : '']
+          .filter(Boolean);
+        var kinds = {}, order = [];
+        ws.forEach(function (w) {
+          var name = '🏅 ' + w.type;
+          WORKOUTS.some(function (k) { return k[0].test(w.type) && (name = k[1]); });
+          if (!(name in kinds)) { kinds[name] = 0; order.push(name); }
+          kinds[name] += w.minutes || 0;
+        });
+        var rows = parts.length ? [hrow(parts.join(' · '))] : [];
+        order.forEach(function (k) { rows.push(hrow(k, null, kinds[k] ? kinds[k] + ' мин' : null)); });
+        if (rows.length) card('⌚ Вчера', null, rows);
       }
     }
     function weekly(w) {
@@ -741,6 +784,16 @@ svg{display:block;width:100%;height:auto}
               '× ' + qty(i.qty) + ' · ' + zl(i.spent) + ' zł'));
           });
         }
+      }
+      // Health from the iPhone over the period; hidden without data.
+      var h = j.health;
+      if (h && h.days) {
+        c = card('⌚ Здоровье', 'дней с данными: ' + h.days);
+        if (h.avg_steps != null) c.appendChild(hrow('Шаги в среднем', null, grouped(h.avg_steps)));
+        if (h.workouts) {
+          c.appendChild(hrow('Тренировки', null, h.workouts + ' · ' + h.workout_min + ' мин'));
+        }
+        if (h.avg_sleep_min != null) c.appendChild(hrow('Сон в среднем', null, sleepLine(h.avg_sleep_min)));
       }
       // Unlimited against tickets: the function's own wording, shown as text.
       if (j.cinema) {
