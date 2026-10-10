@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 19:37">
+<meta name="published" content="2026-10-10 19:40">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -178,9 +178,8 @@ svg{display:block;width:100%;height:auto}
   }
 
   // --- today ---
-  // Wording, the weather-code words and the AQI labels follow the morning and
-  // weekly functions (renderWeather, renderDeadlines, renderGenshin, the
-  // Sunday report).
+  // Wording follows the morning and weekly functions (renderDeadlines,
+  // renderGenshin, the Sunday report).
   var WEEK = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
   var KINDS = { new: 'новых игр', freed: 'освободилось мест', list: 'списков', digest: 'сводок' };
   // Year, month, day, hour and minute of a moment in Warsaw.
@@ -196,33 +195,6 @@ svg{display:block;width:100%;height:auto}
   function wd(date) { return (new Date(date + 'T12:00:00Z').getUTCDay() + 6) % 7; }
   function days(from, to) { return Math.round((Date.parse(to) - Date.parse(from)) / 86400000); }
   function addDays(date, n) { return new Date(Date.parse(date + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10); }
-  function weatherWord(c) {
-    if (c == null) return '';
-    if (c <= 1) return 'ясно';
-    if (c <= 3) return 'облачно';
-    if (c === 45 || c === 48) return 'туман';
-    if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return 'дождь';
-    if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'снег';
-    if (c >= 95 && c <= 99) return 'гроза';
-    return '';
-  }
-  function aqiLabel(a) { return a <= 20 ? 'хороший' : a <= 40 ? 'нормальный' : a <= 60 ? 'умеренный' : a <= 80 ? 'плохой' : 'очень плохой'; }
-  function maxAqi(h, date) {
-    var best = null;
-    h.time.forEach(function (t, i) {
-      var hr = Number(t.slice(11, 13)), v = h.european_aqi[i];
-      if (t.indexOf(date) === 0 && hr >= 7 && hr <= 22 && v != null && (best === null || v > best)) best = v;
-    });
-    return best;
-  }
-  function dayLine(d, i) {
-    function r(v) { return v == null ? null : Math.round(v); }
-    var lo = r(d.temperature_2m_min[i]), hi = r(d.temperature_2m_max[i]);
-    var rain = r(d.precipitation_probability_max[i]), wind = r(d.wind_speed_10m_max[i]);
-    return [lo !== null && hi !== null ? lo + '…' + hi + '°' : '', weatherWord(d.weather_code[i]),
-      rain !== null ? 'осадки ' + rain + '%' : '', wind !== null ? 'ветер ' + wind + ' км/ч' : '']
-      .filter(Boolean).join(', ');
-  }
   function plural(n, f) {
     var m10 = n % 10, m100 = n % 100;
     return m10 === 1 && m100 !== 11 ? f[0] : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? f[1] : f[2];
@@ -258,17 +230,6 @@ svg{display:block;width:100%;height:auto}
     }
     function down(title) { card(title + ' — недоступно'); }
     function morning(m, today) {
-      var w = m.weather, a = m.air, rows = [];
-      if (w) {
-        var i = w.time.indexOf(today);
-        if (i >= 0) rows.push(hrow('сегодня ' + dayLine(w, i)));
-        if (i >= 0 && w.time[i + 1]) rows.push(el('div', 'row mu', 'завтра ' + dayLine(w, i + 1)));
-      } else rows.push(hrow('прогноз — недоступно'));
-      var aqi = a ? maxAqi(a, today) : null;
-      if (!a) rows.push(hrow('воздух — недоступно'));
-      else if (aqi !== null) rows.push(hrow('воздух ' + aqiLabel(aqi) + ' · AQI ' + aqi));
-      if (rows.length) card('🌤 Погода', null, rows);
-
       if (!m.deadlines && !m.payments && !m.parcels) down('📅 Сроки и посылки');
       else {
         var due = [];
