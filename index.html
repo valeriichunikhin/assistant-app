@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 21:20">
+<meta name="published" content="2026-10-10 22:04">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -60,6 +60,11 @@ svg{display:block;width:100%;height:auto}
 .btn.wide{width:100%}
 #toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#2a3a4c;color:var(--fg);border-radius:10px;padding:12px 14px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
 #toast.on{opacity:1;transform:none}
+#app{max-width:860px;margin:0 auto}
+.tabs button.out{flex:none;padding:2px 10px}
+.login{max-width:420px;margin:15vh auto 0;text-align:center}
+.login .widget{min-height:56px;padding:8px 12px 16px}
+@media (min-width:900px){.cols{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;align-items:start}.cols>.empty{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -82,14 +87,20 @@ svg{display:block;width:100%;height:auto}
   function clear(e) { while (e.firstChild) e.removeChild(e.firstChild); return e; }
 
   var tg = window.Telegram && window.Telegram.WebApp;
-  if (!tg || !tg.initData) {
-    add(app, el('p', 'empty', 'Открой из Telegram: /app в личке с ботом'));
-    return;
+  // Outside Telegram the page is a site: the Telegram Login Widget signs the
+  // requests instead of initData, and its object is kept for 7 days, as long
+  // as the functions accept it.
+  var browser = !tg || !tg.initData;
+  var login = null;
+  if (browser) {
+    try { login = JSON.parse(store('tgLogin') || 'null'); } catch (e) {}
+    if (!login || !(Date.now() / 1000 - Number(login.auth_date) < 7 * 86400)) login = null;
+  } else {
+    try { tg.ready(); } catch (e) {}
+    try { tg.expand(); } catch (e) {}
+    try { tg.setHeaderColor('#0f171f'); } catch (e) {}
+    try { tg.setBackgroundColor('#0f171f'); } catch (e) {}
   }
-  try { tg.ready(); } catch (e) {}
-  try { tg.expand(); } catch (e) {}
-  try { tg.setHeaderColor('#0f171f'); } catch (e) {}
-  try { tg.setBackgroundColor('#0f171f'); } catch (e) {}
 
   // The page is hosted off supabase.co, so the functions are named in full.
   var BASE = 'https://ssfkoyyhxqcmjokdxkpn.supabase.co/functions/v1/';
@@ -106,8 +117,18 @@ svg{display:block;width:100%;height:auto}
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
   }
-  function api(fn, params, ms) {
-    var opts = { method: 'POST', headers: { 'x-tma-init-data': tg.initData } };
+  // The x-tg-login header: the login object's JSON as base64url (UTF-8).
+  function b64url(s) {
+    var bytes = new TextEncoder().encode(s), bin = '';
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function api(fn, params, ms, quiet) {
+    if (browser && !login) return Promise.reject(new Error('login'));
+    var opts = {
+      method: 'POST',
+      headers: browser ? { 'x-tg-login': b64url(JSON.stringify(login)) } : { 'x-tma-init-data': tg.initData }
+    };
     if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(ms || 15000);
     return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
       .then(function (r) {
@@ -115,13 +136,18 @@ svg{display:block;width:100%;height:auto}
           if (!r.ok || (j && j.ok === false)) {
             var err = new Error((j && j.error) || String(r.status));
             err.code = j && j.error;
+            // An expired or refused login: back to the card, no toast.
+            if (r.status === 401 && browser) {
+              err.login = true;
+              if (login) loginCard('Сессия истекла, войди снова');
+            }
             throw err;
           }
           return j;
         });
       })
       .catch(function (e) {
-        toast(ERRORS[e && e.code]);
+        if (!e.login && !quiet) toast(ERRORS[e && e.code]);
         throw e;
       });
   }
@@ -166,7 +192,43 @@ svg{display:block;width:100%;height:auto}
     buttons[t[0]] = b;
     tabs.appendChild(b);
   });
-  add(app, add(top, tabs), main);
+  if (browser) {
+    var out = el('button', 'out', 'выйти');
+    out.type = 'button';
+    out.onclick = function () { loginCard(); };
+    tabs.appendChild(out);
+  }
+  add(top, tabs);
+
+  function start() {
+    add(clear(app), top, main);
+    show(store('tab') || 'home');
+  }
+  // The login card: the widget's script is created here, after load, so it
+  // mounts its button in place of itself.
+  function loginCard(note) {
+    login = null;
+    store('tgLogin', '');
+    current = null;
+    hideBack();
+    clear(main);
+    var widget = document.createElement('script');
+    widget.async = true;
+    widget.src = 'https://telegram.org/js/telegram-widget.js?22';
+    widget.setAttribute('data-telegram-login', 'valerii_assistant_bot');
+    widget.setAttribute('data-size', 'large');
+    widget.setAttribute('data-userpic', 'false');
+    widget.setAttribute('data-request-access', 'write');
+    widget.setAttribute('data-onauth', 'onTelegramAuth(user)');
+    add(clear(app), add(el('div', 'card login'), el('h3', '', 'Помощник'),
+      el('div', 'sub', note || 'Войди через Telegram — пускает только владельца бота'),
+      add(el('div', 'widget'), widget)));
+  }
+  window.onTelegramAuth = function (user) {
+    login = user;
+    store('tgLogin', JSON.stringify(user));
+    start();
+  };
 
   function show(tab) {
     if (!VIEWS[tab]) tab = 'home';
@@ -223,7 +285,7 @@ svg{display:block;width:100%;height:auto}
 
   function homeView() {
     var head = el('div', 'head', '…');
-    var body = el('div');
+    var body = el('div', 'cols');
     var again = el('button', 'btn ghost wide', '🔄 Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
@@ -659,6 +721,11 @@ svg{display:block;width:100%;height:auto}
       add(card, el('h3', '', r.product_name + (r.size ? ' · ' + r.size : '')),
         el('div', 'sub', CHAIN[r.chain] || r.chain));
       var inner = el('div', 'sub', '…');
+      if (browser) {
+        var ret = el('button', 'btn ghost', '← Назад');
+        ret.onclick = back;
+        add(product, ret);
+      }
       add(product, add(card, inner));
       backHandler = back;
       try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
@@ -746,7 +813,7 @@ svg{display:block;width:100%;height:auto}
   function statsView() {
     var period = store('period');
     if (!/^(4w|12w|1y)$/.test(period)) period = '12w';
-    var seg = el('div', 'tabs seg'), body = el('div'), segs = {};
+    var seg = el('div', 'tabs seg'), body = el('div', 'cols'), segs = {};
     PERIODS.forEach(function (p) {
       var b = segs[p[0]] = el('button', '', p[1]);
       b.type = 'button';
@@ -856,6 +923,8 @@ svg{display:block;width:100%;height:auto}
   var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
   var wishUrl = '', wishTarget = '';
   function openLink(url) {
+    if (!/^https?:\/\//i.test(String(url))) return;
+    if (browser) return window.open(url, '_blank', 'noopener');
     try { tg.openLink(url); } catch (e) { window.open(url, '_blank'); }
   }
   function wishView() {
@@ -957,14 +1026,37 @@ svg{display:block;width:100%;height:auto}
   function feedView() {
     var stream = store('stream');
     if (!/^(all|city|transport|legal)$/.test(stream)) stream = 'all';
-    var seg = el('div', 'tabs seg fit'), body = el('div'), segs = {};
+    var seg = el('div', 'tabs seg fit'), body = el('div'), segs = {}, med = el('div');
     STREAMS.forEach(function (s) {
       var b = segs[s[0]] = el('button', '', s[1]);
       b.type = 'button';
       b.onclick = function () { stream = s[0]; store('stream', stream); load(); };
       seg.appendChild(b);
     });
-    add(main, seg, body);
+    add(main, med, seg, body);
+
+    // «🩺 Медицина»: current promotions from the med function's table, worded
+    // as /med words them; hidden when there are none.
+    function money(v) { var n = Number(v); return Number.isInteger(n) ? String(n) : zl(n); }
+    api('miniapp', { action: 'med' }, undefined, true).then(function (j) {
+      var rows = (j.rows || []).slice(0, 8);
+      if (current !== 'feed' || !rows.length) return;
+      var card = add(el('div', 'card'), el('h3', '', '🩺 Медицина'));
+      rows.forEach(function (r) {
+        var a = el('a', 'lnk', r.title);
+        if (/^https?:\/\//i.test(r.url)) a.href = r.url;
+        a.onclick = function (ev) { ev.preventDefault(); openLink(r.url); };
+        var dt = r.discount_text ? String(r.discount_text).replace(/^-/, '−') : '';
+        var deal = dt ? dt + (r.code ? ' по коду ' + r.code : '') : r.code ? 'по коду ' + r.code : '';
+        var rest = (r.price != null ? ' — ' + money(r.price) + ' zł' : '') + (deal ? ' · ' + deal : '') +
+          (r.valid_to ? ' · до ' + dm(r.valid_to) : '');
+        var row = el('div', 'row');
+        row.style.cursor = 'default';
+        card.appendChild(add(row, add(el('span', 'tx'), document.createTextNode(r.provider + ' · '), a,
+          document.createTextNode(rest))));
+      });
+      med.appendChild(card);
+    }, noop);
 
     function render(rows) {
       clear(body);
@@ -1016,7 +1108,8 @@ svg{display:block;width:100%;height:auto}
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
     feed: feedView, news: newsView
   };
-  show(store('tab') || 'home');
+  if (browser && !login) loginCard();
+  else start();
 })();
 </script>
 </body>
