@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 19:17">
+<meta name="published" content="2026-10-10 19:37">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -18,7 +18,9 @@ button,input{font:inherit;color:inherit}
 .tabs button{flex:1;min-width:0;min-height:44px;padding:2px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600;font-size:12px;line-height:1.15;white-space:nowrap;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .tabs button .em{font-size:17px}
 @media (max-width:519px){.tabs button .lb{display:none}.tabs button .em{font-size:20px}.top button.on{flex:2.4}.tabs button.on .lb{display:block}}
+@media (max-width:399px){.top .tabs{gap:2px}}
 .seg{margin-bottom:10px}
+.fit button{flex:auto}
 .big{padding:0 12px 4px;font-size:30px;font-weight:700}
 .meter{height:6px;margin:5px 0 3px;border-radius:3px;background:var(--line)}
 .meter i{display:block;height:100%;border-radius:3px;background:var(--ac)}
@@ -43,6 +45,7 @@ button,input{font:inherit;color:inherit}
 .row .pr{flex:none;text-align:right;font-variant-numeric:tabular-nums}
 .row .old{color:var(--mu);text-decoration:line-through;font-size:13px;display:block}
 .row.done .tx{color:var(--mu);text-decoration:line-through}
+.clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .mu{color:var(--mu);font-size:14px}
 .foot{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
 .foot .btn{flex:1}
@@ -148,7 +151,7 @@ svg{display:block;width:100%;height:auto}
 
   // --- tabs ---
   var TABS = [['home', '🏠', 'Сегодня'], ['list', '🛒', 'Список'], ['picks', '🏷️', 'Акции'], ['prices', '📈', 'Цены'],
-    ['stats', '📊', 'Статистика'], ['wish', '🎁', 'Вишлист'], ['news', '🆕', 'Что нового']];
+    ['stats', '📊', 'Статистика'], ['wish', '🎁', 'Вишлист'], ['feed', '📰', 'Новости'], ['news', '🆕', 'Что нового']];
   var top = el('div', 'top');
   var tabs = el('div', 'tabs');
   var main = el('div');
@@ -889,6 +892,48 @@ svg{display:block;width:100%;height:auto}
     load();
   }
 
+  // --- news feed ---
+  var STREAMS = [['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
+  var SOURCES = {
+    'infor-legal': 'infor.pl', udsc: 'UdSC', muw: 'MUW', warszawa: 'warszawa.pl', wtp: 'WTP', ukrinform: 'Ukrinform'
+  };
+  function feedView() {
+    var stream = store('stream');
+    if (!/^(all|city|transport|legal)$/.test(stream)) stream = 'all';
+    var seg = el('div', 'tabs seg fit'), body = el('div'), segs = {};
+    STREAMS.forEach(function (s) {
+      var b = segs[s[0]] = el('button', '', s[1]);
+      b.type = 'button';
+      b.onclick = function () { stream = s[0]; store('stream', stream); load(); };
+      seg.appendChild(b);
+    });
+    add(main, seg, body);
+
+    function render(rows) {
+      clear(body);
+      if (!rows.length) return add(body, el('p', 'empty', 'Новостей пока нет'));
+      var card = el('div', 'card');
+      rows.forEach(function (r) {
+        var p = r.published_at ? wp(r.published_at) : null;
+        var row = el('div', 'row'), tx = el('span', 'tx');
+        add(tx, el('b', '', r.title), r.summary ? el('div', 'mu clip', r.summary) : null,
+          el('div', 'mu', (SOURCES[r.source] || r.source) + ' · ' + (p ? p.day + '.' + p.month : '—')));
+        if (/^https?:\/\//i.test(r.url)) row.onclick = function () { openLink(r.url); };
+        else row.style.cursor = 'default';
+        card.appendChild(add(row, tx));
+      });
+      body.appendChild(card);
+    }
+    function load() {
+      for (var k in segs) segs[k].className = k === stream ? 'on' : '';
+      var mine = stream;
+      api('miniapp', { action: 'news', stream: stream }).then(function (j) {
+        if (current === 'feed' && mine === stream) render(j.rows || []);
+      }, noop);
+    }
+    load();
+  }
+
   // --- changelog ---
   // changelog.json is published next to the page; the publish script stamps
   // the page's own date into <meta name="published">.
@@ -912,7 +957,7 @@ svg{display:block;width:100%;height:auto}
 
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    news: newsView
+    feed: feedView, news: newsView
   };
   show(store('tab') || 'home');
 })();
