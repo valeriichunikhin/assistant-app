@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 20:10">
+<meta name="published" content="2026-10-10 20:38">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -295,6 +295,17 @@ svg{display:block;width:100%;height:auto}
           return hrow([WEEK[wd(date)] + ' ' + dm(date), time, [g.venue, g.address].filter(Boolean).join(', '),
             g.status === 'paid' ? 'оплачено' : 'записан'].filter(Boolean).join(' · '), null, null,
             g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null);
+        }));
+      }
+
+      // Cinema City screenings today and tomorrow, from the purchase mails;
+      // hidden when there are none or the key is missing (an older morning).
+      if (m.my_shows === null) down('🍿 Мои сеансы');
+      else if (m.my_shows && m.my_shows.length) {
+        card('🍿 Мои сеансы', null, m.my_shows.map(function (s) {
+          var p = wp(s.starts_at), date = p.year + '-' + p.month + '-' + p.day;
+          return hrow(s.film, [date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), p.hour + ':' + p.minute,
+            [s.cinema, s.hall].filter(Boolean).join(', ')].join(' · '));
         }));
       }
 
@@ -730,6 +741,11 @@ svg{display:block;width:100%;height:auto}
               '× ' + qty(i.qty) + ' · ' + zl(i.spent) + ' zł'));
           });
         }
+      }
+      // Unlimited against tickets: the function's own wording, shown as text.
+      if (j.cinema) {
+        c = card('🎬 Кино', 'Cinema City Unlimited · этот месяц и 3 месяца');
+        j.cinema.lines.forEach(function (l) { c.appendChild(hrow(l)); });
       }
       var p = j.picks, w = j.wishlist, rows = [];
       var won = w.saved.reduce(function (a, s) { return a + s.first_price - s.target; }, 0);
