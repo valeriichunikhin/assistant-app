@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 19:40">
+<meta name="published" content="2026-10-10 20:10">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -45,6 +45,7 @@ button,input{font:inherit;color:inherit}
 .row .pr{flex:none;text-align:right;font-variant-numeric:tabular-nums}
 .row .old{color:var(--mu);text-decoration:line-through;font-size:13px;display:block}
 .row.done .tx{color:var(--mu);text-decoration:line-through}
+.row.soon{background:rgba(255,92,92,.14)}
 .clip{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .mu{color:var(--mu);font-size:14px}
 .foot{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
@@ -256,6 +257,19 @@ svg{display:block;width:100%;height:auto}
         if (due.length) card('📅 Сроки и посылки', null, capped(due, 8));
       }
 
+      // Documents within 90 days (the morning loader's window); red at 7 days
+      // or less. The key is missing while an older morning function is deployed.
+      if (m.documents === null) down('📄 Документы');
+      else if (m.documents && m.documents.length) {
+        card('📄 Документы', null, m.documents.map(function (d) {
+          var n = days(today, d.expires_on);
+          var r = hrow(d.name, (n < 0 ? 'просрочено ' + (-n) + ' дн' : n === 0 ? 'сегодня' : 'через ' + n + ' дн') +
+            ' · ' + dm(d.expires_on) + '.' + d.expires_on.slice(0, 4));
+          if (n <= 7) r.className += ' soon';
+          return r;
+        }));
+      }
+
       if (!m.courts) down('🎾 Корты сегодня');
       else {
         // Slots that have not started yet, earliest first, then cheapest.
@@ -269,6 +283,19 @@ svg{display:block;width:100%;height:auto}
               'https://playmore.pl/klub/' + s.slug + '/');
           }), 6));
         }
+      }
+
+      // Own games from PNH mails, the week ahead; the key is missing while an
+      // older morning function is deployed.
+      if (m.my_games === null) down('🏐 Мои игры');
+      else if (m.my_games && m.my_games.length) {
+        card('🏐 Мои игры', null, m.my_games.map(function (g) {
+          var s = wp(g.starts_at), date = s.year + '-' + s.month + '-' + s.day, time = s.hour + ':' + s.minute;
+          if (g.ends_at) time += '–' + wp(g.ends_at).hour + ':' + wp(g.ends_at).minute;
+          return hrow([WEEK[wd(date)] + ' ' + dm(date), time, [g.venue, g.address].filter(Boolean).join(', '),
+            g.status === 'paid' ? 'оплачено' : 'записан'].filter(Boolean).join(' · '), null, null,
+            g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null);
+        }));
       }
 
       if (!m.volleyball) down('🏐 Волейбол');
