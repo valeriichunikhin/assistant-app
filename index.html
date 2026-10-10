@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 00:55">
+<meta name="published" content="2026-10-11 01:42">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -457,17 +457,19 @@ button.pill{border:0;cursor:pointer}
     return hit(CATS) || hit(RU_CATS) || 'other';
   }
   // A product's picture: its photo when image_url is one (an Aldi row, or an
-  // image file off Biedronka), else the category tile (the server's category
-  // wins), with a 📄 badge when image_url is the Biedronka leaflet page. A photo
-  // or a badged tile is a button that opens the picture; a broken photo falls
-  // back to the plain tile.
-  function prodPic(name, url, chain, cat, big) {
+  // image file off Biedronka), else a tile with the product's own emoji (the
+  // server's, by name), else the category's (the server's category wins), with
+  // a 📄 badge when image_url is the Biedronka leaflet page. A photo or a
+  // badged tile is a button that opens the picture; a broken photo falls back
+  // to the plain tile.
+  function prodPic(name, url, chain, cat, big, emoji) {
     var cls = 'ptile' + (big ? ' big' : '');
     var id = cat || categoryOf(name);
     var tile = el('span', cls);
+    if (emoji) text(tile, emoji);
     // A handwritten item nothing recognises gets a quiet cart, not the bot's
     // «🏠 прочее», which would read as a wrong category.
-    if (id === 'other' && !cat) { tile.className += ' none'; tile.appendChild(icon('cart')); }
+    else if (id === 'other' && !cat) { tile.className += ' none'; tile.appendChild(icon('cart')); }
     else text(tile, CAT_EMO[id] || CAT_EMO.other);
     tile.setAttribute('aria-hidden', 'true');
     url = String(url || '');
@@ -948,7 +950,7 @@ button.pill{border:0;cursor:pointer}
       items.forEach(function (i) {
         var row = el('div', 'row' + (i.done ? ' done' : ''));
         add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
-          prodPic(i.text, i.image_url, i.chain, i.category), add(el('span', 'tx'), el('div', 't', i.text)));
+          prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji), add(el('span', 'tx'), el('div', 't', i.text)));
         row.setAttribute('aria-pressed', i.done ? 'true' : 'false');
         tap(row, function () {
           haptic();
@@ -1033,7 +1035,7 @@ button.pill{border:0;cursor:pointer}
           if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
           if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
           add(row, icon(c.selected ? 'check-square' : 'square', 'mk' + (c.selected ? ' on' : '')),
-            prodPic(c.label, c.image_url, b.chain, c.category), tx, pr);
+            prodPic(c.label, c.image_url, b.chain, c.category, false, c.emoji), tx, pr);
           row.setAttribute('aria-pressed', c.selected ? 'true' : 'false');
           tap(row, function () {
             haptic();
@@ -1116,7 +1118,7 @@ button.pill{border:0;cursor:pointer}
           var tx = el('span', 'tx');
           add(tx, el('b', '', r.product_name + (r.size ? ' · ' + r.size : '')),
             el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + ' наблюдений'));
-          add(row, prodPic(r.product_name, r.image_url, r.chain), tx, el('span', 'pr', zl(r.last_price) + ' zł'));
+          add(row, prodPic(r.product_name, r.image_url, r.chain, null, false, r.emoji), tx, el('span', 'pr', zl(r.last_price) + ' zł'));
           tap(row, function () { open(r); });
           card.appendChild(row);
         });
@@ -1139,7 +1141,7 @@ button.pill{border:0;cursor:pointer}
       clear(product);
       var card = mkCard('trending', r.product_name + (r.size ? ' · ' + r.size : ''));
       var ch = card.firstChild;
-      ch.replaceChild(prodPic(r.product_name, r.image_url, r.chain, null, true), ch.firstChild);
+      ch.replaceChild(prodPic(r.product_name, r.image_url, r.chain, null, true, r.emoji), ch.firstChild);
       ch.appendChild(add(el('span', 'tx'), ch.lastChild, el('div', 'mu', r.chain)));
       var inner = add(el('div'), skeleton(1));
       if (browser) {
