@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 00:23">
+<meta name="published" content="2026-10-11 00:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -158,7 +158,13 @@ button{cursor:pointer}
 .skel i{display:block;height:12px;margin:0 0 12px;border-radius:6px;background:var(--surface-2);animation:pulse 1.2s ease-in-out infinite}
 .skel i:nth-child(1){width:42%;height:14px}.skel i:nth-child(2){width:88%}.skel i:nth-child(3){width:64%}
 @keyframes pulse{50%{opacity:.45}}
-.thumb{flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
+.ptile{position:relative;flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);font:20px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;object-fit:cover}
+.ptile.big{width:56px;height:56px;font-size:30px}
+.ptile .bd{position:absolute;right:-6px;bottom:-6px;padding:2px;border-radius:6px;background:var(--toast);box-shadow:0 0 0 1px var(--line);font-size:12px}
+.ptile.none{color:var(--muted)}
+.ptile .i{width:18px;height:18px}
+.tb{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-4px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer}
+.tb:has(.big){width:64px;height:64px}
 .poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
 .poster.ph{display:grid;place-items:center;color:var(--muted)}
 .poster.ph .i{width:22px;height:22px}
@@ -176,7 +182,6 @@ button.pill{border:0;cursor:pointer}
 .pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 8px;border:1px solid var(--line);border-radius:9px;background:none;color:var(--muted);font-size:12px}
 .pg .i{width:14px;height:14px}
 .row.film .pg{min-height:44px}
-.pr .pg{margin-top:4px}
 .lnk{color:var(--link);font-weight:600;text-decoration:none}
 .card ul{margin:0;padding:2px 14px 14px 32px}
 .card li{margin:5px 0}
@@ -406,6 +411,81 @@ button.pill{border:0;cursor:pointer}
   function pill(s, kind) { return el('span', 'pill' + (kind ? ' ' + kind : ''), s); }
   // A small icon in front of a row.
   function lead(r, ic) { r.insertBefore(add(el('span', 'lead'), icon(ic)), r.firstChild); return r; }
+  // A JS twin of CATS in scripts/deal_batch.py: the same ids and keyword lists,
+  // the first match wins; edit both together. The emoji is the one in the
+  // category's title in the bot.
+  var CATS = [['pets', '🐾', ['karma', 'dla kota', 'dla psa', 'żwirek', 'whiskas', 'pedigree', 'felix', 'purina']],
+    ['kids', '👶', ['pieluch', 'pampers', 'dla dzieci', 'dla niemowl', 'mleko modyfikowane', 'kaszka', 'chusteczki nawilżane']],
+    ['alcohol', '🍺', ['piwo', 'wino', 'wódka', 'whisk', 'likier', 'prosecco', 'cydr', 'gin ', 'rum ']],
+    ['household', '🧴', ['płyn do', 'proszek', 'kapsułki do prania', 'papier toalet', 'ręcznik papier', 'worki', 'zmywak', 'domestos', 'cif', 'ariel', 'persil', 'lenor', 'vizir', 'coccolino', 'odświeżacz', 'gąbk', 'ściereczk']],
+    ['cosmetics', '🧼', ['szampon', 'żel pod prysznic', 'pasta do zęb', 'szczoteczk', 'dezodorant', 'antyperspirant', 'krem', 'maszynk', 'gillette', 'axe', 'nivea', 'dove', 'mydło', 'podpask', 'tampon', 'balsam', 'perfum', 'wod. toaletowa']],
+    ['sweets', '🍫', ['czekolad', 'pralin', 'ptasie', 'ciast', 'wafel', 'żelk', 'drażet', 'cukier', 'chips', 'rogal', 'toffi', 'merci', 'raffaello', 'ferrero', 'lindt', 'syrop', 'mus ', 'baton', 'orzeszk', 'paluszk', 'krakers']],
+    ['dairy', '🥛', ['mleko', 'masło', 'ser', 'jogurt', 'śmietan', 'twar', 'jaj', 'kefir', 'maślank', 'deser']],
+    ['meat', '🥩', ['mięs', 'schab', 'łopatk', 'parówk', 'kiełbas', 'szynk', 'boczek', 'kurcz', 'indyk', 'ryb', 'łosoś', 'śledź', 'kabanos', 'wędlin', 'frankfurt', 'karkówk', 'wołow', 'filet']],
+    ['produce', '🍅', ['pomidor', 'banan', 'winogron', 'malin', 'cytryn', 'jabł', 'ogór', 'papryk', 'pieczark', 'ziemniak', 'cebul', 'marchew', 'sałat', 'gruszk', 'śliwk', 'borów', 'awokado', 'mandarynk', 'pomarańcz', 'truskawk']],
+    ['ready', '🍱', ['mrożon', 'lody', 'frytki', 'pierogi', 'nuggets', 'gotow', 'zestaw obiadowy', 'sałatka', 'kebab', 'burger']],
+    ['bakery', '🍞', ['chleb', 'bułk', 'makaron', 'ryż', 'mąk', 'kasz', 'płatk', 'oliw', 'olej', 'sos', 'przypraw', 'konserw', 'sardynk', 'tuńczyk', 'kwas', 'musli', 'miód', 'dżem']],
+    ['coffee', '☕', ['kawa', 'herbat', 'kakao']],
+    ['drinks', '🥤', ['cola', 'napój', 'sok', 'woda', 'energ', 'pepsi', 'sprite', 'fanta']],
+    ['other', '🏠', []]];
+  var CAT_EMO = {};
+  CATS.forEach(function (c) { CAT_EMO[c[0]] = c[1]; });
+  // Handwritten list items are mostly Russian: a second list for them, tried
+  // after the Polish twin (not part of the twin; oils before dairy's «масл»).
+  var RU_CATS = [['bakery', ['оливк', 'подсолн', 'растительн']],
+    ['pets', ['корм', 'кошач', 'собач', 'наполнител']],
+    ['kids', ['подгузн', 'детск', 'памперс']],
+    ['alcohol', ['пиво', 'вино', 'водк', 'виски', 'ликёр', 'ликер', 'просекко', 'сидр', 'джин', 'ром ']],
+    ['household', ['порошок', 'стирк', 'моющ', 'чистящ', 'туалетн', 'полотен', 'мешки', 'пакет', 'губк', 'тряпк', 'освежител', 'доместос', 'капсул']],
+    ['cosmetics', ['шампун', 'гель для душ', 'зубн', 'щётк', 'щетк', 'дезодор', 'крем', 'бритв', 'мыло', 'прокладк', 'тампон', 'бальзам', 'духи']],
+    ['sweets', ['шоколад', 'конфет', 'печень', 'вафл', 'желе', 'сахар', 'чипс', 'батонч', 'орех', 'крекер', 'сушк', 'пряник', 'торт', 'мармелад']],
+    ['dairy', ['молок', 'масл', 'сыр', 'йогурт', 'сметан', 'творог', 'яйц', 'яиц', 'кефир', 'ряженк', 'сливк']],
+    ['meat', ['мяс', 'свинин', 'говядин', 'сосиск', 'колбас', 'ветчин', 'бекон', 'кур', 'индейк', 'рыб', 'лосос', 'сельд', 'кабанос', 'фарш', 'филе', 'шашлык']],
+    ['produce', ['помидор', 'банан', 'виноград', 'малин', 'лимон', 'яблок', 'огур', 'перец', 'шампиньон', 'картош', 'картоф', 'лук', 'морков', 'салат', 'груш', 'слив', 'черник', 'авокадо', 'мандарин', 'апельсин', 'клубник', 'зелень', 'капуст', 'чеснок', 'укроп', 'петрушк']],
+    ['ready', ['заморож', 'морожен', 'фри', 'пельмен', 'вареник', 'наггетс', 'готов', 'пицц', 'кебаб', 'бургер']],
+    ['bakery', ['хлеб', 'булк', 'батон', 'макарон', 'рис', 'мук', 'круп', 'гречк', 'овсян', 'хлопь', 'соус', 'специ', 'приправ', 'консерв', 'сардин', 'тунец', 'тунц', 'мюсли', 'мёд', 'варень', 'джем', 'соль']],
+    ['coffee', ['кофе', 'чай', 'какао']],
+    ['drinks', ['кола', 'напит', 'сок', 'вода', 'энергет', 'пепси', 'спрайт', 'фанта', 'лимонад']]];
+  function categoryOf(name) {
+    var n = String(name || '').toLowerCase();
+    function hit(list) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i][list[i].length - 1].some(function (k) { return n.indexOf(k) >= 0; })) return list[i][0];
+      }
+      return null;
+    }
+    return hit(CATS) || hit(RU_CATS) || 'other';
+  }
+  // A product's picture: its photo when image_url is one (an Aldi row, or an
+  // image file off Biedronka), else the category tile (the server's category
+  // wins), with a 📄 badge when image_url is the Biedronka leaflet page. A photo
+  // or a badged tile is a button that opens the picture; a broken photo falls
+  // back to the plain tile.
+  function prodPic(name, url, chain, cat, big) {
+    var cls = 'ptile' + (big ? ' big' : '');
+    var id = cat || categoryOf(name);
+    var tile = el('span', cls);
+    // A handwritten item nothing recognises gets a quiet cart, not the bot's
+    // «🏠 прочее», which would read as a wrong category.
+    if (id === 'other' && !cat) { tile.className += ' none'; tile.appendChild(icon('cart')); }
+    else text(tile, CAT_EMO[id] || CAT_EMO.other);
+    tile.setAttribute('aria-hidden', 'true');
+    url = String(url || '');
+    if (!/^https?:\/\/\S+$/i.test(url)) return tile;
+    var photo = chain === 'Aldi' || chain !== 'Biedronka' && /\.(jpe?g|png|webp)([?#]|$)/i.test(url);
+    var b = el('button', 'tb');
+    b.type = 'button';
+    b.setAttribute('aria-label', photo ? 'Фото товара' : 'Страница газетки');
+    b.onclick = function (ev) { ev.stopPropagation(); openLink(url); };
+    if (!photo) return add(b, add(tile, el('span', 'bd', '📄')));
+    var img = el('img', cls + ' photo');
+    img.alt = '';
+    img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    img.src = url;
+    img.onerror = function () { b.replaceWith(tile); };
+    return add(b, img);
+  }
   // A pressable element: click, Enter and Space, a pressed state, a focus ring.
   function tap(e, fn) {
     e.className += ' tap';
@@ -867,7 +947,8 @@ button.pill{border:0;cursor:pointer}
       var card = el('div', 'card');
       items.forEach(function (i) {
         var row = el('div', 'row' + (i.done ? ' done' : ''));
-        add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')), add(el('span', 'tx'), el('div', 't', i.text)));
+        add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
+          prodPic(i.text, i.image_url, i.chain, i.category), add(el('span', 'tx'), el('div', 't', i.text)));
         row.setAttribute('aria-pressed', i.done ? 'true' : 'false');
         tap(row, function () {
           haptic();
@@ -930,25 +1011,6 @@ button.pill{border:0;cursor:pointer}
       batches = batches.filter(function (x) { return x !== b; });
       render();
     }
-    // The candidate's picture: Aldi's product photo as a thumbnail, a
-    // Biedronka leaflet page as a small «стр.» link; either opens the picture.
-    function picture(b, c) {
-      if (!/^https?:\/\//i.test(String(c.image_url || ''))) return null;
-      var e;
-      if (b.chain === 'Aldi') {
-        e = el('img', 'thumb');
-        e.alt = '';
-        e.loading = 'lazy';
-        e.referrerPolicy = 'no-referrer';
-        e.src = c.image_url;
-        e.onerror = function () { e.style.display = 'none'; };
-      } else {
-        e = label(el('button', 'pg'), 'file', 'стр.');
-        e.type = 'button';
-      }
-      e.onclick = function (ev) { ev.stopPropagation(); openLink(c.image_url); };
-      return e;
-    }
     function render() {
       if (current !== 'picks' || !batches) return;
       clear(body);
@@ -970,10 +1032,8 @@ button.pill{border:0;cursor:pointer}
           var pr = el('span', 'pr');
           if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
           if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
-          // A photo stands beside the price, a leaflet-page link under it.
-          var pic = picture(b, c), photo = pic && pic.tagName === 'IMG';
-          if (pic && !photo) pr.appendChild(pic);
-          add(row, icon(c.selected ? 'check-square' : 'square', 'mk' + (c.selected ? ' on' : '')), tx, pr, photo ? pic : null);
+          add(row, icon(c.selected ? 'check-square' : 'square', 'mk' + (c.selected ? ' on' : '')),
+            prodPic(c.label, c.image_url, b.chain, c.category), tx, pr);
           row.setAttribute('aria-pressed', c.selected ? 'true' : 'false');
           tap(row, function () {
             haptic();
@@ -1056,7 +1116,7 @@ button.pill{border:0;cursor:pointer}
           var tx = el('span', 'tx');
           add(tx, el('b', '', r.product_name + (r.size ? ' · ' + r.size : '')),
             el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + ' наблюдений'));
-          add(row, tx, el('span', 'pr', zl(r.last_price) + ' zł'));
+          add(row, prodPic(r.product_name, r.image_url, r.chain), tx, el('span', 'pr', zl(r.last_price) + ' zł'));
           tap(row, function () { open(r); });
           card.appendChild(row);
         });
@@ -1077,7 +1137,10 @@ button.pill{border:0;cursor:pointer}
     function open(r) {
       list.style.display = 'none';
       clear(product);
-      var card = mkCard('trending', r.product_name + (r.size ? ' · ' + r.size : ''), r.chain);
+      var card = mkCard('trending', r.product_name + (r.size ? ' · ' + r.size : ''));
+      var ch = card.firstChild;
+      ch.replaceChild(prodPic(r.product_name, r.image_url, r.chain, null, true), ch.firstChild);
+      ch.appendChild(add(el('span', 'tx'), ch.lastChild, el('div', 'mu', r.chain)));
       var inner = add(el('div'), skeleton(1));
       if (browser) {
         var ret = label(el('button', 'btn ghost'), 'back', 'Назад');
