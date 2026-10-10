@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="published" content="2026-10-10 19:17">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -16,7 +17,13 @@ button,input{font:inherit;color:inherit}
 .tabs{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px}
 .tabs button{flex:1;min-width:0;min-height:44px;padding:2px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600;font-size:12px;line-height:1.15;white-space:nowrap;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .tabs button .em{font-size:17px}
-@media (max-width:379px){.tabs button .lb{display:none}.tabs button .em{font-size:20px}}
+@media (max-width:519px){.tabs button .lb{display:none}.tabs button .em{font-size:20px}.top button.on{flex:2.4}.tabs button.on .lb{display:block}}
+.seg{margin-bottom:10px}
+.big{padding:0 12px 4px;font-size:30px;font-weight:700}
+.meter{height:6px;margin:5px 0 3px;border-radius:3px;background:var(--line)}
+.meter i{display:block;height:100%;border-radius:3px;background:var(--ac)}
+.card ul{margin:0;padding:0 12px 12px 30px}
+.card li{margin:4px 0}
 .tabs button.on{background:var(--ac);color:var(--bg)}
 .head{color:var(--mu);font-size:14px;margin:6px 2px 8px}
 .bar{display:flex;gap:8px;margin-bottom:10px}
@@ -141,7 +148,7 @@ svg{display:block;width:100%;height:auto}
 
   // --- tabs ---
   var TABS = [['home', '🏠', 'Сегодня'], ['list', '🛒', 'Список'], ['picks', '🏷️', 'Акции'], ['prices', '📈', 'Цены'],
-    ['wish', '🎁', 'Вишлист']];
+    ['stats', '📊', 'Статистика'], ['wish', '🎁', 'Вишлист'], ['news', '🆕', 'Что нового']];
   var top = el('div', 'top');
   var tabs = el('div', 'tabs');
   var main = el('div');
@@ -150,6 +157,7 @@ svg{display:block;width:100%;height:auto}
   TABS.forEach(function (t) {
     var b = add(el('button'), el('span', 'em', t[1]), el('span', 'lb', t[2]));
     b.type = 'button';
+    b.title = t[2];
     b.onclick = function () { show(t[0]); };
     buttons[t[0]] = b;
     tabs.appendChild(b);
@@ -195,7 +203,7 @@ svg{display:block;width:100%;height:auto}
     if (c >= 95 && c <= 99) return 'гроза';
     return '';
   }
-  function aqiLabel(a) { return a <= 20 ? 'хороший' : a <= 40 ? 'умеренный' : 'плохой'; }
+  function aqiLabel(a) { return a <= 20 ? 'хороший' : a <= 40 ? 'нормальный' : a <= 60 ? 'умеренный' : a <= 80 ? 'плохой' : 'очень плохой'; }
   function maxAqi(h, date) {
     var best = null;
     h.time.forEach(function (t, i) {
@@ -686,6 +694,104 @@ svg{display:block;width:100%;height:auto}
     });
   }
 
+  // --- stats ---
+  // Spending from the receipts, savings from the receipts (exact), the deal
+  // picks («до», potential) and the wishlist.
+  var PERIODS = [['4w', '4 нед'], ['12w', '12 нед'], ['1y', 'год']];
+  function statsView() {
+    var period = store('period');
+    if (!/^(4w|12w|1y)$/.test(period)) period = '12w';
+    var seg = el('div', 'tabs seg'), body = el('div'), segs = {};
+    PERIODS.forEach(function (p) {
+      var b = segs[p[0]] = el('button', '', p[1]);
+      b.type = 'button';
+      b.onclick = function () { period = p[0]; store('period', period); load(); };
+      seg.appendChild(b);
+    });
+    add(main, seg, body);
+
+    function card(title, sub) {
+      return body.appendChild(add(el('div', 'card'), el('h3', '', title), sub ? el('div', 'sub', sub) : null));
+    }
+    function checks(n) { return n + ' ' + plural(n, ['чек', 'чека', 'чеков']); }
+    function qty(q) { return String(Math.round(Number(q) * 1000) / 1000).replace('.', ','); }
+    function render(j) {
+      clear(body);
+      var t = j.totals, c;
+      if (!t.receipts) add(body, el('p', 'empty', 'Чеков за период нет. Присылай PDF из Moja Biedronka в тему Receipts.'));
+      else {
+        c = card('Потрачено');
+        add(c, el('div', 'big', zl(t.spent) + ' zł'), el('div', 'sub', checks(t.receipts) + ' · средний чек ' +
+          zl(t.avg_basket) + ' zł · скидки магазина ' + zl(t.discounts) + ' zł'));
+        c = card('По магазинам');
+        var top = j.by_store.length ? j.by_store[0].spent : 0;
+        j.by_store.forEach(function (s) {
+          var r = hrow(s.chain, checks(s.receipts), zl(s.spent) + ' zł'), m = el('div', 'meter'), f = el('i');
+          f.style.width = (top > 0 ? Math.max(2, s.spent / top * 100) : 0) + '%';
+          r.firstChild.insertBefore(add(m, f), r.firstChild.lastChild);
+          c.appendChild(r);
+        });
+        add(card('По неделям'), weekChart(j.by_week, addDays(j.to, -wd(j.to))));
+        if (j.top_items.length) {
+          c = card('Топ товаров');
+          j.top_items.forEach(function (i) {
+            c.appendChild(hrow(i.name, i.discount > 0 ? 'скидка ' + zl(i.discount) + ' zł' : null,
+              '× ' + qty(i.qty) + ' · ' + zl(i.spent) + ' zł'));
+          });
+        }
+      }
+      var p = j.picks, w = j.wishlist, rows = [];
+      var won = w.saved.reduce(function (a, s) { return a + s.first_price - s.target; }, 0);
+      if (!t.receipts && !p.selected && !w.reached) return;
+      rows.push(hrow('Скидки магазина по чекам: ' + zl(t.discounts) + ' zł'),
+        hrow('Выбрано из акций: ' + p.selected + ' ' + plural(p.selected, ['позиция', 'позиции', 'позиций']) +
+          ' в ' + p.batches + ' ' + plural(p.batches, ['партии', 'партиях', 'партиях']) + ', экономия до ' +
+          zl(p.bought_potential) + ' zł'));
+      if (w.reached) {
+        rows.push(hrow('Вишлист: ' + w.reached + ' ' + plural(w.reached, ['цель достигнута', 'цели достигнуты',
+          'целей достигнуто']) + (won > 0 ? ', экономия ' + zl(won) + ' zł' : '')));
+      }
+      p.lines.slice(0, 10).forEach(function (l) {
+        rows.push(el('div', 'row mu', l.label + ' · ' + zl(l.price) + ' вместо ' + zl(l.old_price) + ' · ' + l.chain));
+      });
+      c = card('Экономия');
+      rows.forEach(function (r) { c.appendChild(r); });
+    }
+    function load() {
+      for (var k in segs) segs[k].className = k === period ? 'on' : '';
+      var mine = period;
+      api('miniapp', { action: 'stats', period: period }).then(function (j) {
+        if (current === 'stats' && mine === period) render(j);
+      }, noop);
+    }
+    load();
+  }
+  // Weekly spend as bars: the current week outlined, every few weeks dated,
+  // the largest labelled.
+  function weekChart(weeks, now) {
+    var W = 320, H = 150, L = 4, T = 16, B = 20, n = weeks.length || 1;
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img' });
+    var max = Math.max.apply(null, weeks.map(function (w) { return w.spent; }).concat([0]));
+    var step = (W - 2 * L) / n, every = Math.max(2, Math.ceil(n / 7)), hi = -1;
+    add(box, svg('line', { x1: L, x2: W - L, y1: H - B, y2: H - B, stroke: '#223040' }));
+    weeks.forEach(function (w, i) {
+      var h = max > 0 ? w.spent / max * (H - T - B) : 0, x = L + i * step + step * 0.15;
+      var a = { x: x, y: H - B - h, width: step * 0.7, height: h, rx: 2, fill: '#c1f354' };
+      if (w.week_start === now) { a['fill-opacity'] = 0.3; a.stroke = '#c1f354'; }
+      if (h > 0) add(box, svg('rect', a));
+      if (hi < 0 || w.spent > weeks[hi].spent) hi = i;
+      if ((n - 1 - i) % every === 0) {
+        add(box, svg('text', { x: x + step * 0.35, y: H - 6, fill: '#8b98a5', 'font-size': 10, 'text-anchor': 'middle' },
+          dm(w.week_start)));
+      }
+    });
+    if (max > 0) {
+      var cx = Math.min(Math.max(L + (hi + 0.5) * step, 24), W - 24);
+      add(box, svg('text', { x: cx, y: T - 4, fill: '#e6edf3', 'font-size': 10, 'text-anchor': 'middle' }, zl(max)));
+    }
+    return box;
+  }
+
   // --- wishlist ---
   var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
   var wishUrl = '', wishTarget = '';
@@ -783,7 +889,31 @@ svg{display:block;width:100%;height:auto}
     load();
   }
 
-  var VIEWS = { home: homeView, list: listView, picks: picksView, prices: pricesView, wish: wishView };
+  // --- changelog ---
+  // changelog.json is published next to the page; the publish script stamps
+  // the page's own date into <meta name="published">.
+  function newsView() {
+    var body = el('div'), meta = document.querySelector('meta[name="published"]');
+    add(main, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function (list) {
+      if (current !== 'news') return;
+      list.forEach(function (e) {
+        var ul = el('ul');
+        e.lines.forEach(function (l) { ul.appendChild(el('li', '', l)); });
+        body.appendChild(add(el('div', 'card'), el('h3', '', dm(e.date) + '.' + e.date.slice(0, 4) + ' · ' + e.title), ul));
+      });
+    }).catch(function () {
+      if (current === 'news') add(clear(body), el('p', 'empty', 'Список обновлений недоступен'));
+    });
+  }
+
+  var VIEWS = {
+    home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
+    news: newsView
+  };
   show(store('tab') || 'home');
 })();
 </script>
