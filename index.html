@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 00:20">
+<meta name="published" content="2026-10-11 00:23">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -160,6 +160,8 @@ button{cursor:pointer}
 @keyframes pulse{50%{opacity:.45}}
 .thumb{flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
 .poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
+.poster.ph{display:grid;place-items:center;color:var(--muted)}
+.poster.ph .i{width:22px;height:22px}
 .row.film{align-items:flex-start}
 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 button.pill{border:0;cursor:pointer}
@@ -1419,14 +1421,17 @@ button.pill{border:0;cursor:pointer}
   function cinemaView() {
     var body = el('div', 'cols');
     main.appendChild(body);
+    // The poster, or a film glyph in its 56×84 box when there is none or
+    // it fails, so the rows of a card line up.
     function poster(url) {
-      if (!/^https?:\/\//i.test(String(url || ''))) return null;
+      var ph = add(el('span', 'poster ph'), icon('film'));
+      if (!/^https?:\/\//i.test(String(url || ''))) return ph;
       var e = el('img', 'poster');
       e.alt = '';
       e.loading = 'lazy';
       e.referrerPolicy = 'no-referrer';
       e.src = url;
-      e.onerror = function () { e.style.display = 'none'; };
+      e.onerror = function () { e.replaceWith(ph); };
       return e;
     }
     function act(params, done) {
@@ -1479,7 +1484,7 @@ button.pill{border:0;cursor:pointer}
         pills.appendChild(p);
       });
       return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
-        el('div', 'mu', 'с ' + dm(f.release_date)),
+        el('div', 'mu num', 'с ' + dm(f.release_date)),
         f.sale && f.sale.length ? pills : null,
         add(el('div', 'acts'),
           btn('check', 'Смотрел', function () { act({ action: 'film_mark', film: f.id, mark: 'w' }, 'Отмечено: смотрел'); }),
@@ -1492,7 +1497,8 @@ button.pill{border:0;cursor:pointer}
       var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
       var watched = j.watched || [], early = j.early || [], prem = j.premieres || [];
       if (!prem.length && !early.length && !shows.length && !watched.length) {
-        return add(body, state('film', 'Премьер на две недели пока нет'));
+        add(body, state('film', 'Премьер на две недели пока нет'), j.skipped ? el('p', 'mu', '🚫 не интересно: ' + j.skipped) : null);
+        return;
       }
       var c = mkCard('film', 'Премьеры', 'ближайшие 14 дней');
       if (!prem.length) c.appendChild(el('div', 'row small mu', 'Новых премьер нет'));
@@ -1502,7 +1508,7 @@ button.pill{border:0;cursor:pointer}
         c = mkCard('calendar', 'Предпремьеры');
         early.forEach(function (e) {
           var r = add(el('div', 'row film'), poster(e.film.poster), add(el('span', 'tx'), name(e.film),
-            el('div', 'mu', whenW(e.date) + ' · ' + e.cinema)));
+            el('div', 'mu num', whenW(e.date) + ' · ' + e.cinema)));
           if (e.url) r.appendChild(btn('link', 'билеты', function () { openLink(e.url); }));
           c.appendChild(r);
         });
@@ -1519,7 +1525,7 @@ button.pill{border:0;cursor:pointer}
         c = mkCard('check', 'Смотрел');
         watched.forEach(function (w) {
           var tx = add(el('span', 'tx'), el('div', 't', w.display),
-            el('div', 'mu', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : '') + (w.rating != null && !w.id ? ' · ⭐ ' + rateText(w.rating) : '')),
+            el('div', 'mu num', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : '') + (w.rating != null && !w.id ? ' · ⭐ ' + rateText(w.rating) : '')),
             w.id ? starBar(w.id, w.rating) : null);
           var r = add(el('div', 'row film'), poster(w.poster), tx);
           if (w.id && w.source === 'mark') {
