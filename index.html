@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-10 22:04">
+<meta name="published" content="2026-10-10 23:00">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -807,8 +807,9 @@ svg{display:block;width:100%;height:auto}
   }
 
   // --- stats ---
-  // Spending from the receipts, savings from the receipts (exact), the deal
-  // picks («до», potential) and the wishlist.
+  // Spending from the receipts; savings: what the advice saved (picks bought,
+  // confirmed by receipts) in total and per category, the store discounts from
+  // the receipts (exact) and the wishlist.
   var PERIODS = [['4w', '4 нед'], ['12w', '12 нед'], ['1y', 'год']];
   function statsView() {
     var period = store('period');
@@ -867,20 +868,23 @@ svg{display:block;width:100%;height:auto}
         c = card('🎬 Кино', 'Cinema City Unlimited · этот месяц и 3 месяца');
         j.cinema.lines.forEach(function (l) { c.appendChild(hrow(l)); });
       }
-      var p = j.picks, w = j.wishlist, rows = [];
+      var p = j.savings, w = j.wishlist, rows = [];
       var won = w.saved.reduce(function (a, s) { return a + s.first_price - s.target; }, 0);
-      if (!t.receipts && !p.selected && !w.reached) return;
-      rows.push(hrow('Скидки магазина по чекам: ' + zl(t.discounts) + ' zł'),
-        hrow('Выбрано из акций: ' + p.selected + ' ' + plural(p.selected, ['позиция', 'позиции', 'позиций']) +
-          ' в ' + p.batches + ' ' + plural(p.batches, ['партии', 'партиях', 'партиях']) + ', экономия до ' +
-          zl(p.bought_potential) + ' zł'));
+      if (!t.receipts && !p.items && !w.reached) return;
+      function buys(n) { return n + ' ' + plural(n, ['покупка', 'покупки', 'покупок']); }
+      rows.push(hrow('Благодаря советам: ' + zl(p.total) + ' zł за период · ' + buys(p.items)));
+      var best = p.by_category.length ? p.by_category[0].saved : 0;
+      p.by_category.forEach(function (s) {
+        var r = hrow(s.title, buys(s.items), zl(s.saved) + ' zł'), m = el('div', 'meter'), f = el('i');
+        f.style.width = (best > 0 ? Math.max(2, s.saved / best * 100) : 0) + '%';
+        r.firstChild.insertBefore(add(m, f), r.firstChild.lastChild);
+        rows.push(r);
+      });
+      rows.push(hrow('Скидки магазина по чекам: ' + zl(t.discounts) + ' zł'));
       if (w.reached) {
         rows.push(hrow('Вишлист: ' + w.reached + ' ' + plural(w.reached, ['цель достигнута', 'цели достигнуты',
           'целей достигнуто']) + (won > 0 ? ', экономия ' + zl(won) + ' zł' : '')));
       }
-      p.lines.slice(0, 10).forEach(function (l) {
-        rows.push(el('div', 'row mu', l.label + ' · ' + zl(l.price) + ' вместо ' + zl(l.old_price) + ' · ' + l.chain));
-      });
       c = card('Экономия');
       rows.forEach(function (r) { c.appendChild(r); });
     }
