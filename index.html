@@ -14,8 +14,9 @@ body{font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica
 button,input{font:inherit;color:inherit}
 .top{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0 8px}
 .tabs{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px}
-.tabs button{flex:1;min-width:0;min-height:44px;padding:0 2px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600;font-size:14px;white-space:nowrap}
-@media (max-width:379px){.tabs button{font-size:12px}}
+.tabs button{flex:1;min-width:0;min-height:44px;padding:2px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600;font-size:12px;line-height:1.15;white-space:nowrap;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tabs button .em{font-size:17px}
+@media (max-width:379px){.tabs button .lb{display:none}.tabs button .em{font-size:20px}}
 .tabs button.on{background:var(--ac);color:var(--bg)}
 .head{color:var(--mu);font-size:14px;margin:6px 2px 8px}
 .bar{display:flex;gap:8px;margin-bottom:10px}
@@ -26,6 +27,7 @@ button,input{font:inherit;color:inherit}
 .btn.warn{background:#3a2a1a;color:#ffcf7a;border:1px solid #6a4a20}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
 .card h3{margin:0;padding:12px 12px 4px;font-size:16px}
+.card h3:last-child{padding-bottom:12px}
 .card .sub{padding:0 12px 8px;color:var(--mu);font-size:14px}
 .row{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 12px;border-top:1px solid var(--line);cursor:pointer}
 .row:first-child{border-top:0}
@@ -44,6 +46,7 @@ svg{display:block;width:100%;height:auto}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
 .lnk{color:var(--ac);font-weight:600;text-decoration:none}
 .row .x{flex:none;padding:0 10px}
+.btn.wide{width:100%}
 #toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#2a3a4c;color:var(--fg);border-radius:10px;padding:12px 14px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
 #toast.on{opacity:1;transform:none}
 </style>
@@ -92,9 +95,9 @@ svg{display:block;width:100%;height:auto}
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
   }
-  function api(fn, params) {
+  function api(fn, params, ms) {
     var opts = { method: 'POST', headers: { 'x-tma-init-data': tg.initData } };
-    if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(15000);
+    if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(ms || 15000);
     return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
       .then(function (r) {
         return r.json().then(function (j) {
@@ -137,14 +140,15 @@ svg{display:block;width:100%;height:auto}
   function noop() {}
 
   // --- tabs ---
-  var TABS = [['list', '🛒 Список'], ['picks', '🏷️ Акции'], ['prices', '📈 Цены'], ['wish', '🎁 Вишлист']];
+  var TABS = [['home', '🏠', 'Сегодня'], ['list', '🛒', 'Список'], ['picks', '🏷️', 'Акции'], ['prices', '📈', 'Цены'],
+    ['wish', '🎁', 'Вишлист']];
   var top = el('div', 'top');
   var tabs = el('div', 'tabs');
   var main = el('div');
   var buttons = {};
   var current = null;
   TABS.forEach(function (t) {
-    var b = el('button', '', t[1]);
+    var b = add(el('button'), el('span', 'em', t[1]), el('span', 'lb', t[2]));
     b.type = 'button';
     b.onclick = function () { show(t[0]); };
     buttons[t[0]] = b;
@@ -153,13 +157,229 @@ svg{display:block;width:100%;height:auto}
   add(app, add(top, tabs), main);
 
   function show(tab) {
-    if (!VIEWS[tab]) tab = 'list';
+    if (!VIEWS[tab]) tab = 'home';
     current = tab;
     store('tab', tab);
     for (var k in buttons) buttons[k].className = k === tab ? 'on' : '';
     hideBack();
     clear(main);
     VIEWS[tab]();
+  }
+
+  // --- today ---
+  // Wording, the weather-code words and the AQI labels follow the morning and
+  // weekly functions (renderWeather, renderDeadlines, renderGenshin, the
+  // Sunday report).
+  var WEEK = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+  var KINDS = { new: 'новых игр', freed: 'освободилось мест', list: 'списков', digest: 'сводок' };
+  // Year, month, day, hour and minute of a moment in Warsaw.
+  function wp(ts) {
+    var o = {};
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Warsaw', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    }).formatToParts(new Date(ts)).forEach(function (x) { o[x.type] = x.value; });
+    return o;
+  }
+  function whenW(ts) { var p = wp(ts); return p.day + '.' + p.month + ' ' + p.hour + ':' + p.minute; }
+  function wd(date) { return (new Date(date + 'T12:00:00Z').getUTCDay() + 6) % 7; }
+  function days(from, to) { return Math.round((Date.parse(to) - Date.parse(from)) / 86400000); }
+  function addDays(date, n) { return new Date(Date.parse(date + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10); }
+  function weatherWord(c) {
+    if (c == null) return '';
+    if (c <= 1) return 'ясно';
+    if (c <= 3) return 'облачно';
+    if (c === 45 || c === 48) return 'туман';
+    if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return 'дождь';
+    if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'снег';
+    if (c >= 95 && c <= 99) return 'гроза';
+    return '';
+  }
+  function aqiLabel(a) { return a <= 20 ? 'хороший' : a <= 40 ? 'умеренный' : 'плохой'; }
+  function maxAqi(h, date) {
+    var best = null;
+    h.time.forEach(function (t, i) {
+      var hr = Number(t.slice(11, 13)), v = h.european_aqi[i];
+      if (t.indexOf(date) === 0 && hr >= 7 && hr <= 22 && v != null && (best === null || v > best)) best = v;
+    });
+    return best;
+  }
+  function dayLine(d, i) {
+    function r(v) { return v == null ? null : Math.round(v); }
+    var lo = r(d.temperature_2m_min[i]), hi = r(d.temperature_2m_max[i]);
+    var rain = r(d.precipitation_probability_max[i]), wind = r(d.wind_speed_10m_max[i]);
+    return [lo !== null && hi !== null ? lo + '…' + hi + '°' : '', weatherWord(d.weather_code[i]),
+      rain !== null ? 'осадки ' + rain + '%' : '', wind !== null ? 'ветер ' + wind + ' км/ч' : '']
+      .filter(Boolean).join(', ');
+  }
+  function plural(n, f) {
+    var m10 = n % 10, m100 = n % 100;
+    return m10 === 1 && m100 !== 11 ? f[0] : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? f[1] : f[2];
+  }
+  function receiptsLine(n, total, disc) {
+    return n + ' ' + plural(n, ['чек', 'чека', 'чеков']) + ' · ' + zl(total) + ' zł' +
+      (disc ? ' · скидки ' + zl(Math.abs(disc)) + ' zł' : '');
+  }
+  function hrow(main, sub, right, href) {
+    var r = el('div', 'row');
+    add(r, add(el('span', 'tx'), el('span', '', main), sub ? el('div', 'mu', sub) : null),
+      right != null ? el('span', 'pr', right) : null);
+    if (href) r.onclick = function () { openLink(href); };
+    else r.style.cursor = 'default';
+    return r;
+  }
+  function capped(rows, n) {
+    return rows.length > n ? rows.slice(0, n).concat([el('div', 'row mu', '+' + (rows.length - n) + ' ещё')]) : rows;
+  }
+
+  function homeView() {
+    var head = el('div', 'head', '…');
+    var body = el('div');
+    var again = el('button', 'btn ghost wide', '🔄 Обновить');
+    again.type = 'button';
+    again.onclick = function () { window.scrollTo(0, 0); load(); };
+    add(main, head, body, again);
+
+    function card(title, sub, rows) {
+      var c = add(el('div', 'card'), el('h3', '', title), sub ? el('div', 'sub', sub) : null);
+      (rows || []).forEach(function (r) { c.appendChild(r); });
+      body.appendChild(c);
+    }
+    function down(title) { card(title + ' — недоступно'); }
+    function morning(m, today) {
+      var w = m.weather, a = m.air, rows = [];
+      if (w) {
+        var i = w.time.indexOf(today);
+        if (i >= 0) rows.push(hrow('сегодня ' + dayLine(w, i)));
+        if (i >= 0 && w.time[i + 1]) rows.push(el('div', 'row mu', 'завтра ' + dayLine(w, i + 1)));
+      } else rows.push(hrow('прогноз — недоступно'));
+      var aqi = a ? maxAqi(a, today) : null;
+      if (!a) rows.push(hrow('воздух — недоступно'));
+      else if (aqi !== null) rows.push(hrow('воздух ' + aqiLabel(aqi) + ' · AQI ' + aqi));
+      if (rows.length) card('🌤 Погода', null, rows);
+
+      if (!m.deadlines && !m.payments && !m.parcels) down('📅 Сроки и посылки');
+      else {
+        var due = [];
+        var rel = function (d) {
+          var n = days(today, d);
+          return n < 0 ? 'просрочено' : n === 0 ? 'сегодня' : n === 1 ? 'завтра' : 'через ' + n + ' дн';
+        };
+        if (m.deadlines) {
+          m.deadlines.forEach(function (d) {
+            due.push(hrow(d.title, d.sender + ' · до ' + dm(d.due_date) + ' · ' + rel(d.due_date)));
+          });
+        } else due.push(hrow('сроки из писем — недоступно'));
+        if (m.payments) {
+          m.payments.forEach(function (p) {
+            due.push(hrow(p.kind + ' · ' + p.period, 'до ' + dm(p.due_date) + ' · ' + rel(p.due_date)));
+          });
+        } else due.push(hrow('платежи — недоступно'));
+        if (m.parcels) {
+          m.parcels.forEach(function (p) {
+            due.push(hrow('📦 ' + [p.carrier, p.shop].filter(Boolean).join(' · '),
+              'забрать до ' + whenW(p.pickup_deadline)));
+          });
+        } else due.push(hrow('посылки — недоступно'));
+        if (due.length) card('📅 Сроки и посылки', null, capped(due, 8));
+      }
+
+      if (!m.courts) down('🎾 Корты сегодня');
+      else {
+        // Slots that have not started yet, earliest first, then cheapest.
+        var names = {}, now = wp(Date.now()), hm = now.hour + ':' + now.minute;
+        m.courts.clubs.forEach(function (c) { names[c.slug] = c.name; });
+        var slots = m.courts.slots.filter(function (s) { return names[s.slug] && s.start_time >= hm; })
+          .sort(function (x, y) { return x.start_time.localeCompare(y.start_time) || Number(x.price) - Number(y.price); });
+        if (slots.length) {
+          card('🎾 Корты сегодня', null, capped(slots.map(function (s) {
+            return hrow(s.start_time + ' · ' + names[s.slug], null, zl(s.price) + ' zł',
+              'https://playmore.pl/klub/' + s.slug + '/');
+          }), 6));
+        }
+      }
+
+      if (!m.volleyball) down('🏐 Волейбол');
+      else if (m.volleyball.length) {
+        // 🔥 on ср/пт, the priority evenings, as the volleyball digest marks them.
+        var day = (wd(today) === 2 || wd(today) === 4 ? '🔥 ' : '') + WEEK[wd(today)] + ' ' + dm(today) + ' ';
+        card('🏐 Волейбол', 'свободных игр сегодня: ' + m.volleyball.length, capped(m.volleyball.slice()
+          .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })
+          .map(function (g) {
+            var taken = g.max_players != null && g.free_spots != null
+              ? (g.max_players - g.free_spots) + '/' + g.max_players : '';
+            return hrow([day + g.start_at, g.venue, taken].filter(Boolean).join(' · '), null,
+              g.price == null ? null : zl(g.price) + ' zł', 'https://pilkanahali.pl/zajecia/' + g.activity_id);
+          }), 6));
+      }
+
+      if (!m.genshin) down('🎮 Genshin');
+      else if (m.genshin.length) {
+        card('🎮 Genshin · заканчивается', null, m.genshin.slice()
+          .sort(function (x, y) { return Date.parse(x.ends_at) - Date.parse(y.ends_at); }).slice(0, 5)
+          .map(function (r) {
+            return hrow(r.title || r.item_id, 'до ' + whenW(r.ends_at), null,
+              'https://www.hoyolab.com/article/' + r.item_id);
+          }));
+      }
+    }
+    function weekly(w) {
+      var rows = [];
+      var rc = w.receipts;
+      if (!rc) rows.push(hrow('чеки — недоступно'));
+      else if (rc.receipts.length) {
+        var chains = {}, total = 0, disc = 0;
+        rc.receipts.forEach(function (r) {
+          var c = chains[r.chain] = chains[r.chain] || { n: 0, total: 0, disc: 0 };
+          c.n++;
+          c.total += Number(r.total);
+          c.disc += Number(r.discounts_total || 0);
+          total += Number(r.total);
+          disc += Number(r.discounts_total || 0);
+        });
+        rows.push(hrow('🧾 ' + receiptsLine(rc.receipts.length, total, disc)));
+        Object.keys(chains).sort(function (x, y) { return chains[y].total - chains[x].total; })
+          .forEach(function (k) {
+            var c = chains[k];
+            rows.push(el('div', 'row mu', k + ' · ' + receiptsLine(c.n, c.total, c.disc)));
+          });
+      }
+      var sh = w.shopping;
+      if (!sh) rows.push(hrow('список — недоступно'));
+      else {
+        var parts = [sh.added ? 'добавлено ' + sh.added : '', sh.done ? 'куплено ' + sh.done : '',
+          sh.picks ? 'из акций выбрано ' + sh.picks : ''].filter(Boolean);
+        if (parts.length) rows.push(hrow('🛒 ' + parts.join(' · ')));
+      }
+      if (!w.volleyball) rows.push(hrow('волейбол — недоступно'));
+      else if (w.volleyball.length) {
+        var counts = {}, order = Object.keys(KINDS);
+        w.volleyball.forEach(function (r) { counts[r.kind] = (counts[r.kind] || 0) + 1; });
+        var rank = function (k) { return order.indexOf(k) < 0 ? order.length : order.indexOf(k); };
+        rows.push(hrow('🏐 ' + Object.keys(counts).sort(function (x, y) { return rank(x) - rank(y); })
+          .map(function (k) { return (KINDS[k] || k) + ' ' + counts[k]; }).join(' · ')));
+      }
+      if (rows.length) card('🗓 Неделя ' + dm(w.week) + '–' + dm(addDays(w.week, 6)), null, rows);
+    }
+    function render(j) {
+      clear(body);
+      var p = wp(Date.now());
+      var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
+      text(head, WEEK[wd(today)] + ' ' + dm(today) + '.' + today.slice(0, 4));
+      if (j.morning) morning(j.morning, today);
+      else down('🌅 Утренняя сводка');
+      if (j.inbox_new == null) down('📥 Инбокс');
+      else if (j.inbox_new) card('📥 Инбокс', j.inbox_new + ' новых');
+      if (j.weekly) weekly(j.weekly);
+      else down('🗓 Неделя');
+    }
+    function load() {
+      text(head, '…');
+      api('miniapp', { action: 'home' }, 30000).then(function (j) {
+        if (current === 'home') render(j);
+      }, function () { text(head, 'Не загрузилось'); });
+    }
+    load();
   }
 
   // --- list ---
@@ -563,8 +783,8 @@ svg{display:block;width:100%;height:auto}
     load();
   }
 
-  var VIEWS = { list: listView, picks: picksView, prices: pricesView, wish: wishView };
-  show(store('tab') || 'list');
+  var VIEWS = { home: homeView, list: listView, picks: picksView, prices: pricesView, wish: wishView };
+  show(store('tab') || 'home');
 })();
 </script>
 </body>
