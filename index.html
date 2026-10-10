@@ -14,7 +14,8 @@ body{font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica
 button,input{font:inherit;color:inherit}
 .top{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0 8px}
 .tabs{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px}
-.tabs button{flex:1;min-height:44px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600}
+.tabs button{flex:1;min-width:0;min-height:44px;padding:0 2px;border:0;border-radius:9px;background:none;color:var(--mu);font-weight:600;font-size:14px;white-space:nowrap}
+@media (max-width:379px){.tabs button{font-size:12px}}
 .tabs button.on{background:var(--ac);color:var(--bg)}
 .head{color:var(--mu);font-size:14px;margin:6px 2px 8px}
 .bar{display:flex;gap:8px;margin-bottom:10px}
@@ -41,6 +42,8 @@ button,input{font:inherit;color:inherit}
 svg{display:block;width:100%;height:auto}
 .legend{display:flex;gap:14px;padding:0 12px 10px;color:var(--mu);font-size:13px}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.lnk{color:var(--ac);font-weight:600;text-decoration:none}
+.row .x{flex:none;padding:0 10px}
 #toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));background:#2a3a4c;color:var(--fg);border-radius:10px;padding:12px 14px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:5}
 #toast.on{opacity:1;transform:none}
 </style>
@@ -76,7 +79,10 @@ svg{display:block;width:100%;height:auto}
 
   // The page is hosted off supabase.co, so the functions are named in full.
   var BASE = 'https://ssfkoyyhxqcmjokdxkpn.supabase.co/functions/v1/';
-  var ERRORS = { closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено' };
+  var ERRORS = {
+    closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
+    'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля'
+  };
 
   var toastEl = document.getElementById('toast');
   var toastTimer;
@@ -119,6 +125,11 @@ svg{display:block;width:100%;height:auto}
     return v == null || v === '' ? '—' : Number(v).toFixed(2).replace('.', ',');
   }
   function dm(d) { return d ? d.slice(8, 10) + '.' + d.slice(5, 7) : ''; }
+  // A timestamp as dd.mm in the phone's own time zone.
+  function dmt(ts) {
+    var d = new Date(ts);
+    return isNaN(d) ? '' : ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2);
+  }
   function plain(html) {
     return String(html || '').replace(/<[^>]*>/g, '')
       .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
@@ -126,7 +137,7 @@ svg{display:block;width:100%;height:auto}
   function noop() {}
 
   // --- tabs ---
-  var TABS = [['list', '🛒 Список'], ['picks', '🏷️ Акции'], ['prices', '📈 Цены']];
+  var TABS = [['list', '🛒 Список'], ['picks', '🏷️ Акции'], ['prices', '📈 Цены'], ['wish', '🎁 Вишлист']];
   var top = el('div', 'top');
   var tabs = el('div', 'tabs');
   var main = el('div');
@@ -455,7 +466,104 @@ svg{display:block;width:100%;height:auto}
     });
   }
 
-  var VIEWS = { list: listView, picks: picksView, prices: pricesView };
+  // --- wishlist ---
+  var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
+  var wishUrl = '', wishTarget = '';
+  function openLink(url) {
+    try { tg.openLink(url); } catch (e) { window.open(url, '_blank'); }
+  }
+  function wishView() {
+    var form = el('form');
+    var bar1 = el('div', 'bar'), bar2 = el('div', 'bar');
+    var url = el('input'), target = el('input');
+    url.type = 'url';
+    url.placeholder = 'Ссылка на товар';
+    url.value = wishUrl;
+    url.oninput = function () { wishUrl = url.value; };
+    target.placeholder = 'Цель, zł';
+    target.setAttribute('inputmode', 'decimal');
+    target.value = wishTarget;
+    target.oninput = function () { wishTarget = target.value; };
+    var go = el('button', '', 'Следить');
+    go.type = 'submit';
+    form.onsubmit = function (ev) {
+      ev.preventDefault();
+      var u = url.value.trim(), t = target.value.replace(/\s/g, '');
+      if (!u || !t) return toast('Нужны ссылка и цель');
+      go.disabled = true;
+      api('telegram-webhook', { action: 'wish_add', url: u, target: t }).then(function (j) {
+        go.disabled = false;
+        var host = u;
+        try { host = new URL(u).hostname; } catch (e) {}
+        toast('Слежу: ' + (j.title || host) + (j.price != null ? ' · сейчас ' + zl(j.price) + ' zł' : ''));
+        wishUrl = wishTarget = url.value = target.value = '';
+        load();
+      }, function (e) {
+        go.disabled = false;
+        if (e.code) toast(ERRORS[e.code] || e.code);
+        else load(); // a slow shop can outlast the timeout and still be added
+      });
+    };
+    var body = el('div');
+    add(main, add(form, add(bar1, url), add(bar2, target, go)), body);
+    var rows = [];
+    var armed = null, armTimer = null;
+
+    function disarm() {
+      clearTimeout(armTimer);
+      armTimer = null;
+      if (armed) { text(armed, '❌'); armed.className = 'btn ghost x'; }
+      armed = null;
+    }
+    function render() {
+      // A re-render replaces the buttons, so an armed «Точно?» must not survive it.
+      clearTimeout(armTimer);
+      armed = armTimer = null;
+      if (current !== 'wish') return;
+      clear(body);
+      if (!rows.length) return add(body, el('p', 'empty', 'Пусто. Вставь ссылку и цель.'));
+      var card = el('div', 'card');
+      rows.forEach(function (r) {
+        var row = el('div', 'row');
+        var tx = el('span', 'tx');
+        var a = el('a', 'lnk', r.title || r.host);
+        if (/^https?:\/\//i.test(r.url)) a.href = r.url;
+        a.onclick = function (ev) { ev.preventDefault(); openLink(r.url); };
+        add(tx, a,
+          el('div', 'mu', 'сейчас ' + (r.last_price == null ? '—' : zl(r.last_price) + ' zł') +
+            ' · цель ' + zl(r.target) + ' zł' + (r.last_checked ? ' · проверено ' + dmt(r.last_checked) : '')),
+          el('div', r.status === 'reached' ? 'mu acc' : 'mu', WISH_STATUS[r.status] || r.status));
+        var x = el('button', 'btn ghost x', '❌');
+        x.type = 'button';
+        x.onclick = function () {
+          if (armed !== x) {
+            disarm();
+            armed = x;
+            text(x, 'Точно?');
+            x.className = 'btn warn x';
+            armTimer = setTimeout(disarm, 3000);
+            return;
+          }
+          disarm();
+          api('telegram-webhook', { action: 'wish_remove', id: r.id }).then(function () {
+            toast('Убрал');
+            load();
+          }, function (e) { if (e.code === 'no such item') load(); });
+        };
+        card.appendChild(add(row, tx, x));
+      });
+      body.appendChild(card);
+    }
+    function load() {
+      api('telegram-webhook', { action: 'wish' }).then(function (j) {
+        rows = j.rows || [];
+        render();
+      }, noop);
+    }
+    load();
+  }
+
+  var VIEWS = { list: listView, picks: picksView, prices: pricesView, wish: wishView };
   show(store('tab') || 'list');
 })();
 </script>
