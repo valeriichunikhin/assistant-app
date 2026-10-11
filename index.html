@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 14:24">
+<meta name="published" content="2026-10-11 15:57">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -191,6 +191,7 @@ button.pill{border:0;cursor:pointer}
 .row.film .pg{min-height:44px}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
+.row.ib .t{overflow-wrap:anywhere}.card.tap{cursor:pointer}
 .pg.warn{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
 .lnk{color:var(--link);font-weight:600;text-decoration:none}
 .card ul{margin:0;padding:2px 14px 14px 32px}
@@ -387,6 +388,7 @@ button.pill{border:0;cursor:pointer}
           if (!r.ok || (j && j.ok === false)) {
             var err = new Error((j && j.error) || String(r.status));
             err.code = j && j.error;
+            err.answer = j && j.answer;
             // An expired or refused login: back to the card, no toast.
             if (r.status === 401 && browser) {
               err.login = true;
@@ -558,14 +560,14 @@ button.pill{border:0;cursor:pointer}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other seven in a sheet.
-  // From 900 px: all eleven in a left rail. The tab is kept in localStorage and,
+  // Phone: four tabs and «Ещё» in a bottom bar, the other eight in a sheet.
+  // From 900 px: all twelve in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
     ['vb', 'ball', 'Волейбол'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
-    ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var MORE = ['vb', 'stats', 'wish', 'cinema', 'dela', 'feed', 'news'];
+    ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
+  var MORE = ['vb', 'stats', 'wish', 'cinema', 'dela', 'inbox', 'feed', 'news'];
   var NAMES = {};
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date');
@@ -758,8 +760,15 @@ button.pill{border:0;cursor:pointer}
       // Google Calendar today and tomorrow, from the mail bridge; hidden when
       // empty or the key is missing (an older morning). An event begun on an
       // earlier day is today's: «до 01:00» when it ends today, else all day.
+      // calendar_view: the same after the week's rules (work hours one 💼
+      // row, a game's copy dropped); m.calendar while an older morning runs.
       if (m.calendar === null) down('calendar', 'Календарь');
-      else if (m.calendar && m.calendar.length) {
+      else if (m.calendar_view) {
+        if (m.calendar_view.length) card('calendar', 'Календарь', null, capped(m.calendar_view.map(function (x) {
+          return hrow((x.kind === 'work' ? x.icon + ' ' : '') + x.text, [x.date === today ? 'сегодня' : WEEK[wd(x.date)] + ' ' + dm(x.date),
+            x.time ? x.time + (x.until ? '–' + x.until : '') : x.until ? 'до ' + x.until : 'весь день', x.location].filter(Boolean).join(' · '));
+        }), 6));
+      } else if (m.calendar && m.calendar.length) {
         card('calendar', 'Календарь', null, capped(m.calendar.map(function (e) {
           var p = wp(e.starts_at), date = p.year + '-' + p.month + '-' + p.day;
           var q = e.ends_at && wp(e.ends_at), end = q && q.year + '-' + q.month + '-' + q.day;
@@ -841,7 +850,7 @@ button.pill{border:0;cursor:pointer}
       else if (m.my_shows && m.my_shows.length) {
         card('film', 'Мои сеансы', null, m.my_shows.map(function (s) {
           var p = wp(s.starts_at), date = p.year + '-' + p.month + '-' + p.day;
-          return hrow(s.film, [date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), p.hour + ':' + p.minute,
+          return hrow(s.display || s.film, [date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), p.hour + ':' + p.minute,
             [s.cinema, s.hall].filter(Boolean).join(', ')].join(' · '));
         }));
       }
@@ -950,7 +959,7 @@ button.pill{border:0;cursor:pointer}
       if (j.morning) morning(j.morning, today, j.week);
       else { plan(j.week); down('clock', 'Утренняя сводка'); }
       if (j.inbox_new == null) down('inbox', 'Инбокс');
-      else if (j.inbox_new) card('inbox', 'Инбокс', j.inbox_new + ' новых');
+      else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых'), function () { show('inbox'); });
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
       if (j.pulse === null) down('alert', 'Система');
@@ -1229,16 +1238,38 @@ button.pill{border:0;cursor:pointer}
     var timer = null;
     var seq = 0;
     var hint = function () { return state('trending', 'Начни вводить название — покажу цены по газеткам и чекам'); };
+    // «Жду акцию» rows (price_watch): a bot row has no key and matches by name.
+    var watch = [];
+    function fw(s) { return s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z]+/).filter(function (t) { return t.length > 2; }); }
+    function nameHit(w, n) {
+      var f = fw(n), ws = fw(w);
+      return ws.length > 0 && ws.every(function (t) {
+        var i = f.findIndex(function (x) { return t.length > 5 ? x.indexOf(t) === 0 : x === t; });
+        if (i < 0) return false;
+        f.splice(i, 1);
+        return true;
+      });
+    }
+    function watchOf(r) {
+      return watch.filter(function (w) {
+        return (!w.chain || w.chain === r.chain) &&
+          (w.product_key ? w.product_key === r.product_key : nameHit(w.product_name, r.product_name));
+      })[0] || null;
+    }
+    function loadWatch() {
+      return api('telegram-webhook', { action: 'watch' }, 0, true).then(function (j) { watch = j.rows || []; }, noop);
+    }
+    function price(pr, r) { text(pr, (watchOf(r) ? '👀 ' : '') + zl(r.last_price) + ' zł'); }
 
     function search() {
       var q = priceQuery.trim();
       var mine = ++seq;
       if (q.length < 2) return add(clear(results), hint());
       add(clear(results), skeleton(1));
-      api('miniapp', { action: 'prices', q: q }, 0, true).then(function (j) {
+      Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch()]).then(function (a) {
         if (mine !== seq || current !== 'prices') return;
         clear(results);
-        var rows = j.rows || [];
+        var rows = a[0].rows || [];
         if (!rows.length) return add(results, state('search', 'Ничего не нашлось'));
         var card = el('div', 'card');
         rows.forEach(function (r) {
@@ -1246,8 +1277,10 @@ button.pill{border:0;cursor:pointer}
           var tx = el('span', 'tx');
           add(tx, el('b', '', r.product_name + (r.size ? ' · ' + r.size : '')),
             el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + ' наблюдений'));
-          add(row, prodPic(r.product_name, r.image_url, r.chain, null, false, r.emoji), tx, el('span', 'pr', zl(r.last_price) + ' zł'));
-          tap(row, function () { open(r); });
+          var pr = el('span', 'pr');
+          price(pr, r);
+          add(row, prodPic(r.product_name, r.image_url, r.chain, null, false, r.emoji), tx, pr);
+          tap(row, function () { open(r, pr); });
           card.appendChild(row);
         });
         results.appendChild(card);
@@ -1264,7 +1297,8 @@ button.pill{border:0;cursor:pointer}
       clear(product);
       list.style.display = '';
     }
-    function open(r) {
+    // The product page; pr is its search row's price, kept in step with «Жду акцию».
+    function open(r, pr) {
       list.style.display = 'none';
       clear(product);
       var card = mkCard('trending', r.product_name + (r.size ? ' · ' + r.size : ''));
@@ -1283,12 +1317,35 @@ button.pill{border:0;cursor:pointer}
       backHandler = back;
       try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
       window.scrollTo(0, 0);
+      var foot = el('div', 'foot'), buy = el('button', 'btn ghost', '🛒 В список'), wb = el('button', 'btn ghost'), w = null;
+      buy.type = wb.type = 'button';
+      function mark() { text(wb, '👀 Жду акцию' + (w ? ' ✓' : '')); if (pr) price(pr, r); }
+      buy.onclick = function () {
+        api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : '') }).then(function (j) {
+          toast('Добавил: ' + j.added.join(', '));
+        }, noop);
+      };
+      wb.onclick = function () {
+        var was = w;
+        (was ? api('telegram-webhook', { action: 'watch_remove', id: was.id })
+          : api('telegram-webhook', { action: 'watch_add', chain: r.chain, key: r.product_key, name: r.product_name, size: r.size || '' }))
+          .then(function (j) {
+            watch = watch.filter(function (x) { return x !== was; });
+            w = was ? null : { id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name };
+            if (w) watch.push(w);
+            mark();
+            toast(w ? 'Жду акцию — ⭐ в партиях' : 'Больше не жду');
+          }, function (e) { if (e.code === 'no such item') loadWatch().then(function () { w = watchOf(r); mark(); }); });
+      };
+      add(foot, buy, wb);
+      mark();
+      loadWatch().then(function () { w = watchOf(r); mark(); });
       api('miniapp', { action: 'series', chain: r.chain, key: r.product_key }).then(function (j) {
         if (backHandler !== back) return;
         card.removeChild(inner);
-        drawProduct(card, j.rows || [], j.stats || {});
+        drawProduct(card, j.rows || [], j.stats || {}, foot);
       }, function () {
-        if (backHandler === back) add(clear(inner), state('alert', 'Не загрузилось', 'Повторить', function () { open(r); }));
+        if (backHandler === back) add(clear(inner), state('alert', 'Не загрузилось', 'Повторить', function () { open(r, pr); }));
       });
     }
     if (priceQuery.trim().length >= 2) search();
@@ -1352,9 +1409,10 @@ button.pill{border:0;cursor:pointer}
     });
     return box;
   }
-  function drawProduct(card, rows, s) {
-    if (!rows.length) return add(card, state('trending', 'Наблюдений нет'));
-    add(card, chart(rows, s.min_90d, card.clientWidth - 16));
+  // foot: the product's buttons, under the chart.
+  function drawProduct(card, rows, s, foot) {
+    if (!rows.length) return add(card, state('trending', 'Наблюдений нет'), foot);
+    add(card, chart(rows, s.min_90d, card.clientWidth - 16), foot);
     var legend = el('div', 'legend');
     ['leaflet', 'aldi-json', 'receipt'].forEach(function (k) {
       add(legend, add(el('span'), el('i', 'dot ' + SRC_CLASS[k]), document.createTextNode(SRC[k])));
@@ -1979,6 +2037,69 @@ button.pill{border:0;cursor:pointer}
     load();
   }
 
+  // --- inbox ---
+  // What he dropped to the bot, oldest first (?action=inbox). Each button is an
+  // inbox_mark: its answer as a toast, then a reload. «Следить» only for a row
+  // with a URL and a target price, «В список» only for one with something to list
+  // (the server decides: can_watch, can_list).
+  var IB = { link: ['🔗', 'ссылка'], text: ['📝', 'текст'], photo: ['🖼', 'фото'], document: ['📄', 'файл'],
+    voice: ['🎙', 'голос'], video: ['📹', 'кружок'], forward: ['↪️', 'пересылка'], other: ['📥', 'другое'] };
+  var URLS = /(https?:\/\/\S+)/;
+  function inboxView() {
+    var body = add(main, el('div')).lastChild;
+    // The text in one line, cut to 200 characters; its URLs as links.
+    function linked(s) {
+      var t = el('div', 't'), left = 200;
+      s.replace(/\s+/g, ' ').trim().split(URLS).forEach(function (x, k) {
+        var c = Array.from(x);
+        if (left <= 0 || !c.length) return;
+        var shown = c.length > left ? c.slice(0, left - 1).join('') + '…' : x;
+        left -= c.length;
+        if (!(k % 2)) return t.appendChild(document.createTextNode(shown));
+        var a = add(t, el('a', 'lnk', shown)).lastChild;
+        a.href = x;
+        a.onclick = function (ev) { ev.preventDefault(); openLink(x); };
+      });
+      return t;
+    }
+    function act(r, what, ic, s) {
+      var b = label(el('button', 'pg'), ic, s);
+      b.type = 'button';
+      b.onclick = function () {
+        haptic();
+        b.disabled = true;
+        api('telegram-webhook', { action: 'inbox_mark', id: r.id, what: what }, 30000, true)
+          .then(function (j) { toast(j.answer); load(); }, function (e) { if (!e.login) { toast(e.answer); load(); } });
+      };
+      return b;
+    }
+    function row(r) {
+      var k = IB[r.kind] || IB.other, tile = el('span', 'ptile', k[0]);
+      tile.setAttribute('aria-hidden', 'true');
+      return add(el('div', 'row dela ib'), tile, add(el('span', 'tx'), r.text ? linked(r.text) : el('div', 't', k[1]),
+        el('div', 'mu num', [whenW(r.received_at), r.file_name].filter(Boolean).join(' · '))),
+      add(el('div', 'acts'), act(r, 'done', 'check', 'Готово'), act(r, 'skip', 'x', 'Пропустить'),
+        r.can_watch ? act(r, 'watch', 'target', 'Следить') : null,
+        r.can_list ? act(r, 'list', 'cart', 'В список') : null));
+    }
+    function render(rows) {
+      if (current !== 'inbox') return;
+      clear(body);
+      if (!rows.length) return add(body, state('inbox', 'Инбокс пуст'));
+      var c = mkCard('inbox', 'Новые');
+      c.firstChild.appendChild(pill(String(rows.length)));
+      rows.forEach(function (r) { c.appendChild(row(r)); });
+      body.appendChild(c);
+    }
+    function load() {
+      if (!body.firstChild) add(body, skeleton(2));
+      api('telegram-webhook', { action: 'inbox' }, undefined, true).then(function (j) { render(j.rows || []); }, function (e) {
+        if (!e.login && current === 'inbox') failed(body, load);
+      });
+    }
+    load();
+  }
+
   // --- news feed ---
   var STREAMS = [['events', 'События'], ['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
   var SOURCES = {
@@ -2110,7 +2231,7 @@ button.pill{border:0;cursor:pointer}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, dela: delaView, feed: feedView, news: newsView, vb: vbView
+    cinema: cinemaView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView
   };
   if (browser && !login) loginCard();
   else start();
