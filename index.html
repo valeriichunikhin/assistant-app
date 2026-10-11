@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 12:10">
+<meta name="published" content="2026-10-11 13:42">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1980,13 +1980,13 @@ button.pill{border:0;cursor:pointer}
   }
 
   // --- news feed ---
-  var STREAMS = [['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
+  var STREAMS = [['events', 'События'], ['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
   var SOURCES = {
     'infor-legal': 'infor.pl', udsc: 'UdSC', muw: 'MUW', warszawa: 'warszawa.pl', wtp: 'WTP', ukrinform: 'Ukrinform'
   };
   function feedView() {
     var stream = store('stream');
-    if (!/^(all|city|transport|legal)$/.test(stream)) stream = 'all';
+    if (!/^(events|all|city|transport|legal)$/.test(stream)) stream = 'all';
     var seg = el('div', 'seg fit'), body = el('div'), segs = {}, med = el('div');
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', 'Поток');
@@ -2033,12 +2033,40 @@ button.pill{border:0;cursor:pointer}
       });
       body.appendChild(card);
     }
+    // «События»: the events function's json; openings with the place and the
+    // date muted, upcoming events by section.
+    function when(ts) {
+      var p = wp(ts);
+      return WEEK[wd(p.year + '-' + p.month + '-' + p.day)] + ' ' + p.day + '.' + p.month +
+        (p.hour + p.minute === '0000' ? '' : ' ' + p.hour + ':' + p.minute);
+    }
+    function events(j) {
+      clear(body);
+      var up = j.upcoming || [];
+      [['', 'Открытия', j.openings || []], ['free', 'Бесплатно и рядом'], ['malls', 'ТЦ: Wola Park, Arkadia, Blue City'],
+        ['big', 'Фестивали и концерты']].forEach(function (g) {
+        var rows = g[2] || up.filter(function (r) { return r.section === g[0]; });
+        if (!rows.length) return;
+        var card = mkCard(g[0] ? 'calendar' : 'pin', g[1]);
+        rows.forEach(function (r) {
+          var row = el('div', 'row'), at = g[0] ? r.starts_at : r.published_at || r.seen_at;
+          var p = at ? wp(at) : null;
+          add(row, add(el('span', 'tx'), el('b', '', r.title), el('div', 'mu',
+            (g[0] ? [at && when(at), r.place] : [r.place, p && p.day + '.' + p.month]).filter(Boolean).join(' · '))));
+          if (/^https?:\/\//i.test(r.url)) tap(row, function () { openLink(r.url); });
+          card.appendChild(row);
+        });
+        body.appendChild(card);
+      });
+      if (!body.firstChild) add(body, state('calendar', 'Пока ничего — первый дайджест в 10:00'));
+    }
     function load() {
       for (var k in segs) segs[k].className = k === stream ? 'on' : '';
       var mine = stream;
       add(clear(body), skeleton(1));
-      api('miniapp', { action: 'news', stream: stream }, undefined, true).then(function (j) {
-        if (current === 'feed' && mine === stream) render(j.rows || []);
+      api('miniapp', mine === 'events' ? { action: 'events' } : { action: 'news', stream: stream }, undefined, true).then(function (j) {
+        if (current !== 'feed' || mine !== stream) return;
+        if (mine === 'events') events(j); else render(j.rows || []);
       }, function (e) { if (!e.login && current === 'feed' && mine === stream) failed(body, load); });
     }
     load();
