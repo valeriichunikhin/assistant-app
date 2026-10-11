@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 02:26">
+<meta name="published" content="2026-10-11 10:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -118,7 +118,9 @@ button{cursor:pointer}
 .pill.warn{background:var(--warn-bg);color:var(--warn)}
 .pill.bad{background:var(--bad-bg);color:var(--bad)}
 .pill.acc{background:var(--accent-soft);color:var(--link)}
-.t .pill{margin-left:6px}
+.t .pill,.mu .pill{margin-left:6px}
+.cmp span{white-space:nowrap}
+.cmp .cw{font-weight:600;color:var(--link)}
 .meter{height:6px;margin:6px 0 2px;border-radius:3px;background:var(--surface-2);overflow:hidden}
 .meter i{display:block;height:100%;border-radius:3px;background:var(--mark)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);font:600 15px/1.1 var(--font);white-space:nowrap}
@@ -171,6 +173,11 @@ button{cursor:pointer}
 .row.film{align-items:flex-start}
 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 button.pill{border:0;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.chips .pill,.chips select{height:44px;padding:0 12px;font-size:13px}
+.chips select{font-size:16px}
+.chips select{border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font-family:var(--font)}
+.row.off{opacity:.55}
 .stars{display:flex}
 .acts+.stars{margin-top:8px}
 .row.film:has(>.btn.x) .stars{margin-right:-56px}
@@ -332,7 +339,7 @@ button.pill{border:0;cursor:pointer}
     closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
     'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля',
     'no such film': 'Нет такого фильма', 'no such row': 'Уже закрыто', 'bad date': 'Дата — сегодня или позже',
-    'no title': 'Нужен текст', late: 'Поздно, уже не вернуть'
+    'no title': 'Нужен текст', too_close: 'Срок уже завтра — отложить некуда', late: 'Поздно, уже не вернуть'
   };
 
   var toastEl = document.getElementById('toast');
@@ -362,12 +369,17 @@ button.pill{border:0;cursor:pointer}
     for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
     return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
-  function api(fn, params, ms, quiet) {
+  // `body`, when given, goes as JSON.
+  function api(fn, params, ms, quiet, body) {
     if (browser && !login) return Promise.reject(new Error('login'));
     var opts = {
       method: 'POST',
       headers: browser ? { 'x-tg-login': b64url(JSON.stringify(login)) } : { 'x-tma-init-data': tg.initData }
     };
+    if (body) {
+      opts.body = JSON.stringify(body);
+      opts.headers['content-type'] = 'application/json';
+    }
     if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(ms || 15000);
     return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
       .then(function (r) {
@@ -546,14 +558,14 @@ button.pill{border:0;cursor:pointer}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other six in a sheet.
-  // From 900 px: all ten in a left rail. The tab is kept in localStorage and,
+  // Phone: four tabs and «Ещё» in a bottom bar, the other seven in a sheet.
+  // From 900 px: all eleven in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
+    ['vb', 'ball', 'Волейбол'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
     ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var MORE = ['stats', 'wish', 'cinema', 'dela', 'feed', 'news'];
+  var MORE = ['vb', 'stats', 'wish', 'cinema', 'dela', 'feed', 'news'];
   var NAMES = {};
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date');
@@ -709,6 +721,14 @@ button.pill{border:0;cursor:pointer}
   function capped(rows, n) {
     return rows.length > n ? rows.slice(0, n).concat([el('div', 'row small mu', '+' + (rows.length - n) + ' ещё')]) : rows;
   }
+  // One of his own PNH games, on «Сегодня» and «Волейбол».
+  function myGameRow(g) {
+    var s = wp(g.starts_at), date = s.year + '-' + s.month + '-' + s.day, time = s.hour + ':' + s.minute;
+    if (g.ends_at) time += '–' + wp(g.ends_at).hour + ':' + wp(g.ends_at).minute;
+    return hrow(WEEK[wd(date)] + ' ' + dm(date) + ' · ' + time, [g.venue, g.address].filter(Boolean).join(', '),
+      g.status === 'paid' ? pill('оплачено', 'good') : pill('записан', 'acc'),
+      g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null);
+  }
 
   function homeView() {
     var body = el('div', 'cols');
@@ -723,7 +743,18 @@ button.pill{border:0;cursor:pointer}
       return body.appendChild(c);
     }
     function down(ic, title) { card(ic, title).firstChild.appendChild(pill('недоступно', 'warn')); }
-    function morning(m, today) {
+    // The seven days from morning ?mode=week, a row each; hidden while the key
+    // is missing (an older miniapp function).
+    function plan(w) {
+      if (w === null) return down('calendar', 'План недели');
+      if (!w || !Array.isArray(w.days)) return;
+      card('calendar', 'План недели', null, w.days.map(function (d) {
+        return hrow(WEEK[wd(d.date)] + ' ' + dm(d.date), d.items.map(function (x) {
+          return x.icon + ' ' + (x.time ? x.time + ' ' : '') + x.text;
+        }).join(' · ') || '—', d.free_evening ? pill('свободно', 'acc') : null);
+      }));
+    }
+    function morning(m, today, week) {
       // Google Calendar today and tomorrow, from the mail bridge; hidden when
       // empty or the key is missing (an older morning). An event begun on an
       // earlier day is today's: «до 01:00» when it ends today, else all day.
@@ -739,6 +770,7 @@ button.pill{border:0;cursor:pointer}
             e.location].filter(Boolean).join(' · '));
         }), 6));
       }
+      plan(week);
 
       if (!m.deadlines && !m.payments && !m.parcels) down('package', 'Сроки и посылки');
       else {
@@ -780,8 +812,9 @@ button.pill{border:0;cursor:pointer}
         }));
       }
 
+      // Only on the days of the tennis rule (0 = Monday, as wd()).
       if (!m.courts) down('pin', 'Корты сегодня');
-      else {
+      else if (!Array.isArray(m.courts.days) || m.courts.days.indexOf(wd(today)) >= 0) {
         // Slots that have not started yet, earliest first, then cheapest.
         var names = {}, now = wp(Date.now()), hm = now.hour + ':' + now.minute;
         m.courts.clubs.forEach(function (c) { names[c.slug] = c.name; });
@@ -799,13 +832,7 @@ button.pill{border:0;cursor:pointer}
       // older morning function is deployed.
       if (m.my_games === null) down('ball', 'Мои игры');
       else if (m.my_games && m.my_games.length) {
-        card('ball', 'Мои игры', null, m.my_games.map(function (g) {
-          var s = wp(g.starts_at), date = s.year + '-' + s.month + '-' + s.day, time = s.hour + ':' + s.minute;
-          if (g.ends_at) time += '–' + wp(g.ends_at).hour + ':' + wp(g.ends_at).minute;
-          return hrow(WEEK[wd(date)] + ' ' + dm(date) + ' · ' + time, [g.venue, g.address].filter(Boolean).join(', '),
-            g.status === 'paid' ? pill('оплачено', 'good') : pill('записан', 'acc'),
-            g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null);
-        }));
+        card('ball', 'Мои игры', null, m.my_games.map(myGameRow));
       }
 
       // Cinema City screenings today and tomorrow, from the purchase mails;
@@ -920,8 +947,8 @@ button.pill{border:0;cursor:pointer}
       clear(body);
       var p = wp(Date.now());
       var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
-      if (j.morning) morning(j.morning, today);
-      else down('clock', 'Утренняя сводка');
+      if (j.morning) morning(j.morning, today, j.week);
+      else { plan(j.week); down('clock', 'Утренняя сводка'); }
       if (j.inbox_new == null) down('inbox', 'Инбокс');
       else if (j.inbox_new) card('inbox', 'Инбокс', j.inbox_new + ' новых');
       if (j.weekly) weekly(j.weekly);
@@ -1016,14 +1043,23 @@ button.pill{border:0;cursor:pointer}
         add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
           prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji),
           add(el('span', 'tx'), add(el('div', 't', i.text), i.qty > 1 ? el('span', 'mu qty', '×' + i.qty) : null)), x);
-        row.setAttribute('aria-pressed', i.done ? 'true' : 'false');
-        tap(row, function () {
+        // The whole row takes a tap; the text is the keyboard stop, the ✕ stays its own button.
+        function toggle() {
           haptic();
           api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) {
             i.done = j.done;
             render();
           }, noop);
-        });
+        }
+        var txt = row.querySelector('.tx');
+        txt.tabIndex = 0;
+        txt.setAttribute('role', 'button');
+        txt.setAttribute('aria-pressed', i.done ? 'true' : 'false');
+        txt.onkeydown = function (ev) {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
+        };
+        row.className += ' tap';
+        row.onclick = toggle;
         card.appendChild(row);
       });
       var bought = items.length - open;
@@ -1075,8 +1111,30 @@ button.pill{border:0;cursor:pointer}
     input.oninput = function () { pickQuery = input.value; render(); };
     var body = el('div', 'cols');
     add(main, add(bar, add(el('label', 'field'), icon('search'), input)), body);
-    var batches = null;
+    var batches = null, cmp = null;
 
+    // ⚖️ the week's Aldi vs Biedronka pairs (?action=compare); hidden while searching.
+    function compareCard() {
+      var ps = cmp && cmp.pairs || [];
+      if (!ps.length || pickQuery.trim()) return;
+      var card = mkCard('tag', '⚖️ Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(addDays(cmp.week_start, 6)));
+      var save = 0, n = 0;
+      ps.forEach(function (p) {
+        var side = function (chain, price, cardOnly) {
+          return el('span', p.cheaper === chain ? 'cw' : '', chain + ' ' + zl(price) + (cardOnly ? ' 🪪' : ''));
+        };
+        if (p.cheaper !== 'equal') { save += p.diff; n++; }
+        add(card, add(el('div', 'row'), prodPic(p.product, null, p.cheaper, null, false, p.emoji),
+          add(el('span', 'tx'), el('div', 't', p.product),
+            p.tier === 'kind' ? el('div', 'mu', [p.aldi_brand, p.biedronka_brand].filter(Boolean).join(' / ')) : null,
+            add(el('div', 'mu cmp'), side('Aldi', p.aldi_price, p.aldi_card), document.createTextNode(' · '),
+              side('Biedronka', p.biedronka_price, p.biedronka_card))),
+          el('span', 'pr', p.cheaper === 'equal' ? '=' : '−' + zl(p.diff))));
+      });
+      if (n) card.appendChild(el('div', 'row small mu', 'Если брать там, где дешевле: ≈ ' + zl(save) + ' zł на ' + n + ' ' +
+        plural(n, ['товаре', 'товарах', 'товарах'])));
+      body.appendChild(card);
+    }
     function drop(b) {
       batches = batches.filter(function (x) { return x !== b; });
       render();
@@ -1086,6 +1144,7 @@ button.pill{border:0;cursor:pointer}
       clear(body);
       var q = pickQuery.trim().toLowerCase();
       var shown = 0;
+      compareCard();
       batches.forEach(function (b) {
         var cs = b.candidates || [];
         var hits = cs.filter(function (c) {
@@ -1136,6 +1195,7 @@ button.pill{border:0;cursor:pointer}
     }
     function load() {
       add(clear(body), skeleton(2));
+      api('telegram-webhook', { action: 'compare' }, undefined, true).then(function (j) { cmp = j; render(); }, noop);
       api('telegram-webhook', { action: 'picks' }, undefined, true).then(function (j) {
         batches = j.batches || [];
         render();
@@ -1548,8 +1608,9 @@ button.pill{border:0;cursor:pointer}
   }
 
   // --- cinema ---
-  // The cinema function's lists through miniapp?action=cinema; marks and
-  // ratings go to the webhook (film_mark, film_rate), then the tab reloads.
+  // The cinema function's lists through miniapp?action=cinema; marks («хочу»
+  // toggles with mark h) and ratings go to the webhook (film_mark,
+  // film_rate), then the tab reloads.
   function rateText(r) { return String(r).replace('.', ','); }
   function cinemaView() {
     var body = el('div', 'cols');
@@ -1569,7 +1630,10 @@ button.pill{border:0;cursor:pointer}
     }
     function act(params, done) {
       haptic();
-      api('telegram-webhook', params).then(function () { toast(done); load(); }, noop);
+      api('telegram-webhook', params).then(function (j) {
+        toast(typeof done === 'function' ? done(j) : done);
+        load();
+      }, noop);
     }
     function btn(ic, s, fn) {
       var b = label(el('button', 'pg'), ic, s);
@@ -1606,34 +1670,62 @@ button.pill{border:0;cursor:pointer}
       if (f.ukrainian) t.appendChild(document.createTextNode(' 🇺🇦'));
       return t;
     }
-    function premiere(f) {
-      var pills = el('div', 'acts');
-      (f.sale || []).forEach(function (s) {
-        var p = s.url ? el('button', 'pill acc', s.cinema) : pill(s.cinema);
+    // The cinemas as pills, tappable when there is a ticket link; none: null.
+    function pills(list) {
+      if (!list || !list.length) return null;
+      var row = el('div', 'acts');
+      list.forEach(function (s) {
+        var t = s.cinema + (s.ukrainian ? ' 🇺🇦' : '');
+        var p = s.url ? el('button', 'pill acc', t) : pill(t);
         if (s.url) {
           p.type = 'button';
           p.onclick = function () { openLink(s.url); };
         }
-        pills.appendChild(p);
+        row.appendChild(p);
       });
+      return row;
+    }
+    // «Хочу» toggles: say what the server did, not what the tap meant.
+    function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
+    function mark(f, m, ic, s, done) {
+      return btn(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done); });
+    }
+    function premiere(f) {
       return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date)),
-        f.sale && f.sale.length ? pills : null,
+        pills(f.sale),
         add(el('div', 'acts'),
-          btn('check', 'Смотрел', function () { act({ action: 'film_mark', film: f.id, mark: 'w' }, 'Отмечено: смотрел'); }),
-          btn('x', 'Не интересно', function () { act({ action: 'film_mark', film: f.id, mark: 'x' }, 'Отмечено: не интересно'); })),
+          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
+          mark(f, 'h', 'target', 'Хочу', wantToast),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно')),
         starBar(f.id, f.rating)));
+    }
+    // A «хочу» film: out already or from its date, where it plays.
+    function wanted(f, today) {
+      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+        el('div', 'mu num', !f.release_date ? '' : f.release_date <= today ? 'уже в прокате' : 'с ' + dm(f.release_date)),
+        pills(f.cinemas),
+        add(el('div', 'acts'),
+          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          mark(f, 'h', 'target', 'Убрать', wantToast))));
     }
     function render(j) {
       if (current !== 'cinema') return;
       clear(body);
       var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
-      var watched = j.watched || [], early = j.early || [], prem = j.premieres || [];
-      if (!prem.length && !early.length && !shows.length && !watched.length) {
+      var watched = j.watched || [], early = j.early || [], prem = j.premieres || [], want = j.want || [];
+      if (!want.length && !prem.length && !early.length && !shows.length && !watched.length) {
         add(body, state('film', 'Премьер на две недели пока нет'), j.skipped ? el('p', 'mu', '🚫 не интересно: ' + j.skipped) : null);
         return;
       }
-      var c = mkCard('film', 'Премьеры', 'ближайшие 14 дней');
+      var c;
+      if (want.length) {
+        c = mkCard('target', 'Хочу');
+        want.forEach(function (f) { c.appendChild(wanted(f, j.today)); });
+        body.appendChild(c);
+      }
+      c = mkCard('film', 'Премьеры', 'ближайшие 14 дней');
       if (!prem.length) c.appendChild(el('div', 'row small mu', 'Новых премьер нет'));
       prem.forEach(function (f) { c.appendChild(premiere(f)); });
       body.appendChild(c);
@@ -1683,6 +1775,86 @@ button.pill{border:0;cursor:pointer}
     load();
   }
 
+  // --- volleyball ---
+  // The stored filter's PNH games (miniapp ?action=volleyball), by day as the
+  // bot lists them, his own games on top. The chips are the filter the watch
+  // reads too: a tap writes the key's full new array (volleyball_filter) and
+  // reloads; the last chip of a row stays on.
+  var VB_FROM = ['18:00', '18:30', '19:00', '19:30', '20:00'];
+  function vbView() {
+    var top = el('div'), body = el('div', 'cols'), saving = false;
+    add(main, top, body);
+    function save(patch) {
+      if (saving) return;
+      saving = true;
+      haptic();
+      api('miniapp', { action: 'volleyball_filter' }, 15000, false, patch)
+        .then(load, noop).then(function () { saving = false; });
+    }
+    function chips(cur, key, opts) {
+      var row = el('div', 'chips');
+      opts.forEach(function (o) {
+        var on = cur.indexOf(o[0]) >= 0, b = el('button', 'pill' + (on ? ' acc' : ''), o[1]);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(on));
+        if (o[2]) b.title = o[2];
+        b.onclick = function () {
+          if (on && cur.length < 2) return toast('Хотя бы один должен остаться');
+          var p = {};
+          p[key] = on ? cur.filter(function (x) { return x !== o[0]; }) : cur.concat([o[0]]);
+          save(p);
+        };
+        row.appendChild(b);
+      });
+      return row;
+    }
+    function render(j) {
+      if (current !== 'vb') return;
+      if (!j || !j.filter) return failed(clear(body), load); // an old function answers a watch run
+      var f = j.filter, lv = {}, days = {};
+      j.levels.forEach(function (l) { lv[l.id] = l.label; });
+      var sel = el('select');
+      sel.setAttribute('aria-label', 'Начало не раньше');
+      VB_FROM.concat(VB_FROM.indexOf(f.start_from) < 0 ? [f.start_from] : []).sort().forEach(function (t) {
+        var o = el('option', '', 'с ' + t);
+        o.value = t;
+        sel.appendChild(o);
+      });
+      sel.value = f.start_from;
+      sel.onchange = function () { save({ start_from: sel.value }); };
+      add(clear(top), add(mkCard('target', 'Фильтр', 'он же — для уведомлений'),
+        chips(f.venue_ids, 'venue_ids', j.venues.map(function (v) { return [v.id, v.name, v.street]; })),
+        chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, l.label]; })),
+        add(chips(f.weekdays, 'weekdays', WEEK.map(function (w, i) { return [i, w]; })), sel)));
+      clear(body);
+      if (j.my_games.length) {
+        var c = mkCard('ball', 'Мои игры');
+        j.my_games.forEach(function (g) { c.appendChild(myGameRow(g)); });
+        body.appendChild(c);
+      }
+      j.games.forEach(function (g) {
+        var d = wd(g.date), price = g.price == null ? '' : (g.price % 1 ? zl(g.price) : g.price) + ' zł';
+        if (!days[g.date]) {
+          body.appendChild(days[g.date] = mkCard('calendar', WEEK[d] + ' ' + dm(g.date) +
+            (f.priority_weekdays.indexOf(d) >= 0 ? ' 🔥' : '')));
+        }
+        var r = hrow(g.start_at + '–' + g.stop_at + ' · ' + g.venue + (g.verified_only ? ' 🪪' : ''),
+          [lv[g.lv] || g.lv, 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
+          g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
+        if (g.full) r.className += ' off';
+        days[g.date].appendChild(r);
+      });
+      if (!j.games.length) body.appendChild(state('ball', 'Подходящих игр нет — переключи залы или уровни'));
+    }
+    function load() {
+      if (!body.firstChild) add(body, skeleton(2));
+      return api('miniapp', { action: 'volleyball' }, 25000, true).then(render, function (e) {
+        if (!e.login && current === 'vb') failed(clear(body), load);
+      });
+    }
+    load();
+  }
+
   // --- dela ---
   // Everything open, from the webhook (?action=dela): overdue, the next 7
   // days, later. «Сделано» takes two taps, «Отложить» moves the reminders
@@ -1703,7 +1875,7 @@ button.pill{border:0;cursor:pointer}
     what.oninput = function () { delaText = what.value; };
     when.type = 'date';
     when.min = today;
-    when.setAttribute('aria-label', 'Срок');
+    when.setAttribute('aria-label', 'Дата срока');
     when.value = delaDue;
     when.oninput = function () { delaDue = when.value; };
     var go = label(el('button', 'btn'), 'plus', 'Срок');
@@ -1724,7 +1896,7 @@ button.pill{border:0;cursor:pointer}
     };
     var body = el('div', 'cols');
     add(main, add(form, add(bar1, add(el('label', 'field'), icon('file'), what)),
-      add(bar2, add(el('label', 'field'), icon('calendar'), when), go)), body);
+      add(bar2, add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'дата срока'), when), go)), body);
     var armed = null, armTimer = null;
 
     function disarm() {
@@ -1771,8 +1943,9 @@ button.pill{border:0;cursor:pointer}
         }));
       }
       return add(el('div', 'row dela'), tile, add(el('span', 'tx'),
-        add(el('div', 't', i.title), i.snoozed_until ? pill('⏰ до ' + dm(i.snoozed_until)) : null),
-        el('div', 'mu num', (i.sub || DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due))),
+        el('div', 't', i.title),
+        add(el('div', 'mu num', (i.sub || DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due)),
+          i.snoozed_until ? pill('⏰ до ' + dm(i.snoozed_until)) : null)),
         add(el('span', 'pr'), pill(left(i.days), i.days <= 3 ? 'bad' : '')), acts.firstChild ? acts : null);
     }
     function render(items) {
@@ -1898,7 +2071,7 @@ button.pill{border:0;cursor:pointer}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, dela: delaView, feed: feedView, news: newsView
+    cinema: cinemaView, dela: delaView, feed: feedView, news: newsView, vb: vbView
   };
   if (browser && !login) loginCard();
   else start();
