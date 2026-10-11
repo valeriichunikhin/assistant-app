@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 01:42">
+<meta name="published" content="2026-10-11 02:26">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -182,6 +182,9 @@ button.pill{border:0;cursor:pointer}
 .pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 8px;border:1px solid var(--line);border-radius:9px;background:none;color:var(--muted);font-size:12px}
 .pg .i{width:14px;height:14px}
 .row.film .pg{min-height:44px}
+.row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
+.row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
+.pg.warn{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
 .lnk{color:var(--link);font-weight:600;text-decoration:none}
 .card ul{margin:0;padding:2px 14px 14px 32px}
 .card li{margin:5px 0}
@@ -203,6 +206,9 @@ button.pill{border:0;cursor:pointer}
 .s-lf{fill:var(--mark);background:var(--mark)}.s-al{fill:var(--blue);background:var(--blue)}.s-rc{fill:var(--fg);background:var(--fg)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bar) + 12px + env(safe-area-inset-bottom));z-index:9;max-width:420px;margin:0 auto;padding:12px 16px;border-radius:12px;background:var(--toast);color:var(--toast-fg);box-shadow:var(--shadow);text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
 #toast.on{opacity:1;transform:none}
+#toast.act{pointer-events:auto}
+#toast .tl{min-height:44px;margin:-12px 0;padding:0 6px;border:0;background:none;color:var(--accent);font-weight:600}
+.row .qty{margin-left:6px;font-weight:400}
 .login{max-width:400px;margin:14vh auto 0;padding:28px 20px 12px;text-align:center}
 .login .mark{width:52px;height:52px;margin:0 auto 14px;border-radius:15px}
 .login h1{margin:0 0 6px;font:700 22px/1.2 var(--font-num)}
@@ -264,6 +270,7 @@ button.pill{border:0;cursor:pointer}
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="i-tack" viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -324,7 +331,8 @@ button.pill{border:0;cursor:pointer}
   var ERRORS = {
     closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
     'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля',
-    'no such film': 'Нет такого фильма'
+    'no such film': 'Нет такого фильма', 'no such row': 'Уже закрыто', 'bad date': 'Дата — сегодня или позже',
+    'no title': 'Нужен текст', late: 'Поздно, уже не вернуть'
   };
 
   var toastEl = document.getElementById('toast');
@@ -334,6 +342,19 @@ button.pill{border:0;cursor:pointer}
     toastEl.className = 'on';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
+  }
+  // «Убрал · Вернуть» for 10 s: the button brings the ids back, then `after`.
+  function undoToast(s, ids, after) {
+    var b = el('button', 'tl', 'Вернуть');
+    b.type = 'button';
+    b.onclick = function () {
+      toastEl.className = '';
+      api('telegram-webhook', { action: 'undo', ids: ids.join(',') }).then(after, noop);
+    };
+    add(clear(toastEl), document.createTextNode(s + ' · '), b);
+    toastEl.className = 'on act';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.className = ''; }, 10000);
   }
   // The x-tg-login header: the login object's JSON as base64url (UTF-8).
   function b64url(s) {
@@ -525,14 +546,14 @@ button.pill{border:0;cursor:pointer}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other five in a sheet.
-  // From 900 px: all nine in a left rail. The tab is kept in localStorage and,
+  // Phone: four tabs and «Ещё» in a bottom bar, the other six in a sheet.
+  // From 900 px: all ten in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['feed', 'news', 'Новости'],
-    ['news', 'sparkles', 'Что нового']];
-  var MORE = ['stats', 'wish', 'cinema', 'feed', 'news'];
+    ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
+    ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
+  var MORE = ['stats', 'wish', 'cinema', 'dela', 'feed', 'news'];
   var NAMES = {};
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date');
@@ -729,7 +750,7 @@ button.pill{border:0;cursor:pointer}
         };
         if (m.deadlines) {
           m.deadlines.forEach(function (d) {
-            due.push(hrow(d.title, d.sender + ' · до ' + dm(d.due_date), rel(d.due_date)));
+            due.push(hrow(d.title, (d.sender ? d.sender + ' · ' : '') + 'до ' + dm(d.due_date), rel(d.due_date)));
           });
         } else due.push(hrow('сроки из писем — недоступно'));
         if (m.payments) {
@@ -882,6 +903,19 @@ button.pill{border:0;cursor:pointer}
       }
       if (rows.length) card('calendar', 'Неделя ' + dm(w.week) + '–' + dm(addDays(w.week, 6)), null, rows);
     }
+    // The Mac jobs and the mail bridge (mail-events ?action=pulse), last: shown
+    // only when a part went quiet or a cron job is failing.
+    function pulse(ps, today) {
+      if (!ps.some(function (x) { return x.stale; })) return;
+      card('alert', 'Система', null, ps.map(function (x) {
+        if (x.fails != null) return hrow(x.label, null, pill('сбой', 'bad'));
+        if (!x.last_ok_at) return hrow(x.label, 'ещё не было', pill('—'));
+        var p = wp(x.last_ok_at), date = p.year + '-' + p.month + '-' + p.day, at = p.hour + ':' + p.minute;
+        if (date !== today) at = (date > addDays(today, -7) ? WEEK[wd(date)] : dm(date)) + ' ' + at;
+        return hrow(x.label, x.stale ? 'нет отметки с ' + at + ' · ждал ' + x.threshold : at,
+          pill(x.stale ? 'тихо' : 'ок', x.stale ? 'warn' : 'acc'));
+      }));
+    }
     function render(j) {
       clear(body);
       var p = wp(Date.now());
@@ -892,6 +926,8 @@ button.pill{border:0;cursor:pointer}
       else if (j.inbox_new) card('inbox', 'Инбокс', j.inbox_new + ' новых');
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
+      if (j.pulse === null) down('alert', 'Система');
+      else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
       if (!body.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
     }
     function load() {
@@ -931,12 +967,22 @@ button.pill{border:0;cursor:pointer}
     add(main, head, add(bar, add(el('label', 'field'), icon('cart'), input), plus), body);
     var items = [];
     var confirmTimer = null;
+    var armed = null, armTimer = null;
 
     function stat(s, n) { return add(el('span'), document.createTextNode(s + ' '), el('b', '', n)); }
+    function xIcon(b) { add(clear(b), icon('x')); b.setAttribute('aria-label', 'Убрать'); return b; }
+    function disarm() {
+      clearTimeout(armTimer);
+      armTimer = null;
+      if (armed) { xIcon(armed); armed.className = 'btn ghost x'; }
+      armed = null;
+    }
     function render() {
       // A re-render replaces the button, so an armed «Точно?» must not survive it.
       clearTimeout(confirmTimer);
       confirmTimer = null;
+      clearTimeout(armTimer);
+      armed = armTimer = null;
       if (current !== 'list') return;
       var open = items.filter(function (i) { return !i.done; }).length;
       add(clear(head), stat('осталось', open), stat('куплено', items.length - open));
@@ -949,8 +995,27 @@ button.pill{border:0;cursor:pointer}
       var card = el('div', 'card');
       items.forEach(function (i) {
         var row = el('div', 'row' + (i.done ? ' done' : ''));
+        var x = xIcon(el('button', 'btn ghost x'));
+        x.type = 'button';
+        x.onclick = function (ev) {
+          ev.stopPropagation();
+          if (armed !== x) {
+            disarm();
+            armed = x;
+            label(x, null, 'Точно?');
+            x.className = 'btn warn x';
+            armTimer = setTimeout(disarm, 3000);
+            return;
+          }
+          disarm();
+          api('telegram-webhook', { action: 'delete', id: i.id }).then(function (j) {
+            undoToast('Убрал', [j.id], load);
+            load();
+          }, function (e) { if (e.code === 'no such item') load(); });
+        };
         add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
-          prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji), add(el('span', 'tx'), el('div', 't', i.text)));
+          prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji),
+          add(el('span', 'tx'), add(el('div', 't', i.text), i.qty > 1 ? el('span', 'mu qty', '×' + i.qty) : null)), x);
         row.setAttribute('aria-pressed', i.done ? 'true' : 'false');
         tap(row, function () {
           haptic();
@@ -979,7 +1044,10 @@ button.pill{border:0;cursor:pointer}
           }
           clearTimeout(confirmTimer);
           confirmTimer = null;
-          api('telegram-webhook', { action: 'clear' }).then(load, noop);
+          api('telegram-webhook', { action: 'clear' }).then(function (j) {
+            if (j.ids && j.ids.length) undoToast('Убрал ' + j.ids.length, j.ids, load);
+            load();
+          }, noop);
         };
         card.appendChild(add(foot, btn));
       }
@@ -1615,6 +1683,129 @@ button.pill{border:0;cursor:pointer}
     load();
   }
 
+  // --- dela ---
+  // Everything open, from the webhook (?action=dela): overdue, the next 7
+  // days, later. «Сделано» takes two taps, «Отложить» moves the reminders
+  // three days on (dela_done, dela_snooze); «+ Срок» adds a deadline by hand
+  // (deadline_add). The tab reloads after each.
+  var DELA_ICON = { dl: '📄', pay: '🏦', pk: '📦', rt: '↩️', doc: '🪪', sub: '💳' };
+  var DELA_KIND = { dl: 'свой срок', pay: 'платёж', pk: 'посылка', rt: 'возврат', doc: 'документ', sub: 'списание' };
+  var DELA_DONE = { dl: 'Сделано', pay: 'Оплачено', pk: 'Забрал', rt: 'Оставляю' };
+  var delaText = '', delaDue = '';
+  function delaView() {
+    var form = el('form'), bar1 = el('div', 'bar'), bar2 = el('div', 'bar');
+    var what = el('input'), when = el('input');
+    var p = wp(Date.now()), today = p.year + '-' + p.month + '-' + p.day;
+    what.placeholder = 'Что сделать';
+    what.setAttribute('aria-label', 'Что сделать');
+    what.maxLength = 80;
+    what.value = delaText;
+    what.oninput = function () { delaText = what.value; };
+    when.type = 'date';
+    when.min = today;
+    when.setAttribute('aria-label', 'Срок');
+    when.value = delaDue;
+    when.oninput = function () { delaDue = when.value; };
+    var go = label(el('button', 'btn'), 'plus', 'Срок');
+    go.type = 'submit';
+    form.onsubmit = function (ev) {
+      ev.preventDefault();
+      var t = what.value.trim(), d = when.value;
+      if (!t || !d) return toast('Нужны текст и дата');
+      if (d < today) return toast(ERRORS['bad date']);
+      go.disabled = true;
+      haptic();
+      api('telegram-webhook', { action: 'deadline_add', title: t, date: d }).then(function (j) {
+        go.disabled = false;
+        toast('📄 ' + j.title + ' · ' + dm(j.due) + ' — напомню за 7 и за 1 день');
+        delaText = delaDue = what.value = when.value = '';
+        load();
+      }, function () { go.disabled = false; });
+    };
+    var body = el('div', 'cols');
+    add(main, add(form, add(bar1, add(el('label', 'field'), icon('file'), what)),
+      add(bar2, add(el('label', 'field'), icon('calendar'), when), go)), body);
+    var armed = null, armTimer = null;
+
+    function disarm() {
+      clearTimeout(armTimer);
+      armTimer = null;
+      if (armed) { label(armed, 'check', 'Сделано'); armed.className = 'pg'; }
+      armed = null;
+    }
+    function act(params, done) {
+      haptic();
+      api('telegram-webhook', params).then(function (j) { toast(done(j)); load(); }, function (e) {
+        if (e.code === 'no such row') load();
+      });
+    }
+    function btn(ic, s, fn) {
+      var b = label(el('button', 'pg'), ic, s);
+      b.type = 'button';
+      b.onclick = fn;
+      return b;
+    }
+    function left(n) { return n < 0 ? 'просрочено ' + -n + ' дн' : n === 0 ? 'сегодня' : 'через ' + n + ' дн'; }
+    function row(i) {
+      var tile = el('span', 'ptile', DELA_ICON[i.kind] || '📌');
+      tile.setAttribute('aria-hidden', 'true');
+      var acts = el('div', 'acts');
+      if (i.can_done) {
+        var done = btn('check', 'Сделано', function () {
+          if (armed !== done) {
+            disarm();
+            armed = done;
+            label(done, null, 'Точно?');
+            done.className = 'pg warn';
+            armTimer = setTimeout(disarm, 3000);
+            return;
+          }
+          disarm();
+          act({ action: 'dela_done', kind: i.kind, id: i.id }, function () { return DELA_DONE[i.kind]; });
+        });
+        acts.appendChild(done);
+      }
+      if (i.can_snooze) {
+        acts.appendChild(btn('clock', 'Отложить', function () {
+          act({ action: 'dela_snooze', kind: i.kind, id: i.id }, function (j) { return 'Отложено до ' + dm(j.snoozed_until); });
+        }));
+      }
+      return add(el('div', 'row dela'), tile, add(el('span', 'tx'),
+        add(el('div', 't', i.title), i.snoozed_until ? pill('⏰ до ' + dm(i.snoozed_until)) : null),
+        el('div', 'mu num', (i.sub || DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due))),
+        add(el('span', 'pr'), pill(left(i.days), i.days <= 3 ? 'bad' : '')), acts.firstChild ? acts : null);
+    }
+    function render(items) {
+      // A re-render replaces the buttons, so an armed «Точно?» must not survive it.
+      clearTimeout(armTimer);
+      armed = armTimer = null;
+      if (current !== 'dela') return;
+      clear(body);
+      if (!items.length) {
+        add(body, state('check', 'Открытых дел нет 👌'));
+        try { what.focus(); } catch (e) {}
+        return;
+      }
+      [['alert', 'Просрочено', function (n) { return n < 0; }],
+        ['calendar', 'Ближайшие 7 дней', function (n) { return n >= 0 && n <= 7; }],
+        ['clock', 'Потом', function (n) { return n > 7; }]].forEach(function (b) {
+        var rows = items.filter(function (i) { return b[2](i.days); });
+        if (!rows.length) return;
+        var c = mkCard(b[0], b[1]);
+        c.firstChild.appendChild(pill(String(rows.length), b[1] === 'Просрочено' ? 'bad' : ''));
+        rows.forEach(function (i) { c.appendChild(row(i)); });
+        body.appendChild(c);
+      });
+    }
+    function load() {
+      if (!body.firstChild) add(body, skeleton(2));
+      api('telegram-webhook', { action: 'dela' }, undefined, true).then(function (j) { render(j.items || []); }, function (e) {
+        if (!e.login && current === 'dela') failed(body, load);
+      });
+    }
+    load();
+  }
+
   // --- news feed ---
   var STREAMS = [['all', 'все'], ['city', 'Варшава'], ['transport', 'транспорт'], ['legal', 'легализация']];
   var SOURCES = {
@@ -1707,7 +1898,7 @@ button.pill{border:0;cursor:pointer}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, feed: feedView, news: newsView
+    cinema: cinemaView, dela: delaView, feed: feedView, news: newsView
   };
   if (browser && !login) loginCard();
   else start();
