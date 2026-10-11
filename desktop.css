@@ -1,0 +1,114 @@
+/* The desktop layer of the Mini App (≥ 900 px), loaded by index.html on a wide screen only; the tokens come from
+   the page (docs/specs/miniapp-desktop.md). Everything here is for the big screen: a 12-column grid of widgets,
+   tables, two panes, a poster grid, actions that appear on hover. */
+.main.desk{max-width:1440px;padding-top:20px}
+/* 12 columns, 16 px gutters; .span-N spans N of them (a card keeps its own look). */
+.dg{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}
+.dg>*{min-width:0}
+.dg>.card{margin:0}
+.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}
+.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-9{grid-column:span 9}.span-12{grid-column:span 12}
+@media (max-width:1199px){.span-3,.span-4,.span-5{grid-column:span 6}.span-6,.span-7,.span-8,.span-9{grid-column:span 12}}
+/* A page section head: title 16/600, a muted note on the right, a hairline under. */
+.dsec{display:flex;align-items:baseline;gap:12px;margin:8px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.dsec h2{margin:0;font:600 16px/1.3 var(--font);letter-spacing:-.01em}
+.dsec .mu{margin-left:auto}
+/* Tables: hairline rows, 40 px, numbers mono and right-aligned, header 12 px uppercase. */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{padding:0 12px 8px;color:var(--muted-2);font:500 12px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase;text-align:left;white-space:nowrap}
+.tbl td{height:40px;padding:0 12px;border-top:1px solid var(--line);vertical-align:middle}
+.tbl td:first-child,.tbl th:first-child{padding-left:14px}
+.tbl td:last-child,.tbl th:last-child{padding-right:14px}
+.tbl .num,.tbl th.r,.tbl td.r{text-align:right;font-variant-numeric:tabular-nums}
+.tbl td.num{font-family:var(--font-num);font-size:13px}
+.tbl tr.tap{cursor:pointer}
+@media (hover:hover){.tbl tbody tr:hover td{background:var(--press)}}
+.tbl .mu{font-size:13px}
+.tbl .acts{margin:0;justify-content:flex-end;flex-wrap:nowrap}
+/* Actions that show on hover only (keyboard focus shows them too). */
+.hov{opacity:0;transition:opacity .12s}
+tr:hover .hov,.row:hover .hov,.pcell:hover .hov,.hov:focus-within,tr:focus-within .hov{opacity:1}
+@media (hover:none){.hov{opacity:1}}
+/* Two panes: a list on the left, a sticky detail on the right. */
+.panes{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.panes.even{grid-template-columns:1fr 1fr}
+.panes>.side{position:sticky;top:76px}
+/* A poster grid: 2:3 posters, the name under, actions on hover over the poster. */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;padding:14px}
+.pcell{position:relative;min-width:0}
+.pcell .pbox{position:relative;aspect-ratio:2/3;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);overflow:hidden}
+.pcell .pbox img{width:100%;height:100%;object-fit:cover;display:block}
+.pcell .pbox .ph{display:grid;place-items:center;height:100%;color:var(--muted-2)}
+.pcell .pov{position:absolute;inset:auto 0 0 0;display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.pcell .pov .pg{background:rgba(0,0,0,.6);color:#fff;border-color:rgba(255,255,255,.25)}
+.pcell .pn{margin-top:8px;font:500 13px/1.3 var(--font)}
+.pcell .pd{color:var(--muted-2);font:12px/1.3 var(--font-num)}
+/* Key/value tiles in a row (an overview strip). */
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kv>div{padding:12px 14px;background:var(--surface)}
+.kv .k{color:var(--muted-2);font-size:12px}
+.kv .v{font:500 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.kv .v small{font-size:13px;color:var(--muted)}
+/* A week strip: seven equal columns of a card, each day a column. */
+.week7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.week7>div{min-height:120px;padding:10px 12px;background:var(--surface)}
+.week7 .d{font:500 12px/1.2 var(--font-num);color:var(--muted-2);margin-bottom:6px}
+.week7 .d b{color:var(--fg);font-weight:600}
+.week7 .it{font-size:13px;line-height:1.35;margin:4px 0}
+.week7 .free{color:var(--good)}
+/* The top bar on a wide screen: a global search for prices after the title. */
+.hdr .dsearch{margin-left:24px;width:320px;min-height:34px}
+.hdr .dsearch input{height:32px;font-size:14px}
+.hdr .kbd{margin-left:auto;color:var(--muted-2);font:12px var(--font-num)}
+kbd.k{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;font:11px/1.4 var(--font-num);color:var(--muted);text-align:center}
+/* The overview (lane 1): widget heads with «→», sub-heads inside a widget, the week's today column, compact rows. */
+.dg>.dtiles{min-height:66px}
+.dtiles .skel{border:1px solid var(--line);border-radius:var(--r)}
+.dtiles .kv .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtiles .kv .v small{display:block;margin-top:2px;font:12px/1.3 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch .dgo{flex:none;display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted-2);font:500 12px/1 var(--font);transition:background .12s,color .12s}
+@media (hover:hover){.ch .dgo:hover{background:var(--press);color:var(--fg)}}
+.wb{border-top:1px solid var(--line)}
+.wb>.state{padding:28px 16px}
+.wb>.skel{padding:14px}
+.wb>.tbl th{padding-top:10px}
+.wsub{padding:10px 14px 8px;color:var(--muted-2);font:500 12px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase}
+.wb>.wsub:not(:first-child){border-top:1px solid var(--line)}
+.wb>.wsub+.tbl th{padding-top:0}
+.wb .row .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb .row .clip1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb .row.overdue{background:var(--bad-bg)}
+.wb .row .acts{margin:0;flex-wrap:nowrap}
+.wb .tbl tr.off td{color:var(--muted-2)}
+.wb .tbl .pn{display:flex;align-items:center;gap:10px;min-width:0}
+.wb .tbl .pn .ptile{width:28px;height:28px;font-size:16px}
+.wb .tbl .pn .tb{width:32px;height:32px;margin:0}
+.wb .tbl .cw{color:var(--link);font-weight:600}
+.wb .tbl .old{color:var(--muted-2);text-decoration:line-through}
+.wb .tbl td{white-space:nowrap}
+.wb .tbl td:nth-child(2):not(.r),.wb .tbl td:first-child{white-space:normal}
+/* The week inside its card: today's column marked, items 13 px with the time mono. */
+.wb .week7{border-top:0}
+.week7>.now{background:color-mix(in srgb,var(--fg) 3%,var(--surface))}
+.week7>.now .d,.week7>.now .d b{color:var(--link)}
+.week7 .tm{font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.week7 .it-work{color:var(--muted)}
+.week7 .it.free{margin-top:8px;font-weight:500}
+/* «Хочу» posters in a half-width widget: smaller cells. */
+.pgrid.mini{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+.dfoot{display:flex;justify-content:center;margin-top:24px}
+/* The header search and the shortcut hint (wide screens only). */
+.hdr:has(.dsearch) h1{flex:0 1 auto}
+.hdr .dsearch{flex:0 1 360px;width:auto}
+.hdr .kbd{white-space:nowrap}
+.hdr .kbd .k{margin:0 2px}
+@media (max-width:899px){.hdr .dsearch,.hdr .kbd{display:none}}
+@media (max-width:1199px){.hdr .kbd{display:none}}
+/* Overview: cards in a row line up at the bottom; empty states fill the card. */
+.dhome{align-items:stretch}
+.dhome>.card{display:flex;flex-direction:column}
+.dhome .wb{flex:1}
+.dhome .wb>.state{height:100%;display:grid;place-content:center}
+/* Inbox: the hover actions lie over the right end of the row, so the text keeps the whole width. */
+.wb .row{position:relative}
+.wb .row .acts.hov{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;padding-left:24px;background:linear-gradient(to right,transparent,var(--surface) 24px)}

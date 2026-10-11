@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 18:19">
+<meta name="published" content="2026-10-11 20:03">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -704,14 +704,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     text(hTitle, NAMES[tab]);
     text(hDate, todayLabel());
     text(rDate, todayLabel());
-    main.classList.toggle('narrow', NARROW.indexOf(tab) >= 0);
+    // A wide screen draws the desktop view of the tab when app/desktop*.js registered one.
+    var desk = wide() && window.DESKTOP && DESKTOP.views && DESKTOP.views[tab];
+    main.classList.toggle('narrow', !desk && NARROW.indexOf(tab) >= 0);
+    main.classList.toggle('desk', !!desk);
     hideBack();
     clear(main);
     main.classList.remove('in');
     void main.offsetWidth;
     main.classList.add('in');
     window.scrollTo(0, 0);
-    VIEWS[tab]();
+    (desk || VIEWS[tab])();
   }
 
   // --- today ---
@@ -2333,6 +2336,48 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
     cinema: cinemaView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView
   };
+  // --- desktop (≥ 900 px) ---
+  // app/desktop.css and app/desktop*.js are loaded only on a wide screen; they draw the tabs for a big
+  // screen (DESKTOP.views[tab]) with the helpers below (docs/specs/miniapp-desktop.md). The phone never
+  // loads them. A script that arrives after the first paint redraws the current tab.
+  var wideQuery = window.matchMedia ? matchMedia('(min-width:900px)') : null;
+  function wide() { return !!(wideQuery && wideQuery.matches); }
+  window.APP = {
+    el: el, add: add, text: text, clear: clear, icon: icon, label: label, mkCard: mkCard, pill: pill, lead: lead,
+    skeleton: skeleton, state: state, failed: failed, toast: toast, undoToast: undoToast, haptic: haptic, tap: tap,
+    api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, whenW: whenW, wd: wd, wp: wp, days: days,
+    addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,
+    drawProduct: drawProduct, weekChart: weekChart, rateText: rateText, hrow: hrow, capped: capped,
+    myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, categoryOf: categoryOf,
+    todayLabel: todayLabel, show: show, views: VIEWS, names: NAMES, tabs: TABS, main: main, hdr: hdr, rail: rail,
+    hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
+    PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
+    DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO,
+    get current() { return current; }, get login() { return login; }
+  };
+  window.DESKTOP = window.DESKTOP || { views: {} };
+  // Each name is a stylesheet and a script next to the page: desktop (the shared helpers and the overview),
+  // desktop-a and desktop-b (the wide tabs). A missing file is a harmless 404.
+  var DESKTOP_FILES = ['desktop', 'desktop-a', 'desktop-b'];
+  function loadDesktop() {
+    if (!wide() || loadDesktop.done) return;
+    loadDesktop.done = true;
+    var meta = document.querySelector('meta[name="published"]'), v = '?v=' + encodeURIComponent((meta && meta.content) || '0');
+    DESKTOP_FILES.forEach(function (f) {
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = f + '.css' + v;
+      document.head.appendChild(css);
+      var sc = document.createElement('script');
+      sc.src = f + '.js' + v;
+      sc.onload = function () { if (current && DESKTOP.views[current] && shell.parentNode) show(current); };
+      document.body.appendChild(sc);
+    });
+  }
+  loadDesktop();
+  if (wideQuery && wideQuery.addEventListener) {
+    wideQuery.addEventListener('change', function () { loadDesktop(); if (current && shell.parentNode) show(current); });
+  }
   if (browser && !login) loginCard();
   else start();
 })();
