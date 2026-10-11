@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 16:53">
+<meta name="published" content="2026-10-11 17:23">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1758,6 +1758,15 @@ button.pill{border:0;cursor:pointer}
           mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно')),
         starBar(f.id, f.rating)));
     }
+    // A «Скоро» film: its date, «Хочу» and «Не интересно».
+    function soonRow(f) {
+      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+        el('div', 'mu num', 'с ' + dm(f.release_date)),
+        add(el('div', 'acts'),
+          mark(f, 'h', 'target', 'Хочу', wantToast),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'))));
+    }
+    var MONTHS = 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' ');
     // A «хочу» film: out already or from its date, where it plays.
     function wanted(f, today) {
       return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
@@ -1772,8 +1781,8 @@ button.pill{border:0;cursor:pointer}
       if (current !== 'cinema') return;
       clear(body);
       var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
-      var watched = j.watched || [], early = j.early || [], prem = j.premieres || [], want = j.want || [];
-      if (!want.length && !prem.length && !early.length && !shows.length && !watched.length) {
+      var watched = j.watched || [], early = j.early || [], prem = j.premieres || [], want = j.want || [], soon = j.soon || [];
+      if (!want.length && !prem.length && !soon.length && !early.length && !shows.length && !watched.length) {
         add(body, state('film', 'Премьер на две недели пока нет'), j.skipped ? el('p', 'mu', '🚫 не интересно: ' + j.skipped) : null);
         return;
       }
@@ -1787,6 +1796,17 @@ button.pill{border:0;cursor:pointer}
       if (!prem.length) c.appendChild(el('div', 'row small mu', 'Новых премьер нет'));
       prem.forEach(function (f) { c.appendChild(premiere(f)); });
       body.appendChild(c);
+      if (soon.length) {
+        // By month: «Декабрь 2026», then that month's films by date.
+        c = mkCard('sparkles', 'Скоро', 'на полгода вперёд');
+        var mon = '';
+        soon.forEach(function (f) {
+          var m = MONTHS[+f.release_date.slice(5, 7) - 1] + ' ' + f.release_date.slice(0, 4);
+          if (m !== mon) c.appendChild(add(el('div', 'row small mu'), el('b', '', mon = m)));
+          c.appendChild(soonRow(f));
+        });
+        body.appendChild(c);
+      }
       if (early.length) {
         c = mkCard('calendar', 'Предпремьеры');
         early.forEach(function (e) {
@@ -2109,7 +2129,7 @@ button.pill{border:0;cursor:pointer}
   function feedView() {
     var stream = store('stream');
     if (!/^(events|all|city|transport|legal|world)$/.test(stream)) stream = 'all';
-    var seg = el('div', 'seg fit'), body = el('div'), segs = {}, med = el('div');
+    var seg = el('div', 'seg fit'), body = el('div'), segs = {}, med = el('div'), dig = el('div');
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', 'Поток');
     STREAMS.forEach(function (s) {
@@ -2118,7 +2138,25 @@ button.pill{border:0;cursor:pointer}
       b.onclick = function () { stream = s[0]; store('stream', stream); load(); };
       seg.appendChild(b);
     });
-    add(main, med, seg, body);
+    add(main, dig, med, seg, body);
+
+    // «📰 Выжимка»: the group's morning digest, a row per pick (the line, the
+    // source label as the link); hidden when there is none.
+    function digest(d) {
+      var picks = (d && d.picks) || [];
+      clear(dig);
+      if (current !== 'feed' || !picks.length) return;
+      var card = mkCard('news', '📰 Выжимка · ' + dm(d.day));
+      picks.forEach(function (p) {
+        var a = el('a', 'lnk', SOURCES[p.source] || p.source);
+        if (/^https?:\/\//i.test(p.url)) a.href = p.url;
+        a.onclick = function (ev) { ev.preventDefault(); openLink(p.url); };
+        card.appendChild(add(el('div', 'row'), add(el('span', 'tx'), document.createTextNode(p.line + ' · '), a)));
+      });
+      dig.appendChild(card);
+    }
+    // Opened on «События»: the digest still comes from the news answer.
+    if (stream === 'events') api('miniapp', { action: 'news', stream: 'all' }, undefined, true).then(function (j) { digest(j.digest); }, noop);
 
     // «Медицина»: current promotions from the med function's table, worded
     // as /med words them; hidden when there are none.
@@ -2199,7 +2237,7 @@ button.pill{border:0;cursor:pointer}
       add(clear(body), skeleton(1));
       api('miniapp', mine === 'events' ? { action: 'events' } : { action: 'news', stream: stream }, undefined, true).then(function (j) {
         if (current !== 'feed' || mine !== stream) return;
-        if (mine === 'events') events(j); else render(j.rows || []);
+        if (mine === 'events') events(j); else { digest(j.digest); render(j.rows || []); }
       }, function (e) { if (!e.login && current === 'feed' && mine === stream) failed(body, load); });
     }
     load();
