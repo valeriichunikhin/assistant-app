@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 13:42">
+<meta name="published" content="2026-10-11 14:24">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -338,7 +338,7 @@ button.pill{border:0;cursor:pointer}
   var ERRORS = {
     closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
     'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля',
-    'no such film': 'Нет такого фильма', 'no such row': 'Уже закрыто', 'bad date': 'Дата — сегодня или позже',
+    'no such film': 'Нет такого фильма', 'no such event': 'Нет такого события', 'no such row': 'Уже закрыто', 'bad date': 'Дата — сегодня или позже',
     'no title': 'Нужен текст', too_close: 'Срок уже завтра — отложить некуда', late: 'Поздно, уже не вернуть'
   };
 
@@ -2054,6 +2054,17 @@ button.pill{border:0;cursor:pointer}
           add(row, add(el('span', 'tx'), el('b', '', r.title), el('div', 'mu',
             (g[0] ? [at && when(at), r.place] : [r.place, p && p.day + '.' + p.month]).filter(Boolean).join(' · '))));
           if (/^https?:\/\//i.test(r.url)) tap(row, function () { openLink(r.url); });
+          // «📅 .ics»: the bot sends the event's file to the private chat.
+          if (r.starts_at && r.id) {
+            var ics = el('button', 'btn ghost x', '📅 .ics');
+            ics.type = 'button';
+            ics.onclick = function (ev) {
+              ev.stopPropagation();
+              haptic();
+              api('telegram-webhook', { action: 'calendar_ics', id: r.id }).then(function () { toast('Файл отправил в чат с ботом'); }, noop);
+            };
+            row.appendChild(ics);
+          }
           card.appendChild(row);
         });
         body.appendChild(card);
