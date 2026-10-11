@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 17:38">
+<meta name="published" content="2026-10-11 17:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -170,6 +170,12 @@ button{cursor:pointer}
 .poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);object-fit:cover}
 .poster.ph{display:grid;place-items:center;color:var(--muted)}
 .poster.ph .i{width:22px;height:22px}
+.poster-btn{flex:none;padding:0;border:0;background:none;line-height:0}
+.zoom{position:fixed;inset:0;z-index:9;display:grid;place-content:center;justify-items:center;gap:12px;background:rgba(0,0,0,.88);color:var(--toast-fg);animation:fade .12s}
+.zoom img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:12px}
+.zoom .x{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}
+.zoom div{max-width:92vw;text-align:center;overflow-wrap:anywhere}
+body.zoomed{overflow:hidden}
 .row.film{align-items:flex-start}
 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 button.pill{border:0;cursor:pointer}
@@ -1673,9 +1679,26 @@ button.pill{border:0;cursor:pointer}
   function cinemaView() {
     var body = el('div', 'cols');
     main.appendChild(body);
+    // A poster large; a tap, Escape or Back closes it.
+    function zoom(img, title) {
+      var z = el('div', 'zoom'), x = add(el('button', 'btn ghost x'), icon('x')), im = img.cloneNode(), h = document.body.classList;
+      z.setAttribute('role', 'dialog');
+      z.setAttribute('aria-modal', 'true');
+      if (title) z.setAttribute('aria-label', title);
+      x.setAttribute('aria-label', 'Закрыть');
+      im.className = '';
+      function close() { z.remove(); h.remove('zoomed'); hideBack(); }
+      z.onclick = backHandler = close;
+      z.onkeydown = function (e) { if (e.key === 'Escape') close(); };
+      try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
+      h.add('zoomed');
+      add(document.body, add(z, x, im, title && el('div', '', title)));
+      haptic();
+      x.focus();
+    }
     // The poster, or a film glyph in its 56×84 box when there is none or
     // it fails, so the rows of a card line up.
-    function poster(url) {
+    function poster(url, title) {
       var ph = add(el('span', 'poster ph'), icon('film'));
       if (!/^https?:\/\//i.test(String(url || ''))) return ph;
       var e = el('img', 'poster');
@@ -1683,8 +1706,12 @@ button.pill{border:0;cursor:pointer}
       e.loading = 'lazy';
       e.referrerPolicy = 'no-referrer';
       e.src = url;
-      e.onerror = function () { e.replaceWith(ph); };
-      return e;
+      var b = add(el('button', 'poster-btn'), e);
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Постер крупнее');
+      b.onclick = function () { zoom(e, title); };
+      e.onerror = function () { b.replaceWith(ph); };
+      return b;
     }
     function act(params, done) {
       haptic();
@@ -1753,7 +1780,7 @@ button.pill{border:0;cursor:pointer}
       return /^https?:\/\//i.test(String(f.link || '')) ? btn('link', 'О фильме', function () { openLink(f.link); }) : null;
     }
     function premiere(f) {
-      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date)),
         pills(f.sale),
         add(el('div', 'acts'),
@@ -1765,7 +1792,7 @@ button.pill{border:0;cursor:pointer}
     }
     // A «Скоро» film: its date, «Хочу» and «Не интересно».
     function soonRow(f) {
-      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date)),
         add(el('div', 'acts'),
           mark(f, 'h', 'target', 'Хочу', wantToast),
@@ -1775,7 +1802,7 @@ button.pill{border:0;cursor:pointer}
     var MONTHS = 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' ');
     // A «хочу» film: out already or from its date, where it plays.
     function wanted(f, today) {
-      return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
+      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
         el('div', 'mu num', !f.release_date ? '' : f.release_date <= today ? 'уже в прокате' : 'с ' + dm(f.release_date)),
         pills(f.cinemas),
         add(el('div', 'acts'),
@@ -1817,7 +1844,7 @@ button.pill{border:0;cursor:pointer}
       if (early.length) {
         c = mkCard('calendar', 'Предпремьеры');
         early.forEach(function (e) {
-          var r = add(el('div', 'row film'), poster(e.film.poster), add(el('span', 'tx'), name(e.film),
+          var r = add(el('div', 'row film'), poster(e.film.poster, e.film.display), add(el('span', 'tx'), name(e.film),
             el('div', 'mu num', whenW(e.date) + ' · ' + e.cinema)));
           if (e.url) r.appendChild(btn('link', 'билеты', function () { openLink(e.url); }));
           c.appendChild(r);
@@ -1837,7 +1864,7 @@ button.pill{border:0;cursor:pointer}
           var tx = add(el('span', 'tx'), el('div', 't', w.display),
             el('div', 'mu num', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : '') + (w.rating != null && !w.id ? ' · ⭐ ' + rateText(w.rating) : '')),
             w.id ? starBar(w.id, w.rating) : null);
-          var r = add(el('div', 'row film'), poster(w.poster), tx);
+          var r = add(el('div', 'row film'), poster(w.poster, w.display), tx);
           if (w.id && w.source === 'mark') {
             var x = add(el('button', 'btn ghost x'), icon('x'));
             x.type = 'button';
