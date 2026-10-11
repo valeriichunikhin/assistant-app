@@ -83,13 +83,14 @@
     return box;
   };
 
-  // Keyboard: 1–9, 0 switch tabs in rail order; «/» focuses the search in the header, when there is one.
+  // Keyboard: 1–9, 0 switch tabs in rail order; «/» focuses the search in the header, when there is one (on «Цены»
+  // the page's own field, the header one is hidden there).
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     var t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
     if (typing) return;
     if (e.key === '/') {
-      var s = A.hdr.querySelector('.dsearch input');
+      var s = A.current === 'prices' ? A.main.querySelector('input[type="search"]') : A.hdr.querySelector('.dsearch input');
       if (s) { e.preventDefault(); s.focus(); }
       return;
     }
@@ -134,13 +135,16 @@
     return p;
   }
   function soft(p) { return p.then(null, function () { return null; }); }
+  // The page's Russian names (index.html: APP.levelRu, APP.hallRu); the raw text until the page has them.
+  function lvRu(l) { var r = typeof A.levelRu === 'function' ? A.levelRu(l.id) : null; return r && r !== l.id ? r : l.label; }
+  function hallRu(x) { return typeof A.hallRu === 'function' ? A.hallRu(x) : x; }
 
   // A widget: the card head with «→» to its tab (none for the overview's own cards), a body that loads on its
   // own; a failed load shows the phone's failed() with a retry inside the card and the other widgets stand.
   function widget(grid, n, ic, title, tab) {
     var c = A.mkCard(ic, title);
     if (tab) {
-      var go = add(el('button', 'dgo'), el('span', '', A.names[tab]), document.createTextNode(' →'));
+      var go = add(el('button', 'dgo'), document.createTextNode('открыть →'));
       go.type = 'button';
       go.setAttribute('aria-label', 'Открыть: ' + A.names[tab]);
       go.onclick = function () { A.show(tab); };
@@ -192,7 +196,7 @@
       items.push({ k: 'Свободные вечера', v: String(wk.free_evenings.length),
         small: wk.free_evenings.map(function (d) { return WEEK[A.wd(d)]; }).join(' · ') });
     }
-    if (st && st.totals) {
+    if (st && st.totals && st.totals.receipts > 0) {
       items.push({ k: 'Траты · 4 нед', v: A.grouped(Math.round(st.totals.spent)) + ' zł',
         small: st.totals.receipts + ' ' + A.plural(st.totals.receipts, ['чек', 'чека', 'чеков']) });
     }
@@ -277,7 +281,7 @@
   function volley(body, j) {
     if (!j || !j.filter) return add(body, A.state('alert', 'Нет данных об играх'));
     var lv = {}, rows = [], mine = {};
-    j.levels.forEach(function (l) { lv[l.id] = l.label; });
+    j.levels.forEach(function (l) { lv[l.id] = lvRu(l); });
     (j.my_games || []).slice().sort(function (x, y) { return x.starts_at.localeCompare(y.starts_at); }).forEach(function (g) {
       mine[g.activity_id] = true;
       var x = (j.games || []).filter(function (y) { return y.id === g.activity_id; })[0];
@@ -322,10 +326,10 @@
     if (shows.length) {
       body.appendChild(el('div', 'wsub', 'Мои сеансы'));
       body.appendChild(D.table([{ h: 'Когда' }, { h: 'Фильм' }, { h: 'Где' }], shows.slice(0, 5).map(function (s) {
-        var d = ymd(s.starts_at), ua = /ukraiński dubbing/i.test(s.film);
+        var d = ymd(s.starts_at), ua = s.ukrainian || /ukraiński dubbing/i.test(s.film);
         return [add(el('span', 'num'), document.createTextNode(dayName(d) + ' ' + hm(s.starts_at))),
-          s.film.replace(/\s*ukraiński dubbing.*$/i, '') + (ua ? ' 🇺🇦' : ''),
-          add(el('span', 'mu'), document.createTextNode([String(s.cinema || '').replace(/^Cinema City /, ''), s.hall].filter(Boolean).join(' · ')))];
+          (s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, '')) + (ua ? ' 🇺🇦' : ''),
+          add(el('span', 'mu'), document.createTextNode([String(s.cinema || '').replace(/^Cinema City /, ''), hallRu(s.hall)].filter(Boolean).join(' · ')))];
       })));
     }
   }
@@ -336,7 +340,7 @@
     ((picks && picks.batches) || []).forEach(function (b) {
       (b.candidates || []).forEach(function (c) { if (/^⭐/.test(c.label)) stars.push({ b: b, c: c }); });
     });
-    if (!ps.length && !stars.length) return add(body, A.state('tag', 'Пар и ⭐ в партиях пока нет — придут с газетками'));
+    if (!ps.length && !stars.length) return add(body, A.state('tag', 'Пар и ⭐ в подборках пока нет — придут с газетками'));
     if (ps.length) {
       body.appendChild(el('div', 'wsub', '⚖️ Aldi vs Biedronka · ' + dm(cmp.week_start) + '–' + dm(A.addDays(cmp.week_start, 6))));
       var side = function (p, chain, price, card) {
@@ -351,7 +355,7 @@
       if (ps.length > 6) body.appendChild(more(ps.length - 6, 'picks'));
     }
     if (stars.length) {
-      body.appendChild(el('div', 'wsub', '⭐ Жду акцию — уже в партиях'));
+      body.appendChild(el('div', 'wsub', '⭐ Жду акцию — уже в подборках'));
       body.appendChild(D.table([{ h: 'Товар' }, { h: 'Сеть' }, { h: 'Цена', r: true }, { h: 'Было', r: true }],
         stars.slice(0, 6).map(function (s) {
           var c = s.c;
@@ -363,7 +367,8 @@
     }
   }
 
-  // 4b. «Новости»: today's digest (rows with the source as the link); without one, the latest headlines.
+  // 4b. «Новости»: the digest of today or yesterday (rows with the source as the link); without one, a hint and the
+  // three newest headlines outside «Варшава» (its rows are mostly festival screenings).
   function news(body, j, head) {
     var d = j.digest, picks = (d && d.picks) || [];
     function link(s, url) {
@@ -380,9 +385,9 @@
       });
       return;
     }
-    var rows = (j.rows || []).slice(0, 6);
-    if (!rows.length) return add(body, A.state('news', 'Новостей пока нет'));
-    body.appendChild(el('div', 'wsub', 'Выжимки сегодня нет — последние'));
+    var rows = (j.rows || []).filter(function (r) { return r.stream !== 'city'; }).slice(0, 3);
+    if (!rows.length) return add(body, A.state('news', 'Выжимки сегодня не было'));
+    body.appendChild(el('div', 'wsub', 'Выжимки сегодня не было'));
     rows.forEach(function (r) {
       var row = hrow(r.title, (SOURCES[r.source] || r.source) + (r.published_at ? ' · ' + A.whenW(r.published_at) : ''), null,
         /^https?:\/\//i.test(r.url) ? r.url : null);
@@ -453,7 +458,9 @@
       return Promise.all([homeA(f), soft(get('miniapp', { action: 'stats', period: '4w' }, 15000, f)), soft(vbA(f))]);
     }, tiles);
     load(widget(grid, 8, 'calendar', 'План недели', null), homeA, week);
-    load(widget(grid, 4, 'clock', 'Сегодня', null), homeA, todayCard);
+    var tb = widget(grid, 4, 'clock', 'Сегодня', null);
+    tb.parentNode.classList.add('dfill'); // full width at 900–1199 px, where a span-4 would stand alone
+    load(tb, homeA, todayCard);
     load(widget(grid, 6, 'ball', 'Волейбол', 'vb'), vbA, volley);
     load(widget(grid, 6, 'film', 'Кино', 'cinema'), function (f) { return get('miniapp', { action: 'cinema' }, 25000, f); }, cinema);
     load(widget(grid, 6, 'tag', 'Акции', 'picks'), function (f) {
@@ -464,7 +471,9 @@
     load(nb, function (f) { return get('miniapp', { action: 'news', stream: 'all' }, 15000, f); }, function (b, j) { news(b, j, nh); });
     load(widget(grid, 4, 'target', 'Жду акцию', 'prices'), function (f) { return get('telegram-webhook', { action: 'watch' }, 15000, f); }, watch);
     load(widget(grid, 4, 'tack', 'Дела', 'dela'), function (f) { return get('telegram-webhook', { action: 'dela' }, 15000, f); }, dela);
-    load(widget(grid, 4, 'inbox', 'Инбокс', 'inbox'), function (f) { return get('telegram-webhook', { action: 'inbox' }, 15000, f); }, inbox);
+    var ib = widget(grid, 4, 'inbox', 'Инбокс', 'inbox');
+    ib.parentNode.classList.add('dfill');
+    load(ib, function (f) { return get('telegram-webhook', { action: 'inbox' }, 15000, f); }, inbox);
     var again = A.label(el('button', 'btn ghost wide'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { memo = {}; A.show('home'); };
@@ -472,7 +481,9 @@
   };
   // The header search: Enter, or a pause of 400 ms with two letters or more, opens «Цены» with the query. The
   // query goes to DESKTOP.query (for a wide prices view) and into the prices view's own field as typed input, so
-  // the phone pricesView takes it into priceQuery and searches.
+  // the phone pricesView takes it into priceQuery and searches. On «Цены» the header field is hidden (the page's
+  // field is the one; DESKTOP.typed asks it to take the focus when the query was being typed here), and it is
+  // emptied on leaving «Цены» and on Escape.
   var input = el('input'), timer = null;
   input.type = 'search';
   input.placeholder = 'Поиск товара…';
@@ -484,10 +495,10 @@
     D.query = q;
     if (input.value.trim() !== q) input.value = q;
     var had = document.activeElement === input;
+    D.typed = had && A.current !== 'prices';
     if (A.current !== 'prices') A.show('prices');
     var f = A.main.querySelector('input[type="search"]');
     if (f && f.value !== q) { f.value = q; f.dispatchEvent(new Event('input', { bubbles: true })); }
-    if (had) setTimeout(function () { input.focus(); }, 0);
   }
   input.oninput = function () {
     clearTimeout(timer);
@@ -495,10 +506,21 @@
   };
   input.onkeydown = function (e) {
     if (e.key === 'Enter') { e.preventDefault(); prices(input.value); }
-    else if (e.key === 'Escape') input.blur();
+    else if (e.key === 'Escape') { clearTimeout(timer); input.value = ''; input.blur(); }
   };
   function kbd(s) { return el('kbd', 'k', s); }
-  A.hdr.insertBefore(add(el('label', 'field dsearch'), icon('search'), input), A.hTitle.nextSibling);
+  var box = add(el('label', 'field dsearch'), icon('search'), input);
+  A.hdr.insertBefore(box, A.hTitle.nextSibling);
+  // show() retitles the header on every tab change: hide the field on «Цены», empty it elsewhere.
+  var lastTab = null;
+  function onTab() {
+    var p = A.current === 'prices';
+    box.classList.toggle('off', p);
+    if (!p && lastTab === 'prices') { clearTimeout(timer); input.value = ''; }
+    lastTab = A.current;
+  }
+  if (window.MutationObserver) new MutationObserver(onTab).observe(A.hTitle, { childList: true, characterData: true, subtree: true });
+  onTab();
   A.hdr.appendChild(add(el('span', 'kbd'), kbd('1–9'), document.createTextNode(' разделы · '), kbd('/'),
     document.createTextNode(' поиск')));
 })();

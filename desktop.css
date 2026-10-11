@@ -43,9 +43,10 @@ tr:hover .hov,.row:hover .hov,.pcell:hover .hov,.hov:focus-within,tr:focus-withi
 .pcell .pov .pg{background:rgba(0,0,0,.6);color:#fff;border-color:rgba(255,255,255,.25)}
 .pcell .pn{margin-top:8px;font:500 13px/1.3 var(--font)}
 .pcell .pd{color:var(--muted-2);font:12px/1.3 var(--font-num)}
-/* Key/value tiles in a row (an overview strip). */
-.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.kv>div{padding:12px 14px;background:var(--surface)}
+/* Key/value tiles in a row (an overview strip). The dividers are the cells' outlines in the 1 px gaps, so the empty
+   end of a wrapped last row stays the card's colour, not a grey slab. */
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kv>div{padding:12px 14px;background:var(--surface);outline:1px solid var(--line)}
 .kv .k{color:var(--muted-2);font-size:12px}
 .kv .v{font:500 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .kv .v small{font-size:13px;color:var(--muted)}
@@ -98,17 +99,22 @@ kbd.k{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid var(-
 .pgrid.mini{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
 .dfoot{display:flex;justify-content:center;margin-top:24px}
 /* The header search and the shortcut hint (wide screens only). */
-.hdr:has(.dsearch) h1{flex:0 1 auto}
+.hdr:has(.dsearch) h1{flex:0 1 auto;min-width:128px}
 .hdr .dsearch{flex:0 1 360px;width:auto}
 .hdr .kbd{white-space:nowrap}
 .hdr .kbd .k{margin:0 2px}
 @media (max-width:899px){.hdr .dsearch,.hdr .kbd{display:none}}
+.hdr .dsearch.off{display:none}
 @media (max-width:1199px){.hdr .kbd{display:none}}
 /* Overview: cards in a row line up at the bottom; empty states fill the card. */
 .dhome{align-items:stretch}
 .dhome>.card{display:flex;flex-direction:column}
 .dhome .wb{flex:1}
 .dhome .wb>.state{height:100%;display:grid;place-content:center}
+/* 900–1199 px: «Сегодня» and «Инбокс» take the whole row instead of standing alone in half of it. */
+@media (max-width:1199px){.dhome>.dfill{grid-column:span 12}}
+/* «Когда» in «Мои сеансы» stays on one line. */
+.wb .tbl td:first-child>.num{white-space:nowrap}
 /* Inbox: the hover actions lie over the right end of the row, so the text keeps the whole width. */
 .wb .row{position:relative}
 .wb .row .acts.hov{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;padding-left:24px;background:linear-gradient(to right,transparent,var(--surface) 24px)}

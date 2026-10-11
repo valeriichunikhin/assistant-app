@@ -37,7 +37,8 @@
     b.onclick = function (ev) { ev.stopPropagation(); fn(b); };
     return b;
   }
-  // «Точно?» on the first press, fn on a second one within 3 s (the phone's ✕ and «Сделано»).
+  // «Точно?» on the first press, fn on a second one within 3 s (the phone's ✕ and «Сделано»); the button is itself
+  // again before fn runs, so a failed call does not leave it asking.
   function confirmed(ic, s, fn) {
     var timer = null;
     var b = pg(ic, s, function () {
@@ -49,6 +50,8 @@
       }
       clearTimeout(timer);
       timer = null;
+      b.classList.remove('warn');
+      label(b, ic, s);
       fn(b);
     });
     return b;
@@ -76,12 +79,16 @@
   // A deal product as a grid cell: a big picture, the name, the price and the old one, the chain, a ⭐ when it is
   // one he waits for (deal_batch prefixes the label with «⭐ »), actions on hover.
   // The line (deal_batch) holds the full name, the mechanic, 🪪 and the 90-day verdict; the label is cut to 21 characters.
+  // The rest drops the price segment («7,98 13,99») and «−43%»: the cell shows both already (a trailing 🪪 stays).
   function lineParts(c) {
     var s = A.plain(c.line).replace(/^⭐ /, ''), warn = /^⚠️/.test(s);
     s = s.replace(/^⚠️ не скидка · /, '');
     var i = s.indexOf(' · ');
     if (!s) return { name: stripStar(c.label), rest: '', warn: false };
-    return { name: i < 0 ? s : s.slice(0, i), rest: i < 0 ? '' : s.slice(i + 3), warn: warn };
+    var rest = i < 0 ? [] : s.slice(i + 3).split(' · ').map(function (x) {
+      return x.replace(/^\d[\d,]*( \d[\d,]*)?(?= 🪪$|$)/, '').replace(/^[−-]\d+%(?= 🪪$|$)/, '').trim();
+    }).filter(Boolean);
+    return { name: i < 0 ? s : s.slice(0, i), rest: rest.join(' · '), warn: warn };
   }
   function prodCell(c, chain, actions) {
     var lp = lineParts(c), name = lp.name;
@@ -102,7 +109,7 @@
   // --- list: the list on the left, the open batches' products on the right ---
   var listDraft = '';
   view('list', function (main) {
-    var left = A.mkCard('cart', 'Список'), right = A.mkCard('tag', 'Из партий', 'Наведи на товар — «+ в список»');
+    var left = A.mkCard('cart', 'Список'), right = A.mkCard('tag', 'Из подборок');
     var head = el('div', 'summary dsum');
     left.firstChild.appendChild(head);
     var form = el('form', 'dform'), inp = input('Добавить…', listDraft);
@@ -131,12 +138,19 @@
       return items.some(function (i) { return !i.done && String(i.text || '').toLowerCase().indexOf(n) === 0; });
     }
     function stat(s, n) { return add(el('span'), document.createTextNode(s + ' '), el('b', '', n)); }
-    function toggle(i) {
+    // At once on the screen, back as it was when the call fails; the focus stays on the row (k) it was on.
+    function toggle(i, k) {
+      var was = i.done;
       A.haptic();
-      api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) { i.done = j.done; render(); }, noop);
+      i.done = !was;
+      render(k);
+      api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) {
+        if (j.done !== i.done) { i.done = j.done; render(k); }
+      }, function () { i.done = was; render(k); });
     }
-    function render() {
+    function render(k) {
       if (!on('list') || !lbody.isConnected) return;
+      var back = typeof k === 'number' && lbody.contains(document.activeElement) ? k : -1;
       var open = items.filter(function (i) { return !i.done; }).length, bought = items.length - open;
       add(clear(head), stat('осталось', open), stat('куплено', bought));
       clear(lbody);
@@ -146,7 +160,7 @@
         return;
       }
       lbody.appendChild(D.table([{ h: '', w: '40px' }, { h: 'Товар' }, { h: 'Шт', r: true, w: '48px' },
-        { h: 'Откуда', w: '84px' }, { h: '', w: '52px' }], items.map(function (i) {
+        { h: 'Откуда', w: '84px' }, { h: '', w: '96px' }], items.map(function (i) {
         var x = confirmed('x', '', function () {
           api('telegram-webhook', { action: 'delete', id: i.id }).then(function (j) {
             A.undoToast('Убрал', [j.id], load);
@@ -158,9 +172,11 @@
           nameCell(A.prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji), i.text),
           i.qty > 1 ? i.qty : '', el('span', 'mu', i.chain || 'вручную'), hovActs(x)];
       }), {
-        onRow: function (k) { toggle(items[k]); },
+        onRow: function (k) { toggle(items[k], k); },
         cls: function (k) { return items[k].done ? 'done' : ''; }
       }));
+      var row = back >= 0 && lbody.querySelectorAll('tbody tr')[back];
+      if (row) try { row.focus({ preventScroll: true }); } catch (e) {}
       if (bought) {
         var timer = null, btn = label(el('button', 'btn ghost'), 'trash', 'Убрать купленное');
         btn.type = 'button';
@@ -192,16 +208,17 @@
         if (!on('list') || !rbody.isConnected) return;
         clear(rbody);
         var bs = (j.batches || []).filter(function (b) { return (b.candidates || []).length; });
-        if (!bs.length) return rbody.appendChild(A.state('tag', 'Открытых партий нет. Новые приходят с газетками.'));
+        if (!bs.length) return rbody.appendChild(A.state('tag', 'Подборок акций пока нет — новые приходят с газетками (вс, пн, чт)'));
+        if (!right.querySelector('.sub')) right.insertBefore(el('div', 'sub', 'Наведи на товар — «+ в список»'), rbody);
         bs.forEach(function (b) {
           rbody.appendChild(add(el('div', 'dgh'), el('b', '', b.title), b.chain ? el('span', 'mu', b.chain) : null,
             el('span', 'mu', b.candidates.length + ' ' + A.plural(b.candidates.length, ['товар', 'товара', 'товаров']))));
           var grid = el('div', 'dprods');
           b.candidates.forEach(function (c) {
-            var name = lineParts(c).name + ' (' + b.chain + ')', have = inList(name);
+            var full = lineParts(c).name, name = full + ' (' + b.chain + ')', have = inList(full);
             grid.appendChild(prodCell(c, b.chain, hovActs(pg('plus', have ? 'в списке' : 'в список', function (btn) {
               btn.disabled = true;
-              api('telegram-webhook', { action: 'add', text: name }).then(function (r) {
+              api('telegram-webhook', { action: 'add', text: name, one: 1 }).then(function (r) {
                 label(btn, 'check', 'в списке');
                 toast('Добавил: ' + (r.added || [name]).join(', '));
                 load();
@@ -322,7 +339,7 @@
         add(body, head, grid);
       });
       if (!shown) body.appendChild(A.state(q || pickCat ? 'search' : 'tag',
-        q || pickCat ? 'Ничего не нашлось' : 'Открытых партий нет. Новые приходят с газетками.'));
+        q || pickCat ? 'Ничего не нашлось' : 'Подборок акций пока нет — новые приходят с газетками (вс, пн, чт)'));
     }
     function load() {
       add(clear(body), A.skeleton(2));
@@ -631,14 +648,14 @@
     function render(rows) {
       clear(body);
       if (!rows.length) return body.appendChild(A.state('news', 'Новостей пока нет'));
-      var t = D.table([{ h: 'Время', w: '112px' }, { h: 'Источник', w: '150px' }, { h: 'Заголовок' }], rows.map(function (r) {
+      var t = D.table([{ h: 'Время', w: '124px' }, { h: 'Источник', w: '150px' }, { h: 'Заголовок' }], rows.map(function (r) {
         return [num(r.published_at ? at(r.published_at) : '—'), el('span', 'mu', SOURCES[r.source] || r.source),
           add(el('div', 'tx'), el('div', 't one', r.title), r.summary ? el('div', 'mu one', r.summary) : null)];
       }), { onRow: function (k) { A.openLink(rows[k].url); } });
       t.classList.add('fixed');
       body.appendChild(countPill(cardWith('news', 'Лента', null, t), rows.length));
     }
-    // «События»: openings with the place, upcoming events by section, each a table with the bot's .ics.
+    // «События»: openings with the place, upcoming events by section, each a table with «📅 В календарь» (the bot's .ics).
     function when(ts) {
       var q = A.wp(ts);
       return A.WEEK[A.wd(q.year + '-' + q.month + '-' + q.day)] + ' ' + q.day + '.' + q.month +
@@ -651,10 +668,10 @@
         ['big', 'Фестивали и концерты']].forEach(function (g) {
         var rows = g[2] || up.filter(function (r) { return r.section === g[0]; });
         if (!rows.length) return;
-        var t = D.table([{ h: 'Когда', w: '124px' }, { h: 'Что' }, { h: 'Где', w: '120px' }, { h: '', w: '76px' }], rows.map(function (r) {
+        var t = D.table([{ h: 'Когда', w: '150px' }, { h: 'Что' }, { h: 'Где', w: '120px' }, { h: '', w: '148px' }], rows.map(function (r) {
           var ts = g[0] ? r.starts_at : r.published_at || r.seen_at, ics = null;
           if (r.starts_at && r.id) {
-            ics = pg('calendar', '.ics', function () {
+            ics = pg(null, '📅 В календарь', function () {
               A.haptic();
               api('telegram-webhook', { action: 'calendar_ics', id: r.id }).then(function () { toast('Файл отправил в чат с ботом'); }, noop);
             });

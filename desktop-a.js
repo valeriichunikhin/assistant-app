@@ -29,6 +29,10 @@
   function two(main, sub) { return add(el('div', 'da-two'), el('div', 't', main), sub ? el('div', 'mu', sub) : null); }
   function card(ic, title, sub) { return A.mkCard(ic, title, sub); }
   function loading(box) { return add(clear(box), A.skeleton(1)); }
+  // The page's Russian wording (index.html: APP.mechRu, APP.levelRu, APP.hallRu); the raw text until the page has it.
+  function mechRu(x) { return typeof A.mechRu === 'function' ? A.mechRu(x) : x; }
+  function lvRu(l) { var r = typeof A.levelRu === 'function' ? A.levelRu(l.id) : null; return r && r !== l.id ? r : l.label; }
+  function hallRu(x) { return typeof A.hallRu === 'function' ? A.hallRu(x) : x; }
 
   // --- prices ---
   // The search on the left, the selected product on the right; before a search, «Жду акцию» and the last looked-at
@@ -59,6 +63,8 @@
 
   view('prices', function () {
     if (typeof D.query !== 'string') D.query = '';
+    var typed = D.typed; // the query was being typed in the header: the focus comes here with it
+    D.typed = false;
     var watch = [], seq = 0, dseq = 0, timer = null, marks = [], detailMark = noop;
     var left = el('div'), right = el('div');
     var input = el('input');
@@ -70,20 +76,24 @@
     add(left, add(el('div', 'bar'), add(el('label', 'field'), icon('search'), input)), results);
     A.main.appendChild(D.panes(left, right)).classList.add('da-prices');
 
+    // A product watch first; a keyword watch (no product_key, the bot's «/watch masło») only when there is none.
     function watchOf(r) {
-      return watch.filter(function (w) {
+      var hits = watch.filter(function (w) {
         return (!w.chain || w.chain === r.chain) &&
           (w.product_key ? w.product_key === r.product_key : nameHit(w.product_name, r.product_name));
-      })[0] || null;
+      });
+      return hits.filter(function (w) { return w.product_key; })[0] || hits[0] || null;
     }
+    function own(w) { return !!(w && w.product_key); }
     function loadWatch(quiet) {
       return api('telegram-webhook', { action: 'watch' }, 0, true).then(function (j) { watch = j.rows || []; },
         function (e) { if (!quiet) throw e; });
     }
     function refresh() { marks.forEach(function (f) { f(); }); detailMark(); }
-    // The toggle the phone's product page has, from any row: watch_add / watch_remove, then every mark in step.
+    // The toggle the phone's product page has, from any row: watch_add / watch_remove, then every mark in step. Under a
+    // keyword watch it adds this product's own watch and leaves the keyword one alone.
     function toggle(r) {
-      var was = watchOf(r);
+      var w = watchOf(r), was = own(w) ? w : null;
       A.haptic();
       (was ? api('telegram-webhook', { action: 'watch_remove', id: was.id })
         : api('telegram-webhook', { action: 'watch_add', chain: r.chain, key: r.product_key, name: r.product_name, size: r.size || '' }))
@@ -91,15 +101,15 @@
           watch = watch.filter(function (x) { return x !== was; });
           if (!was) watch.push({ id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name });
           refresh();
-          A.toast(was ? 'Больше не жду' : 'Жду акцию — ⭐ в партиях');
+          A.toast(was ? 'Больше не жду' : 'Жду акцию — ⭐ в подборках');
         }, function (e) { if (e.code === 'no such item') loadWatch(true).then(refresh); });
     }
     function eye(r) {
       var b = btn('da-eye', '👀', function (ev) { ev.stopPropagation(); toggle(r); });
       function set() {
-        var on = !!watchOf(r);
-        b.className = 'da-eye' + (on ? ' on' : ' hov');
-        b.title = on ? 'Жду акцию — убрать' : 'Жду акцию';
+        var w = watchOf(r), on = own(w), kw = !!w && !on;
+        b.className = 'da-eye' + (on ? ' on' : kw ? ' kw' : ' hov');
+        b.title = on ? 'Жду акцию — убрать' : kw ? 'жду по слову «' + w.product_name + '» — нажми, чтобы ждать этот товар' : 'Жду акцию';
         b.setAttribute('aria-pressed', String(on));
       }
       set();
@@ -109,6 +119,11 @@
     function pic(r, big) { return A.prodPic(r.product_name, r.image_url, r.chain, null, big, r.emoji); }
     function prodCell(r) {
       return add(el('div', 'da-prod'), pic(r), two(r.product_name, r.size || null));
+    }
+    // The price; under a conditional one («при покупке 4», «по карте») its condition in Russian.
+    function priceCell(r) {
+      var m = r.conditional && r.mechanic ? mechRu(r.mechanic) : '';
+      return m ? add(el('div', 'da-pc'), num(zl(r.last_price) + ' zł'), el('div', 'mu', m)) : num(zl(r.last_price) + ' zł');
     }
 
     function search() {
@@ -120,16 +135,22 @@
       loading(results);
       Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch(true)]).then(function (a) {
         if (mine !== seq || !live('prices')) return;
-        var rows = a[0].rows || [];
+        var rows = a[0].rows || [], used = a[0].query_pl;
+        var asked = used && used.toLowerCase() !== q.toLowerCase() ? 'искал: ' + used : '';
         marks = [];
         clear(results);
-        if (!rows.length) { results.appendChild(A.state('search', 'Ничего не нашлось')); return idle(); }
+        if (!rows.length) {
+          var none = A.state('search', 'Ничего не нашлось. Названия в газетках польские: masło, mleko, jaja…');
+          if (asked) none.appendChild(el('p', 'mu', asked));
+          results.appendChild(none);
+          return idle();
+        }
         var t = D.table([{ h: 'Товар' }, { h: 'Магазин' }, { h: 'Цена', r: true }, { h: 'Мин 90 дн', r: true }, { h: 'Набл.', r: true }, { h: '', w: '44px' }],
           rows.map(function (r) {
-            return [prodCell(r), r.chain, num(zl(r.last_price) + ' zł'), num(zl(r.min_90d)), r.n, eye(r)];
+            return [prodCell(r), r.chain, priceCell(r), num(zl(r.min_90d)), r.n, eye(r)];
           }), { onRow: function (i) { pick(i, true); } });
         add(results, add(el('div', 'da-cap'), el('span', '', rows.length + ' ' + A.plural(rows.length, ['товар', 'товара', 'товаров'])),
-          el('span', 'mu', '👀 — жду акцию')), t);
+          el('span', 'mu', [asked, '👀 — жду акцию'].filter(Boolean).join(' · '))), t);
         function pick(i, byHand) {
           Array.prototype.forEach.call(t.tBodies[0].rows, function (tr, k) { tr.classList.toggle('sel', k === i); });
           open(rows[i], byHand);
@@ -142,7 +163,10 @@
       clearTimeout(timer);
       timer = setTimeout(search, 300);
     };
-    input.onkeydown = function (e) { if (e.key === 'Enter') { clearTimeout(timer); search(); } };
+    input.onkeydown = function (e) {
+      if (e.key === 'Enter') { clearTimeout(timer); search(); }
+      else if (e.key === 'Escape') { e.preventDefault(); input.blur(); } // the keys 1–9 work again
+    };
 
     // The selected product: the price in numbers, the chart, «В список» and «Жду акцию», then the history.
     function open(r, byHand) {
@@ -156,12 +180,15 @@
       var foot = el('div', 'foot'), buy = el('button', 'btn ghost', '🛒 В список'), wb = el('button', 'btn ghost');
       buy.type = wb.type = 'button';
       buy.onclick = function () {
-        api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : '') }).then(function (j) {
+        api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : ''), one: 1 }).then(function (j) {
           A.toast('Добавил: ' + j.added.join(', '));
         }, noop);
       };
       wb.onclick = function () { toggle(r); };
-      detailMark = function () { text(wb, '👀 Жду акцию' + (watchOf(r) ? ' ✓' : '')); };
+      detailMark = function () {
+        var w = watchOf(r);
+        text(wb, '👀 Жду акцию' + (own(w) ? ' ✓' : w ? ' · по слову «' + w.product_name + '»' : ''));
+      };
       detailMark();
       add(foot, buy, wb);
       add(clear(right), add(c, inner));
@@ -173,7 +200,7 @@
         var tiles = [{ k: 'последняя', v: zl(s.last) + ' zł', small: dm(s.last_on) }, { k: 'мин 90 дн', v: zl(s.min_90d), small: dm(s.min_on) },
           { k: 'медиана 90 дн', v: zl(s.median_90d) }, { k: 'наблюдений', v: String(s.n_90d || 0), small: 'за 90 дн' }];
         c.appendChild(add(el('div', 'da-kv'), D.tiles(tiles)));
-        if (s.best_now) c.appendChild(add(el('div', 'sub'), A.pill('лучшая цена сейчас', 'good')));
+        if (s.best_now && !r.conditional) c.appendChild(add(el('div', 'sub'), A.pill('минимум за 90 дн', 'good')));
         c.appendChild(A.chart(rows, s.min_90d, c.clientWidth - 16));
         var legend = el('div', 'legend');
         ['leaflet', 'aldi-json', 'receipt'].forEach(function (k) {
@@ -184,7 +211,7 @@
         var h = card('clock', 'История', rows.length + ' ' + A.plural(rows.length, ['наблюдение', 'наблюдения', 'наблюдений']));
         h.appendChild(D.table([{ h: 'Дата' }, { h: 'Источник' }, { h: 'Условие' }, { h: 'Цена', r: true }],
           rows.slice().reverse().map(function (x) {
-            return [num(dm(x.observed_on)), A.SRC[x.source] || x.source, x.mechanic ? el('span', 'mu', x.mechanic) : '',
+            return [num(dm(x.observed_on)), A.SRC[x.source] || x.source, x.mechanic ? el('span', 'mu', mechRu(x.mechanic)) : '',
               num(zl(x.price) + ' zł')];
           })));
         right.appendChild(h);
@@ -197,7 +224,7 @@
     function idle() {
       var mine = ++dseq;
       detailMark = noop;
-      var wc = card('target', 'Жду акцию', 'бот отметит ⭐ в партиях, когда будет скидка'), wbox = add(el('div'), A.skeleton(1));
+      var wc = card('target', 'Жду акцию', 'бот отметит ⭐ в подборках, когда будет скидка'), wbox = add(el('div'), A.skeleton(1));
       var rc = card('clock', 'Недавно смотрел'), list = seen();
       add(clear(right), add(wc, wbox), rc);
       if (!list.length) rc.appendChild(el('div', 'row small mu', 'Пока пусто — открой товар из поиска'));
@@ -228,7 +255,13 @@
       draw();
     }
     search();
-    setTimeout(function () { var a = document.activeElement; if (live('prices') && (!a || a === document.body)) input.focus(); }, 0);
+    if (typed) {
+      setTimeout(function () {
+        if (!live('prices')) return;
+        input.focus();
+        try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {}
+      }, 0);
+    }
   });
 
   // --- cinema ---
@@ -240,15 +273,33 @@
     var page = el('div', 'dg da-cine'), lcol = D.span(el('div', 'da-col'), 8), rcol = D.span(el('div', 'da-col'), 4);
     var posters = add(el('div'), A.skeleton(2)), tables = add(el('div'), A.skeleton(1)), unl = el('div');
     A.main.appendChild(add(page, add(lcol, posters), add(rcol, tables, unl)));
-    function act(params, done) {
+    function act(params, done, after) {
       A.haptic();
       api('telegram-webhook', params).then(function (j) {
-        A.toast(typeof done === 'function' ? done(j) : done);
+        if (after) after(); else A.toast(typeof done === 'function' ? done(j) : done);
         if (live('cinema')) load();
       }, noop);
     }
     function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
-    function mark(f, m, ic, s, done) { return pg(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done); }); }
+    // «Смотрел» and «Не интересно» answer with «… · Вернуть»: the page's undoToast (its 10 s), its button sending the
+    // film back — to «хочу» (h) for a «Хочу» film, else to new (c).
+    function undoMark(s, f) {
+      A.undoToast(s, [], noop);
+      var b = document.querySelector('#toast button.tl');
+      if (!b) return;
+      b.onclick = function () {
+        b.parentNode.className = '';
+        api('telegram-webhook', { action: 'film_mark', film: f.id, mark: f.status === 'want' ? 'h' : 'c' }).then(function () {
+          A.toast('Вернул');
+          if (live('cinema')) load();
+        }, noop);
+      };
+    }
+    function mark(f, m, ic, s, done) {
+      return pg(ic, s, function () {
+        act({ action: 'film_mark', film: f.id, mark: m }, done, m === 'w' || m === 'x' ? function () { undoMark(done, f); } : null);
+      });
+    }
     function about(f) {
       return /^https?:\/\//i.test(String(f.link || '')) ? pg('link', 'О фильме', function () { A.openLink(f.link); }) : null;
     }
@@ -346,7 +397,9 @@
       if (!shows.length) c.appendChild(el('div', 'row small mu', 'Билетов впереди нет'));
       else {
         c.appendChild(D.table([{ h: 'Когда' }, { h: 'Фильм · кинотеатр, зал' }], shows.map(function (s) {
-          return [num(A.whenW(s.starts_at)), two(s.film, [String(s.cinema || '').replace(/^Cinema City /, ''), s.hall].filter(Boolean).join(', '))];
+          var ua = s.ukrainian || /ukraiński dubbing/i.test(s.film);
+          return [num(A.whenW(s.starts_at)), two((s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, '')) + (ua ? ' 🇺🇦' : ''),
+            [String(s.cinema || '').replace(/^Cinema City /, ''), hallRu(s.hall)].filter(Boolean).join(', '))];
         })));
       }
       tables.appendChild(c);
@@ -399,8 +452,9 @@
       if (saving) return;
       saving = true;
       A.haptic();
+      // A failed save redraws from the server too, so the select and the chips show what is really saved.
       api('miniapp', { action: 'volleyball_filter' }, 15000, false, patch)
-        .then(load, noop).then(function () { saving = false; });
+        .then(load, load).then(function () { saving = false; });
     }
     function chips(cur, key, opts) {
       var row = el('div', 'da-chips');
@@ -424,7 +478,7 @@
       if (!live('vb')) return;
       if (!j || !j.filter) { A.failed(clear(top), load); return clear(body); } // an old function answers a watch run
       var f = j.filter, lv = {};
-      j.levels.forEach(function (l) { lv[l.id] = l.label; });
+      j.levels.forEach(function (l) { lv[l.id] = lvRu(l); });
       var sel = el('select');
       sel.setAttribute('aria-label', 'Начало не раньше');
       A.VB_FROM.concat(A.VB_FROM.indexOf(f.start_from) < 0 ? [f.start_from] : []).sort().forEach(function (t) {
@@ -436,7 +490,7 @@
       sel.onchange = function () { save({ start_from: sel.value }); };
       add(clear(top), add(el('div', 'card da-filter'),
         group('Залы', chips(f.venue_ids, 'venue_ids', j.venues.map(function (v) { return [v.id, v.name, v.street]; }))),
-        group('Уровень', chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, l.label]; }))),
+        group('Уровень', chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, lv[l.id]]; }))),
         group('Дни', chips(f.weekdays, 'weekdays', A.WEEK.map(function (w, i) { return [i, w]; }))),
         group('Начало', sel),
         el('span', 'mu da-gnote', 'фильтр — он же для уведомлений')));
@@ -451,10 +505,18 @@
           }), { onRow: function (i) { var g = j.my_games[i]; if (g.activity_id > 0) A.openLink('https://pilkanahali.pl/zajecia/' + g.activity_id); } }));
         body.appendChild(c);
       }
-      if (!j.games.length) return body.appendChild(add(el('div', 'card'), A.state('ball', 'Подходящих игр нет — переключи залы или уровни')));
+      // His games stand in the strips even when the filter hides them (or they are full): a «ты записан» card.
+      var games = j.games.slice();
+      j.my_games.forEach(function (g) {
+        var d = date(g.starts_at);
+        if (d < j.today || j.games.some(function (x) { return x.id === g.activity_id || (x.mine && x.date === d && x.start_at === time(g.starts_at)); })) return;
+        games.push({ date: d, start_at: time(g.starts_at), stop_at: g.ends_at ? time(g.ends_at) : '', venue: g.venue || '',
+          street: g.address || '', mine: true, url: g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null });
+      });
+      if (!games.length) return body.appendChild(add(el('div', 'card'), A.state('ball', 'Подходящих игр нет — переключи залы или уровни')));
       // From the week of the first game on: a Sunday with nothing left does not get a strip of its own.
       var byDay = {}, first = null, last = j.today;
-      j.games.forEach(function (g) {
+      games.forEach(function (g) {
         (byDay[g.date] = byDay[g.date] || []).push(g);
         if (!first || g.date < first) first = g.date;
         if (g.date > last) last = g.date;
@@ -476,8 +538,9 @@
       function game(g) {
         var price = g.price == null ? '' : (g.price % 1 ? zl(g.price) : g.price) + ' zł';
         var b = add(el('div', 'da-g' + (g.mine ? ' mine' : '') + (g.full ? ' full' : '')),
-          el('b', 'num da-gtm', g.start_at + '–' + g.stop_at),
-          add(el('div', 'da-gt'), el('span', 'da-gv', g.venue + (g.verified_only ? ' 🪪' : '')), el('span', 'num', g.taken + '/' + g.max_players)),
+          el('b', 'num da-gtm', g.start_at + (g.stop_at ? '–' + g.stop_at : '')),
+          add(el('div', 'da-gt'), el('span', 'da-gv', g.venue + (g.verified_only ? ' 🪪' : '')),
+            g.max_players != null ? el('span', 'num', g.taken + '/' + g.max_players) : null),
           el('div', 'mu', [lv[g.lv] || g.lv, price].filter(Boolean).join(' · ')),
           g.mine ? A.pill('ты записан', 'acc') : g.busy ? A.pill('у тебя игра') : null);
         b.title = [g.venue, g.street].filter(Boolean).join(', ');

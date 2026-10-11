@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 20:03">
+<meta name="published" content="2026-10-11 21:14">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -95,6 +95,7 @@ button{cursor:pointer}
 .row .t{font-weight:500}
 .row b{font-weight:600}
 .row .pr{flex:none;text-align:right;font:500 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .mech{display:block;color:var(--warn);font:400 12px var(--font)}
 .row .old{display:block;color:var(--muted-2);text-decoration:line-through;font:400 12px var(--font-num);font-variant-numeric:tabular-nums}
 .row .mk{width:22px;height:22px;color:var(--muted)}
 .row .mk.on{color:var(--mark)}
@@ -128,7 +129,7 @@ button{cursor:pointer}
 @media (max-width:399px){.foot .btn .i{display:none}}
 .bar{display:flex;gap:8px;margin:0 0 12px}
 .field{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);transition:border-color .12s,box-shadow .12s}
-.field:focus-within{border-color:var(--line-2);box-shadow:0 0 0 2px var(--accent-soft)}
+.field:focus-within{outline:2px solid var(--fg);outline-offset:2px}
 .field .i{width:18px;height:18px;color:var(--muted)}
 .field input{flex:1;min-width:0;height:42px;padding:0;border:0;background:none;outline:none;-webkit-appearance:none;appearance:none}
 .field input::placeholder{color:var(--muted-2)}
@@ -150,7 +151,7 @@ button{cursor:pointer}
 .state>.i{width:24px;height:24px;color:var(--muted-2)}
 .state p{max-width:32ch;margin:0}
 .skel{padding:16px 14px 8px}
-.skel i{display:block;height:12px;margin:0 0 12px;border-radius:6px;background:var(--surface-2);animation:pulse 1.2s ease-in-out infinite}
+.skel i{display:block;height:12px;margin:0 0 12px;border-radius:6px;background:var(--line);animation:pulse 1.2s ease-in-out infinite}
 .skel i:nth-child(1){width:42%;height:14px}.skel i:nth-child(2){width:88%}.skel i:nth-child(3){width:64%}
 @keyframes pulse{50%{opacity:.45}}
 .ptile{position:relative;flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font:20px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;object-fit:cover}
@@ -164,9 +165,9 @@ button{cursor:pointer}
 .poster.ph{display:grid;place-items:center;color:var(--muted)}
 .poster.ph .i{width:22px;height:22px}
 .poster-btn{flex:none;padding:0;border:0;background:none;line-height:0}
-.zoom{position:fixed;inset:0;z-index:9;display:grid;place-content:center;justify-items:center;gap:12px;background:rgba(0,0,0,.88);color:var(--toast-fg);animation:fade .12s}
+.zoom{position:fixed;inset:0;z-index:9;display:grid;place-content:center;justify-items:center;gap:12px;background:rgba(0,0,0,.95);color:var(--toast-fg);animation:fade .12s}
 .zoom img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:var(--r)}
-.zoom .x{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}
+.zoom .x{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));border-radius:50%;color:inherit;background:rgba(0,0,0,.4)}
 .zoom div{max-width:92vw;text-align:center;overflow-wrap:anywhere}
 body.zoomed{overflow:hidden}
 .row.film{align-items:flex-start}
@@ -247,7 +248,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .cols>.state{grid-column:1/-1}
   #toast{bottom:24px}
 }
-@media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 4px;font-size:12px}}
+@media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* After the Geist review (11.10): the active segment reads in dark, content centred on wide screens, a grey search
    clear in light, the focus ring inside a scrolling segment, 44 px segments on the phone, the current tab bolder. */
@@ -374,11 +375,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // «Убрал · Вернуть» for 10 s: the button brings the ids back, then `after`.
   function undoToast(s, ids, after) {
+    backToast(s, function () { api('telegram-webhook', { action: 'undo', ids: ids.join(',') }).then(after, noop); });
+  }
+  function backToast(s, fn) {
     var b = el('button', 'tl', 'Вернуть');
     b.type = 'button';
     b.onclick = function () {
       toastEl.className = '';
-      api('telegram-webhook', { action: 'undo', ids: ids.join(',') }).then(after, noop);
+      fn();
     };
     add(clear(toastEl), document.createTextNode(s + ' · '), b);
     toastEl.className = 'on act';
@@ -621,18 +625,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   moreBtn.setAttribute('aria-haspopup', 'dialog');
   moreBtn.onclick = openSheet;
   tabbar.appendChild(moreBtn);
-  scrim.onclick = closeSheet;
+  scrim.onclick = function () { closeSheet(true); };
   function openSheet() {
     shell.classList.add('more');
     sheet.setAttribute('aria-hidden', 'false');
     var b = sheet.querySelector('[aria-current]') || sheet.querySelector('button');
     if (b) b.focus();
   }
-  function closeSheet() {
+  function closeSheet(refocus) {
+    if (refocus && shell.classList.contains('more')) moreBtn.focus();
     shell.classList.remove('more');
     sheet.setAttribute('aria-hidden', 'true');
   }
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(true); });
   add(hdr, hTitle, hDate);
   if (browser) {
     var out = label(el('button', 'out'), 'logout', 'выйти');
@@ -1236,7 +1241,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         card.appendChild(add(foot, done, skip));
         body.appendChild(card);
       });
-      if (!shown) add(body, state(q ? 'search' : 'tag', q ? 'Ничего не нашлось' : 'Открытых партий нет. Новые приходят с газетками.'));
+      if (!shown) add(body, state(q ? 'search' : 'tag', q ? 'Ничего не нашлось' : 'Подборок акций пока нет — новые приходят с газетками (вс, пн, чт)'));
     }
     function load() {
       add(clear(body), skeleton(2));
@@ -1254,11 +1259,32 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var backHandler = null;
   function hideBack() {
     if (!backHandler) return;
-    try { tg.BackButton.offClick(backHandler); tg.BackButton.hide(); } catch (e) {}
+    if (hasBack()) try { tg.BackButton.offClick(backHandler); tg.BackButton.hide(); } catch (e) {}
     backHandler = null;
   }
   var SRC = { leaflet: 'газетка', 'aldi-json': 'Aldi', receipt: 'чек' };
   var SRC_CLASS = { leaflet: 's-lf', 'aldi-json': 's-al', receipt: 's-rc' };
+  // Telegram's Back button: from 6.1, not in a browser.
+  function hasBack() { try { return !browser && tg.isVersionAtLeast('6.1'); } catch (e) { return false; } }
+  // A leaflet mechanic in Russian: «−33% · при покупке 4».
+  function mechRu(s) {
+    s = String(s || '').toUpperCase();
+    var o = [], m;
+    if ((m = /DRUGI[^%\d]{0,20}(\d+)\s*%/.exec(s))) { o.push('второй −' + m[1] + '%'); s = s.replace(m[0], ''); }
+    if ((m = /[-−–](\d+)\s*%\s*CO DRUG/.exec(s))) { o.push('второй −' + m[1] + '%'); s = s.replace(m[0], ''); }
+    if ((m = /DRUGI ZA (\d+(?:[.,]\d+)?) ZŁ/.exec(s))) o.push('второй за ' + m[1] + ' zł');
+    if ((m = /(\d+)\+(\d+) GRATIS/.exec(s))) o.push(m[1] + '+' + m[2] + ' бесплатно');
+    if ((m = /[-−–](\d+)\s*%/.exec(s))) o.unshift('−' + m[1] + '%');
+    if ((m = /PRZY ZAKUPIE\s+(\d+)/.exec(s))) o.push('при покупке ' + m[1]);
+    if ((m = /KAŻD[AEY]\s+(\d+)/.exec(s))) o.push('за ' + m[1] + ' шт.');
+    if (/Z KART|APLIKACJ/.test(s)) o.push('по карте');
+    if (/SUPERCENA/.test(s)) o.push('суперцена');
+    return o.join(' · ');
+  }
+  // PNH levels: levelRu(id, label).
+  var LEVEL_RU = { beginners: 'начальный', medium: 'средний', medium_plus: 'средний+', intermediate: 'выше среднего', advanced: 'продвинутый' };
+  function levelRu(id, label) { return LEVEL_RU[id] || label || id; }
+  function hallRu(s) { var m = /Sala (\d+)/i.exec(s || ''); return m ? 'зал ' + m[1] : s; }
 
   function pricesView() {
     var list = el('div');
@@ -1295,7 +1321,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function loadWatch() {
       return api('telegram-webhook', { action: 'watch' }, 0, true).then(function (j) { watch = j.rows || []; }, noop);
     }
-    function price(pr, r) { text(pr, (watchOf(r) ? '👀 ' : '') + zl(r.last_price) + ' zł'); }
+    function price(pr, r) {
+      text(pr, (watchOf(r) ? '👀 ' : '') + zl(r.last_price) + ' zł');
+      if (r.conditional) add(pr, el('span', 'mech', mechRu(r.mechanic) || 'с условием'));
+    }
+    // The size only when the name does not end with it.
+    function sized(r, sep) {
+      var sq = function (s) { return String(s || '').toLowerCase().replace(/\s/g, ''); }, z = sq(r.size);
+      return r.product_name + (z && sq(r.product_name).slice(-z.length) !== z ? sep + r.size : '');
+    }
 
     function search() {
       var q = priceQuery.trim();
@@ -1305,21 +1339,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch()]).then(function (a) {
         if (mine !== seq || current !== 'prices') return;
         clear(results);
-        var rows = a[0].rows || [];
-        if (!rows.length) return add(results, state('search', 'Ничего не нашлось'));
+        var rows = a[0].rows || [], pl = a[0].query_pl, used = pl && pl !== q ? el('p', 'mu', 'искал: ' + pl) : null;
+        if (!rows.length) return add(results, add(state('search', 'Ничего не нашлось. Названия в газетках польские: masło, mleko, jaja…'), used));
         var card = el('div', 'card');
         rows.forEach(function (r) {
           var row = el('div', 'row');
           var tx = el('span', 'tx');
-          add(tx, el('b', '', r.product_name + (r.size ? ' · ' + r.size : '')),
-            el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + ' наблюдений'));
+          add(tx, el('b', '', sized(r, ' · ')),
+            el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + plural(r.n, [' наблюдение', ' наблюдения', ' наблюдений'])));
           var pr = el('span', 'pr');
           price(pr, r);
           add(row, prodPic(r.product_name, r.image_url, r.chain, null, false, r.emoji), tx, pr);
           tap(row, function () { open(r, pr); });
           card.appendChild(row);
         });
-        results.appendChild(card);
+        add(results, used, card);
       }, function (e) { if (!e.login && mine === seq && current === 'prices') failed(results, search); });
     }
     input.oninput = function () {
@@ -1337,7 +1371,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function open(r, pr) {
       list.style.display = 'none';
       clear(product);
-      var card = mkCard('trending', r.product_name + (r.size ? ' · ' + r.size : ''));
+      var card = mkCard('trending', sized(r, ' · '));
       var ch = card.firstChild;
       ch.replaceChild(prodPic(r.product_name, r.image_url, r.chain, null, true, r.emoji), ch.firstChild);
       ch.appendChild(add(el('span', 'tx'), ch.lastChild, el('div', 'mu', r.chain)));
@@ -1351,13 +1385,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       add(product, add(card, inner));
       backHandler = back;
-      try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
+      if (hasBack()) try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
       window.scrollTo(0, 0);
       var foot = el('div', 'foot'), buy = el('button', 'btn ghost', '🛒 В список'), wb = el('button', 'btn ghost'), w = null;
       buy.type = wb.type = 'button';
       function mark() { text(wb, '👀 Жду акцию' + (w ? ' ✓' : '')); if (pr) price(pr, r); }
       buy.onclick = function () {
-        api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : '') }).then(function (j) {
+        api('telegram-webhook', { action: 'add', text: sized(r, ' '), one: 1 }).then(function (j) {
           toast('Добавил: ' + j.added.join(', '));
         }, noop);
       };
@@ -1370,7 +1404,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             w = was ? null : { id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name };
             if (w) watch.push(w);
             mark();
-            toast(w ? 'Жду акцию — ⭐ в партиях' : 'Больше не жду');
+            toast(w ? 'Жду акцию — ⭐ в подборках' : 'Больше не жду');
           }, function (e) { if (e.code === 'no such item') loadWatch().then(function () { w = watchOf(r); mark(); }); });
       };
       add(foot, buy, wb);
@@ -1458,9 +1492,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     add(card, el('div', 'sub num', 'последняя ' + zl(s.last) + ' (' + dm(s.last_on) + ') · мин 90 дн ' +
       zl(s.min_90d) + (s.min_on ? ' (' + dm(s.min_on) + ')' : '') + ' · медиана ' + zl(s.median_90d) +
       ' · ' + (s.n_90d || 0) + ' набл.'));
-    if (s.best_now) add(card, add(el('div', 'sub'), pill('лучшая сейчас', 'good')));
+    // A multi-buy or card price is not «лучшая сейчас».
+    var lm = rows[rows.length - 1].mechanic || '';
+    if (s.best_now) add(card, add(el('div', 'sub'), /PRZY ZAKUPIE|SZT|DRUGI|KAŻD|Z KART|APLIKAC|APP/i.test(lm)
+      ? pill(mechRu(lm) || 'с условием', 'warn') : pill('лучшая сейчас', 'good')));
     rows.slice(-10).reverse().forEach(function (r) {
-      add(card, hrow(dm(r.observed_on) + ' · ' + (SRC[r.source] || r.source), r.mechanic || null, zl(r.price) + ' zł'));
+      add(card, hrow(dm(r.observed_on) + ' · ' + (SRC[r.source] || r.source), mechRu(r.mechanic) || null, zl(r.price) + ' zł'));
     });
   }
 
@@ -1720,7 +1757,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       function close() { z.remove(); h.remove('zoomed'); hideBack(); }
       z.onclick = backHandler = close;
       z.onkeydown = function (e) { if (e.key === 'Escape') close(); };
-      try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
+      if (hasBack()) try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
       h.add('zoomed');
       add(document.body, add(z, x, im, title && el('div', '', title)));
       haptic();
@@ -1743,10 +1780,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       e.onerror = function () { b.replaceWith(ph); };
       return b;
     }
-    function act(params, done) {
+    // back: the mark «Вернуть» sends (h: «хочу» again, c: unmarked).
+    function act(params, done, back) {
       haptic();
       api('telegram-webhook', params).then(function (j) {
-        toast(typeof done === 'function' ? done(j) : done);
+        var s = typeof done === 'function' ? done(j) : done;
+        if (back) backToast(s, function () { act({ action: 'film_mark', film: params.film, mark: back }, 'Вернул'); });
+        else toast(s);
         load();
       }, noop);
     }
@@ -1802,8 +1842,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // «Хочу» toggles: say what the server did, not what the tap meant.
     function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
-    function mark(f, m, ic, s, done) {
-      return btn(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done); });
+    function mark(f, m, ic, s, done, back) {
+      return btn(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done, back); });
     }
     // «О фильме»: the film's Cinema City page (description, trailer), where there is one.
     function about(f) {
@@ -1814,9 +1854,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         el('div', 'mu num', 'с ' + dm(f.release_date)),
         pills(f.sale),
         add(el('div', 'acts'),
-          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
+          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел', 'c'),
           mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'c'),
           about(f)),
         starBar(f.id, f.rating)));
     }
@@ -1826,7 +1866,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         el('div', 'mu num', 'с ' + dm(f.release_date)),
         add(el('div', 'acts'),
           mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'c'),
           about(f))));
     }
     var MONTHS = 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' ');
@@ -1836,8 +1876,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         el('div', 'mu num', !f.release_date ? '' : f.release_date <= today ? 'уже в прокате' : 'с ' + dm(f.release_date)),
         pills(f.cinemas),
         add(el('div', 'acts'),
-          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел', 'h'),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'h'),
           mark(f, 'h', 'target', 'Убрать', wantToast),
           about(f))));
     }
@@ -1884,7 +1924,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (shows.length) {
         c = mkCard('clock', 'Мои сеансы');
         shows.forEach(function (s) {
-          c.appendChild(hrow(s.film, whenW(s.starts_at) + ' · ' + [s.cinema, s.hall].filter(Boolean).join(', ')));
+          c.appendChild(hrow((s.display || s.film) + (s.ukrainian ? ' 🇺🇦' : ''), whenW(s.starts_at) + ' · ' + [s.cinema, hallRu(s.hall)].filter(Boolean).join(', ')));
         });
         body.appendChild(c);
       }
@@ -1954,7 +1994,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (current !== 'vb') return;
       if (!j || !j.filter) return failed(clear(body), load); // an old function answers a watch run
       var f = j.filter, lv = {}, days = {};
-      j.levels.forEach(function (l) { lv[l.id] = l.label; });
+      j.levels.forEach(function (l) { lv[l.id] = levelRu(l.id, l.label); });
       var sel = el('select');
       sel.setAttribute('aria-label', 'Начало не раньше');
       VB_FROM.concat(VB_FROM.indexOf(f.start_from) < 0 ? [f.start_from] : []).sort().forEach(function (t) {
@@ -1966,7 +2006,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       sel.onchange = function () { save({ start_from: sel.value }); };
       add(clear(top), add(mkCard('target', 'Фильтр', 'он же — для уведомлений'),
         chips(f.venue_ids, 'venue_ids', j.venues.map(function (v) { return [v.id, v.name, v.street]; })),
-        chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, l.label]; })),
+        chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, lv[l.id]]; })),
         add(chips(f.weekdays, 'weekdays', WEEK.map(function (w, i) { return [i, w]; })), sel)));
       clear(body);
       if (j.my_games.length) {
@@ -1981,7 +2021,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             (f.priority_weekdays.indexOf(d) >= 0 ? ' 🔥' : '')));
         }
         var r = hrow(g.start_at + '–' + g.stop_at + ' · ' + g.venue + (g.verified_only ? ' 🪪' : ''),
-          [lv[g.lv] || g.lv, 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
+          [lv[g.lv] || levelRu(g.lv), 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
           g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
         if (g.full) r.className += ' off';
         days[g.date].appendChild(r);
@@ -2202,7 +2242,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       b.onclick = function () { stream = s[0]; store('stream', stream); load(); };
       seg.appendChild(b);
     });
-    add(main, dig, med, seg, body);
+    add(main, seg, dig, med, body);
 
     // «📰 Выжимка»: the group's morning digest, a row per pick (the line, the
     // source label as the link); hidden when there is none.
@@ -2228,8 +2268,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     api('miniapp', { action: 'med' }, undefined, true).then(function (j) {
       var rows = (j.rows || []).slice(0, 8);
       if (current !== 'feed' || !rows.length) return;
-      var card = mkCard('steth', 'Медицина');
-      rows.forEach(function (r) {
+      // Three rows, the rest behind «ещё N».
+      var card = mkCard('steth', 'Медицина'), tail = [], more = el('div', 'row small mu', 'ещё ' + (rows.length - 3));
+      rows.forEach(function (r, k) {
         var a = el('a', 'lnk', r.title);
         if (/^https?:\/\//i.test(r.url)) a.href = r.url;
         a.onclick = function (ev) { ev.preventDefault(); openLink(r.url); };
@@ -2237,9 +2278,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var deal = dt ? dt + (r.code ? ' по коду ' + r.code : '') : r.code ? 'по коду ' + r.code : '';
         var rest = (r.price != null ? ' — ' + money(r.price) + ' zł' : '') + (deal ? ' · ' + deal : '') +
           (r.valid_to ? ' · до ' + dm(r.valid_to) : '');
-        card.appendChild(add(el('div', 'row'), add(el('span', 'tx'), document.createTextNode(r.provider + ' · '), a,
-          document.createTextNode(rest))));
+        var row = add(el('div', 'row'), add(el('span', 'tx'), document.createTextNode(r.provider + ' · '), a,
+          document.createTextNode(rest)));
+        if (k > 2) tail.push(row); else card.appendChild(row);
       });
+      if (tail.length) card.appendChild(tap(more, function () { more.remove(); add.apply(null, [card].concat(tail)); }));
       med.appendChild(card);
     }, noop);
 
@@ -2278,9 +2321,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           add(row, add(el('span', 'tx'), el('b', '', r.title), el('div', 'mu',
             (g[0] ? [at && when(at), r.place] : [r.place, p && p.day + '.' + p.month]).filter(Boolean).join(' · '))));
           if (/^https?:\/\//i.test(r.url)) tap(row, function () { openLink(r.url); });
-          // «📅 .ics»: the bot sends the event's file to the private chat.
+          // «📅 В календарь»: the bot sends the event's file to the private chat.
           if (r.starts_at && r.id) {
-            var ics = el('button', 'btn ghost x', '📅 .ics');
+            var ics = el('button', 'btn ghost x', '📅 В календарь');
             ics.type = 'button';
             ics.onclick = function (ev) {
               ev.stopPropagation();
@@ -2339,7 +2382,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // --- desktop (≥ 900 px) ---
   // app/desktop.css and app/desktop*.js are loaded only on a wide screen; they draw the tabs for a big
   // screen (DESKTOP.views[tab]) with the helpers below (docs/specs/miniapp-desktop.md). The phone never
-  // loads them. A script that arrives after the first paint redraws the current tab.
+  // loads them. The last script to arrive after the first paint redraws the current tab.
   var wideQuery = window.matchMedia ? matchMedia('(min-width:900px)') : null;
   function wide() { return !!(wideQuery && wideQuery.matches); }
   window.APP = {
@@ -2352,7 +2395,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     todayLabel: todayLabel, show: show, views: VIEWS, names: NAMES, tabs: TABS, main: main, hdr: hdr, rail: rail,
     hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
-    DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO,
+    DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };
@@ -2363,6 +2406,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (!wide() || loadDesktop.done) return;
     loadDesktop.done = true;
     var meta = document.querySelector('meta[name="published"]'), v = '?v=' + encodeURIComponent((meta && meta.content) || '0');
+    var left = DESKTOP_FILES.length;
     DESKTOP_FILES.forEach(function (f) {
       var css = document.createElement('link');
       css.rel = 'stylesheet';
@@ -2370,7 +2414,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       document.head.appendChild(css);
       var sc = document.createElement('script');
       sc.src = f + '.js' + v;
-      sc.onload = function () { if (current && DESKTOP.views[current] && shell.parentNode) show(current); };
+      sc.onload = sc.onerror = function () { if (!--left && current && DESKTOP.views[current] && shell.parentNode) show(current); };
       document.body.appendChild(sc);
     });
   }
