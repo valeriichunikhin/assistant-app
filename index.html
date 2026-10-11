@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 17:23">
+<meta name="published" content="2026-10-11 17:38">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1748,6 +1748,10 @@ button.pill{border:0;cursor:pointer}
     function mark(f, m, ic, s, done) {
       return btn(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done); });
     }
+    // «О фильме»: the film's Cinema City page (description, trailer), where there is one.
+    function about(f) {
+      return /^https?:\/\//i.test(String(f.link || '')) ? btn('link', 'О фильме', function () { openLink(f.link); }) : null;
+    }
     function premiere(f) {
       return add(el('div', 'row film'), poster(f.poster), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date)),
@@ -1755,7 +1759,8 @@ button.pill{border:0;cursor:pointer}
         add(el('div', 'acts'),
           mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
           mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно')),
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          about(f)),
         starBar(f.id, f.rating)));
     }
     // A «Скоро» film: its date, «Хочу» and «Не интересно».
@@ -1764,7 +1769,8 @@ button.pill{border:0;cursor:pointer}
         el('div', 'mu num', 'с ' + dm(f.release_date)),
         add(el('div', 'acts'),
           mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'))));
+          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
+          about(f))));
     }
     var MONTHS = 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' ');
     // A «хочу» film: out already or from its date, where it plays.
@@ -1775,7 +1781,8 @@ button.pill{border:0;cursor:pointer}
         add(el('div', 'acts'),
           mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел'),
           mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно'),
-          mark(f, 'h', 'target', 'Убрать', wantToast))));
+          mark(f, 'h', 'target', 'Убрать', wantToast),
+          about(f))));
     }
     function render(j) {
       if (current !== 'cinema') return;
