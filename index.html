@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-11 21:14">
+<meta name="published" content="2026-10-12 14:40">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -156,7 +156,7 @@ button{cursor:pointer}
 @keyframes pulse{50%{opacity:.45}}
 .ptile{position:relative;flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);font:20px/1 "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;object-fit:cover}
 .ptile.big{width:56px;height:56px;font-size:30px}
-.ptile .bd{position:absolute;right:-6px;bottom:-6px;padding:2px;border-radius:6px;background:var(--toast);box-shadow:0 0 0 1px var(--line);font-size:12px}
+.ptile .bd{position:absolute;right:-6px;bottom:-6px;padding:2px;border-radius:6px;background:var(--surface);box-shadow:0 0 0 1px var(--line);font-size:12px}
 .ptile.none{color:var(--muted)}
 .ptile .i{width:18px;height:18px}
 .tb{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-4px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer}
@@ -450,7 +450,34 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   function plain(html) {
     return String(html || '').replace(/<[^>]*>/g, '')
-      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+      .replace(/&#(x[0-9a-f]+|\d+);/gi, function (m, n) {
+        var c = n[0] === 'x' || n[0] === 'X' ? parseInt(n.slice(1), 16) : +n;
+        return c > 0 && c < 0x110000 ? String.fromCodePoint(c) : m;
+      })
+      .replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  }
+  // A deal line («Żel do prania Coccolino, 1,48 l · <b>−50%</b> · 1+1 🪪») as a person reads it: the full name
+  // (the label is cut at 21 letters) and a Russian note of the deal; the price stays in its own column.
+  var DEAL_RU = [[/^drugi −(\d+)%$/i, 'второй −$1%'], [/^drugi za (.+)$/i, 'второй за $1'], [/^co druga −(\d+)%$/i, 'каждая вторая −$1%'],
+    [/^przy (\d+) szt\.$/i, 'при покупке $1 шт.'], [/^1\+1$/, 'второй в подарок'], [/^2\+1$/, 'третий в подарок'],
+    [/^supercena$/i, 'суперцена']];
+  function dealParts(c) {
+    var s = plain(c.line), star = /^⭐ /.test(s), warn;
+    s = s.replace(/^⭐ /, '');
+    warn = /^⚠️ не скидка · /.test(s);
+    s = s.replace(/^⚠️ не скидка · /, '');
+    var segs = s.split(' · '), name = segs.shift() || String(c.label || '').replace(/^⭐ /, '').replace(/^[−-]\d+% /, '');
+    var note = [];
+    segs.forEach(function (x) {
+      var card = / 🪪$/.test(x);
+      x = x.replace(/ 🪪$/, '').replace(/ 🪪/g, ' по карте').trim();
+      if (/^\d[\d,]*( \d[\d,]*)?$/.test(x)) x = '';  // the price and the old price: the right column has them
+      DEAL_RU.forEach(function (r) { x = x.replace(r[0], r[1]); });
+      if (x) note.push(x);
+      if (card) note.push('по карте');
+    });
+    if (warn) note.unshift('⚠️ не скидка');
+    return { name: (star ? '⭐ ' : '') + name, note: note.join(' · ') };
   }
   function noop() {}
 
@@ -1171,7 +1198,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var save = 0, n = 0;
       ps.forEach(function (p) {
         var side = function (chain, price, cardOnly) {
-          return el('span', p.cheaper === chain ? 'cw' : '', chain + ' ' + zl(price) + (cardOnly ? ' 🪪' : ''));
+          return el('span', p.cheaper === chain ? 'cw' : '', chain + ' ' + zl(price) + (cardOnly ? ' по карте' : ''));
         };
         if (p.cheaper !== 'equal') { save += p.diff; n++; }
         add(card, add(el('div', 'row'), prodPic(p.product, null, p.cheaper, null, false, p.emoji),
@@ -1203,11 +1230,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (q && !hits.length) return;
         shown++;
         var sel = cs.filter(function (c) { return c.selected; }).length;
-        var card = mkCard('tag', b.title, [b.chain, 'выбрано ' + sel + ' из ' + cs.length].filter(Boolean).join(' · '));
+        var card = mkCard('tag', b.title, 'выбрано ' + sel + ' из ' + cs.length);
         hits.forEach(function (c) {
           var row = el('div', 'row');
           var tx = el('span', 'tx');
-          add(tx, el('b', '', c.label), el('div', 'mu', plain(c.line)));
+          var dp = dealParts(c);
+          add(tx, el('b', '', dp.name), dp.note ? el('div', 'mu', dp.note) : null);
           var pr = el('span', 'pr');
           if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
           if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
@@ -2388,7 +2416,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   window.APP = {
     el: el, add: add, text: text, clear: clear, icon: icon, label: label, mkCard: mkCard, pill: pill, lead: lead,
     skeleton: skeleton, state: state, failed: failed, toast: toast, undoToast: undoToast, haptic: haptic, tap: tap,
-    api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, whenW: whenW, wd: wd, wp: wp, days: days,
+    api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, dealParts: dealParts, whenW: whenW, wd: wd, wp: wp, days: days,
     addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,
     drawProduct: drawProduct, weekChart: weekChart, rateText: rateText, hrow: hrow, capped: capped,
     myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, categoryOf: categoryOf,

@@ -81,6 +81,10 @@
   // The line (deal_batch) holds the full name, the mechanic, 🪪 and the 90-day verdict; the label is cut to 21 characters.
   // The rest drops the price segment («7,98 13,99») and «−43%»: the cell shows both already (a trailing 🪪 stays).
   function lineParts(c) {
+    if (A.dealParts) {  // index.html's reading: the full name and a Russian note of the deal
+      var dp = A.dealParts(c);
+      return { name: dp.name.replace(/^⭐ /, ''), rest: dp.note.replace(/^⚠️ не скидка( · )?/, ''), warn: /^⚠️/.test(dp.note) };
+    }
     var s = A.plain(c.line).replace(/^⭐ /, ''), warn = /^⚠️/.test(s);
     s = s.replace(/^⚠️ не скидка · /, '');
     var i = s.indexOf(' · ');
