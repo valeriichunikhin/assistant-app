@@ -142,15 +142,10 @@
       return items.some(function (i) { return !i.done && String(i.text || '').toLowerCase().indexOf(n) === 0; });
     }
     function stat(s, n) { return add(el('span'), document.createTextNode(s + ' '), el('b', '', n)); }
-    // At once on the screen, back as it was when the call fails; the focus stays on the row (k) it was on.
+    // At once on the screen, saved in the background as on the phone (APP.markItem); the focus stays on the row (k).
     function toggle(i, k) {
-      var was = i.done;
       A.haptic();
-      i.done = !was;
-      render(k);
-      api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) {
-        if (j.done !== i.done) { i.done = j.done; render(k); }
-      }, function () { i.done = was; render(k); });
+      A.markItem(i, function () { render(k); });
     }
     function render(k) {
       if (!on('list') || !lbody.isConnected) return;
@@ -166,10 +161,12 @@
       lbody.appendChild(D.table([{ h: '', w: '40px' }, { h: 'Товар' }, { h: 'Шт', r: true, w: '48px' },
         { h: 'Откуда', w: '84px' }, { h: '', w: '96px' }], items.map(function (i) {
         var x = confirmed('x', '', function () {
+          A.dropMark(A.itemKey(i));
+          items = items.filter(function (y) { return y !== i; });
+          render();
           api('telegram-webhook', { action: 'delete', id: i.id }).then(function (j) {
             A.undoToast('Убрал', [j.id], load);
-            load();
-          }, function (e) { if (e.code === 'no such item') load(); });
+          }, load);
         });
         x.setAttribute('aria-label', 'Убрать');
         return [icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
@@ -204,6 +201,7 @@
     function load() {
       api('telegram-webhook', { action: 'items' }, undefined, true).then(function (j) {
         items = j.items || [];
+        A.keepItems(items, render);
         render();
       }, function (e) { if (!e.login && on('list')) A.failed(lbody, load); });
     }
@@ -247,7 +245,14 @@
     var bar = el('div', 'dtool'), inp = input('Поиск по акциям', pickQ, 'search'), cats = el('div', 'chips dchips');
     inp.oninput = function () { pickQ = inp.value; render(); };
     var body = add(el('div'), A.skeleton(2));
-    add(main, add(bar, field('search', inp, 'dq'), cats), body);
+    add(main, A.pickSeg(), add(bar, field('search', inp, 'dq'), cats), body);
+    // «Все акции»: the phone's view (APP.dealsAll) in the wide grid, filtered by this search field.
+    if (A.pickAll()) {
+      body.className = 'cols';
+      var redraw = A.dealsAll(body, function () { return pickQ; });
+      inp.oninput = function () { pickQ = inp.value; redraw(); };
+      return;
+    }
     var batches = null, cmp = null;
 
     function catOf(c) { return c.category || A.categoryOf(c.label); }
@@ -315,14 +320,18 @@
         var skip = label(el('button', 'btn ghost'), 'x', 'Пропустить');
         done.type = skip.type = 'button';
         done.onclick = function () {
-          api('telegram-webhook', { action: 'pick_done', batch: b.id }).then(function (j) {
-            toast('Добавил ' + j.added);
-            drop(b);
-          }, function (e) { if (e.code === 'closed') drop(b); });
+          A.flushBatch(b).then(function () {
+            api('telegram-webhook', { action: 'pick_done', batch: b.id }).then(function (j) {
+              toast('Добавил ' + j.added);
+              drop(b);
+            }, function (e) { if (e.code === 'closed') drop(b); });
+          });
         };
         skip.onclick = function () {
-          api('telegram-webhook', { action: 'pick_skip', batch: b.id }).then(function () { drop(b); },
-            function (e) { if (e.code === 'closed') drop(b); });
+          A.flushBatch(b).then(function () {
+            api('telegram-webhook', { action: 'pick_skip', batch: b.id }).then(function () { drop(b); },
+              function (e) { if (e.code === 'closed') drop(b); });
+          });
         };
         head.appendChild(add(el('div', 'dbtns'), done, skip));
         var grid = el('div', 'dprods');
@@ -333,10 +342,7 @@
           cell.setAttribute('aria-pressed', c.selected ? 'true' : 'false');
           A.tap(cell, function () {
             A.haptic();
-            api('telegram-webhook', { action: 'pick', id: c.id }).then(function (j) {
-              c.selected = j.selected;
-              render();
-            }, function (e) { if (e.code === 'closed') drop(b); });
+            A.markPick(c, b, render, function () { drop(b); });
           });
           grid.appendChild(cell);
         });
@@ -350,6 +356,7 @@
       api('telegram-webhook', { action: 'compare' }, undefined, true).then(function (j) { cmp = j; render(); }, noop);
       api('telegram-webhook', { action: 'picks' }, undefined, true).then(function (j) {
         batches = j.batches || [];
+        A.keepPicks(batches, render);
         render();
       }, function (e) { if (!e.login && on('picks')) A.failed(body, load); });
     }

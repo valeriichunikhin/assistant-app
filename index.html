@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-12 14:40">
+<meta name="published" content="2026-10-13 11:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -174,6 +174,7 @@ body.zoomed{overflow:hidden}
 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.chips.dchain{padding:0 0 12px}
 .chips .pill,.chips select{height:44px;padding:0 12px;font-size:13px}
 .chips select{font-size:16px}
 .chips select{border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);color:var(--fg);font-family:var(--font)}
@@ -504,10 +505,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var CATS = [['pets', '🐾', ['karma', 'dla kota', 'dla psa', 'żwirek', 'whiskas', 'pedigree', 'felix', 'purina']],
     ['kids', '👶', ['pieluch', 'pampers', 'dla dzieci', 'dla niemowl', 'mleko modyfikowane', 'kaszka', 'chusteczki nawilżane']],
     ['alcohol', '🍺', ['piwo', 'wino', 'wódka', 'whisk', 'likier', 'prosecco', 'cydr', 'gin ', 'rum ']],
-    ['household', '🧴', ['płyn do', 'proszek', 'kapsułki do prania', 'papier toalet', 'ręcznik papier', 'worki', 'zmywak', 'domestos', 'cif', 'ariel', 'persil', 'lenor', 'vizir', 'coccolino', 'odświeżacz', 'gąbk', 'ściereczk']],
-    ['cosmetics', '🧼', ['szampon', 'żel pod prysznic', 'pasta do zęb', 'szczoteczk', 'dezodorant', 'antyperspirant', 'krem', 'maszynk', 'gillette', 'axe', 'nivea', 'dove', 'mydło', 'podpask', 'tampon', 'balsam', 'perfum', 'wod. toaletowa']],
+    ['household', '🧴', ['płyn do', 'serwet', 'proszek', 'kapsułki do prania', 'papier toalet', 'ręcznik papier', 'worki', 'zmywak', 'domestos', 'cif', 'ariel', 'persil', 'lenor', 'vizir', 'coccolino', 'odświeżacz', 'gąbk', 'ściereczk']],
+    ['cosmetics', '🧼', ['szampon', 'żel pod prysznic', 'twarzy', 'micelarn', 'pasta do zęb', 'szczoteczk', 'dezodorant', 'antyperspirant', 'krem', 'maszynk', 'gillette', 'axe', 'nivea', 'dove', 'mydło', 'podpask', 'tampon', 'balsam', 'perfum', 'wod. toaletowa']],
     ['sweets', '🍫', ['czekolad', 'pralin', 'ptasie', 'ciast', 'wafel', 'żelk', 'drażet', 'cukier', 'chips', 'rogal', 'toffi', 'merci', 'raffaello', 'ferrero', 'lindt', 'syrop', 'mus ', 'baton', 'orzeszk', 'paluszk', 'krakers']],
-    ['dairy', '🥛', ['mleko', 'masło', 'ser', 'jogurt', 'śmietan', 'twar', 'jaj', 'kefir', 'maślank', 'deser']],
+    ['dairy', '🥛', ['mleko', 'masło', 'ser', 'jogurt', 'śmietan', 'twaróg', 'twarog', 'jaj', 'kefir', 'maślank', 'deser']],
     ['meat', '🥩', ['mięs', 'schab', 'łopatk', 'parówk', 'kiełbas', 'szynk', 'boczek', 'kurcz', 'indyk', 'ryb', 'łosoś', 'śledź', 'kabanos', 'wędlin', 'frankfurt', 'karkówk', 'wołow', 'filet']],
     ['produce', '🍅', ['pomidor', 'banan', 'winogron', 'malin', 'cytryn', 'jabł', 'ogór', 'papryk', 'pieczark', 'ziemniak', 'cebul', 'marchew', 'sałat', 'gruszk', 'śliwk', 'borów', 'awokado', 'mandarynk', 'pomarańcz', 'truskawk']],
     ['ready', '🍱', ['mrożon', 'lody', 'frytki', 'pierogi', 'nuggets', 'gotow', 'zestaw obiadowy', 'sałatka', 'kebab', 'burger']],
@@ -720,6 +721,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
   function show(tab) {
     if (!isView(tab)) tab = 'home';
+    flushMarks('');
     current = tab;
     store('tab', tab);
     if (browser && location.hash !== '#' + tab) {
@@ -1043,6 +1045,92 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     load();
   }
 
+  // --- optimistic marks (docs/specs/optimistic-toggles.md) ---
+  // A tap changes the mark on screen at once; the save goes 400 ms after the last tap on that item, with the final
+  // state, and not at all when that is the last confirmed one. A failed save puts the confirmed state back.
+  // Per key ('item:<id>', 'pick:<batch>:<id>'): ok (confirmed), want (on screen), send(state) → a promise of the
+  // server's state, show(state) to put a state on screen, fail(err) after a revert; n saves under way, t the timer.
+  var marks = {}, SAVE_FAILED = 'Не сохранилось — проверь связь';
+  function mark(key, want, was, send, show, fail) {
+    var m = marks[key] || (marks[key] = { ok: was, n: 0, busy: Promise.resolve() });
+    m.want = want;
+    m.send = send;
+    m.show = show;
+    m.fail = fail;
+    clearTimeout(m.t);
+    m.t = setTimeout(function () { flushMark(key); }, 400);
+  }
+  function flushMark(key) {
+    var m = marks[key];
+    clearTimeout(m.t);
+    m.t = null;
+    m.n++;
+    return m.busy = m.busy.then(function () {
+      if (m.want === m.ok) return;
+      return m.send(m.want).then(function (v) {
+        m.ok = v;
+        if (v !== m.want && !m.t) { m.want = v; m.show(v); }
+      }, function (e) {
+        clearTimeout(m.t);
+        m.t = null;
+        m.want = m.ok;
+        m.show(m.ok);
+        m.fail(e);
+      });
+    }).then(function () { if (!--m.n && !m.t && marks[key] === m) delete marks[key]; });
+  }
+  // Sends the pending marks whose key starts with `prefix` now; resolves when they are all answered.
+  function flushMarks(prefix) {
+    return Promise.all(Object.keys(marks).filter(function (k) { return k.indexOf(prefix) === 0; }).map(flushMark));
+  }
+  // Forgets an item's pending mark (it is being deleted).
+  function dropMark(key) {
+    var m = marks[key];
+    if (m && !m.n) { clearTimeout(m.t); delete marks[key]; }
+  }
+  // After a reload: rows whose mark is still on its way show it as tapped, and a failure lands on the new rows.
+  function keepMarks(rows, key, field, render) {
+    rows.forEach(function (r) {
+      var m = marks[key(r)];
+      if (!m) return;
+      r[field] = m.want;
+      m.show = function (v) { r[field] = v; render(); };
+    });
+  }
+  function itemKey(i) { return 'item:' + i.id; }
+  // The list's ✓ and a pick's ☐: flipped and drawn (render) at once, saved in the background.
+  function markItem(i, render) {
+    var was = i.done;
+    i.done = !was;
+    render();
+    mark(itemKey(i), i.done, was, function (v) {
+      return api('telegram-webhook', { action: 'toggle', id: i.id, done: v ? 1 : 0 }, undefined, true)
+        .then(function (j) { return j.done; });
+    }, function (v) { i.done = v; render(); }, function () { toast(SAVE_FAILED); });
+  }
+  function keepItems(items, render) { keepMarks(items, itemKey, 'done', render); }
+  // `closed` runs when the batch is closed already (instead of the toast).
+  function markPick(c, b, render, closed) {
+    var was = c.selected;
+    c.selected = !was;
+    render();
+    mark('pick:' + b.id + ':' + c.id, c.selected, was, function (v) {
+      return api('telegram-webhook', { action: 'pick', id: c.id, selected: v ? 1 : 0 }, undefined, true)
+        .then(function (j) { return j.selected; });
+    }, function (v) { c.selected = v; render(); }, function (e) {
+      if (e.code === 'closed') closed();
+      else toast(SAVE_FAILED);
+    });
+  }
+  function keepPicks(batches, render) {
+    batches.forEach(function (b) {
+      keepMarks(b.candidates || [], function (c) { return 'pick:' + b.id + ':' + c.id; }, 'selected', render);
+    });
+  }
+  // «Готово» and «Пропустить» send the batch's pending picks first.
+  function flushBatch(b) { return flushMarks('pick:' + b.id + ':'); }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) flushMarks(''); });
+
   // --- list ---
   var draft = '';
   function listView() {
@@ -1112,10 +1200,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             return;
           }
           disarm();
+          dropMark(itemKey(i));
+          items = items.filter(function (x) { return x !== i; });
+          render();
           api('telegram-webhook', { action: 'delete', id: i.id }).then(function (j) {
             undoToast('Убрал', [j.id], load);
-            load();
-          }, function (e) { if (e.code === 'no such item') load(); });
+          }, load);
         };
         add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
           prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji),
@@ -1123,10 +1213,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         // The whole row takes a tap; the text is the keyboard stop, the ✕ stays its own button.
         function toggle() {
           haptic();
-          api('telegram-webhook', { action: 'toggle', id: i.id }).then(function (j) {
-            i.done = j.done;
-            render();
-          }, noop);
+          markItem(i, render);
         }
         var txt = row.querySelector('.tx');
         txt.tabIndex = 0;
@@ -1170,6 +1257,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!body.firstChild) add(body, skeleton(1));
       api('telegram-webhook', { action: 'items' }, undefined, true).then(function (j) {
         items = j.items || [];
+        keepItems(items, render);
         render();
       }, function (e) { if (!e.login && current === 'list') failed(body, load); });
     }
@@ -1178,16 +1266,152 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
   // --- picks ---
   var pickQuery = '';
+  // The tab's two views: «Все акции» (every current offer, ?action=deals_all) and «Подборки» (the open batches).
+  var pickMode = store('pickMode') === 'batches' ? 'batches' : 'all', dealChain = '';
+  // JS twins of pct() and mech_short() in scripts/deal_batch.py: the effective percent («DRUGI 80% TANIEJ» counts
+  // half, 1+1 = 50, 2+1 = 33) and the mechanic in Russian; edit both together. pyRound is Python's round().
+  function pyRound(v) { var r = Math.round(v); return Math.abs(v % 1) === 0.5 && r % 2 ? r - 1 : r; }
+  function dealPct(o) {
+    var mm = String(o.mechanic || '').toUpperCase(), x;
+    if ((x = /DRUG[IĄA] ZA (\d+(?:[.,]\d+)?)\s*Z/.exec(mm)) && o.old_price) {
+      return Math.max(0, pyRound((o.old_price - parseFloat(x[1].replace(',', '.'))) / (2 * o.old_price) * 100));
+    }
+    if (o.old_price && o.price && o.old_price > o.price) return pyRound((1 - o.price / o.old_price) * 100);
+    if ((x = /DRUGI (\d+)% TANIEJ/.exec(mm))) return pyRound(+x[1] / 2);
+    if ((x = /-?(\d+)% CO DRUGA/.exec(mm))) return pyRound(+x[1] / 2);
+    if ((x = /(\d+)% TANIEJ/.exec(mm))) return +x[1];
+    if (mm.indexOf('1+1') >= 0) return 50;
+    if (mm.indexOf('2+1') >= 0) return 33;
+    return 0;
+  }
+  var MECH_RU = [[/DRUGI (\d+)% TANIEJ/, 'второй −', '%'], [/DRUGI ZA (\d+) ZŁ/, 'второй за ', ' zł'],
+    [/-?(\d+)% CO DRUGA/, 'каждая вторая −', '%'], [/PRZY ZAKUPIE (\d+)/, 'при покупке ', ' шт.']];
+  function dealMech(m) {
+    m = String(m || '').toUpperCase();
+    for (var i = 0, x; i < MECH_RU.length; i++) {
+      if ((x = MECH_RU[i][0].exec(m))) return MECH_RU[i][1] + x[1] + MECH_RU[i][2];
+    }
+    if (m.indexOf('1+1') >= 0) return 'второй в подарок';
+    if (m.indexOf('2+1') >= 0) return 'третий в подарок';
+    if (m.indexOf('SUPERCENA') >= 0) return 'суперцена';
+    return '';
+  }
+  var MON = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  // A date as a word: the weekday within a week of today, else «17 окт».
+  function dayWord(d, today) {
+    return days(today, d) <= 6 ? WEEK[wd(d)] : +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1];
+  }
+  // «Все акции»: the offers grouped by the bot's categories (categoryOf, as deal_batch.py does), in
+  // deal_categories order, disabled ones hidden and named below; chain chips and the tab's search filter them.
+  // query() is the search field's text; returns the redraw for that field. Also the desktop's view (desktop-b.js).
+  function dealsAll(body, query) {
+    var top = el('div', 'chips dchain'), note = el('p', 'mu'), data = null, opened = {};
+    body.parentNode.insertBefore(top, body);
+    body.parentNode.insertBefore(note, body.nextSibling);
+    function render() {
+      if (current !== 'picks' || !data) return;
+      clear(body);
+      clear(top);
+      text(note, '');
+      var q = query().trim().toLowerCase(), today = data.today, byId = {}, n = { '': 0, Biedronka: 0, Aldi: 0 };
+      data.categories.forEach(function (c) { byId[c.id] = { c: c, rows: [] }; });
+      (data.offers || []).forEach(function (o) {
+        if (q && o.name.toLowerCase().indexOf(q) < 0) return;
+        var g = byId[categoryOf(o.name)] || byId.other;
+        if (!g) return;
+        if (g.c.enabled) { n['']++; n[o.chain] = (n[o.chain] || 0) + 1; }
+        if (!dealChain || o.chain === dealChain) g.rows.push(o);
+      });
+      [['', 'Все'], ['Biedronka', 'Biedronka'], ['Aldi', 'Aldi']].forEach(function (c) {
+        var on = dealChain === c[0], b = el('button', 'pill' + (on ? ' acc' : ''), c[1] + ' ' + (n[c[0]] || 0));
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(on));
+        b.onclick = function () { dealChain = c[0]; render(); };
+        top.appendChild(b);
+      });
+      var hidden = [], shown = 0;
+      data.categories.slice().sort(function (a, b) { return a.sort - b.sort; }).forEach(function (c) {
+        var rows = byId[c.id].rows, sp = c.title.indexOf(' ');
+        if (!rows.length) return;
+        if (!c.enabled) return hidden.push(c.title.slice(sp + 1) + ' (' + rows.length + ')');
+        shown++;
+        rows.forEach(function (o) { o.pct = dealPct(o); });
+        rows.sort(function (a, b) {
+          return (a.valid_from > today) - (b.valid_from > today) || b.pct - a.pct || a.price - b.price;
+        });
+        var best = Math.max.apply(null, rows.map(function (o) { return o.pct; }));
+        var card = mkCard('tag', sp > 0 ? c.title.slice(sp + 1) : c.title,
+          rows.length + ' ' + plural(rows.length, ['акция', 'акции', 'акций']) + (best ? ' · до −' + best + '%' : ''));
+        text(card.querySelector('.ico'), sp > 0 ? c.title.slice(0, sp) : CAT_EMO[c.id] || '');
+        var all = opened[c.id] || rows.length <= 6;
+        (all ? rows : rows.slice(0, 6)).forEach(function (o) {
+          var z = String(o.size || '').toLowerCase().replace(/\s/g, '');
+          var name = o.name + (z && o.name.toLowerCase().replace(/\s/g, '').slice(-z.length) !== z ? ', ' + o.size : '');
+          var when = o.valid_from > today ? 'с ' + dayWord(o.valid_from, today)
+            : o.valid_to === today ? 'только сегодня' : 'до ' + dayWord(o.valid_to, today);
+          var line = [o.pct ? '−' + o.pct + '%' : '', dealMech(o.mechanic), o.card ? 'по карте' : '', when]
+            .filter(Boolean).join(' · ');
+          var pr = el('span', 'pr');
+          if (o.price > 0) {
+            add(pr, el('span', '', zl(o.price) + ' zł'));
+            if (o.old_price > o.price) add(pr, el('span', 'old', zl(o.old_price)));
+          }
+          card.appendChild(add(el('div', 'row'), prodPic(o.name, o.image_url, o.chain, categoryOf(o.name), false, o.emoji),
+            add(el('span', 'tx'), el('b', '', name), add(el('div', 'mu', line), pill(o.chain === 'Aldi' ? 'A' : 'B'))), pr));
+        });
+        if (!all) {
+          var more = label(el('button', 'btn ghost'), null, 'Ещё ' + (rows.length - 6));
+          more.type = 'button';
+          more.onclick = function () { opened[c.id] = true; render(); };
+          card.appendChild(add(el('div', 'foot'), more));
+        }
+        body.appendChild(card);
+      });
+      if (!shown) add(body, state(q ? 'search' : 'tag', q ? 'Ничего не нашлось' : 'Акций на сегодня нет'));
+      if (hidden.length) text(note, 'Скрыты выключенные категории: ' + hidden.join(', '));
+    }
+    function load() {
+      add(clear(body), skeleton(2));
+      api('telegram-webhook', { action: 'deals_all' }, undefined, true).then(function (j) {
+        data = j;
+        render();
+      }, function (e) { if (!e.login && current === 'picks') failed(body, load); });
+    }
+    load();
+    return render;
+  }
+  // The «Все акции · Подборки» switch; a change redraws the tab (the phone's or the desktop's view).
+  function pickSeg() {
+    var seg = el('div', 'seg');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Вид акций');
+    [['all', 'Все акции'], ['batches', 'Подборки']].forEach(function (m) {
+      var b = el('button', m[0] === pickMode ? 'on' : '', m[1]);
+      b.type = 'button';
+      b.onclick = function () {
+        if (pickMode === m[0]) return;
+        pickMode = m[0];
+        store('pickMode', pickMode);
+        show('picks');
+      };
+      seg.appendChild(b);
+    });
+    return seg;
+  }
+  function pickAll() { return pickMode === 'all'; }
   function picksView() {
+    var seg = pickSeg();
     var bar = el('div', 'bar');
     var input = el('input');
     input.placeholder = 'Поиск по акциям';
     input.type = 'search';
     input.value = pickQuery;
     input.setAttribute('aria-label', 'Поиск по акциям');
-    input.oninput = function () { pickQuery = input.value; render(); };
+    input.oninput = function () { pickQuery = input.value; (redraw || render)(); };
     var body = el('div', 'cols');
-    add(main, add(bar, add(el('label', 'field'), icon('search'), input)), body);
+    add(main, seg, add(bar, add(el('label', 'field'), icon('search'), input)), body);
+    var redraw = pickAll() ? dealsAll(body, function () { return pickQuery; }) : null;
+    if (redraw) return;
     var batches = null, cmp = null;
 
     // ⚖️ the week's Aldi vs Biedronka pairs (?action=compare); hidden while searching.
@@ -1244,10 +1468,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           row.setAttribute('aria-pressed', c.selected ? 'true' : 'false');
           tap(row, function () {
             haptic();
-            api('telegram-webhook', { action: 'pick', id: c.id }).then(function (j) {
-              c.selected = j.selected;
-              render();
-            }, function (e) { if (e.code === 'closed') drop(b); });
+            markPick(c, b, render, function () { drop(b); });
           });
           card.appendChild(row);
         });
@@ -1256,15 +1477,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var skip = label(el('button', 'btn ghost'), 'x', 'Пропустить');
         done.type = skip.type = 'button';
         done.onclick = function () {
-          api('telegram-webhook', { action: 'pick_done', batch: b.id }).then(function (j) {
-            toast('Добавил ' + j.added);
-            drop(b);
-          }, function (e) { if (e.code === 'closed') drop(b); });
+          flushBatch(b).then(function () {
+            api('telegram-webhook', { action: 'pick_done', batch: b.id }).then(function (j) {
+              toast('Добавил ' + j.added);
+              drop(b);
+            }, function (e) { if (e.code === 'closed') drop(b); });
+          });
         };
         skip.onclick = function () {
-          api('telegram-webhook', { action: 'pick_skip', batch: b.id }).then(function () {
-            drop(b);
-          }, function (e) { if (e.code === 'closed') drop(b); });
+          flushBatch(b).then(function () {
+            api('telegram-webhook', { action: 'pick_skip', batch: b.id }).then(function () {
+              drop(b);
+            }, function (e) { if (e.code === 'closed') drop(b); });
+          });
         };
         card.appendChild(add(foot, done, skip));
         body.appendChild(card);
@@ -1276,6 +1501,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       api('telegram-webhook', { action: 'compare' }, undefined, true).then(function (j) { cmp = j; render(); }, noop);
       api('telegram-webhook', { action: 'picks' }, undefined, true).then(function (j) {
         batches = j.batches || [];
+        keepPicks(batches, render);
         render();
       }, function (e) { if (!e.login && current === 'picks') failed(body, load); });
     }
@@ -2420,7 +2646,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,
     drawProduct: drawProduct, weekChart: weekChart, rateText: rateText, hrow: hrow, capped: capped,
     myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, categoryOf: categoryOf,
-    todayLabel: todayLabel, show: show, views: VIEWS, names: NAMES, tabs: TABS, main: main, hdr: hdr, rail: rail,
+    todayLabel: todayLabel, show: show, views: VIEWS, markItem: markItem, keepItems: keepItems, dropMark: dropMark,
+    itemKey: itemKey, markPick: markPick, keepPicks: keepPicks, flushBatch: flushBatch, pickSeg: pickSeg,
+    pickAll: pickAll, dealsAll: dealsAll, names: NAMES, tabs: TABS, main: main, hdr: hdr, rail: rail,
     hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
     DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
