@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-13 11:22">
+<meta name="published" content="2026-10-13 11:27">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1301,7 +1301,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function dayWord(d, today) {
     return days(today, d) <= 6 ? WEEK[wd(d)] : +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1];
   }
-  // «Все акции»: the offers grouped by the bot's categories (categoryOf, as deal_batch.py does), in
+  // «Все акции»: the offers grouped by the bot's categories (the leaflet's own, else categoryOf, as deal_batch.py does), in
   // deal_categories order, disabled ones hidden and named below; chain chips and the tab's search filter them.
   // query() is the search field's text; returns the redraw for that field. Also the desktop's view (desktop-b.js).
   function dealsAll(body, query) {
@@ -1317,7 +1317,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       data.categories.forEach(function (c) { byId[c.id] = { c: c, rows: [] }; });
       (data.offers || []).forEach(function (o) {
         if (q && o.name.toLowerCase().indexOf(q) < 0) return;
-        var g = byId[categoryOf(o.name)] || byId.other;
+        var g = byId[o.category || categoryOf(o.name)] || byId.other;
         if (!g) return;
         if (g.c.enabled) { n['']++; n[o.chain] = (n[o.chain] || 0) + 1; }
         if (!dealChain || o.chain === dealChain) g.rows.push(o);
@@ -1356,7 +1356,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             add(pr, el('span', '', zl(o.price) + ' zł'));
             if (o.old_price > o.price) add(pr, el('span', 'old', zl(o.old_price)));
           }
-          card.appendChild(add(el('div', 'row'), prodPic(o.name, o.image_url, o.chain, categoryOf(o.name), false, o.emoji),
+          card.appendChild(add(el('div', 'row'), prodPic(o.name, o.image_url, o.chain, o.category || categoryOf(o.name), false, o.emoji),
             add(el('span', 'tx'), el('b', '', name), add(el('div', 'mu', line), pill(o.chain === 'Aldi' ? 'A' : 'B'))), pr));
         });
         if (!all) {
