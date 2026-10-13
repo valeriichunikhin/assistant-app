@@ -1,0 +1,81 @@
+/* Lane 2 of the desktop layer (docs/specs/miniapp-desktop.md): the wide «Цены», «Кино», «Волейбол», «Статистика».
+   Loaded after desktop.css on a wide screen only; colours come from the page's tokens. */
+/* Shared bits: a two-line cell, a column of cards, tiles inside a card, a toolbar row. */
+.da-two{min-width:0}
+.da-two .t{font-weight:500;overflow-wrap:anywhere}
+.da-two .mu{font-size:12px}
+.da-two .meter{max-width:220px}
+.da-col{min-width:0}
+.da-col>.card,.da-col>div>.card{margin:0 0 16px}
+.da-kv .kv{border-width:1px 0 0;border-radius:0}
+.da-bar{display:flex;align-items:center;gap:16px;margin:0 0 16px}
+.da-bar .seg{margin:0}
+.da-note{margin:4px 2px 16px}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .card .tbl{margin-top:2px}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .card>.ch+.tbl,:is(.da-prices,.da-cine,.da-vb,.da-stats) .card>.sub+.tbl{margin-top:0}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl td .num{font-family:var(--font-num);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl td.r .num{display:block;text-align:right}
+/* Prices: the product cell, the selected row, the 👀 toggle. */
+.da-res{margin:0}
+.da-res .tbl th{padding-top:10px}
+.da-cap{display:flex;justify-content:space-between;gap:12px;padding:10px 14px 4px;font-size:13px}
+.da-prod{display:flex;align-items:center;gap:10px;min-width:0;padding:4px 0}
+.da-prod .tb{width:36px;height:36px;margin:0}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl tr.sel td{background:var(--accent-soft)}
+:is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl tr.sel td:first-child{box-shadow:inset 2px 0 0 var(--mark)}
+.da-eye{display:grid;place-items:center;width:32px;height:32px;margin-left:auto;padding:0;border:1px solid var(--line);border-radius:var(--r-s);background:none;font-size:15px;filter:grayscale(1);transition:opacity .12s,border-color .12s}
+.da-eye.on{border-color:var(--mark);background:var(--accent-soft);filter:none;opacity:1}
+@media (hover:hover){.da-eye:hover{border-color:var(--line-2);filter:none}}
+/* A keyword watch («жду по слову») covers the row: a dashed 👀, always shown; a click watches this product itself. */
+.da-eye.kw{border-style:dashed;border-color:var(--mark);filter:none;opacity:1}
+/* The price with its condition under it («при покупке 4»). */
+.da-pc{text-align:right}
+.da-pc .mu{font-size:12px;white-space:nowrap}
+.da-prices .tbl .btn.x{min-height:32px;min-width:32px;padding:0 6px}
+.da-prices .tbl .btn.x .i{width:16px;height:16px}
+.panes.da-prices>.side>.card{margin:0 0 16px}
+.panes.da-prices{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.da-res .tbl td:not(:first-child){white-space:nowrap}
+.da-prices .side .da-kv .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:1700px){.da-prices .side .da-kv .kv{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tbl td:has(>.da-two),.tbl td:has(>.da-prod){padding-top:6px;padding-bottom:6px}
+.da-prices .side .da-kv .kv .v{font-size:18px}
+.panes.da-prices>.side{max-height:calc(100vh - 92px);overflow-y:auto;scrollbar-width:thin}
+.da-prices .side .ch .tx{flex:1;min-width:0}
+.da-prices .side .ch .tx h3{font-size:15px}
+/* Cinema: a link poster, the hover menu as a column, the cinema pills, month heads, small stars. */
+.pcell .pbox.da-link{cursor:pointer}
+.da-cine .pcell .pov{inset:0;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:4px;background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.85) 55%)}
+.da-cine .pcell .pov .pg{min-height:28px;justify-content:flex-start;padding:0 8px;font-size:12px}
+.pcell:focus-within .pov{opacity:1}
+.da-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.da-pills .pill{height:20px;padding:0 6px;font-size:11px}
+.da-month{padding:12px 14px 0;color:var(--muted-2);font:500 12px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase}
+.da-month+.pgrid{padding-top:10px}
+.da-stars{margin-top:4px}
+.da-stars .st{width:20px;height:24px;font-size:15px}
+.tbl .da-stars{margin:0}
+.da-fine{padding-top:10px;font-size:12px;color:var(--muted-2)}
+/* Volleyball: the filter toolbar, the week strips, the game cards. */
+.da-filter{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px;padding:12px 14px}
+.da-grp{display:flex;flex-direction:column;gap:6px}
+.da-gl{color:var(--muted-2);font:500 11px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase}
+.da-chips{display:flex;flex-wrap:wrap;gap:4px}
+.da-chips .pill{height:32px;padding:0 10px;font-size:13px}
+.da-grp select{height:32px;padding:0 8px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);color:var(--fg);font:13px var(--font)}
+.da-gnote{margin-left:auto;align-self:center;font-size:12px}
+.week7>.da-past{background:var(--surface-2)}
+.week7>.da-past .d{opacity:.6}
+.week7>.da-today .d b{color:var(--mark)}
+.week7 .da-none{color:var(--muted-2);font-size:13px}
+.da-g{margin:6px 0 0;padding:7px 8px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface);font-size:12px;line-height:1.35;transition:border-color .12s,background .12s}
+.da-g.tap{cursor:pointer}
+@media (hover:hover){.da-g.tap:hover{border-color:var(--line-2);background:var(--press)}}
+.da-g.mine{border-color:var(--mark);box-shadow:inset 3px 0 0 var(--mark)}
+.da-g.full{opacity:.55}
+.da-gtm{display:block;font-weight:600;font-size:12px}
+.da-gt{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.da-gt .num{flex:none;color:var(--muted);font-size:12px}
+.da-gv{min-width:0;font-weight:500;font-size:13px;overflow-wrap:anywhere}
+.da-g .mu{font-size:12px}
+.da-g .pill{margin-top:5px;height:18px;font-size:11px}

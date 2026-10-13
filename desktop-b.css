@@ -1,0 +1,83 @@
+/* The desktop layer, lane 3: list, picks, wish, dela, inbox, feed (docs/specs/miniapp-desktop.md). Loaded on a
+   wide screen only; colours are the page's tokens. */
+/* A toolbar or a form in one row above a view. */
+.dtool{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 16px}
+.dtool .seg{margin:0}
+.dtool .field.dq{flex:0 1 320px}
+.field.grow{flex:1 1 320px}
+.field.w180{flex:0 0 180px}
+.field.w240{flex:0 0 260px}
+.field input[type="date"]{color-scheme:inherit}
+.dform{display:flex;gap:8px;padding:2px 14px 12px}
+.dsum{margin:0 0 0 auto;gap:14px}
+.dchips{padding:0}
+.dchips .pill{gap:6px}
+.dchips .pill .num{color:var(--muted-2);font-size:11px}
+.dchips .pill.acc .num{color:inherit}
+/* Cells: a picture with a name, small tiles and check marks sized for a 40 px row. */
+.dname{display:flex;align-items:center;gap:10px;min-width:0;padding:6px 0}
+.dname .tx,.tbl .tx{min-width:0}
+.tbl .t{font-weight:500;overflow-wrap:anywhere}
+.tbl .t .pill{margin-left:6px}
+.tbl .ptile{width:30px;height:30px;font-size:16px}
+.tbl .tb{width:34px;height:34px;margin:-2px;border-radius:var(--r-s)}
+.tbl .mk{display:block;width:20px;height:20px;color:var(--muted)}
+.tbl .mk.on{color:var(--mark)}
+.tbl tr.done .t{color:var(--muted);text-decoration:line-through}
+.tbl tr.done .ptile{opacity:.6}
+.tbl tr.over td{background:var(--bad-bg)}
+.tbl .cw{font-weight:600;color:var(--link)}
+.tbl.fixed{table-layout:fixed}
+.tbl.fixed td .num{white-space:nowrap}
+.tbl td .one,.row .one{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tbl td .tx{padding:6px 0}
+.card>.tbl{margin-top:2px}
+.card>.foot.mu{font-size:13px}
+.dgap{display:flex;flex-direction:column;gap:2px}
+.dgap .meter{margin:0}
+.dgap .mu{font-size:12px}
+.dmono{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.dlane-b .kv{margin:0 0 16px}
+/* A batch: the head with its buttons, then the products as a grid. */
+.dsec .dbtns{display:flex;gap:8px;margin-left:12px}
+.dlane-b .dsec{align-items:center}
+.dlane-b .dsec+.dprods{padding:0 0 24px}
+.dgh{display:flex;align-items:baseline;gap:10px;padding:12px 14px 0;border-top:1px solid var(--line)}
+.dgh b{font-weight:600}
+.dprods{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px;padding:12px 14px 14px}
+.dprod{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;padding:10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:border-color .12s,background .12s}
+.dprod.tap{cursor:pointer}
+.dprod.tap:focus-visible{outline-offset:-2px}
+@media (hover:hover){.dprod:hover{border-color:var(--line-2);background:var(--press)}}
+.dprod.on{border-color:var(--mark);box-shadow:inset 0 0 0 1px var(--mark)}
+.dprod .dpic{display:grid;place-items:center;height:104px;border-radius:var(--r-s);background:var(--surface-2);overflow:hidden}
+.dprod .dpic .tb{width:100%;height:100%;margin:0;border-radius:0}
+.dprod .dpic .ptile.big{width:72px;height:72px;border:0;background:none;font-size:44px}
+.dprod .dpic img.ptile.big{width:100%;height:100%;padding:6px;object-fit:contain;background:#fff}
+.dprod .dpic .ptile .bd{right:-4px;bottom:-4px}
+.dprod .pn{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:34px;font:500 13px/1.3 var(--font);overflow-wrap:anywhere}
+.dprod .dpr{display:flex;align-items:baseline;gap:8px;font:500 15px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.dprod .dpr .old{color:var(--muted-2);text-decoration:line-through;font-size:12px}
+.dprod .dln{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;overflow-wrap:anywhere}
+.dprod .dmeta{display:flex;align-items:center;gap:6px;margin-top:auto;min-height:20px}
+.dprod .dmeta .mu{font:12px var(--font-num)}
+.dprod.tap .dpic .tb{pointer-events:none}
+.dprod .dstar{position:absolute;top:14px;right:14px;font-size:14px;line-height:1}
+.dprod .dmk{position:absolute;top:14px;left:14px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink)}
+.dprod .dmk .i{width:14px;height:14px;stroke-width:3}
+.dprod>.hov{position:absolute;top:14px;right:14px;margin:0}
+.dprod>.hov .pg{background:var(--surface);color:var(--fg)}
+.dprod:hover>.hov,.dprod:focus-within>.hov{opacity:1}
+.dprod:hover>.dstar{opacity:0}
+/* Inbox: the selected drop marked in the list, its full text in the pane. */
+.dlane-b .row.sel{background:var(--press);box-shadow:inset 2px 0 0 var(--mark)}
+.dlane-b .row .tx .one{max-width:100%}
+.dfull{padding:4px 14px 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.55}
+.durls{display:flex;flex-direction:column;gap:4px;padding:0 14px 14px;overflow-wrap:anywhere;font-size:13px}
+.dlane-b .foot .btn{flex:0 0 auto}
+/* Feed: the left column of cards keeps the page's gap. */
+.dfl>div>.card{margin:0 0 16px}
+.dfl .row .tx{line-height:1.45}
+.dlane-b .panes.solo{grid-template-columns:1fr}
+.dfl{position:sticky;top:76px;align-self:start}
+.dlane-b .panes.solo .dfl{display:none}
