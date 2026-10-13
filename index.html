@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-13 11:17">
+<meta name="published" content="2026-10-13 11:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -505,14 +505,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var CATS = [['pets', '🐾', ['karma', 'dla kota', 'dla psa', 'żwirek', 'whiskas', 'pedigree', 'felix', 'purina']],
     ['kids', '👶', ['pieluch', 'pampers', 'dla dzieci', 'dla niemowl', 'mleko modyfikowane', 'kaszka', 'chusteczki nawilżane']],
     ['alcohol', '🍺', ['piwo', 'wino', 'wódka', 'whisk', 'likier', 'prosecco', 'cydr', 'gin ', 'rum ']],
-    ['household', '🧴', ['płyn do', 'serwet', 'proszek', 'kapsułki do prania', 'papier toalet', 'ręcznik papier', 'worki', 'zmywak', 'domestos', 'cif', 'ariel', 'persil', 'lenor', 'vizir', 'coccolino', 'odświeżacz', 'gąbk', 'ściereczk']],
-    ['cosmetics', '🧼', ['szampon', 'żel pod prysznic', 'twarzy', 'micelarn', 'pasta do zęb', 'szczoteczk', 'dezodorant', 'antyperspirant', 'krem', 'maszynk', 'gillette', 'axe', 'nivea', 'dove', 'mydło', 'podpask', 'tampon', 'balsam', 'perfum', 'wod. toaletowa']],
-    ['sweets', '🍫', ['czekolad', 'pralin', 'ptasie', 'ciast', 'wafel', 'żelk', 'drażet', 'cukier', 'chips', 'rogal', 'toffi', 'merci', 'raffaello', 'ferrero', 'lindt', 'syrop', 'mus ', 'baton', 'orzeszk', 'paluszk', 'krakers']],
+    ['household', '🧴', ['odplamiacz', 'nabłyszczacz', 'zmywark', 'vanish', 'worki na śmieci', 'płyn do', 'serwet', 'proszek', 'kapsułki do prania', 'papier toalet', 'ręcznik papier', 'worki', 'zmywak', 'domestos', 'cif', 'ariel', 'persil', 'lenor', 'vizir', 'coccolino', 'odświeżacz', 'gąbk', 'ściereczk']],
+    ['cosmetics', '🧼', ['makijaż', 'pomadk', 'tusz do rzęs', 'mgiełk', 'lakier do włosów', 'odżywk', 'taft', 'schauma', 'balsam do ciała', 'serum', 'maseczk', 'szampon', 'żel pod prysznic', 'twarzy', 'micelarn', 'pasta do zęb', 'szczoteczk', 'dezodorant', 'antyperspirant', 'krem', 'maszynk', 'gillette', 'axe', 'nivea', 'dove', 'mydło', 'podpask', 'tampon', 'balsam', 'perfum', 'wod. toaletowa']],
+    ['sweets', '🍫', ['orzech', 'migdał', 'pistacj', 'cookies', 'ciastk', 'chrupk', 'żurawin', 'rodzynk', 'bakalie', 'czekolad', 'pralin', 'ptasie', 'ciast', 'wafel', 'żelk', 'drażet', 'cukier', 'chips', 'rogal', 'toffi', 'merci', 'raffaello', 'ferrero', 'lindt', 'syrop', 'mus ', 'baton', 'orzeszk', 'paluszk', 'krakers']],
     ['dairy', '🥛', ['mleko', 'masło', 'ser', 'jogurt', 'śmietan', 'twaróg', 'twarog', 'jaj', 'kefir', 'maślank', 'deser']],
-    ['meat', '🥩', ['mięs', 'schab', 'łopatk', 'parówk', 'kiełbas', 'szynk', 'boczek', 'kurcz', 'indyk', 'ryb', 'łosoś', 'śledź', 'kabanos', 'wędlin', 'frankfurt', 'karkówk', 'wołow', 'filet']],
+    ['meat', '🥩', ['mięso', 'mięsa', 'mięsn', 'kraina mięs', 'schab', 'łopatk', 'parówk', 'kiełbas', 'szynk', 'boczek', 'kurcz', 'indyk', 'ryb', 'łosoś', 'śledź', 'kabanos', 'wędlin', 'frankfurt', 'karkówk', 'wołow', 'filet']],
     ['produce', '🍅', ['pomidor', 'banan', 'winogron', 'malin', 'cytryn', 'jabł', 'ogór', 'papryk', 'pieczark', 'ziemniak', 'cebul', 'marchew', 'sałat', 'gruszk', 'śliwk', 'borów', 'awokado', 'mandarynk', 'pomarańcz', 'truskawk']],
-    ['ready', '🍱', ['mrożon', 'lody', 'frytki', 'pierogi', 'nuggets', 'gotow', 'zestaw obiadowy', 'sałatka', 'kebab', 'burger']],
-    ['bakery', '🍞', ['chleb', 'bułk', 'makaron', 'ryż', 'mąk', 'kasz', 'płatk', 'oliw', 'olej', 'sos', 'przypraw', 'konserw', 'sardynk', 'tuńczyk', 'kwas', 'musli', 'miód', 'dżem']],
+    ['ready', '🍱', ['sajgonk', 'pierog', 'pizz', 'zapiekank', 'gotowe danie', 'mrożon', 'lody', 'frytki', 'pierogi', 'nuggets', 'gotow', 'zestaw obiadowy', 'sałatka', 'kebab', 'burger']],
+    ['bakery', '🍞', ['bagiet', 'ketchup', 'majonez', 'musztard', 'mąka', 'olej rzepak', 'sos pomidor', 'kasza', 'płatki owsian', 'chleb', 'bułk', 'makaron', 'ryż', 'mąk', 'kasz', 'płatk', 'oliw', 'olej', 'sos', 'przypraw', 'konserw', 'sardynk', 'tuńczyk', 'kwas', 'musli', 'miód', 'dżem']],
     ['coffee', '☕', ['kawa', 'herbat', 'kakao']],
     ['drinks', '🥤', ['cola', 'napój', 'sok', 'woda', 'energ', 'pepsi', 'sprite', 'fanta']],
     ['other', '🏠', []]];
