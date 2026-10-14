@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-13 11:27">
+<meta name="published" content="2026-10-14 10:24">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1958,6 +1958,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           meter.appendChild(f);
         }
         add(tx, add(el('div', 't'), a, pill(WISH_STATUS[r.status] || r.status, WISH_PILL[r.status] || '')),
+          r.note ? el('div', 'mu', r.note) : null,
           el('div', 'mu num', 'сейчас ' + (r.last_price == null ? '—' : zl(r.last_price) + ' zł') +
             ' · цель ' + zl(r.target) + ' zł' + (r.last_checked ? ' · проверено ' + dmt(r.last_checked) : '')),
           meter);
