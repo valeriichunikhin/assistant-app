@@ -2,9 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<link rel="icon" href="data:,">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-17 16:47">
+<meta name="published" content="2026-10-17 17:04">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -303,6 +309,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
 <symbol id="i-tack" viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -328,6 +335,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // as the functions accept it.
   var browser = !tg || !tg.initData;
   var login = null;
+  // The Home Screen app signs with the device key instead (docs/specs/pwa-push.md): the bot's «Ссылка для
+  // телефона» opens the page with ?key=…, kept in localStorage and taken out of the address bar.
+  var appKey = null;
   var root = document.documentElement;
   // Inside Telegram the theme follows the app: data-theme from colorScheme,
   // --bg tinted a quarter of the way toward Telegram's own background, and
@@ -349,6 +359,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     try { tg.setBackgroundColor(bg); } catch (e) {}
   }
   if (browser) {
+    var query = new URLSearchParams(location.search);
+    appKey = query.get('key') || store('appKey') || null;
+    if (query.get('key')) {
+      store('appKey', appKey);
+      // Safari keeps ?key= so «На экран Домой» saves a URL that carries it: the installed app has its own storage and reads it on first launch.
+      if (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) {
+        query.delete('key');
+        try { history.replaceState(null, '', location.pathname + (query.toString() ? '?' + query : '') + location.hash); } catch (e) {}
+      }
+    }
     try { login = JSON.parse(store('tgLogin') || 'null'); } catch (e) {}
     if (!login || !(Date.now() / 1000 - Number(login.auth_date) < 7 * 86400)) login = null;
   } else {
@@ -399,10 +419,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // `body`, when given, goes as JSON.
   function api(fn, params, ms, quiet, body) {
-    if (browser && !login) return Promise.reject(new Error('login'));
+    if (browser && !login && !appKey) return Promise.reject(new Error('login'));
     var opts = {
       method: 'POST',
-      headers: browser ? { 'x-tg-login': b64url(JSON.stringify(login)) } : { 'x-tma-init-data': tg.initData }
+      headers: !browser ? { 'x-tma-init-data': tg.initData }
+        : appKey ? { 'x-app-key': appKey } : { 'x-tg-login': b64url(JSON.stringify(login)) }
     };
     if (body) {
       opts.body = JSON.stringify(body);
@@ -419,7 +440,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             // An expired or refused login: back to the card, no toast.
             if (r.status === 401 && browser) {
               err.login = true;
-              if (login) loginCard('Сессия истекла, войди снова');
+              if (appKey) loginCard('Открой /app в боте и нажми «Ссылка для телефона»');
+              else if (login) loginCard('Сессия истекла, войди снова');
             }
             throw err;
           }
@@ -698,6 +720,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function loginCard(note) {
     login = null;
     store('tgLogin', '');
+    appKey = null;
+    store('appKey', '');
     current = null;
     hideBack();
     closeSheet();
@@ -2608,12 +2632,91 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     load();
   }
 
+  // --- push ---
+  // «Уведомления» (docs/specs/pwa-push.md), outside Telegram only: iOS delivers Web Push to the app added
+  // to the Home Screen, never to a Safari tab, and asks for permission only from a tap. The key is public.
+  var VAPID_PUBLIC = 'BPtqkChexFL8jXAlg3casOnXYKsWd3CfOdO4QR3PVeHouXZKX9K0mFAq_ffLrIx7NgbWB1MwfGnMQXDfn15kEgc';
+  function vapidKey() {
+    var s = VAPID_PUBLIC.replace(/-/g, '+').replace(/_/g, '/'), bin = atob(s + '==='.slice((s.length + 3) % 4));
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function pushCard() {
+    var card = mkCard('bell', 'Уведомления'), line = el('div', 'sub', 'Проверяю…'), foot = el('div', 'foot');
+    var on = label(el('button', 'btn'), 'bell', 'Включить'), test = el('button', 'btn ghost', 'Проверить');
+    var off = label(el('button', 'btn ghost'), 'x', 'Выключить'), sub = null;
+    on.type = test.type = off.type = 'button';
+    add(card, line);
+    var ios = /iP(hone|ad|od)/.test(navigator.userAgent) || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+    var standalone = navigator.standalone || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    if (ios && !standalone) {
+      text(line, 'Откройте приложение с экрана Домой, в Safari уведомления не работают');
+      return card;
+    }
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !window.Notification) {
+      text(line, 'Этот браузер не умеет уведомления');
+      return card;
+    }
+    card.appendChild(foot);
+    function paint(s) {
+      sub = s || null;
+      text(line, sub ? 'Включены' : 'Выключены');
+      add(clear(foot), sub ? test : on, sub ? off : null);
+    }
+    // ready never settles when sw.js failed to register, so it is raced against the registration lookup.
+    Promise.race([navigator.serviceWorker.ready, navigator.serviceWorker.getRegistration().then(function (r) {
+      if (r) return new Promise(noop);
+      throw new Error('no worker');
+    })]).then(function (r) { return r.pushManager.getSubscription(); }).then(paint, function () {
+      text(line, 'Не удалось включить, обнови страницу');
+    });
+    // requestPermission comes first in the tap: iOS refuses it after an await.
+    on.onclick = function () {
+      haptic();
+      on.disabled = true;
+      Notification.requestPermission().then(function (p) {
+        if (p !== 'granted') throw new Error('denied');
+        return navigator.serviceWorker.ready;
+      }).then(function (r) {
+        return r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: vapidKey() });
+      }).then(function (s) {
+        var body = s.toJSON();
+        body.ua = navigator.userAgent;
+        // api() toasts its own failure; the phone then drops the subscription the server never stored.
+        return api('push', { action: 'subscribe' }, undefined, false, body).then(function () {
+          paint(s);
+          toast('Уведомления включены');
+        }, function () { return s.unsubscribe().catch(noop); });
+      }).catch(function (e) {
+        if (e && e.message === 'denied') text(line, 'Запрещены — разреши в Настройках → Уведомления → Assistant');
+        else toast();
+      }).then(function () { on.disabled = false; });
+    };
+    test.onclick = function () {
+      haptic();
+      api('push', { action: 'test' }).then(function () { toast('Отправил — придёт через пару секунд'); }, noop);
+    };
+    off.onclick = function () {
+      haptic();
+      off.disabled = true;
+      var endpoint = sub && sub.endpoint;
+      (sub ? sub.unsubscribe() : Promise.resolve()).catch(noop).then(function () {
+        return api('push', { action: 'unsubscribe' }, undefined, false, { endpoint: endpoint });
+      }).then(function () { toast('Уведомления выключены'); }, noop).then(function () {
+        off.disabled = false;
+        paint(null);
+      });
+    };
+    return card;
+  }
+
   // --- changelog ---
   // changelog.json is published next to the page; the publish script stamps
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    add(main, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    add(main, browser ? pushCard() : null, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
@@ -2682,8 +2785,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   if (wideQuery && wideQuery.addEventListener) {
     wideQuery.addEventListener('change', function () { loadDesktop(); if (current && shell.parentNode) show(current); });
   }
-  if (browser && !login) loginCard();
+  if (browser && !login && !appKey) loginCard();
   else start();
+  // The Home Screen app's service worker shows the pushes; Telegram's webview has no use for it.
+  if (browser && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(noop);
 })();
 </script>
 </body>
