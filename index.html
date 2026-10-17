@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-14 10:24">
+<meta name="published" content="2026-10-17 16:47">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -91,6 +91,7 @@ button{cursor:pointer}
 .row.tap{cursor:pointer;transition:background .12s}
 .row.tap:focus-visible{outline-offset:-2px}
 .row.tap:active{background:var(--press)}
+.row>.i.go{width:16px;height:16px;color:var(--muted-2)}
 .row .tx{flex:1;min-width:0;overflow-wrap:anywhere}
 .row .t{font-weight:500}
 .row b{font-weight:600}
@@ -2245,6 +2246,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       return row;
     }
+    // A trailing link icon on a row that opens its pilkanahali.pl page.
+    function goes(r) { return r.classList.contains('tap') ? add(r, icon('link', 'go')) : r; }
     function render(j) {
       if (current !== 'vb') return;
       if (!j || !j.filter) return failed(clear(body), load); // an old function answers a watch run
@@ -2266,7 +2269,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       clear(body);
       if (j.my_games.length) {
         var c = mkCard('ball', 'Мои игры');
-        j.my_games.forEach(function (g) { c.appendChild(myGameRow(g)); });
+        j.my_games.forEach(function (g) { c.appendChild(goes(myGameRow(g))); });
         body.appendChild(c);
       }
       j.games.forEach(function (g) {
@@ -2279,7 +2282,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           [lv[g.lv] || levelRu(g.lv), 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
           g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
         if (g.full) r.className += ' off';
-        days[g.date].appendChild(r);
+        days[g.date].appendChild(goes(r));
       });
       if (!j.games.length) body.appendChild(state('ball', 'Подходящих игр нет — переключи залы или уровни'));
     }
