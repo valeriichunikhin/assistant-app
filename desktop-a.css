@@ -7,7 +7,7 @@
 .da-two .meter{max-width:220px}
 .da-col{min-width:0}
 .da-col>.card,.da-col>div>.card{margin:0 0 16px}
-.da-kv .kv{border-width:1px 0 0;border-radius:0}
+.da-kv .kv{border-width:1px 0 0;border-color:var(--line);border-radius:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
 .da-bar{display:flex;align-items:center;gap:16px;margin:0 0 16px}
 .da-bar .seg{margin:0}
 .da-note{margin:4px 2px 16px}

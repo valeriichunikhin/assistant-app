@@ -11,7 +11,7 @@
 @media (max-width:1199px){.span-3,.span-4,.span-5{grid-column:span 6}.span-6,.span-7,.span-8,.span-9{grid-column:span 12}}
 /* A page section head: title 16/600, a muted note on the right, a hairline under. */
 .dsec{display:flex;align-items:baseline;gap:12px;margin:8px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.dsec h2{margin:0;font:600 16px/1.3 var(--font);letter-spacing:-.01em}
+.dsec h2{margin:0;font:800 16px/1.3 var(--font);letter-spacing:-.02em}
 .dsec .mu{margin-left:auto}
 /* Tables: hairline rows, 40 px, numbers mono and right-aligned, header 12 px uppercase. */
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
@@ -45,14 +45,14 @@ tr:hover .hov,.row:hover .hov,.pcell:hover .hov,.hov:focus-within,tr:focus-withi
 .pcell .pd{color:var(--muted-2);font:12px/1.3 var(--font-num)}
 /* Key/value tiles in a row (an overview strip). The dividers are the cells' outlines in the 1 px gaps, so the empty
    end of a wrapped last row stays the card's colour, not a grey slab. */
-.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.kv>div{padding:12px 14px;background:var(--surface);outline:1px solid var(--line)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);overflow:hidden;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
+.kv>div{padding:12px 14px;box-shadow:1px 0 0 var(--line),0 1px 0 var(--line)}
 .kv .k{color:var(--muted-2);font-size:12px}
-.kv .v{font:500 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.kv .v{font:800 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .kv .v small{font-size:13px;color:var(--muted)}
 /* A week strip: seven equal columns of a card, each day a column. */
-.week7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
-.week7>div{min-height:120px;padding:10px 12px;background:var(--surface)}
+.week7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;border-top:1px solid var(--line)}
+.week7>div{min-height:120px;padding:10px 12px;box-shadow:1px 0 0 var(--line)}
 .week7 .d{font:500 12px/1.2 var(--font-num);color:var(--muted-2);margin-bottom:6px}
 .week7 .d b{color:var(--fg);font-weight:600}
 .week7 .it{font-size:13px;line-height:1.35;margin:4px 0}
@@ -90,7 +90,7 @@ kbd.k{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid var(-
 .wb .tbl td:nth-child(2):not(.r),.wb .tbl td:first-child{white-space:normal}
 /* The week inside its card: today's column marked, items 13 px with the time mono. */
 .wb .week7{border-top:0}
-.week7>.now{background:color-mix(in srgb,var(--fg) 3%,var(--surface))}
+.week7>.now{background:color-mix(in srgb,var(--fg) 4%,transparent)}
 .week7>.now .d,.week7>.now .d b{color:var(--link)}
 .week7 .tm{font-family:var(--font-num);font-size:12px;color:var(--muted)}
 .week7 .it-work{color:var(--muted)}
@@ -117,4 +117,5 @@ kbd.k{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid var(-
 .wb .tbl td:first-child>.num{white-space:nowrap}
 /* Inbox: the hover actions lie over the right end of the row, so the text keeps the whole width. */
 .wb .row{position:relative}
-.wb .row .acts.hov{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;padding-left:24px;background:linear-gradient(to right,transparent,var(--surface) 24px)}
+.wb .row .acts.hov{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;}
+.wb .row .acts.hov .pg{background:var(--solid)}
