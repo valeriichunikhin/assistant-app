@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0a">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-17 17:22">
+<meta name="published" content="2026-10-17 21:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -279,7 +279,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></symbol>
 <symbol id="i-news" viewBox="0 0 24 24"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></symbol>
 <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol>
-<symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><polygon points="12,2 14,10 22,12 14,14 12,22 10,14 2,12 10,10" fill="currentColor" stroke="none"/><polygon points="19,3 19.8,5.2 22,6 19.8,6.8 19,9 18.2,6.8 16,6 18.2,5.2" fill="currentColor" stroke="none"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
 <symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
 <symbol id="i-check-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
@@ -432,7 +432,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (window.AbortSignal && AbortSignal.timeout) opts.signal = AbortSignal.timeout(ms || 15000);
     return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
       .then(function (r) {
-        return r.json().then(function (j) {
+        return r.json().catch(function () { return null; }).then(function (j) {
           if (!r.ok || (j && j.ok === false)) {
             var err = new Error((j && j.error) || String(r.status));
             err.code = j && j.error;
@@ -636,14 +636,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other eight in a sheet.
-  // From 900 px: all twelve in a left rail. The tab is kept in localStorage and,
+  // Phone: four tabs and «Ещё» in a bottom bar, the other nine in a sheet.
+  // From 900 px: all thirteen in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['vb', 'ball', 'Волейбол'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
     ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var MORE = ['vb', 'stats', 'wish', 'cinema', 'dela', 'inbox', 'feed', 'news'];
+  var MORE = ['vb', 'genshin', 'stats', 'wish', 'cinema', 'dela', 'inbox', 'feed', 'news'];
   // One-column views: 720 px wide on a desktop (.main.narrow).
   var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed', 'news'];
   var NAMES = {};
@@ -664,7 +664,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   sheet.setAttribute('role', 'dialog');
   sheet.setAttribute('aria-label', 'Ещё');
   sheet.setAttribute('aria-hidden', 'true');
-  add(rail, add(el('div', 'brand'), add(el('span', 'mark'), icon('bot')), el('span', '', 'Помощник')));
+  add(rail, add(el('div', 'brand'), add(el('span', 'mark'), icon('spark')), el('span', '', 'Помощник')));
   sheet.appendChild(el('div', 'grab'));
   TABS.forEach(function (t) {
     NAMES[t[0]] = t[2];
@@ -734,7 +734,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     widget.setAttribute('data-userpic', 'false');
     widget.setAttribute('data-request-access', 'write');
     widget.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    add(clear(app), add(el('div', 'wrap'), add(el('div', 'card login'), add(el('div', 'mark'), icon('bot')),
+    add(clear(app), add(el('div', 'wrap'), add(el('div', 'card login'), add(el('div', 'mark'), icon('spark')),
       el('h1', '', 'Помощник'), el('p', '', note || 'Войди через Telegram — пускает только владельца бота'),
       add(el('div', 'widget'), widget))));
   }
@@ -2319,6 +2319,118 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     load();
   }
 
+  // --- genshin ---
+  // The Mac's snapshot (genshin_state: HoYoLAB notes and characters, the Enka
+  // profile, the morning line's rows) and the HoYoLAB events not over yet,
+  // from miniapp ?action=genshin (docs/specs/genshin-tab.md).
+  function genshinView() {
+    var body = el('div', 'cols');
+    add(main, body);
+    // A moment in Warsaw: «HH:MM» today, «dd.mm HH:MM» on another day.
+    function at(ts) {
+      var p = wp(ts), t = wp(Date.now());
+      return (p.day === t.day && p.month === t.month ? '' : p.day + '.' + p.month + ' ') + p.hour + ':' + p.minute;
+    }
+    function card(ic, title, rows) {
+      var c = mkCard(ic, title);
+      rows.forEach(function (r) { c.appendChild(r); });
+      return body.appendChild(c);
+    }
+    function head(s) {
+      var p = s.profile || {};
+      var line = [p.nickname, p.ar != null ? 'AR ' + p.ar : '', p.wl != null ? 'WL ' + p.wl : '',
+        p.abyss ? 'Бездна ' + p.abyss : ''].filter(Boolean).join(' · ');
+      var c = card('game', line || 'Genshin', []);
+      if (s.notes_at) c.firstChild.appendChild(el('span', 'mu', 'обновлено ' + at(s.notes_at)));
+    }
+    // A lime meter of current/max; ⚠️ from 160, when it is close to running over.
+    function resin(r) {
+      var full = r.current >= r.max || Date.parse(r.resin_full_at) <= Date.now();
+      var row = hrow((r.current >= 160 ? '⚠️ ' : '') + r.current + '/' + r.max,
+        full ? 'полная' : r.resin_full_at ? 'полная в ' + at(r.resin_full_at) : null);
+      var m = el('div', 'meter'), f = el('i');
+      f.style.width = (r.max > 0 ? Math.min(100, r.current / r.max * 100) : 0) + '%';
+      row.firstChild.insertBefore(add(m, f), row.firstChild.lastChild);
+      card('clock', 'Смола', [row]);
+    }
+    function today(n, t) {
+      var rows = [], c = n.commissions, ex = n.expeditions || [], d = n.discounts;
+      if (c) rows.push(hrow('Поручения', c.claimed ? 'награда получена' : null, c.done + '/' + c.total));
+      if (ex.length) {
+        var next = ex.filter(function (e) { return !e.done && e.finish_at; })
+          .sort(function (x, y) { return Date.parse(x.finish_at) - Date.parse(y.finish_at); })[0];
+        rows.push(hrow('Экспедиции', next ? 'следующая в ' + at(next.finish_at) : 'все вернулись',
+          ex.filter(function (e) { return e.done; }).length + '/' + ex.length));
+      }
+      if (n.transformer_ready) rows.push(hrow('Преобразователь', null, pill('готов', 'acc')));
+      else if (n.transformer_at) rows.push(hrow('Преобразователь', 'готов в ' + at(n.transformer_at)));
+      if (d) {
+        // Bold from Friday to Sunday: the discounts reset on Monday.
+        var w = wp(Date.now()), k = d.left + '/' + d.max;
+        rows.push(hrow('Скидки на боссов', null, wd(w.year + '-' + w.month + '-' + w.day) >= 4 ? el('b', '', k) : k));
+      }
+      var q = wp(Date.now());
+      if (t.date === q.year + '-' + q.month + '-' + q.day) {
+        if (t.books) rows.push(hrow(t.books, 'книги сегодня'));
+        if (t.weapons) rows.push(hrow(t.weapons, 'материалы оружия сегодня'));
+        if (t.checkin) rows.push(hrow(t.checkin));
+      }
+      if (rows.length) card('check-square', 'Сегодня', rows);
+    }
+    // Soonest to end first (the server's order). A wish has ✨ in front; one
+    // ending within two days a lime dot (a wish's ✨ turns lime instead).
+    function events(list) {
+      if (!list.length) return;
+      var soon = Date.now() + 2 * 86400000;
+      card('calendar', 'События', list.map(function (e) {
+        var p = wp(e.ends_at), r = hrow(e.title, 'до ' + p.day + '.' + p.month);
+        var lime = Date.parse(e.ends_at) <= soon, ld = el('span', 'lead');
+        if (/Молитв|Wish/i.test(e.title)) ld.appendChild(icon('sparkles'));
+        else if (lime) ld.appendChild(el('i', 'dot')).style.background = 'var(--mark)';
+        if (lime) ld.style.color = 'var(--mark)';
+        r.insertBefore(ld, r.firstChild);
+        return r;
+      }));
+    }
+    // As sent (level down); the first 20, the rest on a tap of «+N ещё».
+    function chars(list) {
+      if (!list.length) return;
+      var rows = list.map(function (c) {
+        return hrow(c.name, c.weapon ? c.weapon + ' (' + c.weapon_level + ')' : null, 'ур. ' + c.level + ' · C' + c.constellation);
+      });
+      var box = card('top', 'Персонажи', rows.slice(0, 20));
+      if (rows.length > 20) {
+        var more = el('div', 'row small mu', '+' + (rows.length - 20) + ' ещё');
+        box.appendChild(tap(more, function () {
+          more.remove();
+          rows.slice(20).forEach(function (r) { box.appendChild(r); });
+        }));
+      }
+    }
+    function render(j) {
+      if (current !== 'genshin') return;
+      clear(body);
+      var s = j.state;
+      if (!s) body.appendChild(state('game', 'Снимок ещё не пришёл: он обновляется утром в 07:35 и каждый час'));
+      else {
+        var n = s.notes || {};
+        head(s);
+        if (n.resin) resin(n.resin);
+        var cw = s.characters_at && wp(s.characters_at), tw = wp(Date.now());
+        today(n, cw && cw.day === tw.day && cw.month === tw.month ? (s.today || {}) : {});
+      }
+      events(j.events || []);
+      if (s) chars(s.characters || []);
+    }
+    function load() {
+      if (!body.firstChild) add(body, skeleton(2));
+      api('miniapp', { action: 'genshin' }, 25000, true).then(render, function (e) {
+        if (!e.login && current === 'genshin') failed(clear(body), load);
+      });
+    }
+    load();
+  }
+
   // --- dela ---
   // Everything open, from the webhook (?action=dela): overdue, the next 7
   // days, later. «Сделано» takes two taps, «Отложить» moves the reminders
@@ -2738,7 +2850,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView
+    cinema: cinemaView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    genshin: genshinView
   };
   // --- desktop (≥ 900 px) ---
   // app/desktop.css and app/desktop*.js are loaded only on a wide screen; they draw the tabs for a big
