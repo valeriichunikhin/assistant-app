@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-17 23:08">
+<meta name="published" content="2026-10-18 01:01">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -217,6 +217,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:0 14px 10px;color:var(--muted);font-size:12px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .dot{width:9px;height:9px;border-radius:50%}
+/* A row that unfolds on a tap (Genshin builds, the next plan, an event's tip): the chevron turns, the block under it is tinted. */
+.row>.i.go{transition:transform .15s}.row.open>.i.go{transform:rotate(180deg)}
+.det{background:var(--surface-2)}.det>.row:first-child{border-top:1px solid var(--line)}
+.tip{padding:9px 14px 12px;border-top:1px solid var(--line);font-size:13px;white-space:pre-line;overflow-wrap:anywhere}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em}
 .dash{width:14px;border-top:2px dashed var(--mark)}
 .chart{display:block;width:100%;height:auto;padding:4px 8px 0}
 .chart .ax{stroke:var(--line)}
@@ -319,6 +324,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
 <symbol id="i-tack" viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
 <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -2320,7 +2329,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // --- genshin ---
   // The Mac's snapshot (genshin_state: HoYoLAB notes and characters, the Enka
   // profile, the morning line's rows) and the HoYoLAB events not over yet,
-  // from miniapp ?action=genshin (docs/specs/genshin-tab.md).
+  // from miniapp ?action=genshin (docs/specs/genshin-tab.md); v2 adds the
+  // builds, the farming plan, the Abyss, the codes and the event tips
+  // (docs/specs/genshin-tab-v2.md).
   function genshinView() {
     var body = el('div', 'cols');
     add(main, body);
@@ -2329,17 +2340,56 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var p = wp(ts), t = wp(Date.now());
       return (p.day === t.day && p.month === t.month ? '' : p.day + '.' + p.month + ' ') + p.hour + ':' + p.minute;
     }
+    // «dd.mm» of a date or a moment; '' when it does not parse.
+    function ddmm(ts) {
+      if (isNaN(new Date(ts).getTime())) return '';
+      var p = wp(ts);
+      return p.day + '.' + p.month;
+    }
     function card(ic, title, rows) {
       var c = mkCard(ic, title);
       rows.forEach(function (r) { c.appendChild(r); });
       return body.appendChild(c);
     }
+    // A block of rows under an unfolded row.
+    function det(rows) { return add.apply(null, [el('div', 'det')].concat(rows)); }
+    // A row with a chevron that shows make()'s block under itself on a tap and
+    // hides it on the next; rows sharing `one` keep one open at a time.
+    function folding(r, make, one) {
+      var shown = null;
+      function shut() {
+        shown.remove();
+        shown = null;
+        r.classList.remove('open');
+        r.setAttribute('aria-expanded', 'false');
+      }
+      r.appendChild(icon('chevron-down', 'go'));
+      r.setAttribute('aria-expanded', 'false');
+      return tap(r, function () {
+        if (shown) {
+          shut();
+          if (one) one.shut = null;
+          return;
+        }
+        if (one && one.shut) one.shut();
+        shown = make();
+        r.after(shown);
+        r.classList.add('open');
+        r.setAttribute('aria-expanded', 'true');
+        if (one) one.shut = shut;
+      });
+    }
     function head(s) {
-      var p = s.profile || {};
+      var p = s.profile || {}, a = s.abyss;
       var line = [p.nickname, p.ar != null ? 'AR ' + p.ar : '', p.wl != null ? 'WL ' + p.wl : '',
-        p.abyss ? 'Бездна ' + p.abyss : ''].filter(Boolean).join(' · ');
+        p.abyss && !a ? 'Бездна ' + p.abyss : ''].filter(Boolean).join(' · ');
       var c = card('game', line || 'Genshin', []);
       if (s.notes_at) c.firstChild.appendChild(el('span', 'mu', 'обновлено ' + at(s.notes_at)));
+      // HoYoLAB's Abyss replaces Enka's floor: «Бездна 8-3 · 24★ · до 16.11».
+      if (a && a.max_floor) {
+        c.appendChild(el('div', 'sub', ['Бездна ' + a.max_floor, a.stars != null ? a.stars + '★' : '',
+          ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : ''].filter(Boolean).join(' · ')));
+      }
     }
     // An accent meter of current/max; ⚠️ from 160, when it is close to running over.
     function resin(r) {
@@ -2375,26 +2425,144 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       if (rows.length) card('check-square', 'Сегодня', rows);
     }
+    // The Mac's groups in this order; mora is one number on the right.
+    var GROUPS = [['series', 'Книги'], ['exp', 'Опыт'], ['other', 'Прочее'], ['mora', 'Мора']];
+    // An ascension's level step and the AR it needs: «После AR 35» for 70.
+    var CAP_AR = { 40: 15, 50: 25, 60: 30, 70: 35, 80: 40, 90: 50 };
+    function talents(t) { return Array.isArray(t) ? t.join('/') : t == null ? '?' : String(t); }
+    // «Процветание ×12 — пн, чт, вс»: a book's days as the Mac names them (its two weekdays and Sunday).
+    function mat(m) {
+      return m.name + ' ×' + grouped(m.amount) + (Array.isArray(m.days) && m.days.length ? ' — ' + m.days.join(', ') : '');
+    }
+    // Per character a heading row, then a row per group. Materials come as a
+    // list (each with its group, none: «Прочее») or as {group: [..]}.
+    function planRows(list) {
+      var rows = [];
+      list.forEach(function (p) {
+        var f = p.from || {}, t = p.to || {}, ms = p.materials || [], by = ms;
+        rows.push(hrow(p.character, 'ур. ' + f.level + ' → ' + t.level + ', таланты ' + talents(f.talents) +
+          ' → ' + talents(t.talents)));
+        if (Array.isArray(ms)) {
+          by = {};
+          ms.forEach(function (m) {
+            var k = m.group || 'other';
+            (by[k] = by[k] || []).push(m);
+          });
+        }
+        GROUPS.forEach(function (g) {
+          var l = by[g[0]] || [];
+          if (!l.length) return;
+          var r = g[0] === 'mora'
+            ? hrow(g[1], null, grouped(l.reduce(function (n, m) { return n + (Number(m.amount) || 0); }, 0)))
+            : hrow(g[1], l.map(mat).join(' · '));
+          r.className += ' small';
+          rows.push(r);
+        });
+      });
+      return rows;
+    }
+    // «План фарма» after «Сегодня»: the materials up to the current level cap,
+    // the next step folded under «После AR N». No plan, no card.
+    function plan(pl) {
+      var now = (pl && pl.now) || [], next = (pl && pl.next) || [];
+      if (!now.length && !next.length) return;
+      var rows = planRows(now);
+      if (next.length) {
+        var lv = next[0].to && next[0].to.level;
+        rows.push(folding(hrow(CAP_AR[lv] ? 'После AR ' + CAP_AR[lv] : 'Следующий порог', lv ? 'до ур. ' + lv : null),
+          function () { return det(planRows(next)); }));
+      }
+      card('layers', 'План фарма', rows);
+    }
+    // The working codes, up to 8: the code in monospace, its date and a copy
+    // button that reads «скопировано» for 1.5 s.
+    function codes(list) {
+      if (!list.length) return;
+      card('ticket', 'Коды', list.slice(0, 8).map(function (c) {
+        var b = label(el('button', 'pg'), 'copy', 'Скопировать'), r = hrow(c.code, (c.published > 0 ? ddmm(c.published * 1000) : '') || null, b);
+        b.type = 'button';
+        b.onclick = function () {
+          function done() {
+            label(b, 'check', 'скопировано');
+            setTimeout(function () { label(b, 'copy', 'Скопировать'); }, 1500);
+          }
+          // Some webviews deny the Clipboard API: fall back to a hidden textarea.
+          function fallback() {
+            var ta = document.createElement('textarea'), ok = false;
+            ta.value = c.code;
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { ok = document.execCommand('copy'); } catch (e) {}
+            ta.remove();
+            if (ok) done(); else toast('Не скопировалось');
+          }
+          (navigator.clipboard ? navigator.clipboard.writeText(c.code) : Promise.reject()).then(done, fallback);
+        };
+        r.querySelector('.t').className += ' code';
+        return r;
+      }));
+    }
+    // A tip as plain text: <br> to a line break, then the tags dropped and the
+    // entities read by an inert parsed document (nothing of it reaches the page).
+    function plain(s) {
+      return new DOMParser().parseFromString(String(s).replace(/<br\s*\/?>/gi, '\n'), 'text/html').body.textContent.trim();
+    }
     // Soonest to end first (the server's order). A wish has ✨ in front; one
     // ending within two days an accent dot (a wish's ✨ turns accent instead).
+    // An event with a tip unfolds it.
     function events(list) {
       if (!list.length) return;
       var soon = Date.now() + 2 * 86400000;
       card('calendar', 'События', list.map(function (e) {
-        var p = wp(e.ends_at), r = hrow(e.title, 'до ' + p.day + '.' + p.month);
+        var p = wp(e.ends_at), r = hrow(e.title, 'до ' + p.day + '.' + p.month + (e.tip_text ? ' · совет' : ''));
         var lime = Date.parse(e.ends_at) <= soon, ld = el('span', 'lead');
         if (/Молитв|Wish/i.test(e.title)) ld.appendChild(icon('sparkles'));
         else if (lime) ld.appendChild(el('i', 'dot')).style.background = 'var(--mark)';
         if (lime) ld.style.color = 'var(--mark)';
         r.insertBefore(ld, r.firstChild);
+        if (e.tip_text) folding(r, function () { return det([el('div', 'tip', plain(e.tip_text))]); });
         return r;
       }));
     }
-    // As sent (level down); the first 20, the rest on a tap of «+N ещё».
-    function chars(list) {
+    var SLOTS = { 1: 'цветок', 2: 'перо', 3: 'часы', 4: 'кубок', 5: 'корона' };
+    // An unfolded build: weapon, talents against the ceiling, each artifact
+    // («часы · Берсерк» · «+5 · HP%»), the stats in one line, up to 4 hints
+    // with an accent dot.
+    function buildRows(b) {
+      var rows = [], w = b.weapon || {}, st = b.stats || {};
+      var ts = (b.talents || []).map(function (t) { return t.level; });
+      if (w.name) rows.push(hrow(w.name, 'оружие', 'ур. ' + w.level + ' · R' + w.refinement));
+      if (ts.length) rows.push(hrow('Таланты', null, ts.join('/') + ' · потолок ' + b.talent_cap));
+      (b.artifacts || []).forEach(function (a) {
+        var m = a.main || {};
+        // HoYoLAB names HP% «HP» with a value in %: the % goes on the name.
+        var main = m.name ? m.name + (['HP', 'Сила атаки', 'Защита'].indexOf(m.name) >= 0 && /%$/.test(String(m.value)) ? '%' : '') : '';
+        rows.push(hrow([SLOTS[a.pos] || a.pos_name, a.set].filter(Boolean).join(' · '), null,
+          ['+' + a.level, main].filter(Boolean).join(' · ')));
+      });
+      var sl = [st.crit_rate != null ? 'крит ' + st.crit_rate + ' / ' + (st.crit_dmg != null ? st.crit_dmg : '?') : '',
+        st.atk != null ? 'АТК ' + st.atk : '', st.hp != null ? 'HP ' + st.hp : '',
+        st.em != null ? 'МС ' + st.em : '', st.er != null ? 'ВЭ ' + st.er : ''].filter(Boolean);
+      if (sl.length) rows.push(el('div', 'row small mu', sl.join(' · ')));
+      (b.hints || []).slice(0, 4).forEach(function (h) {
+        var r = hrow(h), ld = el('span', 'lead');
+        ld.appendChild(el('i', 'dot')).style.background = 'var(--mark)';
+        r.insertBefore(ld, r.firstChild);
+        rows.push(r);
+      });
+      return det(rows);
+    }
+    // As sent (level down); the first 20, the rest on a tap of «+N ещё». A
+    // character with a build unfolds it, one at a time.
+    function chars(list, builds) {
       if (!list.length) return;
+      var by = {}, one = {};
+      builds.forEach(function (b) { by[b.name] = b; });
       var rows = list.map(function (c) {
-        return hrow(c.name, c.weapon ? c.weapon + ' (' + c.weapon_level + ')' : null, 'ур. ' + c.level + ' · C' + c.constellation);
+        var r = hrow(c.name, c.weapon ? c.weapon + ' (' + c.weapon_level + ')' : null, 'ур. ' + c.level + ' · C' + c.constellation);
+        var b = by[c.name];
+        return b ? folding(r, function () { return buildRows(b); }, one) : r;
       });
       var box = card('top', 'Персонажи', rows.slice(0, 20));
       if (rows.length > 20) {
@@ -2416,9 +2584,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (n.resin) resin(n.resin);
         var cw = s.characters_at && wp(s.characters_at), tw = wp(Date.now());
         today(n, cw && cw.day === tw.day && cw.month === tw.month ? (s.today || {}) : {});
+        plan(s.plan);
       }
+      codes(j.codes || []);
       events(j.events || []);
-      if (s) chars(s.characters || []);
+      if (s) chars(s.characters || [], s.builds || []);
     }
     function load() {
       if (!body.firstChild) add(body, skeleton(2));
