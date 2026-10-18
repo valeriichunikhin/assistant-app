@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 14:29">
+<meta name="published" content="2026-10-18 15:32">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -99,6 +99,7 @@ button{cursor:pointer}
 .card{background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);margin:0 0 16px;overflow:hidden;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
 .ch{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 14px 6px}
 .ch:last-child{padding-bottom:10px}
+.card.hero{background-size:cover;background-position:center}
 .ch .ico{display:grid;place-items:center;flex:none;width:28px;height:28px;border:1px solid var(--line);border-radius:var(--r-s);color:var(--muted)}
 .ch .ico .i{width:16px;height:16px}
 .ch h3{flex:1;min-width:0;margin:0;font:800 14px/1.3 var(--font);letter-spacing:-.02em}
@@ -300,7 +301,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 /* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
    stats 3×2, the team four in a row. */
 .av{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 14px/1 var(--font);object-fit:cover;overflow:hidden}
-.av.s28{width:28px;height:28px;font-size:12px}.av.s24{width:24px;height:24px;font-size:11px}.av.s48{width:48px;height:48px;font-size:18px}img.av.s28,img.av.s24{object-fit:contain}
+.av.s28{width:28px;height:28px;font-size:12px}.av.s24{width:24px;height:24px;font-size:11px}.av.s40{width:40px;height:40px;font-size:16px}.av.s48{width:48px;height:48px;font-size:18px}img.av.s28,img.av.s24{object-fit:contain}
 .tiles.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.tiles.g3 .tile{grid-column:auto;padding:8px 14px}.tiles.g3 .v{font-size:15px;font-weight:700}.tiles.g3 .k{font-size:11px}
 .team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:4px 14px 10px;font-size:12px;text-align:center}
 .team>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;overflow-wrap:anywhere}
@@ -557,9 +558,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       sub ? el('div', 'sub', sub) : null);
   }
   function pill(s, kind) { return el('span', 'pill' + (kind ? ' ' + kind : ''), s); }
-  // The only <img> sources: TMDB posters and HoYoLAB icons (https, a host under hoyoverse.com or hoyolab.com).
+  // The only <img> sources: TMDB posters, HoYoLAB icons and Enka's profile pictures (https, a host under hoyoverse.com or hoyolab.com).
   function imgOk(u) {
-    return /^https:\/\/image\.tmdb\.org\//.test(u) || /^https:\/\/([a-z0-9-]+\.)+(hoyoverse|hoyolab)\.com\//i.test(u);
+    return /^https:\/\/image\.tmdb\.org\//.test(u) || /^https:\/\/enka\.network\/ui\//.test(u)
+      || /^https:\/\/([a-z0-9-]+\.)+(hoyoverse|hoyolab)\.com\//i.test(u);
   }
   // A small icon in front of a row.
   function lead(r, ic) { r.insertBefore(add(el('span', 'lead'), icon(ic)), r.firstChild); return r; }
@@ -2757,6 +2759,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var line = [p.nickname, p.ar != null ? 'AR ' + p.ar : '', p.wl != null ? 'WL ' + p.wl : '',
         p.abyss && !a ? 'Бездна ' + p.abyss : ''].filter(Boolean).join(' · ');
       var c = card('game', line || 'Genshin', []);
+      if (imgOk(String(p.avatar || ''))) c.firstChild.firstChild.replaceWith(ava(p.avatar, p.nickname, 's40'));
+      if (imgOk(String(p.namecard || ''))) {
+        var veil = 'color-mix(in srgb, var(--solid) 72%, transparent)';
+        c.classList.add('hero');
+        c.style.backgroundImage = 'linear-gradient(' + veil + ',' + veil + '), url("' + p.namecard + '")';
+      }
       if (s.notes_at) c.firstChild.appendChild(el('span', 'mu', 'обновлено ' + at(s.notes_at)));
       // HoYoLAB's Abyss replaces Enka's floor: «Бездна 8-3 · 24★ · до 16.11».
       if (a && a.max_floor) {
