@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 17:39">
+<meta name="published" content="2026-10-18 19:33">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -201,14 +201,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chips select{font-size:16px}
 .chips select{border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font-family:var(--font)}
 .row.off{opacity:.55}
-.stars{display:flex}
-.acts+.stars{margin-top:8px}
-.row.film:has(>.btn.x) .stars{margin-right:-56px}
-.st{position:relative;display:grid;place-items:center;width:44px;height:44px;font-size:22px;line-height:1;color:var(--muted)}
-.st.on{color:var(--mark)}
-.st.half{background:linear-gradient(90deg,var(--mark) 50%,var(--muted) 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.st button{position:absolute;top:0;bottom:0;left:0;width:50%;padding:0;border:0;background:none}
-.st button+button{left:50%}
 .pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font-size:12px;transition:border-color .12s,color .12s}
 .pg .i{width:14px;height:14px}
 .row.film .pg{min-height:44px}
@@ -303,7 +295,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
 /* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
    «сериал»/«аниме» tag, a folded list card's header with its chevron. */
-.card>.seg{margin:0 14px}.hs+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}
+.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}
 .ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
 /* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
    stats 3×2, the team four in a row. */
@@ -2236,9 +2228,35 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
   // --- cinema ---
   // The cinema function's lists through miniapp?action=cinema; marks («хочу»
-  // toggles with mark h) and ratings go to the webhook (film_mark,
-  // film_rate), then the tab reloads.
+  // toggles with mark h) go to the webhook (film_mark), then the tab reloads.
+  // A rating (film_rate) is drawn at once and saved through mark()
+  // (docs/specs/films-from-cinema.md: the rating strip and chips of «Фильмы»).
   function rateText(r) { return String(r).replace('.', ','); }
+  // A chip of «Фильмы» and «Кино»: a pill button, pressed when on.
+  function chip(s, on, aria, fn) {
+    var b = el('button', 'pill' + (on ? ' acc' : ''), s);
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(on));
+    if (aria) b.setAttribute('aria-label', aria);
+    b.onclick = fn;
+    return b;
+  }
+  // «Видел» with a rating, one strip in both film tabs: FILM_RATES as chips, the current one pressed and scrolled
+  // to the middle of the strip; onPick(rating).
+  function rateStrip(current, onPick) {
+    var rates = el('div', 'hs');
+    rates.setAttribute('role', 'group');
+    rates.setAttribute('aria-label', 'Видел — оценка');
+    FILM_RATES.forEach(function (v) {
+      rates.appendChild(chip(rateText(v), current != null && Number(current) === v, 'Видел, оценка ' + rateText(v),
+        function () { onPick(v); }));
+    });
+    requestAnimationFrame(function () {
+      var on = rates.querySelector('.acc');
+      if (on) rates.scrollLeft = on.offsetLeft - (rates.clientWidth - on.offsetWidth) / 2;
+    });
+    return rates;
+  }
   function cinemaView() {
     var body = el('div', 'cols');
     main.appendChild(body);
@@ -2292,23 +2310,37 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       b.onclick = fn;
       return b;
     }
-    // Five stars, each tapped on its left half (x,5) or right half (x).
-    function starBar(id, rating) {
-      var bar = el('div', 'stars');
-      bar.setAttribute('role', 'group');
-      bar.setAttribute('aria-label', 'Оценка');
-      for (var k = 1; k <= 5; k++) {
-        var st = el('span', 'st' + (rating >= k ? ' on' : rating >= k - 0.5 ? ' half' : ''), '★');
-        [k * 10 - 5, k * 10].forEach(function (t) {
-          var b = el('button');
-          b.type = 'button';
-          b.setAttribute('aria-label', 'Оценка ' + rateText(t / 10));
-          b.onclick = function () { act({ action: 'film_rate', film: id, tenths: t }, '⭐ ' + rateText(t / 10) + ' — записал'); };
-          st.appendChild(b);
-        });
-        bar.appendChild(st);
-      }
-      return bar;
+    // A rating is «смотрел» with it: on screen at once on every row of the film, saved 400 ms after the last tap,
+    // then the tab reloads (the film moves to «Смотрел»). The state is a string «status:rating».
+    var drawn = {}, abouts = {}, day = '';
+    function enc(st, r) { return (st || 'new') + ':' + (r == null ? '' : Number(r)); }
+    function dec(v, f) { var p = v.split(':'); f.status = p[0]; f.rating = p[1] ? Number(p[1]) : null; }
+    function repaint(id) { (drawn[id] || []).forEach(function (d) { d.paint(); }); }
+    function redraw(id, v) { (drawn[id] || []).forEach(function (d) { dec(v, d.f); }); repaint(id); }
+    function rate(f, v) {
+      var was = enc(f.status, f.rating), want = enc('watched', v);
+      if (want === was) return;
+      haptic();
+      redraw(f.id, want);
+      mark('cine:' + f.id, want, was, function (st) {
+        return api('telegram-webhook', { action: 'film_rate', film: f.id, tenths: Math.round(Number(st.split(':')[1]) * 10) }, 15000, true)
+          .then(function (j) { load(); return enc(j.status, j.rating); });
+      }, function (st) { redraw(f.id, st); }, function () { toast(SAVE_FAILED); });
+    }
+    // A film's block (its row and the strips under it), drawn again in place when its mark changes; a mark still
+    // on its way shows as tapped. build(box, f) draws into box.
+    function live(f, build) {
+      var wrap = el('div', 'fi'), m = marks['cine:' + f.id];
+      if (m) dec(m.want, f);
+      function paint() { build(clear(wrap), f); }
+      (drawn[f.id] || (drawn[f.id] = [])).push({ f: f, paint: paint });
+      paint();
+      return wrap;
+    }
+    // The film's mark on the right of its row, as in «Фильмы».
+    function said(f) {
+      return f.status === 'watched' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
+        : f.status === 'want' ? pill('Хочу') : f.status === 'skip' ? pill('Не интересно') : null;
     }
     function name(f) {
       var t = el('div', 't');
@@ -2338,48 +2370,82 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // «Хочу» toggles: say what the server did, not what the tap meant.
     function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
-    function mark(f, m, ic, s, done, back) {
-      return btn(ic, s, function () { act({ action: 'film_mark', film: f.id, mark: m }, done, back); });
+    function markChip(f, m, s, on, done, back) {
+      return chip(s, on, null, function () { act({ action: 'film_mark', film: f.id, mark: m }, done, back); });
     }
-    // «О фильме»: the film's Cinema City page (description, trailer), where there is one.
+    // The mark chips in a strip, as the status chips of «Фильмы».
+    function statuses() {
+      var sts = el('div', 'hs');
+      sts.setAttribute('role', 'group');
+      sts.setAttribute('aria-label', 'Отметка');
+      return add.apply(null, [sts].concat([].slice.call(arguments)));
+    }
+    // «О фильме» unfolds TMDB's description, rating and genres, and the Cinema City page, under the row.
+    function aboutChip(f) {
+      var link = /^https?:\/\//i.test(String(f.link || ''));
+      if (!f.overview && !(Number(f.vote) > 0) && !(f.genres || []).length && !link) return null;
+      var b = chip('О фильме', !!abouts[f.id], null, function () { abouts[f.id] = !abouts[f.id]; repaint(f.id); });
+      b.removeAttribute('aria-pressed');
+      b.setAttribute('aria-expanded', String(!!abouts[f.id]));
+      return b;
+    }
     function about(f) {
-      return /^https?:\/\//i.test(String(f.link || '')) ? btn('link', 'О фильме', function () { openLink(f.link); }) : null;
+      if (!abouts[f.id]) return null;
+      var meta = [Number(f.vote) > 0 ? '★ ' + rateText(Number(f.vote).toFixed(1)) + ' TMDB' : '', (f.genres || []).join(', ')]
+        .filter(Boolean).join(' · ');
+      return add(el('div', 'tip'), f.overview ? el('div', '', String(f.overview).slice(0, 300)) : null,
+        meta ? el('div', 'mu', meta) : null,
+        /^https?:\/\//i.test(String(f.link || '')) ? add(el('div', 'acts'), btn('link', 'Cinema City', function () { openLink(f.link); })) : null);
     }
-    function premiere(f) {
-      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
+    function premiere(box, f) {
+      add(box, add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date)),
-        pills(f.sale),
-        add(el('div', 'acts'),
-          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел', 'c'),
-          mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'c'),
-          about(f)),
-        starBar(f.id, f.rating)));
+        pills(f.sale)), said(f)),
+      rateStrip(f.status === 'watched' ? f.rating : null, function (v) { rate(f, v); }),
+      statuses(markChip(f, 'h', 'Хочу', f.status === 'want', wantToast),
+        markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'c'),
+        aboutChip(f)),
+      about(f));
     }
     // A «Скоро» film: its date, «Хочу» and «Не интересно».
-    function soonRow(f) {
-      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
-        el('div', 'mu num', 'с ' + dm(f.release_date)),
-        add(el('div', 'acts'),
-          mark(f, 'h', 'target', 'Хочу', wantToast),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'c'),
-          about(f))));
+    function soonRow(box, f) {
+      add(box, add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
+        el('div', 'mu num', 'с ' + dm(f.release_date))), said(f)),
+      statuses(markChip(f, 'h', 'Хочу', f.status === 'want', wantToast),
+        markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'c'),
+        aboutChip(f)),
+      about(f));
     }
     var MONTHS = 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь'.split(' ');
     // A «хочу» film: out already or from its date, where it plays.
-    function wanted(f, today) {
-      return add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
-        el('div', 'mu num', !f.release_date ? '' : f.release_date <= today ? 'уже в прокате' : 'с ' + dm(f.release_date)),
-        pills(f.cinemas),
-        add(el('div', 'acts'),
-          mark(f, 'w', 'check', 'Смотрел', 'Отмечено: смотрел', 'h'),
-          mark(f, 'x', 'x', 'Не интересно', 'Отмечено: не интересно', 'h'),
-          mark(f, 'h', 'target', 'Убрать', wantToast),
-          about(f))));
+    function wanted(box, f) {
+      add(box, add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
+        el('div', 'mu num', !f.release_date ? '' : f.release_date <= day ? 'уже в прокате' : 'с ' + dm(f.release_date)),
+        pills(f.cinemas)), said(f)),
+      rateStrip(f.status === 'watched' ? f.rating : null, function (v) { rate(f, v); }),
+      statuses(markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'h'),
+        markChip(f, 'h', 'Убрать', false, wantToast),
+        aboutChip(f)),
+      about(f));
+    }
+    // A «Смотрел» line: the date and how it got there; a film's own line also has the rating strip.
+    function seen(box, w) {
+      var r = add(el('div', 'row film'), poster(w.poster, w.display), add(el('span', 'tx'), el('div', 't', w.display),
+        el('div', 'mu num', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : ''))), said(w));
+      if (w.id && w.source === 'mark') {
+        var x = add(el('button', 'btn ghost x'), icon('x'));
+        x.type = 'button';
+        x.setAttribute('aria-label', 'Снять отметку');
+        x.onclick = function () { act({ action: 'film_mark', film: w.id, mark: 'clear' }, 'Отметка снята'); };
+        r.appendChild(x);
+      }
+      return add(box, r, w.id ? rateStrip(w.status === 'watched' ? w.rating : null, function (v) { rate(w, v); }) : null);
     }
     function render(j) {
       if (current !== 'cinema') return;
       clear(body);
+      drawn = {};
+      day = j.today;
       var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
       var watched = j.watched || [], early = j.early || [], prem = j.premieres || [], want = j.want || [], soon = j.soon || [];
       if (!want.length && !prem.length && !soon.length && !early.length && !shows.length && !watched.length) {
@@ -2389,12 +2455,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var c;
       if (want.length) {
         c = mkCard('target', 'Хочу');
-        want.forEach(function (f) { c.appendChild(wanted(f, j.today)); });
+        want.forEach(function (f) { c.appendChild(live(f, wanted)); });
         body.appendChild(c);
       }
       c = mkCard('film', 'Премьеры', 'ближайшие 14 дней');
       if (!prem.length) c.appendChild(el('div', 'row small mu', 'Новых премьер нет'));
-      prem.forEach(function (f) { c.appendChild(premiere(f)); });
+      prem.forEach(function (f) { c.appendChild(live(f, premiere)); });
       body.appendChild(c);
       if (soon.length) {
         // By month: «Декабрь 2026», then that month's films by date.
@@ -2403,7 +2469,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         soon.forEach(function (f) {
           var m = MONTHS[+f.release_date.slice(5, 7) - 1] + ' ' + f.release_date.slice(0, 4);
           if (m !== mon) c.appendChild(add(el('div', 'row small mu'), el('b', '', mon = m)));
-          c.appendChild(soonRow(f));
+          c.appendChild(live(f, soonRow));
         });
         body.appendChild(c);
       }
@@ -2427,18 +2493,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (watched.length) {
         c = mkCard('check', 'Смотрел');
         watched.forEach(function (w) {
-          var tx = add(el('span', 'tx'), el('div', 't', w.display),
-            el('div', 'mu num', dm(w.date) + (w.source === 'mark' ? ' · отмечен' : '') + (w.rating != null && !w.id ? ' · ⭐ ' + rateText(w.rating) : '')),
-            w.id ? starBar(w.id, w.rating) : null);
-          var r = add(el('div', 'row film'), poster(w.poster, w.display), tx);
-          if (w.id && w.source === 'mark') {
-            var x = add(el('button', 'btn ghost x'), icon('x'));
-            x.type = 'button';
-            x.setAttribute('aria-label', 'Снять отметку');
-            x.onclick = function () { act({ action: 'film_mark', film: w.id, mark: 'clear' }, 'Отметка снята'); };
-            r.appendChild(x);
-          }
-          c.appendChild(r);
+          // A line of this list is «смотрел» whatever else the film carries.
+          w.status = 'watched';
+          c.appendChild(w.id ? live(w, seen) : seen(el('div', 'fi'), w));
         });
         body.appendChild(c);
       }
@@ -2568,14 +2625,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       img.onerror = function () { img.replaceWith(ph); };
       return img;
     }
-    function chip(s, on, aria, fn) {
-      var b = el('button', 'pill' + (on ? ' acc' : ''), s);
-      b.type = 'button';
-      b.setAttribute('aria-pressed', String(on));
-      if (aria) b.setAttribute('aria-label', aria);
-      b.onclick = fn;
-      return b;
-    }
     function button(cls, ic, s, fn) {
       var b = label(el('button', cls), ic, s);
       b.type = 'button';
@@ -2589,20 +2638,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (f.anime || f.kind === 'tv') t.appendChild(el('span', 'mu fk', f.anime ? ' · аниме' : ' · сериал'));
       var said = FILM_STATUS.filter(function (x) { return x[0] === f.status; })[0];
       var tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
-        Number(f.vote) > 0 ? el('div', 'mu', '★ ' + rateText(Number(f.vote).toFixed(1))) : null);
+        Number(f.vote) > 0 ? el('div', 'mu', '★ ' + rateText(Number(f.vote).toFixed(1))) : null, inCinema(f.cinema));
       add(clear(wrap), add(r, poster(f), tx, f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
         : said ? pill(said[1], f.status === 'watching' ? 'acc' : '') : null, icon('chevron-down', 'go')));
       r.setAttribute('aria-expanded', String(open));
       tap(r, function () { if (open) shut(); else { shut(); hold(wrap, f, sec); } });
       if (!open) return;
       r.classList.add('open');
-      var rates = el('div', 'hs');
-      rates.setAttribute('role', 'group');
-      rates.setAttribute('aria-label', 'Видел — оценка');
-      FILM_RATES.forEach(function (v) {
-        rates.appendChild(chip(rateText(v), f.status === 'seen' && f.rating === v, 'Видел, оценка ' + rateText(v),
-          function () { setMark(f, 'seen', v); }));
-      });
+      var rates = rateStrip(f.status === 'seen' ? f.rating : null, function (v) { setMark(f, 'seen', v); });
       // A status chip sets it (the rating goes), the active one taken again clears it.
       var sts = el('div', 'hs');
       sts.setAttribute('role', 'group');
@@ -2617,11 +2660,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(wrap, add(el('div', 'det fd'), rates, sts,
         f.status ? add(el('div', 'acts'), button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); })) : null,
       f.overview ? el('div', 'tip', String(f.overview).slice(0, 300)) : null));
-      // The chosen rating in the middle of its strip.
-      requestAnimationFrame(function () {
-        var on = rates.querySelector('.acc');
-        if (on) rates.scrollLeft = on.offsetLeft - (rates.clientWidth - on.offsetWidth) / 2;
-      });
+    }
+    // A film that plays in Cinema City now or soon (films-from-cinema.md): «в кино», or «в кино с 30.10» before its date.
+    function inCinema(c) {
+      if (!c) return null;
+      var p = wp(Date.now()), today = p.year + '-' + p.month + '-' + p.day;
+      return el('div', 'mu', c.release_date && c.release_date > today ? 'в кино с ' + dm(c.release_date) : 'в кино');
     }
     // Opens f in a list row's wrap (no other open block is closed here).
     function hold(wrap, f, sec) {
