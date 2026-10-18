@@ -448,7 +448,8 @@
             load();
           }, function (e) { if (e.code === 'no such item') load(); });
         });
-        return [add(el('div', 'tx'), add(el('div', 't'), link(r.title || r.host, r.url)), el('div', 'mu', r.host)),
+        return [add(el('div', 'tx'), add(el('div', 't'), link(r.title || r.host, r.url),
+          r.in_stock === false ? pill('нет в наличии') : null), el('div', 'mu', r.host)),
           num(last == null ? '—' : zl(last) + ' zł'), num(zl(r.target) + ' zł'), gap,
           pill(A.WISH_STATUS[r.status] || r.status, A.WISH_PILL[r.status] || ''),
           num(r.last_checked ? A.dmt(r.last_checked) : '—'), hovActs(x)];
