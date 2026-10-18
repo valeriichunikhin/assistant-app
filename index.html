@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 21:54">
+<meta name="published" content="2026-10-19 00:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -299,7 +299,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
 /* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
    «сериал»/«аниме» tag, a folded list card's header with its chevron. */
-.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty{padding:0 0 12px}
+.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty,.hs.tch{padding:0 0 12px}
 /* Вишлист (docs/specs/wishlist-tetyana.md): the «для Тетяны» chip in the add form, as tall as the field. */
 .bar>.pill{flex:none;height:44px;padding:0 12px;font-size:13px}@media (min-width:900px){.bar>.pill{height:36px}}
 .ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
@@ -314,6 +314,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    chips, a fixed percent column so the meters share one length, the Abyss stars (won in --mark, the rest --muted-2). */
 .av.s32{width:32px;height:32px;font-size:13px}img.av.rg{background:#2c2f45;object-fit:contain}
 .row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
+/* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
+.td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
 .st{font-size:15px;letter-spacing:1px}.st i{font-style:normal;color:var(--muted-2)}.st i.on{color:var(--mark)}.st i+i.c{margin-left:8px}
 </style>
 </head>
@@ -794,18 +796,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['tasks', 'check-square', 'Задачи'],
     ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow).
-  var NARROW = ['list', 'prices', 'wish', 'films', 'inbox', 'feed', 'news'];
+  var NARROW = ['list', 'prices', 'wish', 'films', 'tasks', 'inbox', 'feed', 'news'];
   var NAMES = {};
   // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
   // {tabs: {hidden}, home: {hidden, order}}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
   // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'inbox', 'feed'];
-  var HOME_KEYS = ['calendar', 'plan', 'morning', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
+  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'inbox', 'feed'];
+  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The known keys of v, once each, in its order; anything else → [].
   function keysIn(v, keys) {
@@ -1266,6 +1268,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           pill(x.stale ? 'тихо' : 'ок', x.stale ? 'warn' : 'acc'));
       }));
     }
+    function tasksCard(tk, today) {
+      var c = card('check-square', 'Задачи', 'открыто ' + (tk.count_open || 0));
+      if (tk.overdue) c.firstChild.appendChild(pill('просрочено ' + tk.overdue, 'bad'));
+      tap(c.firstChild, function () { show('tasks'); });
+      (tk.today || []).slice(0, 5).forEach(function (t) {
+        var m = marks[taskKey(t)], r = null;
+        t.done = m ? m.want : t.status === 'done';
+        function paint() {
+          var n = taskLine(t, null, today, function () { markTask(t, paint); });
+          n.className += ' tap';
+          n.onclick = function () { show('tasks'); };
+          if (r) c.replaceChild(n, r);
+          r = n;
+          return n;
+        }
+        c.appendChild(paint());
+      });
+    }
     function render(j) {
       clear(body);
       cards = {};
@@ -1277,6 +1297,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       slot = 'inbox';
       if (j.inbox_new == null) down('inbox', 'Инбокс');
       else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых'), function () { show('inbox'); });
+      // Tasks (docs/specs/tasks.md): the late count and today's, ✓ on each; hidden when nothing is late or due today.
+      slot = 'tasks';
+      if (j.tasks === null) down('check-square', 'Задачи');
+      else if (j.tasks && (j.tasks.overdue || (j.tasks.today || []).length)) tasksCard(j.tasks, today);
       slot = 'week';
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
@@ -1334,7 +1358,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         m.ok = v;
         // The cached answers of the screen are older than this save: the next open draws a fresh one.
         // The settings write their own cache entry (sendPrefs).
-        if (key !== 'prefs') cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
+        if (key.indexOf('task:') === 0) { cacheDrop('tasks'); cacheDrop('home'); }
+        else if (key !== 'prefs') cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
         if (v !== m.want && !m.t) { m.want = v; m.show(v); }
       }, function (e) {
         clearTimeout(m.t);
@@ -1534,6 +1559,305 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           render();
         }, retry: load });
     }
+    load();
+  }
+
+  // --- tasks (docs/specs/tasks.md) ---
+  // miniapp tasks_list: the open tasks and the done ones of 14 days. A new task goes as raw text (tasks_add {text});
+  // the server parses its tail («до пт», «завтра», «в 15:00», «#fba») and answers the task and what it understood.
+  var TASK_AREAS = [['fba', 'FBA'], ['clinic', 'Pomoc'], ['home', 'Дом'], ['personal', 'Личное']];
+  var TASK_SRC = { call: 'из созвона', voice: 'из голосового', bot: 'из бота', claude: 'от Claude' };
+  var taskDraft = '', taskDoneOpen = false;
+  function warsawToday() { var p = wp(Date.now()); return p.year + '-' + p.month + '-' + p.day; }
+  function areaName(k, areas) {
+    var a = (areas || TASK_AREAS).filter(function (x) { return x[0] === k; })[0];
+    return a ? a[1] : '';
+  }
+  // «пт 24.10 · 15:00 · Pomoc · из созвона»
+  function taskCaption(t, areas) {
+    return [t.due_date ? WEEK[wd(t.due_date)] + ' ' + dm(t.due_date) : '', t.due_time ? String(t.due_time).slice(0, 5) : '',
+      areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean).join(' · ');
+  }
+  function taskKey(t) { return 'task:' + t.id; }
+  function setDone(t, v) {
+    t.done = v;
+    t.status = v ? 'done' : 'open';
+    t.done_at = v ? t.done_at || new Date().toISOString() : null;
+  }
+  // The ✓ of a task, on the tab and on «Сегодня»: flipped and drawn (render) at once, tasks_done 400 ms after the last tap.
+  function markTask(t, render) {
+    var was = !!t.done;
+    setDone(t, !was);
+    render();
+    mark(taskKey(t), t.done, was, function (v) {
+      return api('miniapp', { action: 'tasks_done' }, 15000, true, { id: t.id, done: v }).then(function (j) {
+        var r = (j && j.task) || j || {};
+        return r.status ? r.status === 'done' : v;
+      });
+    }, function (v) { setDone(t, v); render(); }, function () { toast(SAVE_FAILED); });
+  }
+  // A task's row: its ✓ button (tick), the title, the caption, a red pill of the days it is late.
+  function taskLine(t, areas, today, tick) {
+    var ck = add(el('button', 'tb'), icon(t.done ? 'check-square' : 'square', 'mk' + (t.done ? ' on' : '')));
+    ck.type = 'button';
+    ck.setAttribute('aria-label', 'Сделано: ' + t.title);
+    ck.setAttribute('aria-pressed', String(!!t.done));
+    ck.onclick = function (ev) {
+      ev.stopPropagation();
+      haptic();
+      tick();
+    };
+    var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas);
+    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), el('div', 't', t.title), cap ? el('div', 'mu', cap) : null),
+      late > 0 ? add(el('span', 'pr'), pill(late + ' дн', 'bad')) : null);
+  }
+  // The next pt/sb/vs after today (w as wd(): 0 = Monday).
+  function nextWd(today, w) { return addDays(today, (w - wd(today) + 6) % 7 + 1); }
+  function tasksView() {
+    var tasks = [], areas = TASK_AREAS, opened = null, refocus = null, area = store('taskArea') || '';
+    var bar = el('form', 'bar'), input = el('input');
+    input.placeholder = 'Новая задача…';
+    input.value = taskDraft;
+    input.enterKeyHint = 'done';
+    input.maxLength = 300;
+    input.setAttribute('aria-label', 'Новая задача');
+    input.oninput = function () { taskDraft = input.value; };
+    var plus = add(el('button', 'btn'), icon('plus'));
+    plus.type = 'submit';
+    plus.setAttribute('aria-label', 'Добавить');
+    var chips = el('div', 'hs tch'), body = el('div');
+    chips.setAttribute('role', 'group');
+    chips.setAttribute('aria-label', 'Метка');
+    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), chips, body);
+    // What the server understood: « · до пт 24.10 · 15:00 · Pomoc».
+    function parsedLine(p) {
+      var s = [p.due_date ? 'до ' + WEEK[wd(p.due_date)] + ' ' + dm(p.due_date) : '', p.due_time ? String(p.due_time).slice(0, 5) : '',
+        areaName(p.area, areas)].filter(Boolean).join(' · ');
+      return s ? ' · ' + s : '';
+    }
+    function own(t) {
+      t.done = t.status === 'done';
+      return t;
+    }
+    function fresh() {
+      cacheDrop('tasks');
+      cacheDrop('home');
+    }
+    bar.onsubmit = function (ev) {
+      ev.preventDefault();
+      var s = input.value.trim();
+      if (!s) return;
+      plus.disabled = true;
+      haptic();
+      api('miniapp', { action: 'tasks_add' }, 15000, true, { text: s }).then(function (j) {
+        plus.disabled = false;
+        taskDraft = input.value = '';
+        var t = (j && j.task) || j || {};
+        toast('✅ ' + (t.title || s) + parsedLine((j && j.parsed) || t));
+        if (t.id != null && !tasks.some(function (x) { return x.id === t.id; })) tasks.push(own(t));
+        // A filter that would hide the new task goes back to «Все».
+        if (area && t.area !== area) {
+          area = '';
+          store('taskArea', area);
+        }
+        fresh();
+        render();
+        load();
+      }, function (e) {
+        plus.disabled = false;
+        // The title left after the date and the hashtag is empty or over 200 characters.
+        if (!e.login) toast(e.code === 'bad request' ? 'Нужно название, до 200 знаков' : ERRORS[e.code]);
+      });
+    };
+    // patch on screen at once, then tasks_edit; quiet: the screen already shows it (the title field). A failure puts it back.
+    function edit(t, patch, quiet) {
+      var was = {}, b = { id: t.id }, k;
+      for (k in patch) { was[k] = t[k]; t[k] = b[k] = patch[k]; }
+      if (!quiet) render();
+      api('miniapp', { action: 'tasks_edit' }, 15000, false, b).then(function (j) {
+        var r = (j && j.task) || j, moved = false;
+        fresh();
+        if (!r || r.id !== t.id) return;
+        ['title', 'note', 'area', 'due_date', 'due_time'].forEach(function (f) {
+          if (f in r && r[f] !== t[f]) { t[f] = r[f]; moved = true; }
+        });
+        if (moved) render();
+      }, function () {
+        for (var f in was) t[f] = was[f];
+        render();
+      });
+    }
+    function drop(t) {
+      var was = t.status;
+      haptic();
+      dropMark(taskKey(t));
+      t.status = 'dropped';
+      opened = null;
+      render();
+      api('miniapp', { action: 'tasks_drop' }, 15000, false, { id: t.id }).then(function () {
+        fresh();
+        backToast('Убрал', function () {
+          api('miniapp', { action: 'tasks_done' }, 15000, false, { id: t.id, done: false }).then(function () {
+            fresh();
+            delete shown.tasks;
+            load();
+          }, noop);
+        });
+      }, function () {
+        t.status = was;
+        render();
+      });
+    }
+    // The block under an open row: the title, the area, the due day and time, «Убрать».
+    function details(t, today) {
+      var d = el('div', 'det td'), ti = el('input'), di = el('input'), tm = el('input');
+      ti.value = t.title;
+      ti.maxLength = 200;
+      ti.enterKeyHint = 'done';
+      ti.setAttribute('aria-label', 'Название');
+      ti.onkeydown = function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); ti.blur(); } };
+      ti.onblur = function () {
+        var s = ti.value.trim();
+        if (!s) ti.value = t.title;
+        else if (s !== t.title) {
+          edit(t, { title: s }, true);
+          var row = d.parentNode && d.parentNode.querySelector('.row .t');
+          if (row) text(row, s);
+        }
+      };
+      var ac = el('div', 'hs'), dc = el('div', 'hs');
+      ac.setAttribute('role', 'group');
+      ac.setAttribute('aria-label', 'Метка задачи');
+      dc.setAttribute('role', 'group');
+      dc.setAttribute('aria-label', 'Срок');
+      areas.forEach(function (a) {
+        ac.appendChild(chip(a[1], t.area === a[0], null, function () { edit(t, { area: t.area === a[0] ? null : a[0] }); }));
+      });
+      // The active day taken again clears the due date (and its time).
+      [[today, 'сегодня'], [addDays(today, 1), 'завтра']].concat([4, 5, 6].map(function (w) { return [nextWd(today, w), WEEK[w]]; }))
+        .forEach(function (o) {
+          dc.appendChild(chip(o[1], t.due_date === o[0], null, function () {
+            edit(t, t.due_date === o[0] ? { due_date: null, due_time: null } : { due_date: o[0] });
+          }));
+        });
+      di.type = 'date';
+      di.value = t.due_date || '';
+      di.setAttribute('aria-label', 'Дата');
+      di.onchange = function () { edit(t, di.value ? { due_date: di.value } : { due_date: null, due_time: null }); };
+      tm.type = 'time';
+      tm.value = t.due_time ? String(t.due_time).slice(0, 5) : '';
+      tm.setAttribute('aria-label', 'Время');
+      // A time needs a day: without one it is today's.
+      tm.onchange = function () {
+        var p = { due_time: tm.value || null };
+        if (tm.value && !t.due_date) p.due_date = today;
+        edit(t, p);
+      };
+      var rm = label(el('button', 'btn ghost'), 'trash', 'Убрать');
+      rm.type = 'button';
+      rm.onclick = function () { drop(t); };
+      return add(d, add(el('div', 'bar'), add(el('label', 'field'), ti)), ac, dc,
+        add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
+        add(el('div', 'acts'), rm));
+    }
+    function item(t, today) {
+      var wrap = el('div', 'fi'), open = opened === t.id;
+      var r = taskLine(t, areas, today, function () {
+        markTask(t, render);
+        if (t.done) backToast('Сделано', function () { markTask(t, render); });
+      });
+      var tx = r.querySelector('.tx');
+      function toggle() {
+        opened = open ? null : t.id;
+        refocus = t.id;
+        render();
+      }
+      tx.tabIndex = 0;
+      tx.setAttribute('role', 'button');
+      tx.setAttribute('aria-expanded', String(open));
+      tx.onkeydown = function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
+      };
+      r.className += ' tap' + (open ? ' open' : '');
+      r.onclick = toggle;
+      r.appendChild(icon('chevron-down', 'go'));
+      wrap.tid = t.id;
+      return add(wrap, r, open ? details(t, today) : null);
+    }
+    function drawChips() {
+      clear(chips);
+      [['', 'Все']].concat(areas).forEach(function (a) {
+        chips.appendChild(chip(a[1], area === a[0], null, function () {
+          if (area === a[0]) return;
+          area = a[0];
+          store('taskArea', area);
+          opened = null;
+          render();
+        }));
+      });
+    }
+    function byDue(a, b) {
+      return String(a.due_date || '').localeCompare(String(b.due_date || '')) ||
+        String(a.due_time || '99').localeCompare(String(b.due_time || '99')) ||
+        String(a.created_at || '').localeCompare(String(b.created_at || ''));
+    }
+    function render() {
+      if (current !== 'tasks') return;
+      if (!areas.some(function (a) { return a[0] === area; })) area = '';
+      drawChips();
+      var today = warsawToday(), soon = addDays(today, 7), g = { over: [], today: [], soon: [], later: [], none: [], done: [] };
+      tasks.forEach(function (t) {
+        if (t.status === 'dropped' || (area && t.area !== area)) return;
+        if (t.done) g.done.push(t);
+        else if (!t.due_date) g.none.push(t);
+        else if (t.due_date < today) g.over.push(t);
+        else if (t.due_date === today) g.today.push(t);
+        else if (t.due_date <= soon) g.soon.push(t);
+        else g.later.push(t);
+      });
+      clear(body);
+      var any = false;
+      // «Позже»: past the seven days of «Скоро», so no task is left out.
+      [['over', 'alert', 'Просрочено'], ['today', 'clock', 'Сегодня'], ['soon', 'calendar', 'Скоро'], ['later', 'layers', 'Позже'],
+        ['none', 'bookmark', 'Без срока']].forEach(function (k) {
+        var rows = g[k[0]].sort(byDue);
+        if (!rows.length) return;
+        any = true;
+        var c = mkCard(k[1], k[2]);
+        c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
+        rows.forEach(function (t) { c.appendChild(item(t, today)); });
+        body.appendChild(c);
+      });
+      if (!any) body.appendChild(state('check-square', area ? 'В «' + areaName(area, areas) + '» открытых задач нет' : 'Задач нет — напиши первую в поле выше'));
+      if (g.done.length) {
+        var c = mkCard('check', 'Сделано'), h = c.firstChild;
+        add(h, el('span', 'mu', String(g.done.length)), icon('chevron-down', 'go'));
+        h.setAttribute('aria-expanded', String(taskDoneOpen));
+        tap(h, function () { taskDoneOpen = !taskDoneOpen; render(); });
+        if (taskDoneOpen) {
+          g.done.sort(function (a, b) { return String(b.done_at || '').localeCompare(String(a.done_at || '')); })
+            .forEach(function (t) { c.appendChild(item(t, today)); });
+        }
+        body.appendChild(c);
+      }
+      if (refocus != null) {
+        var w = [].filter.call(body.querySelectorAll('.fi'), function (x) { return x.tid === refocus; })[0];
+        refocus = null;
+        if (w) w.querySelector('.tx').focus();
+      }
+    }
+    function load() {
+      swr({ key: 'tasks', box: body, n: 2, live: function () { return current === 'tasks'; },
+        fetch: function () { return api('miniapp', { action: 'tasks_list' }, 15000, true); },
+        render: function (j) {
+          var a = (j.areas || []).filter(function (x) { return Array.isArray(x) && x.length === 2; });
+          if (a.length) areas = a;
+          tasks = (j.tasks || []).map(own);
+          keepMarks(tasks, taskKey, 'done', render);
+          render();
+        }, retry: load });
+    }
+    drawChips();
     load();
   }
 
@@ -4152,7 +4476,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var HOME_NAMES = {
     plan: 'План недели', calendar: 'Календарь', due: 'Сроки и посылки', docs: 'Документы', courts: 'Корты сегодня',
     games: 'Мои игры', shows: 'Мои сеансы', vb: 'Волейбол', genshin: 'Genshin', yesterday: 'Вчера', inbox: 'Инбокс',
-    week: 'Неделя', system: 'Система'
+    week: 'Неделя', system: 'Система', tasks: 'Задачи'
   };
   // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
   function homeOrder() {
@@ -4376,7 +4700,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
     genshin: genshinView
   };
   // --- desktop (≥ 900 px) ---
