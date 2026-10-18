@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 15:32">
+<meta name="published" content="2026-10-18 16:24">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -68,6 +68,9 @@ button{cursor:pointer}
 .hdr{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:12px;min-height:52px;padding:env(safe-area-inset-top) 16px 0;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
 .hdr h1{flex:1;min-width:0;margin:0;font:800 20px/1.2 var(--font);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr .date{color:var(--muted);font-size:13px;white-space:nowrap}
+/* a refresh under way (docs/specs/app-cache-first.md): a 2px bar on the header's bottom edge, outside the flow */
+.hdr.busy::after{content:"";position:absolute;left:0;bottom:-1px;width:30%;height:2px;background:var(--accent);animation:busy 1.1s ease-in-out infinite alternate}
+@keyframes busy{to{transform:translateX(233.333%)}}
 .out{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:none;color:var(--muted);font-size:13px;transition:background .12s}
 .out .i{width:16px;height:16px}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
@@ -670,6 +673,103 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return s;
   }
   function failed(box, retry) { add(clear(box), state('alert', 'Не загрузилось', 'Повторить', retry)); }
+  // --- cache-first screens (docs/specs/app-cache-first.md) ---
+  // localStorage['cache:' + key] = {t, j}: the last good answer of a screen. shown[key] is the JSON on screen now;
+  // lastLoad is what the return to the app reruns; busyN counts the current tab's requests (busyGen: which tab).
+  var shown = {}, shownBox = {}, lastLoad = null, busyN = 0, busyGen = 0, cacheEpoch = 0;
+  // What the key's box shows now: shown[key] counts only for the box it was drawn into (a rebuilt view starts empty).
+  function onScreen(o) { return shownBox[o.key] === o.box ? shown[o.key] : undefined; }
+  function setShown(o, s) { shown[o.key] = s; shownBox[o.key] = o.box; }
+  function cacheGet(key) {
+    var o = null;
+    try { o = JSON.parse(store('cache:' + key) || 'null'); } catch (e) {}
+    return o && o.t ? { t: o.t, j: o.j, s: JSON.stringify(o.j) } : null;
+  }
+  function cacheClear() {
+    try {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf('cache:') === 0) localStorage.removeItem(k);
+      }
+    } catch (e) {}
+  }
+  // Forgets the cached screens whose key starts with prefix (a confirmed write made them stale).
+  function cacheDrop(prefix) {
+    try {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf('cache:' + prefix) === 0) localStorage.removeItem(k);
+      }
+    } catch (e) {}
+  }
+  // A full storage drops every cached screen and tries once more; a second failure is silent (store()).
+  function cacheSet(key, s) {
+    if (s.length > 400000 || '{['.indexOf(s.charAt(0)) < 0) { cacheDrop(key); return; }
+    if (key.indexOf('prices:') === 0) {
+      // One entry per typed query would pile up: only the latest query stays.
+      try {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf('cache:prices:') === 0 && k !== 'cache:' + key) localStorage.removeItem(k);
+        }
+      } catch (e) {}
+    }
+    var v = '{"t":' + Date.now() + ',"j":' + s + '}';
+    try { localStorage.setItem('cache:' + key, v); } catch (e) { cacheClear(); store('cache:' + key, v); }
+  }
+  // «12:30» today, «17.10 12:30» on another day, by the phone's clock.
+  function cacheTime(t) {
+    var d = new Date(t), p = function (x) { return ('0' + x).slice(-2); }, hm = p(d.getHours()) + ':' + p(d.getMinutes());
+    return d.toDateString() === new Date().toDateString() ? hm : p(d.getDate()) + '.' + p(d.getMonth() + 1) + ' ' + hm;
+  }
+  // Stale-while-revalidate (docs/specs/app-cache-first.md): the last answer is drawn at once, the fresh one
+  // replaces it only when it differs. o: {key, box, n, live, fetch, render, retry, fail}
+  //   key    cache key;  box  the element the view draws into;  n  skeleton cards when nothing is cached (0: none)
+  //   live() → whether the answer still applies (the tab is current and the view's own mode did not change)
+  //   fetch() → the api() promise;  render(j) draws j into box;  retry() the view's load, for «Повторить»
+  //   fail(e), optional: the view's own error state instead of failed(box, retry); no retry and no fail: silent
+  function swr(o) {
+    var hit = cacheGet(o.key), live = o.live(), gen = busyGen, epoch = cacheEpoch, f = o.box.firstChild;
+    if (hit && (!f || onScreen(o) !== hit.s)) {
+      try {
+        setShown(o, hit.s);
+        o.render(hit.j);
+      } catch (e) {
+        // A cached answer this view cannot draw: forget it and fetch as if nothing was cached.
+        cacheDrop(o.key);
+        delete shown[o.key];
+        hit = null;
+        if (o.n) add(clear(o.box), skeleton(o.n));
+      }
+    } else if (!hit && o.n && (!f || (f.className === 'state' && onScreen(o) === undefined))) add(clear(o.box), skeleton(o.n));
+    if (live) {
+      if (o.retry) lastLoad = { tab: current, run: o.retry, t: Date.now() };
+      busyN++;
+      hdr.classList.add('busy');
+    }
+    function done() {
+      if (live && gen === busyGen && --busyN <= 0) { busyN = 0; hdr.classList.remove('busy'); }
+    }
+    // A view drawn again since (another tab, then back) has a new box: the old one is not on screen.
+    function here() { return o.live() && o.box.isConnected; }
+    return o.fetch().then(function (j) {
+      var s = JSON.stringify(j);
+      done();
+      if (epoch === cacheEpoch) cacheSet(o.key, s);
+      if (!here()) return;
+      // Equal data: not one node is replaced, so open rows, the scroll and the focus stay.
+      if (s !== onScreen(o) || !o.box.firstChild) {
+        setShown(o, s);
+        o.render(j);
+      }
+    }, function (e) {
+      done();
+      if (e.login || !here()) return;
+      if (hit) toast('Не обновилось — показано на ' + cacheTime(hit.t));
+      else if (o.fail) o.fail(e);
+      else if (o.retry) failed(o.box, o.retry);
+    });
+  }
   // Today in Warsaw for the header: «сб, 10 октября».
   function todayLabel() {
     try {
@@ -786,6 +886,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     store('tgLogin', '');
     appKey = null;
     store('appKey', '');
+    cacheClear();
+    cacheEpoch++;
+    shown = {};
+    shownBox = {};
     current = null;
     hideBack();
     closeSheet();
@@ -822,6 +926,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (!isView(tab)) tab = 'home';
     flushMarks('');
     current = tab;
+    busyGen++;
+    busyN = 0;
+    hdr.classList.remove('busy');
     store('tab', tab);
     if (browser && location.hash !== '#' + tab) {
       try { history.replaceState(null, '', '#' + tab); } catch (e) {}
@@ -1129,10 +1236,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!body.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
     }
     function load() {
-      add(clear(body), skeleton(4));
-      api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
-        if (current === 'home') render(j);
-      }, function (e) { if (!e.login && current === 'home') failed(body, load); });
+      swr({ key: 'home', box: body, n: 4, live: function () { return current === 'home'; },
+        fetch: function () { return api('miniapp', { action: 'home' }, 30000, true); }, render: render, retry: load });
     }
     load();
   }
@@ -1161,6 +1266,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (m.want === m.ok) return;
       return m.send(m.want).then(function (v) {
         m.ok = v;
+        // The cached answers of the screen are older than this save: the next open draws a fresh one.
+        cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
         if (v !== m.want && !m.t) { m.want = v; m.show(v); }
       }, function (e) {
         clearTimeout(m.t);
@@ -1221,7 +1328,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // «Готово» and «Пропустить» send the batch's pending picks first.
   function flushBatch(b) { return flushMarks('pick:' + b.id + ':'); }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) flushMarks(''); });
+  // Back in the app after two minutes: the tab's last load runs again (cache-first, so no skeleton, no flash).
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) flushMarks('');
+    else if (lastLoad && lastLoad.tab === current && Date.now() - lastLoad.t > 120000) lastLoad.run();
+  });
 
   // --- list ---
   var draft = '';
@@ -1295,9 +1406,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           dropMark(itemKey(i));
           items = items.filter(function (x) { return x !== i; });
           render();
+          // After an undo or a failure the screen is no longer the cached answer: the next load draws whatever comes.
+          var reload = function () { delete shown.list; load(); };
           api('telegram-webhook', { action: 'delete', id: i.id }).then(function (j) {
-            undoToast('Убрал', [j.id], load);
-          }, load);
+            undoToast('Убрал', [j.id], reload);
+          }, reload);
         };
         add(row, icon(i.done ? 'check-square' : 'square', 'mk' + (i.done ? ' on' : '')),
           prodPic(i.text, i.image_url, i.chain, i.category, false, i.emoji),
@@ -1346,12 +1459,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       body.appendChild(card);
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(1));
-      api('telegram-webhook', { action: 'items' }, undefined, true).then(function (j) {
-        items = j.items || [];
-        keepItems(items, render);
-        render();
-      }, function (e) { if (!e.login && current === 'list') failed(body, load); });
+      swr({ key: 'list', box: body, n: 1, live: function () { return current === 'list'; },
+        fetch: function () { return api('telegram-webhook', { action: 'items' }, undefined, true); },
+        render: function (j) {
+          items = j.items || [];
+          keepItems(items, render);
+          render();
+        }, retry: load });
     }
     load();
   }
@@ -1463,11 +1577,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (hidden.length) text(note, 'Скрыты выключенные категории: ' + hidden.join(', '));
     }
     function load() {
-      add(clear(body), skeleton(2));
-      api('telegram-webhook', { action: 'deals_all' }, undefined, true).then(function (j) {
-        data = j;
-        render();
-      }, function (e) { if (!e.login && current === 'picks') failed(body, load); });
+      swr({ key: 'picks:all', box: body, n: 2, live: function () { return current === 'picks' && pickAll(); },
+        fetch: function () { return api('telegram-webhook', { action: 'deals_all' }, undefined, true); },
+        render: function (j) {
+          data = j;
+          render();
+        }, retry: load });
     }
     load();
     return render;
@@ -1530,6 +1645,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function drop(b) {
       batches = batches.filter(function (x) { return x !== b; });
+      cacheDrop('picks:');
       render();
     }
     function render() {
@@ -1589,13 +1705,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!shown) add(body, state(q ? 'search' : 'tag', q ? 'Ничего не нашлось' : 'Подборок акций пока нет — новые приходят с газетками (вс, пн, чт)'));
     }
     function load() {
-      add(clear(body), skeleton(2));
-      api('telegram-webhook', { action: 'compare' }, undefined, true).then(function (j) { cmp = j; render(); }, noop);
-      api('telegram-webhook', { action: 'picks' }, undefined, true).then(function (j) {
-        batches = j.batches || [];
-        keepPicks(batches, render);
-        render();
-      }, function (e) { if (!e.login && current === 'picks') failed(body, load); });
+      var live = function () { return current === 'picks' && !pickAll(); };
+      swr({ key: 'picks:cmp', box: body, n: 2, live: live,
+        fetch: function () { return api('telegram-webhook', { action: 'compare' }, undefined, true); },
+        render: function (j) { cmp = j; render(); } });
+      swr({ key: 'picks:batches', box: body, n: 2, live: live,
+        fetch: function () { return api('telegram-webhook', { action: 'picks' }, undefined, true); },
+        render: function (j) {
+          batches = j.batches || [];
+          keepPicks(batches, render);
+          render();
+        }, retry: load });
     }
     load();
   }
@@ -1668,7 +1788,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return api('telegram-webhook', { action: 'watch' }, 0, true).then(function (j) { watch = j.rows || []; }, noop);
     }
     function price(pr, r) {
-      text(pr, (watchOf(r) ? '👀 ' : '') + zl(r.last_price) + ' zł');
+      pr.eye = !!watchOf(r);
+      text(pr, (pr.eye ? '👀 ' : '') + zl(r.last_price) + ' zł');
       if (r.conditional) add(pr, el('span', 'mech', mechRu(r.mechanic) || 'с условием'));
     }
     // The size only when the name does not end with it.
@@ -1677,15 +1798,25 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return r.product_name + (z && sq(r.product_name).slice(-z.length) !== z ? sep + r.size : '');
     }
 
+    // The query whose rows are on screen, and those rows with their price cells.
+    var drawnQ = null, drawn = [];
+    // Cached rows were drawn before «Жду акцию» came: only a 👀 that changed is redrawn.
+    function eyes() { drawn.forEach(function (x) { if (x[0].eye !== !!watchOf(x[1])) price(x[0], x[1]); }); }
     function search() {
       var q = priceQuery.trim();
       var mine = ++seq;
-      if (q.length < 2) return add(clear(results), hint());
-      add(clear(results), skeleton(1));
-      Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch()]).then(function (a) {
-        if (mine !== seq || current !== 'prices') return;
+      if (q.length < 2) { drawnQ = null; return add(clear(results), hint()); }
+      // Another query's rows are not this one's screen.
+      if (q !== drawnQ) { drawnQ = null; clear(results); }
+      swr({ key: 'prices:' + q, box: results, n: 1, live: function () { return mine === seq && current === 'prices'; },
+        fetch: function () {
+          return Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch()]).then(function (a) { eyes(); return a[0]; });
+        }, render: draw, retry: search });
+      function draw(j) {
         clear(results);
-        var rows = a[0].rows || [], pl = a[0].query_pl, used = pl && pl !== q ? el('p', 'mu', 'искал: ' + pl) : null;
+        drawnQ = q;
+        drawn = [];
+        var rows = j.rows || [], pl = j.query_pl, used = pl && pl !== q ? el('p', 'mu', 'искал: ' + pl) : null;
         if (!rows.length) return add(results, add(state('search', 'Ничего не нашлось. Названия в газетках польские: masło, mleko, jaja…'), used));
         var card = el('div', 'card');
         rows.forEach(function (r) {
@@ -1695,12 +1826,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             el('div', 'mu', r.chain + ' · мин 90 дн: ' + zl(r.min_90d) + ' · ' + r.n + plural(r.n, [' наблюдение', ' наблюдения', ' наблюдений'])));
           var pr = el('span', 'pr');
           price(pr, r);
+          drawn.push([pr, r]);
           add(row, prodPic(r.product_name, r.image_url, r.chain, null, false, r.emoji), tx, pr);
           tap(row, function () { open(r, pr); });
           card.appendChild(row);
         });
         add(results, used, card);
-      }, function (e) { if (!e.login && mine === seq && current === 'prices') failed(results, search); });
+      }
     }
     input.oninput = function () {
       priceQuery = input.value;
@@ -2076,11 +2208,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       body.appendChild(card);
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(1));
-      api('telegram-webhook', { action: 'wish' }, undefined, true).then(function (j) {
-        rows = j.rows || [];
-        render();
-      }, function (e) { if (!e.login && current === 'wish') failed(body, load); });
+      swr({ key: 'wish', box: body, n: 1, live: function () { return current === 'wish'; },
+        fetch: function () { return api('telegram-webhook', { action: 'wish' }, undefined, true); },
+        render: function (j) {
+          rows = j.rows || [];
+          render();
+        }, retry: load });
     }
     load();
   }
@@ -2296,10 +2429,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (j.skipped) body.appendChild(el('p', 'mu', '🚫 не интересно: ' + j.skipped));
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(2));
-      api('miniapp', { action: 'cinema' }, 25000, true).then(render, function (e) {
-        if (!e.login && current === 'cinema') failed(body, load);
-      });
+      swr({ key: 'cinema', box: body, n: 2, live: function () { return current === 'cinema'; },
+        fetch: function () { return api('miniapp', { action: 'cinema' }, 25000, true); }, render: render, retry: load });
     }
     load();
   }
@@ -2537,32 +2668,40 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       moreB = picks.end ? null : button('btn ghost', 'chevron-down', 'Ещё', function () { loadPicks(true); });
       if (moreB) pbox.appendChild(add(el('div', 'foot'), moreB));
     }
+    var pg = null; // the genre whose first page is in pbox
     function loadPicks(more) {
       var page = more ? picks.page + 1 : 1, mine = ++pseq, g = filmGenre;
-      // «Ещё» only says it is loading; the grid stays as it is until the page arrives.
-      if (more) {
-        label(moreB, 'chevron-down', 'Загружаю…');
-        moreB.disabled = true;
-      } else {
-        picks = null;
-        drawPicks();
+      // The first page is cache-first (docs/specs/app-cache-first.md): a cached genre is drawn at once,
+      // another one waits under the skeleton.
+      if (!more) {
+        if (!cacheGet('films:picks:' + g)) {
+          picks = null;
+          pg = null;
+          drawPicks();
+        } else if (pg !== g) clear(pbox);
+        return swr({ key: 'films:picks:' + g, box: pbox, n: 0, live: function () { return mine === pseq && current === 'films'; },
+          fetch: function () { return api('miniapp', { action: 'films_picks' }, 20000, true, { genre: g, page: 1 }); },
+          render: function (j) { pg = g; got(j); }, retry: function () { loadPicks(false); },
+          fail: function (e) { pg = null; picks = { err: e }; drawPicks(); } });
       }
-      api('miniapp', { action: 'films_picks' }, 20000, !more, { genre: g, page: page }).then(function (j) {
+      // «Ещё» only says it is loading; the grid stays as it is until the page arrives.
+      label(moreB, 'chevron-down', 'Загружаю…');
+      moreB.disabled = true;
+      api('miniapp', { action: 'films_picks' }, 20000, false, { genre: g, page: page }).then(function (j) {
         if (mine !== pseq || current !== 'films') return;
+        got(j);
+      }, function (e) {
+        if (mine !== pseq || current !== 'films' || e.login) return;
+        label(moreB, 'chevron-down', 'Ещё');
+        moreB.disabled = false;
+      });
+      function got(j) {
         var rows = (j.rows || []).map(own), have = more ? picks.rows : [];
         picks = { rows: have.concat(rows.filter(function (f) { return have.indexOf(f) < 0; })), page: j.page || page, end: j.more === false, skips: rows.length ? 0 : (more ? picks.skips || 0 : 0) + 1 };
         // A page the server filtered down to nothing is not the end: take the next one.
         if (!rows.length && !picks.end && picks.skips < 5) return loadPicks(true);
         drawPicks();
-      }, function (e) {
-        if (mine !== pseq || current !== 'films' || e.login) return;
-        if (!more) {
-          picks = { err: e };
-          return drawPicks();
-        }
-        label(moreB, 'chevron-down', 'Ещё');
-        moreB.disabled = false;
-      });
+      }
     }
 
     // --- lists ---
@@ -2587,17 +2726,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (was && was === opened && (was.sec === 'want' || was.sec === 'seen') && !was.wrap.isConnected) opened = null;
     }
     function loadLists() {
-      lists = null;
-      drawLists();
-      api('miniapp', { action: 'films_lists' }, 15000, true).then(function (j) {
-        if (current !== 'films') return;
-        lists = { want: (j.want || []).map(own), seen: (j.seen || []).map(own) };
+      if (!cacheGet('films:lists')) {
+        lists = null;
         drawLists();
-      }, function (e) {
-        if (current !== 'films' || e.login) return;
-        lists = { err: e };
-        drawLists();
-      });
+      }
+      swr({ key: 'films:lists', box: wantCard, n: 0, live: function () { return current === 'films'; },
+        fetch: function () { return api('miniapp', { action: 'films_lists' }, 15000, true); },
+        render: function (j) {
+          lists = { want: (j.want || []).map(own), seen: (j.seen || []).map(own) };
+          drawLists();
+        }, retry: loadLists, fail: function (e) {
+          lists = { err: e };
+          drawLists();
+        } });
     }
 
     drawGenres();
@@ -2680,10 +2821,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!j.games.length) body.appendChild(state('ball', 'Подходящих игр нет — переключи залы или уровни'));
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(2));
-      return api('miniapp', { action: 'volleyball' }, 25000, true).then(render, function (e) {
-        if (!e.login && current === 'vb') failed(clear(body), load);
-      });
+      return swr({ key: 'vb', box: body, n: 2, live: function () { return current === 'vb'; },
+        fetch: function () { return api('miniapp', { action: 'volleyball' }, 25000, true); }, render: render, retry: load });
     }
     load();
   }
@@ -3100,10 +3239,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (s) chars(s.characters || [], s.builds || []);
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(2));
-      api('miniapp', { action: 'genshin' }, 25000, true).then(render, function (e) {
-        if (!e.login && current === 'genshin') failed(clear(body), load);
-      });
+      swr({ key: 'genshin', box: body, n: 2, live: function () { return current === 'genshin'; },
+        fetch: function () { return api('miniapp', { action: 'genshin' }, 25000, true); }, render: render, retry: load });
     }
     load();
   }
@@ -3224,10 +3361,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(2));
-      api('telegram-webhook', { action: 'dela' }, undefined, true).then(function (j) { render(j.items || []); }, function (e) {
-        if (!e.login && current === 'dela') failed(body, load);
-      });
+      swr({ key: 'dela', box: body, n: 2, live: function () { return current === 'dela'; },
+        fetch: function () { return api('telegram-webhook', { action: 'dela' }, undefined, true); },
+        render: function (j) { render(j.items || []); }, retry: load });
     }
     load();
   }
@@ -3264,7 +3400,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         haptic();
         b.disabled = true;
         api('telegram-webhook', { action: 'inbox_mark', id: r.id, what: what }, 30000, true)
-          .then(function (j) { toast(j.answer); load(); }, function (e) { if (!e.login) { toast(e.answer); load(); } });
+          .then(function (j) { toast(j.answer); load(); }, function (e) { if (!e.login) { b.disabled = false; toast(e.answer); load(); } });
       };
       return b;
     }
@@ -3287,10 +3423,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       body.appendChild(c);
     }
     function load() {
-      if (!body.firstChild) add(body, skeleton(2));
-      api('telegram-webhook', { action: 'inbox' }, undefined, true).then(function (j) { render(j.rows || []); }, function (e) {
-        if (!e.login && current === 'inbox') failed(body, load);
-      });
+      swr({ key: 'inbox', box: body, n: 2, live: function () { return current === 'inbox'; },
+        fetch: function () { return api('telegram-webhook', { action: 'inbox' }, undefined, true); },
+        render: function (j) { render(j.rows || []); }, retry: load });
     }
     load();
   }
@@ -3310,7 +3445,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     STREAMS.forEach(function (s) {
       var b = segs[s[0]] = el('button', '', s[1]);
       b.type = 'button';
-      b.onclick = function () { stream = s[0]; store('stream', stream); load(); };
+      // Another stream's rows go at once: its cache or the skeleton takes the place.
+      b.onclick = function () { stream = s[0]; store('stream', stream); clear(body); load(); };
       seg.appendChild(b);
     });
     add(main, seg, dig, med, body);
@@ -3331,13 +3467,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       dig.appendChild(card);
     }
     // Opened on «События»: the digest still comes from the news answer.
-    if (stream === 'events') api('miniapp', { action: 'news', stream: 'all' }, undefined, true).then(function (j) { digest(j.digest); }, noop);
+    if (stream === 'events') {
+      swr({ key: 'feed:digest', box: dig, n: 0, live: function () { return current === 'feed'; },
+        fetch: function () {
+          return api('miniapp', { action: 'news', stream: 'all' }, undefined, true).then(function (j) { return { digest: j.digest }; });
+        }, render: function (j) { digest(j.digest); } });
+    }
 
     // «Медицина»: current promotions from the med function's table, worded
     // as /med words them; hidden when there are none.
     function money(v) { var n = Number(v); return Number.isInteger(n) ? String(n) : zl(n); }
-    api('miniapp', { action: 'med' }, undefined, true).then(function (j) {
+    swr({ key: 'feed:med', box: med, n: 0, live: function () { return current === 'feed'; },
+      fetch: function () { return api('miniapp', { action: 'med' }, undefined, true); }, render: medCard });
+    function medCard(j) {
       var rows = (j.rows || []).slice(0, 8);
+      clear(med);
       if (current !== 'feed' || !rows.length) return;
       // Three rows, the rest behind «ещё N».
       var card = mkCard('steth', 'Медицина'), tail = [], more = el('div', 'row small mu', 'ещё ' + (rows.length - 3));
@@ -3355,7 +3499,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       if (tail.length) card.appendChild(tap(more, function () { more.remove(); add.apply(null, [card].concat(tail)); }));
       med.appendChild(card);
-    }, noop);
+    }
 
     function render(rows) {
       clear(body);
@@ -3412,11 +3556,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function load() {
       for (var k in segs) segs[k].className = k === stream ? 'on' : '';
       var mine = stream;
-      add(clear(body), skeleton(1));
-      api('miniapp', mine === 'events' ? { action: 'events' } : { action: 'news', stream: stream }, undefined, true).then(function (j) {
-        if (current !== 'feed' || mine !== stream) return;
-        if (mine === 'events') events(j); else { digest(j.digest); render(j.rows || []); }
-      }, function (e) { if (!e.login && current === 'feed' && mine === stream) failed(body, load); });
+      swr({ key: 'feed:' + mine, box: body, n: 1, live: function () { return current === 'feed' && mine === stream; },
+        fetch: function () {
+          return api('miniapp', mine === 'events' ? { action: 'events' } : { action: 'news', stream: mine }, undefined, true);
+        }, render: function (j) {
+          if (mine === 'events') events(j); else { digest(j.digest); render(j.rows || []); }
+        }, retry: load });
     }
     load();
   }
