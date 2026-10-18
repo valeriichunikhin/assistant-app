@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="published" content="2026-10-18 01:01">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="published" content="2026-10-18 10:16">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -58,6 +58,8 @@ html{background:var(--bg0)}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--grad);pointer-events:none}
 body{font:14px/1.45 var(--font);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overflow-x:hidden}
 button,input{font:inherit;color:inherit}
+html{touch-action:pan-x pan-y}/* no pinch or double-tap zoom on the phone (Valerii, 18.10.2026) */
+.field input{font-size:16px}/* under 16px iOS zooms in on focus */
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 .i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
