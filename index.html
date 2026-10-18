@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 00:32">
+<meta name="published" content="2026-10-19 01:16">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -316,6 +316,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
 /* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
 .td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
+.row .pr .pill+.pill{margin-left:4px}
+/* Задачи v2 (docs/specs/tasks.md): the steps checklist (✓ · title · ▲ ▼ ×), the log, the «Сводка» sheet over the page. */
+.tsh{margin:12px 0 2px;color:var(--muted);font-size:12px;font-weight:600}
+.tst{display:flex;align-items:center;gap:2px;min-height:44px;border-top:1px solid var(--line)}.tst:first-child{border-top:0}
+.tst>button{flex:none;display:grid;place-items:center;width:36px;height:44px;padding:0;border:0;border-radius:10px;background:none;color:var(--muted);font-size:13px;cursor:pointer}
+.tst>button:disabled{opacity:.3;cursor:default}.tst>button .i{width:16px;height:16px}.tst>button .mk{width:20px;height:20px}.tst>button .mk.on{color:var(--mark)}
+.tst>.tx{flex:1;min-width:0;padding:4px 6px;overflow-wrap:anywhere;font-size:14px;cursor:pointer}.tst.done>.tx{color:var(--muted);text-decoration:line-through}.tst>.field{margin:4px 0}
+.tlg{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}.tlg>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}.tlg .dt{flex:none;color:var(--muted-2);font-variant-numeric:tabular-nums}.tlg+.pg{margin-top:6px}
+.tsum{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:flex-end;background:var(--scrim);animation:fade .12s}
+.tsum>div{max-height:85vh;overflow-y:auto;padding:6px 16px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow)}
+.tsum pre{margin:0 0 4px;color:var(--fg);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+@media (min-width:900px){.tsum>div{width:100%;max-width:640px;margin:0 auto}}
 .st{font-size:15px;letter-spacing:1px}.st i{font-style:normal;color:var(--muted-2)}.st i.on{color:var(--mark)}.st i+i.c{margin-left:8px}
 </style>
 </head>
@@ -1596,7 +1608,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
     }, function (v) { setDone(t, v); render(); }, function () { toast(SAVE_FAILED); });
   }
-  // A task's row: its ✓ button (tick), the title, the caption, a red pill of the days it is late.
+  // «3/7»: the done steps of a task that has steps (v2).
+  function stepsPill(t) {
+    if (!(t.steps_total > 0)) return null;
+    var p = pill(t.steps_done + '/' + t.steps_total, 'sp');
+    p.title = 'Шаги: ' + t.steps_done + ' из ' + t.steps_total;
+    return p;
+  }
+  // A task's row: its ✓ button (tick), the title, the caption, the steps pill, a red pill of the days it is late.
   function taskLine(t, areas, today, tick) {
     var ck = add(el('button', 'tb'), icon(t.done ? 'check-square' : 'square', 'mk' + (t.done ? ' on' : '')));
     ck.type = 'button';
@@ -1607,14 +1626,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       haptic();
       tick();
     };
-    var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas);
+    var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
     return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), el('div', 't', t.title), cap ? el('div', 'mu', cap) : null),
-      late > 0 ? add(el('span', 'pr'), pill(late + ' дн', 'bad')) : null);
+      late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
   function nextWd(today, w) { return addDays(today, (w - wd(today) + 6) % 7 + 1); }
   function tasksView() {
-    var tasks = [], areas = TASK_AREAS, opened = null, refocus = null, area = store('taskArea') || '';
+    var tasks = [], areas = TASK_AREAS, opened = null, refocus = null, area = store('taskArea') || '', more = {};
     var bar = el('form', 'bar'), input = el('input');
     input.placeholder = 'Новая задача…';
     input.value = taskDraft;
@@ -1708,7 +1727,291 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         render();
       });
     }
-    // The block under an open row: the title, the area, the due day and time, «Убрать».
+    // v2: the steps, the note field and the log under the v1 fields, from tasks_get. more[id] keeps them across the
+    // tab's redraws: steps on screen, ok (as last confirmed), log (the 50 newest), all (the log unfolded); busy: a
+    // tasks_steps_set under way, again: the steps changed meanwhile, newly: a step was ticked (the log has a new row).
+    var LOG_TEXT = { created: function () { return 'создана'; }, step_done: function (r) { return '✓ ' + r.text; } };
+    function stepCopy(x) { return { id: x.id, title: x.title, done_at: x.done_at || null }; }
+    // The row's «3/7» follows the steps on screen; the task object of the list gets the counts too.
+    function recount(t, st) {
+      var cur = tasks.filter(function (x) { return x.id === t.id; })[0] || t, row = st.d.parentNode && st.d.parentNode.firstChild;
+      [t, cur].forEach(function (x) {
+        x.steps_total = st.steps.length;
+        x.steps_done = st.steps.filter(function (y) { return y.done_at; }).length;
+      });
+      if (!row || !row.querySelector) return;
+      var old = row.querySelector('.sp'), pr = row.querySelector('.pr'), sp = stepsPill(cur);
+      if (old) old.remove();
+      if (!sp) {
+        if (pr && !pr.firstChild) pr.remove();
+        return;
+      }
+      if (!pr) pr = row.insertBefore(el('span', 'pr'), row.querySelector('.go'));
+      pr.insertBefore(sp, pr.firstChild);
+    }
+    function stepsBox(t, d) {
+      var st = more[t.id] || (more[t.id] = { steps: null, ok: [], log: [], all: false });
+      st.box = el('div');
+      st.d = d;
+      if (st.steps) drawV2(t, st);
+      else {
+        st.box.appendChild(el('div', 'mu', 'Загружаю шаги…'));
+        if (!st.loading) loadV2(t, st, false);
+      }
+      return st.box;
+    }
+    // logOnly: after a ticked step, only the log is fetched again (the steps on screen are newer).
+    function loadV2(t, st, logOnly) {
+      if (!logOnly) st.loading = true;
+      api('miniapp', { action: 'tasks_get' }, 15000, true, { id: t.id }).then(function (j) {
+        st.log = (j && j.log) || [];
+        if (logOnly) return drawLog(st);
+        st.loading = false;
+        st.steps = ((j && j.steps) || []).map(stepCopy);
+        st.ok = st.steps.map(stepCopy);
+        recount(t, st);
+        drawV2(t, st);
+      }, function () {
+        if (logOnly) return;
+        st.loading = false;
+        var b = label(el('button', 'pg'), 'refresh', 'Повторить');
+        b.type = 'button';
+        b.onclick = function () {
+          add(clear(st.box), el('div', 'mu', 'Загружаю шаги…'));
+          loadV2(t, st, false);
+        };
+        add(clear(st.box), add(el('div', 'acts'), el('span', 'mu', 'Шаги не загрузились'), b));
+      });
+    }
+    function drawV2(t, st) {
+      var nb = el('form', 'bar'), nf = el('form', 'bar'), ni = el('input'), no = el('input');
+      st.list = el('div');
+      st.logEl = el('div');
+      ni.placeholder = 'Новый шаг…';
+      ni.maxLength = 200;
+      ni.enterKeyHint = 'done';
+      ni.setAttribute('aria-label', 'Новый шаг');
+      // The half-typed step and note live in st, so a redraw of the tab keeps them.
+      ni.value = st.stepDraft || '';
+      ni.oninput = function () { st.stepDraft = ni.value; };
+      nb.onsubmit = function (ev) {
+        ev.preventDefault();
+        var v = ni.value.trim();
+        if (!v) return;
+        if (st.steps.length >= 50) { toast('Не больше 50 шагов'); return; }
+        haptic();
+        st.steps.push({ id: null, title: v, done_at: null });
+        ni.value = st.stepDraft = '';
+        changed(t, st);
+      };
+      no.placeholder = 'Заметка…';
+      no.maxLength = 1000;
+      no.enterKeyHint = 'done';
+      no.setAttribute('aria-label', 'Заметка в журнал');
+      no.value = st.noteDraft || '';
+      no.oninput = function () { st.noteDraft = no.value; };
+      st.noEl = no;
+      nf.onsubmit = function (ev) {
+        ev.preventDefault();
+        var v = no.value.trim();
+        if (!v || st.noting) return;
+        st.noting = true;
+        haptic();
+        api('miniapp', { action: 'tasks_note' }, 15000, false, { id: t.id, text: v }).then(function (j) {
+          st.noting = false;
+          if (st.noEl.value.trim() === v) st.noEl.value = st.noteDraft = '';
+          if (j && j.entry) st.log.unshift(j.entry);
+          fresh();
+          drawLog(st);
+        }, function () { st.noting = false; });
+      };
+      add(clear(st.box), el('div', 'tsh', 'Шаги'), st.list, add(nb, add(el('label', 'field'), icon('plus'), ni)),
+        add(nf, add(el('label', 'field'), no)), st.logEl);
+      drawSteps(t, st);
+      drawLog(st);
+    }
+    // f: [index, 'ck' | 't' | 'up' | 'down' | 'x'] — what gets the focus back after the redraw (keyboard use); none when
+    // the list is empty, so a phone does not open its keyboard on the new step field.
+    function changed(t, st, f) {
+      recount(t, st);
+      drawSteps(t, st, f);
+      saveSteps(t, st);
+    }
+    function drawSteps(t, st, f) {
+      var refs = [];
+      clear(st.list);
+      st.steps.forEach(function (x, i) {
+        var done = !!x.done_at, tt = el('span', 'tx', x.title), r = el('div', 'tst' + (done ? ' done' : ''));
+        function sb(s, aria, fn, off) {
+          var b = el('button', '', s);
+          b.type = 'button';
+          b.setAttribute('aria-label', aria);
+          b.disabled = !!off;
+          b.onclick = fn;
+          return b;
+        }
+        var ck = add(sb(null, 'Шаг сделан: ' + x.title, function () {
+          haptic();
+          x.done_at = done ? null : new Date().toISOString();
+          changed(t, st, [i, 'ck']);
+        }), icon(done ? 'check-square' : 'square', 'mk' + (done ? ' on' : '')));
+        ck.setAttribute('aria-pressed', String(done));
+        function move(k) {
+          var y = st.steps[i + k];
+          st.steps[i + k] = x;
+          st.steps[i] = y;
+          changed(t, st, [i + k, k < 0 ? 'up' : 'down']);
+        }
+        var up = sb('▲', 'Выше: ' + x.title, function () { move(-1); }, i === 0);
+        var dn = sb('▼', 'Ниже: ' + x.title, function () { move(1); }, i === st.steps.length - 1);
+        var rm = add(sb(null, 'Удалить шаг: ' + x.title, function () {
+          st.steps.splice(i, 1);
+          changed(t, st, [i, 'x']);
+        }), icon('x'));
+        // A tap on the title edits it in place: Enter or leaving the field saves, Escape keeps the old one.
+        tap(tt, function () {
+          var fi = el('input'), fin = false;
+          fi.value = x.title;
+          fi.maxLength = 200;
+          fi.enterKeyHint = 'done';
+          fi.setAttribute('aria-label', 'Название шага');
+          function end(keep) {
+            if (fin) return;
+            fin = true;
+            var v = fi.value.trim();
+            if (!keep && v && v !== x.title) {
+              x.title = v;
+              changed(t, st, [i, 't']);
+            } else drawSteps(t, st, [i, 't']);
+          }
+          fi.onkeydown = function (ev) {
+            if (ev.key === 'Enter') { ev.preventDefault(); end(false); }
+            else if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); end(true); }
+          };
+          fi.onblur = function () { end(false); };
+          r.replaceChild(add(el('label', 'field'), fi), tt);
+          fi.focus();
+        });
+        tt.setAttribute('aria-label', 'Изменить шаг: ' + x.title);
+        refs.push({ ck: ck, t: tt, up: up, down: dn, x: rm });
+        st.list.appendChild(add(r, ck, tt, up, dn, rm));
+      });
+      if (!f) return;
+      var o = refs[Math.min(f[0], refs.length - 1)], b = o && o[f[1]];
+      if (b && b.disabled) b = f[1] === 'up' ? o.down : o.up;
+      if (b && !b.disabled) b.focus();
+    }
+    // The whole list goes each time; one request at a time, the latest list follows when it is answered. New steps get
+    // their ids from the answer (its order is the order sent). A failure loads the list again: the server may have
+    // written part of it (or all, after the timeout), so the last confirmed list can hold ids that are gone.
+    function saveSteps(t, st) {
+      if (st.busy) { st.again = true; return; }
+      st.busy = true;
+      st.again = false;
+      var sent = st.steps.slice(), prev = {};
+      st.ok.forEach(function (x) { prev[x.id] = x.done_at; });
+      if (sent.some(function (x) { return x.done_at && !(x.id && prev[x.id]); })) st.newly = true;
+      api('miniapp', { action: 'tasks_steps_set' }, 15000, true, { id: t.id, steps: sent.map(function (x) {
+        var o = { title: x.title, done: !!x.done_at };
+        if (x.id) o.id = x.id;
+        return o;
+      }) }).then(function (j) {
+        var got = (j && j.steps) || [];
+        st.busy = false;
+        st.ok = got.map(stepCopy);
+        if (got.length === sent.length) {
+          sent.forEach(function (x, i) {
+            x.id = got[i].id;
+            if (x.done_at && got[i].done_at) x.done_at = got[i].done_at;
+          });
+        } else if (!st.again) {
+          st.steps = st.ok.map(stepCopy);
+          recount(t, st);
+          drawSteps(t, st);
+        }
+        fresh();
+        if (st.again) saveSteps(t, st);
+        else if (st.newly) {
+          st.newly = false;
+          loadV2(t, st, true);
+        }
+      }, function () {
+        st.busy = st.again = st.newly = false;
+        toast(SAVE_FAILED);
+        loadV2(t, st, false);
+      });
+    }
+    // The newest 10 rows, «ещё N» for the rest of the 50; «создана» and the status changes are grey.
+    function drawLog(st) {
+      var rows = st.log || [], n = st.all ? rows.length : Math.min(10, rows.length);
+      clear(st.logEl);
+      if (!rows.length) return;
+      st.logEl.appendChild(el('div', 'tsh', 'Журнал'));
+      rows.slice(0, n).forEach(function (r) {
+        var grey = r.kind === 'created' || r.kind === 'status', s = LOG_TEXT[r.kind] ? LOG_TEXT[r.kind](r) : r.text;
+        st.logEl.appendChild(add(el('div', 'tlg' + (grey ? ' mu' : '')), el('span', '', s), el('span', 'dt', r.at ? whenW(r.at) : '')));
+      });
+      if (rows.length > n) {
+        var b = el('button', 'pg', 'ещё ' + (rows.length - n));
+        b.type = 'button';
+        b.onclick = function () {
+          st.all = true;
+          drawLog(st);
+          var r = st.logEl.querySelectorAll('.tlg')[n];
+          if (r) { r.tabIndex = -1; r.focus(); }
+        };
+        st.logEl.appendChild(b);
+      }
+    }
+    // «Сводка»: tasks_summary's text in a sheet over the page, «Скопировать» (the Clipboard API, else a hidden
+    // textarea as the Genshin codes do) and «Закрыть»; Escape, the scrim and Telegram's Back close it too.
+    function summary(t, sm) {
+      sm.disabled = true;
+      api('miniapp', { action: 'tasks_summary' }, 15000, false, { id: t.id }).then(function (j) {
+        sm.disabled = false;
+        var s = String((j && j.text) || ''), z = el('div', 'tsum'), h = document.body.classList;
+        var cp = label(el('button', 'btn'), 'copy', 'Скопировать'), x = el('button', 'btn ghost', 'Закрыть');
+        cp.type = x.type = 'button';
+        z.setAttribute('role', 'dialog');
+        z.setAttribute('aria-modal', 'true');
+        z.setAttribute('aria-label', 'Сводка');
+        function close() {
+          z.remove();
+          h.remove('zoomed');
+          hideBack();
+          if (sm.isConnected) sm.focus();
+        }
+        backHandler = close;
+        x.onclick = close;
+        z.onclick = function (ev) { if (ev.target === z) close(); };
+        z.onkeydown = function (ev) { if (ev.key === 'Escape') close(); };
+        cp.onclick = function () {
+          function done() {
+            label(cp, 'check', 'скопировано');
+            setTimeout(function () { label(cp, 'copy', 'Скопировать'); }, 1500);
+          }
+          // Some webviews deny the Clipboard API: fall back to a hidden textarea.
+          function fallback() {
+            var ta = document.createElement('textarea'), ok = false;
+            ta.value = s;
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { ok = document.execCommand('copy'); } catch (e) {}
+            ta.remove();
+            cp.focus();
+            if (ok) done(); else toast('Не скопировалось');
+          }
+          (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(done, fallback);
+        };
+        if (hasBack()) try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
+        h.add('zoomed');
+        add(document.body, add(z, add(el('div'), el('div', 'grab'), el('pre', 'code', s), add(el('div', 'acts'), cp, x))));
+        haptic();
+        cp.focus();
+      }, function () { sm.disabled = false; });
+    }
+    // The block under an open row: the title, the area, the due day and time, the steps, note and log, «Сводка», «Убрать».
     function details(t, today) {
       var d = el('div', 'det td'), ti = el('input'), di = el('input'), tm = el('input');
       ti.value = t.title;
@@ -1753,12 +2056,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (tm.value && !t.due_date) p.due_date = today;
         edit(t, p);
       };
-      var rm = label(el('button', 'btn ghost'), 'trash', 'Убрать');
-      rm.type = 'button';
+      var rm = label(el('button', 'btn ghost'), 'trash', 'Убрать'), sm = label(el('button', 'btn ghost'), 'file', 'Сводка');
+      rm.type = sm.type = 'button';
       rm.onclick = function () { drop(t); };
+      sm.onclick = function () { summary(t, sm); };
       return add(d, add(el('div', 'bar'), add(el('label', 'field'), ti)), ac, dc,
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
-        add(el('div', 'acts'), rm));
+        stepsBox(t, d), add(el('div', 'acts'), sm, rm));
     }
     function item(t, today) {
       var wrap = el('div', 'fi'), open = opened === t.id;
@@ -1768,6 +2072,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       var tx = r.querySelector('.tx');
       function toggle() {
+        // An opened task fetches its steps and log afresh, unless a save of them is still under way.
+        if (!open && more[t.id] && !more[t.id].busy) delete more[t.id];
         opened = open ? null : t.id;
         refocus = t.id;
         render();
