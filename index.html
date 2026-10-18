@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 20:25">
+<meta name="published" content="2026-10-18 20:48">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -263,9 +263,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .seg.fit{width:auto}
   .seg.fit button{flex:1 0 auto}
   .chips .pill,.chips select{height:32px}
-  .cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;align-items:start;margin-bottom:16px}
-  .cols>.card{margin:0}
-  .cols>.state{grid-column:1/-1}
+  /* Cards flow down columns (up to three of 380 px) instead of a row grid: a short card no longer leaves a hole under
+     itself when its neighbour is tall (the Genshin tab's header beside «Сегодня», 18.10.2026). */
+  .cols{columns:3 380px;column-gap:16px;margin-bottom:16px}
+  .cols>.card{margin:0 0 16px;break-inside:avoid}
+  .cols>.state{column-span:all}
   #toast{bottom:24px}
 }
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
