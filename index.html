@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 19:33">
+<meta name="published" content="2026-10-18 20:04">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -295,7 +295,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
 /* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
    «сериал»/«аниме» tag, a folded list card's header with its chevron. */
-.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}
+.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty{padding:0 0 12px}
 .ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
 /* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
    stats 3×2, the team four in a row. */
@@ -2340,7 +2340,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // The film's mark on the right of its row, as in «Фильмы».
     function said(f) {
       return f.status === 'watched' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
-        : f.status === 'want' ? pill('Хочу') : f.status === 'skip' ? pill('Не интересно') : null;
+        : f.status === 'want' ? pill('Хочу') : f.status === 'dropped' ? pill('Бросил')
+        : f.status === 'skip' ? pill('Не интересно') : null;
     }
     function name(f) {
       var t = el('div', 't');
@@ -2403,6 +2404,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         pills(f.sale)), said(f)),
       rateStrip(f.status === 'watched' ? f.rating : null, function (v) { rate(f, v); }),
       statuses(markChip(f, 'h', 'Хочу', f.status === 'want', wantToast),
+        markChip(f, 'd', 'Бросил', f.status === 'dropped', 'Отмечено: бросил', 'c'),
         markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'c'),
         aboutChip(f)),
       about(f));
@@ -2412,6 +2414,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(box, add(el('div', 'row film'), poster(f.poster, f.display), add(el('span', 'tx'), name(f),
         el('div', 'mu num', 'с ' + dm(f.release_date))), said(f)),
       statuses(markChip(f, 'h', 'Хочу', f.status === 'want', wantToast),
+        markChip(f, 'd', 'Бросил', f.status === 'dropped', 'Отмечено: бросил', 'c'),
         markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'c'),
         aboutChip(f)),
       about(f));
@@ -2423,7 +2426,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         el('div', 'mu num', !f.release_date ? '' : f.release_date <= day ? 'уже в прокате' : 'с ' + dm(f.release_date)),
         pills(f.cinemas)), said(f)),
       rateStrip(f.status === 'watched' ? f.rating : null, function (v) { rate(f, v); }),
-      statuses(markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'h'),
+      statuses(markChip(f, 'd', 'Бросил', f.status === 'dropped', 'Отмечено: бросил', 'h'),
+        markChip(f, 'x', 'Не интересно', f.status === 'skip', 'Отмечено: не интересно', 'h'),
         markChip(f, 'h', 'Убрать', false, wantToast),
         aboutChip(f)),
       about(f));
@@ -2440,6 +2444,40 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         r.appendChild(x);
       }
       return add(box, r, w.id ? rateStrip(w.status === 'watched' ? w.rating : null, function (v) { rate(w, v); }) : null);
+    }
+    // A «Смотрел» line from a mail with no Cinema City card but a TMDB film (docs/specs/cinema-dropped.md): its
+    // rating and chips write straight into «Фильмы» (films_mark) under that tab's key and state string
+    // («status:rating», filmsView enc), so a mark on its way is the same in both tabs; then the tab reloads.
+    var FILM_OF = { watched: 'seen', dropped: 'dropped', skip: 'skip' };
+    function fenc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
+    function mailed(w) {
+      var wrap = el('div', 'fi'), key = 'film:movie:' + w.tmdb_id, m = marks[key], st = m ? m.want : fenc(FILM_OF[w.status], w.rating);
+      function set(v) { st = v; paint(); }
+      if (m) m.show = set;
+      function put(s, r) {
+        var was = st, want = fenc(s, r);
+        if (want === was) return;
+        haptic();
+        set(want);
+        mark(key, want, was, function (v) {
+          var p = v.split(':');
+          return api('miniapp', { action: 'films_mark' }, 15000, true,
+            { kind: 'movie', tmdb_id: w.tmdb_id, status: p[0] || null, rating: p[1] ? Number(p[1]) : null, card: null })
+            .then(function (j) { load(); return fenc(j.status, j.rating == null ? null : Number(j.rating)); });
+        }, set, function () { toast(SAVE_FAILED); });
+      }
+      function paint() {
+        var p = st.split(':'), cur = p[0] || null;
+        // A chip sets its status (the rating goes), the active one taken again clears it, as in «Фильмы».
+        function one(x, t) { return chip(t, cur === x, null, function () { put(cur === x ? null : x, null); }); }
+        // Unmarked, the line is still «смотрел»: the mail says so.
+        w.status = !cur || cur === 'seen' ? 'watched' : cur;
+        w.rating = cur === 'seen' && p[1] ? Number(p[1]) : null;
+        add(seen(clear(wrap), w), rateStrip(w.rating, function (v) { put('seen', v); }),
+          statuses(one('dropped', 'Бросил'), one('skip', 'Не интересно'), cur ? chip('Убрать', false, null, function () { put(null, null); }) : null));
+      }
+      paint();
+      return wrap;
     }
     function render(j) {
       if (current !== 'cinema') return;
@@ -2493,9 +2531,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (watched.length) {
         c = mkCard('check', 'Смотрел');
         watched.forEach(function (w) {
-          // A line of this list is «смотрел» whatever else the film carries.
-          w.status = 'watched';
-          c.appendChild(w.id ? live(w, seen) : seen(el('div', 'fi'), w));
+          // A line of this list is «смотрел» whatever else the film carries, or «бросил».
+          if (w.id || !w.tmdb_id) w.status = w.status === 'dropped' ? 'dropped' : 'watched';
+          c.appendChild(w.id ? live(w, seen) : w.tmdb_id ? mailed(w) : seen(el('div', 'fi'), w));
         });
         body.appendChild(c);
       }
@@ -2529,6 +2567,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // The status chips of an open film («Видел» is the rating strip above them), and the lists in their order.
   var FILM_STATUS = [['want', 'Хочу'], ['watching', 'Смотрю'], ['dropped', 'Бросил'], ['skip', 'Не интересно']];
   var FILM_LISTS = ['watching', 'want', 'seen', 'dropped', 'skip'];
+  // The lists' type filter (docs/specs/cinema-dropped.md), kept in localStorage filmListType.
+  var LIST_TYPES = [['all', 'Все'], ['movie', 'Фильмы'], ['tv', 'Сериалы'], ['anime', 'Аниме']];
   function filmPick() {
     var p = null;
     try { p = JSON.parse(store('filmPick') || 'null'); } catch (e) {}
@@ -2550,6 +2590,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var res = el('div'), home = el('div');
     var pickCard = mkCard('clapperboard', 'Подборка'), seg = el('div', 'seg fit'), segs = {}, genres = el('div', 'hs'), pbox = el('div');
     var watchCard = el('div'), wantCard = el('div'), seenCard = el('div'), dropCard = el('div'), skipCard = el('div');
+    var types = el('div', 'hs fty'), listType = store('filmListType');
+    if (!LIST_TYPES.some(function (t) { return t[0] === listType; })) listType = 'all';
+    types.setAttribute('role', 'group');
+    types.setAttribute('aria-label', 'Списки: что показать');
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', 'Что подобрать');
     FILM_TYPES.forEach(function (t) {
@@ -2561,7 +2605,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     genres.setAttribute('role', 'group');
     genres.setAttribute('aria-label', 'Жанр');
     add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
-      add(home, add(pickCard, seg, genres, pbox), watchCard, wantCard, seenCard, dropCard, skipCard), el('p', 'mu', 'Данные TMDB'));
+      add(home, add(pickCard, seg, genres, pbox), types, watchCard, wantCard, seenCard, dropCard, skipCard), el('p', 'mu', 'Данные TMDB'));
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
@@ -2834,19 +2878,37 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       else rows.forEach(function (f) { c.appendChild(item(f, sec)); });
       add(clear(box), c);
     }
+    function drawTypes() {
+      clear(types);
+      LIST_TYPES.forEach(function (t) {
+        types.appendChild(chip(t[1], t[0] === listType, null, function () {
+          if (t[0] === listType) return;
+          listType = t[0];
+          store('filmListType', listType);
+          drawTypes();
+          drawLists();
+        }));
+      });
+    }
+    // A list as the filter shows it: films (movie, not anime), series (tv, not anime) or anime of both kinds.
+    function only(rows) {
+      return !rows || listType === 'all' ? rows : rows.filter(function (f) {
+        return listType === 'anime' ? !!f.anime : !f.anime && f.kind === listType;
+      });
+    }
     function drawLists() {
-      var was = opened;
+      var was = opened, hints = listType === 'all' || !lists; // a filtered list that is empty is not shown
       if (lists && lists.err) {
         add(clear(wantCard), add(mkCard('bookmark', 'Хочу посмотреть'), el('div')));
         err(wantCard.firstChild.lastChild, lists.err, loadLists);
         [watchCard, seenCard, dropCard, skipCard].forEach(clear);
         return;
       }
-      listCard(watchCard, 'clock', 'Смотрю', lists && lists.watching, null, 'watching');
-      listCard(wantCard, 'bookmark', 'Хочу посмотреть', lists && lists.want, 'Пусто — открой фильм и нажми «Хочу»', 'want');
-      listCard(seenCard, 'star', 'Видел', lists && lists.seen, 'Пусто — поставь оценку фильму, который видел', 'seen');
-      listCard(dropCard, 'x', 'Бросил', lists && lists.dropped, null, 'dropped', true);
-      listCard(skipCard, 'trash', 'Не интересно', lists && lists.skip, null, 'skip', true);
+      listCard(watchCard, 'clock', 'Смотрю', lists && only(lists.watching), null, 'watching');
+      listCard(wantCard, 'bookmark', 'Хочу посмотреть', lists && only(lists.want), hints ? 'Пусто — открой фильм и нажми «Хочу»' : null, 'want');
+      listCard(seenCard, 'star', 'Видел', lists && only(lists.seen), hints ? 'Пусто — поставь оценку фильму, который видел' : null, 'seen');
+      listCard(dropCard, 'x', 'Бросил', lists && only(lists.dropped), null, 'dropped', true);
+      listCard(skipCard, 'trash', 'Не интересно', lists && only(lists.skip), null, 'skip', true);
       // The open block was in a list and its film left them all (or its list folded): nothing is open now.
       if (was && was === opened && FILM_LISTS.indexOf(was.sec) >= 0 && !was.wrap.isConnected) opened = null;
     }
@@ -2869,6 +2931,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
 
     drawGenres();
+    drawTypes();
     search();
     loadPicks(false);
     loadLists();
