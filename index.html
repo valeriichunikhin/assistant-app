@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 14:14">
+<meta name="published" content="2026-10-18 14:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -297,6 +297,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .ft .t{font-weight:500;overflow-wrap:anywhere}.ft .mu{font-size:12px}.ft[aria-expanded="true"] .fp{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .fx{grid-column:1/-1;margin:0 -14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
+/* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
+   stats 3×2, the team four in a row. */
+.av{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 14px/1 var(--font);object-fit:cover;overflow:hidden}
+.av.s28{width:28px;height:28px;font-size:12px}.av.s24{width:24px;height:24px;font-size:11px}.av.s48{width:48px;height:48px;font-size:18px}img.av.s28,img.av.s24{object-fit:contain}
+.tiles.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.tiles.g3 .tile{grid-column:auto;padding:8px 14px}.tiles.g3 .v{font-size:15px;font-weight:700}.tiles.g3 .k{font-size:11px}
+.team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:4px 14px 10px;font-size:12px;text-align:center}
+.team>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -348,6 +355,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
 <symbol id="i-clapperboard" viewBox="0 0 24 24"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></symbol>
 <symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></symbol>
 <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol>
 </svg>
 <div id="app"></div>
@@ -548,6 +557,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       sub ? el('div', 'sub', sub) : null);
   }
   function pill(s, kind) { return el('span', 'pill' + (kind ? ' ' + kind : ''), s); }
+  // The only <img> sources: TMDB posters and HoYoLAB icons (https, a host under hoyoverse.com or hoyolab.com).
+  function imgOk(u) {
+    return /^https:\/\/image\.tmdb\.org\//.test(u) || /^https:\/\/([a-z0-9-]+\.)+(hoyoverse|hoyolab)\.com\//i.test(u);
+  }
   // A small icon in front of a row.
   function lead(r, ic) { r.insertBefore(add(el('span', 'lead'), icon(ic)), r.firstChild); return r; }
   // A JS twin of CATS in scripts/deal_batch.py: the same ids and keyword lists,
@@ -2367,7 +2380,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function poster(f, big) {
       var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls), u = String(f.poster || '');
       ph.setAttribute('aria-hidden', 'true');
-      if (!/^https:\/\/image\.tmdb\.org\//.test(u)) return ph;
+      if (!imgOk(u)) return ph;
       var img = el('img', cls);
       img.alt = '';
       img.loading = 'lazy';
@@ -2700,6 +2713,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // A block of rows under an unfolded row.
     function det(rows) { return add.apply(null, [el('div', 'det')].concat(rows)); }
+    // A HoYoLAB icon in a circle (cls: s48, s28, s24; none is 36 px) or, without a usable one, the name's first letter.
+    function ava(u, name, cls) {
+      var ph = el('span', 'av' + (cls ? ' ' + cls : ''), String(name || '?').charAt(0).toUpperCase());
+      ph.setAttribute('aria-hidden', 'true');
+      if (!imgOk(String(u || ''))) return ph;
+      var img = el('img', ph.className);
+      img.alt = '';
+      img.loading = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      img.src = u;
+      img.onerror = function () { img.replaceWith(ph); };
+      return img;
+    }
     // A row with a chevron that shows make()'s block under itself on a tap and
     // hides it on the next; rows sharing `one` keep one open at a time.
     function folding(r, make, one) {
@@ -2741,12 +2767,26 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // An accent meter of current/max; ⚠️ from 160, when it is close to running over.
     function resin(r) {
       var full = r.current >= r.max || Date.parse(r.resin_full_at) <= Date.now();
+      var m = Math.round((Date.parse(r.resin_full_at) - Date.now()) / 60000), h = Math.floor(m / 60);
+      var left = m > 0 ? ' · через ' + [h ? h + ' ч' : '', m % 60 ? m % 60 + ' мин' : ''].filter(Boolean).join(' ') : '';
       var row = hrow((r.current >= 160 ? '⚠️ ' : '') + r.current + '/' + r.max,
-        full ? 'полная' : r.resin_full_at ? 'полная в ' + at(r.resin_full_at) : null);
-      var m = el('div', 'meter'), f = el('i');
+        full ? 'полная' : r.resin_full_at ? 'полная в ' + at(r.resin_full_at) + left : null);
+      var bar = el('div', 'meter'), f = el('i');
       f.style.width = (r.max > 0 ? Math.min(100, r.current / r.max * 100) : 0) + '%';
-      row.firstChild.insertBefore(add(m, f), row.firstChild.lastChild);
+      row.firstChild.insertBefore(add(bar, f), row.firstChild.lastChild);
       card('clock', 'Смола', [row]);
+    }
+    // «Процветание (Кэ Цин), Борьба (Джинн)» from the Mac: a series a line, bold, its characters grey after a dash;
+    // on Sunday everything is open.
+    function series(s, what, sun) {
+      var tx = add(el('span', 'tx'), el('div', 'mu', what + (sun ? ' · открыто всё' : ' сегодня'))), m, any = false;
+      var re = /([^,()]+?)\s*\(([^)]*)\)/g;
+      while ((m = re.exec(s))) {
+        any = true;
+        tx.appendChild(add(el('div'), el('b', '', m[1].trim()), el('span', 'mu', ' — ' + m[2])));
+      }
+      if (!any) tx.appendChild(el('div', 't', s));
+      return add(el('div', 'row'), tx);
     }
     function today(n, t) {
       var rows = [], c = n.commissions, ex = n.expeditions || [], d = n.discounts;
@@ -2766,8 +2806,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       var q = wp(Date.now());
       if (t.date === q.year + '-' + q.month + '-' + q.day) {
-        if (t.books) rows.push(hrow(t.books, 'книги сегодня'));
-        if (t.weapons) rows.push(hrow(t.weapons, 'материалы оружия сегодня'));
+        var sun = wd(t.date) === 6;
+        if (t.books) rows.push(series(t.books, 'Книги', sun));
+        if (t.weapons) rows.push(series(t.weapons, 'Оружие', sun));
         if (t.checkin) rows.push(hrow(t.checkin));
       }
       if (rows.length) card('check-square', 'Сегодня', rows);
@@ -2783,12 +2824,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // Per character a heading row, then a row per group. Materials come as a
     // list (each with its group, none: «Прочее») or as {group: [..]}.
-    function planRows(list) {
+    function planHead(p) {
+      var f = p.from || {}, t = p.to || {};
+      return hrow(p.character, 'ур. ' + f.level + ' → ' + t.level + ' · таланты ' + talents(f.talents) +
+        ' → ' + talents(t.talents));
+    }
+    // headless: the groups only, under a folded character row.
+    function planRows(list, headless) {
       var rows = [];
       list.forEach(function (p) {
-        var f = p.from || {}, t = p.to || {}, ms = p.materials || [], by = ms;
-        rows.push(hrow(p.character, 'ур. ' + f.level + ' → ' + t.level + ', таланты ' + talents(f.talents) +
-          ' → ' + talents(t.talents)));
+        var ms = p.materials || [], by = ms;
+        if (!headless) rows.push(planHead(p));
         if (Array.isArray(ms)) {
           by = {};
           ms.forEach(function (m) {
@@ -2808,18 +2854,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       return rows;
     }
-    // «План фарма» after «Сегодня»: the materials up to the current level cap,
-    // the next step folded under «После AR N». No plan, no card.
+    // «План фарма» after «Команда»: a folded row per character with the materials
+    // up to the current level cap (the first open), the next step folded under
+    // «После AR N». No plan, no card.
     function plan(pl) {
-      var now = (pl && pl.now) || [], next = (pl && pl.next) || [];
+      var now = (pl && pl.now) || [], next = (pl && pl.next) || [], one = {};
       if (!now.length && !next.length) return;
-      var rows = planRows(now);
+      var rows = now.map(function (p) { return folding(planHead(p), function () { return det(planRows([p], true)); }, one); });
       if (next.length) {
         var lv = next[0].to && next[0].to.level;
         rows.push(folding(hrow(CAP_AR[lv] ? 'После AR ' + CAP_AR[lv] : 'Следующий порог', lv ? 'до ур. ' + lv : null),
           function () { return det(planRows(next)); }));
       }
       card('layers', 'План фарма', rows);
+      if (now.length) rows[0].onclick();
     }
     // The working codes, up to 8: the code in monospace, its date and a copy
     // button that reads «скопировано» for 1.5 s.
@@ -2873,25 +2921,32 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }));
     }
     var SLOTS = { 1: 'цветок', 2: 'перо', 3: 'часы', 4: 'кубок', 5: 'корона' };
-    // An unfolded build: weapon, talents against the ceiling, each artifact
-    // («часы · Берсерк» · «+5 · HP%»), the stats in one line, up to 4 hints
-    // with an accent dot.
+    // An unfolded build: weapon with its icon, talents against the ceiling, the
+    // stats 3×2, each artifact with its icon («часы · Берсерк · +5», the main
+    // stat on the right), up to 4 hints with an accent dot.
     function buildRows(b) {
       var rows = [], w = b.weapon || {}, st = b.stats || {};
       var ts = (b.talents || []).map(function (t) { return t.level; });
-      if (w.name) rows.push(hrow(w.name, 'оружие', 'ур. ' + w.level + ' · R' + w.refinement));
+      if (w.name) {
+        var wr = hrow(w.name, 'оружие', 'ур. ' + w.level + ' · R' + w.refinement);
+        wr.insertBefore(ava(w.icon, w.name, 's28'), wr.firstChild);
+        rows.push(wr);
+      }
       if (ts.length) rows.push(hrow('Таланты', null, ts.join('/') + ' · потолок ' + b.talent_cap));
+      var STATS = [['crit_rate', 'крит шанс'], ['crit_dmg', 'крит урон'], ['atk', 'АТК'], ['hp', 'HP'], ['em', 'МС'], ['er', 'ВЭ']];
+      if (STATS.some(function (x) { return st[x[0]] != null; })) {
+        rows.push(add.apply(null, [el('div', 'tiles g3')].concat(STATS.map(function (x) {
+          return add(el('div', 'tile'), el('div', 'v num', st[x[0]] != null ? st[x[0]] : '—'), el('div', 'k', x[1]));
+        }))));
+      }
       (b.artifacts || []).forEach(function (a) {
         var m = a.main || {};
         // HoYoLAB names HP% «HP» with a value in %: the % goes on the name.
         var main = m.name ? m.name + (['HP', 'Сила атаки', 'Защита'].indexOf(m.name) >= 0 && /%$/.test(String(m.value)) ? '%' : '') : '';
-        rows.push(hrow([SLOTS[a.pos] || a.pos_name, a.set].filter(Boolean).join(' · '), null,
-          ['+' + a.level, main].filter(Boolean).join(' · ')));
+        var r = hrow([SLOTS[a.pos] || a.pos_name, a.set, a.level != null ? '+' + a.level : ''].filter(Boolean).join(' · '), null, main || null);
+        r.insertBefore(ava(a.icon, a.set || a.name, 's24'), r.firstChild);
+        rows.push(r);
       });
-      var sl = [st.crit_rate != null ? 'крит ' + st.crit_rate + ' / ' + (st.crit_dmg != null ? st.crit_dmg : '?') : '',
-        st.atk != null ? 'АТК ' + st.atk : '', st.hp != null ? 'HP ' + st.hp : '',
-        st.em != null ? 'МС ' + st.em : '', st.er != null ? 'ВЭ ' + st.er : ''].filter(Boolean);
-      if (sl.length) rows.push(el('div', 'row small mu', sl.join(' · ')));
       (b.hints || []).slice(0, 4).forEach(function (h) {
         var r = hrow(h), ld = el('span', 'lead');
         ld.appendChild(el('i', 'dot')).style.background = 'var(--mark)';
@@ -2900,8 +2955,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       return det(rows);
     }
-    // As sent (level down); the first 20, the rest on a tap of «+N ещё». A
-    // character with a build unfolds it, one at a time.
+    // As sent (level down), each with its avatar; the first 20, the rest on a
+    // tap of «+N ещё». A character with a build unfolds it, one at a time.
     function chars(list, builds) {
       if (!list.length) return;
       var by = {}, one = {};
@@ -2909,6 +2964,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var rows = list.map(function (c) {
         var r = hrow(c.name, c.weapon ? c.weapon + ' (' + c.weapon_level + ')' : null, 'ур. ' + c.level + ' · C' + c.constellation);
         var b = by[c.name];
+        r.insertBefore(ava(c.icon || (b && b.icon), c.name), r.firstChild);
         return b ? folding(r, function () { return buildRows(b); }, one) : r;
       });
       var box = card('top', 'Персонажи', rows.slice(0, 20));
@@ -2920,6 +2976,101 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }));
       }
     }
+    // The game resets at 03:00 UTC (04:00 or 05:00 in Warsaw): the Battle Pass
+    // day and week are read off the UTC date three hours back.
+    function bpDate() { return new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10); }
+    // The Warsaw hour of the reset, for the label.
+    function bpHour() { return wp(Date.parse(new Date().toISOString().slice(0, 10) + 'T03:00:00Z')).hour; }
+    // 'YYYY-Www', the ISO week of a date: its Thursday names the year.
+    function isoWeek(date) {
+      var d = new Date(date + 'T12:00:00Z');
+      d.setUTCDate(d.getUTCDate() + 3 - wd(date));
+      var y = d.getUTCFullYear(), n = Math.floor((d - Date.UTC(y, 0, 1)) / 86400000);
+      return y + '-W' + ('0' + (Math.floor(n / 7) + 1)).slice(-2);
+    }
+    // His ticks in localStorage ({week|date, done}); another week or day starts empty.
+    function ticks(k, key, val) {
+      var o = null;
+      try { o = JSON.parse(store(k)); } catch (e) {}
+      if (!o || o[key] !== val || !o.done || typeof o.done !== 'object') {
+        o = { done: {} };
+        o[key] = val;
+      }
+      return o;
+    }
+    // «Боевой пропуск» after «Сегодня»: the week's tasks with checkboxes and
+    // points, the day's as chips. Older snapshots have no bp: no card. The
+    // Mac's auto ticks count only from today's snapshot and are never stored.
+    function bp(b, live, n) {
+      var weekly = (b && Array.isArray(b.weekly) && b.weekly) || [], daily = (b && Array.isArray(b.daily) && b.daily) || [];
+      if (!weekly.length && !daily.length) return;
+      var box = card('award', 'Боевой пропуск', []), wrap = box.appendChild(el('div'));
+      var reset = label(el('button', 'btn ghost'), null, 'Сбросить');
+      reset.type = 'button';
+      reset.onclick = function () {
+        store('bpWeek', JSON.stringify({ week: isoWeek(bpDate()), done: {} }));
+        store('bpDay', JSON.stringify({ date: bpDate(), done: {} }));
+        draw();
+      };
+      box.appendChild(add(el('div', 'foot'), reset));
+      function id(t) { return String(t.id || t.key || ''); }
+      function pts(t) { return Number(t.pts != null ? t.pts : t.points) || 0; }
+      // boss3 and comm4 come from the hourly notes; the Mac's snapshot is the fallback.
+      function auto(t) {
+        var i = id(t);
+        if (i === 'boss3' && n && n.discounts) return n.discounts.left === 0;
+        if (i === 'comm4' && n && n.commissions) return n.commissions.done >= n.commissions.total;
+        return live && t.auto === true;
+      }
+      function flip(day, t) {
+        var k = day ? 'bpDay' : 'bpWeek', o = day ? ticks(k, 'date', bpDate()) : ticks(k, 'week', isoWeek(bpDate()));
+        if (o.done[id(t)]) delete o.done[id(t)];
+        else o.done[id(t)] = 1;
+        store(k, JSON.stringify(o));
+        haptic();
+        draw();
+      }
+      function draw() {
+        var wk = ticks('bpWeek', 'week', isoWeek(bpDate())).done, dy = ticks('bpDay', 'date', bpDate()).done, got = 0, all = 0;
+        var rows = weekly.map(function (t) {
+          var a = auto(t), on = a || !!wk[id(t)], r = hrow(t.label || t.title || id(t), a ? 'авто' : null, grouped(pts(t)));
+          all += pts(t);
+          if (on) got += pts(t);
+          r.insertBefore(icon(on ? 'check-square' : 'square', 'mk' + (on ? ' on' : '')), r.firstChild);
+          if (on) r.className += ' done';
+          if (!a) {
+            tap(r, function () { flip(false, t); });
+            r.setAttribute('aria-pressed', String(on));
+          }
+          return r;
+        });
+        add.apply(null, [clear(wrap), el('div', 'sub', 'Неделя до пн ' + bpHour() + ':00 · набрано ' + grouped(got) + ' из ' + grouped(all) + ' очков')].concat(rows));
+        if (!daily.length) return;
+        var ch = el('div', 'chips');
+        daily.forEach(function (t) {
+          var a = auto(t), on = a || !!dy[id(t)];
+          var p = el('button', 'pill' + (on ? ' acc' : ''), (t.label || t.title || id(t)) + ' · ' + pts(t) + (a ? ' · авто' : ''));
+          p.type = 'button';
+          p.setAttribute('aria-pressed', String(on));
+          if (a) p.setAttribute('aria-disabled', 'true');
+          else p.onclick = function () { flip(true, t); };
+          ch.appendChild(p);
+        });
+        add(wrap, el('div', 'row small mu', 'Каждый день'), ch);
+      }
+      draw();
+    }
+    // «Команда» after «Боевой пропуск»: four avatars (icons from the characters
+    // by name) with names under them, then the Mac's note. A list or «a, b, c».
+    function team(t, list) {
+      var names = Array.isArray(t.team) ? t.team : t.team ? String(t.team).split(/\s*,\s*/) : [], by = {};
+      names = names.filter(Boolean);
+      if (!names.length) return;
+      list.forEach(function (c) { by[c.name] = c; });
+      card('users', 'Команда', [add.apply(null, [el('div', 'team')].concat(names.map(function (n) {
+        return add(el('div'), ava(by[n] && by[n].icon, n, 's48'), el('span', '', n));
+      }))), t.team_note ? el('div', 'sub', t.team_note) : null].filter(Boolean));
+    }
     function render(j) {
       if (current !== 'genshin') return;
       clear(body);
@@ -2930,7 +3081,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         head(s);
         if (n.resin) resin(n.resin);
         var cw = s.characters_at && wp(s.characters_at), tw = wp(Date.now());
-        today(n, cw && cw.day === tw.day && cw.month === tw.month ? (s.today || {}) : {});
+        var t = s.today || {}, q = wp(Date.now());
+        today(n, cw && cw.day === tw.day && cw.month === tw.month ? t : {});
+        bp(t.bp, t.date === q.year + '-' + q.month + '-' + q.day, n);
+        team(t, s.characters || []);
         plan(s.plan);
       }
       codes(j.codes || []);
