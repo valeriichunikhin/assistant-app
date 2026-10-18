@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 21:12">
+<meta name="published" content="2026-10-18 21:31">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -308,6 +308,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .tiles.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.tiles.g3 .tile{grid-column:auto;padding:8px 14px}.tiles.g3 .v{font-size:15px;font-weight:700}.tiles.g3 .k{font-size:11px}
 .team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:4px 14px 10px;font-size:12px;text-align:center}
 .team>div{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;overflow-wrap:anywhere}
+/* Genshin v4 (docs/specs/genshin-tab-v4.md): region icons (white glyphs) on a dark disc in both themes, the oculi
+   chips, a fixed percent column so the meters share one length, the Abyss stars (won in --mark, the rest --muted-2). */
+.av.s32{width:32px;height:32px;font-size:13px}img.av.rg{background:#2c2f45;object-fit:contain}
+.row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
+.st{font-size:15px;letter-spacing:1px}.st i{font-style:normal;color:var(--muted-2)}.st i.on{color:var(--mark)}.st i+i.c{margin-left:8px}
 </style>
 </head>
 <body>
@@ -362,6 +367,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
 <symbol id="i-award" viewBox="0 0 24 24"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></symbol>
 <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></symbol>
+<symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -3607,6 +3614,73 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         return add(el('div'), ava(by[n] && by[n].icon, n, 's48'), el('span', '', n));
       }))), t.team_note ? el('div', 'sub', t.team_note) : null].filter(Boolean));
     }
+    var OCULI = { anemo: 'Анемо', geo: 'Гео', electro: 'Электро', dendro: 'Дендро', hydro: 'Гидро', pyro: 'Пиро', luno: 'Луно' };
+    // «Исследование» after «Команда»: a row per region in HoYoLAB's order (icon, name, a 6 px meter in --mark,
+    // «43,2 %» on the right, the reputation grey), the account's totals, the non-zero oculi. No world, no card.
+    function world(w) {
+      var rs = (w && Array.isArray(w.regions) && w.regions) || [], st = (w && w.stats) || {}, ch = 0;
+      if (!rs.length) return;
+      var rows = rs.map(function (g) {
+        var pct = Math.max(0, Math.min(100, Number(g.pct) || 0)), bar = el('div', 'meter'), f = el('i');
+        var r = hrow(g.name, g.level ? 'реп. ' + g.level : null, pct.toFixed(1).replace('.', ',') + ' %');
+        f.style.width = pct + '%';
+        r.firstChild.insertBefore(add(bar, f), r.firstChild.children[1] || null);
+        r.insertBefore(ava(g.icon, g.name, 's28 rg'), r.firstChild);
+        r.className += ' xr';
+        return r;
+      });
+      Object.keys(st.chests || {}).forEach(function (k) { ch += Number(st.chests[k]) || 0; });
+      var tot = [['достижений', st.achievements], ['дней в игре', st.days_active], ['телепортов', st.waypoints],
+        ['подземелий', st.domains], ['сундуков', st.chests ? ch : null]]
+        .filter(function (x) { return x[1] != null; }).map(function (x) { return x[0] + ' ' + grouped(x[1]); }).join(' · ');
+      if (tot) rows.push(el('div', 'row small mu', tot));
+      var oc = st.oculi || {}, ks = Object.keys(oc).filter(function (k) { return Number(oc[k]) > 0; });
+      if (ks.length) {
+        rows.push(add.apply(null, [el('div', 'row ocu'), el('span', 'mu', 'Окулусы')].concat(ks.map(function (k) {
+          return pill((OCULI[k] || k) + ' ' + oc[k]);
+        }))));
+      }
+      card('compass', 'Исследование', rows);
+    }
+    var RANKS = [['strongest_strike', 'Сильнейший удар'], ['most_kills', 'Больше всего убийств'], ['most_bursts', 'Взрывов стихий']];
+    // «Бездна» after «Исследование»: the header's line, a row per floor with a star per chamber's max (won ★ in
+    // --mark, the rest ☆ in --muted-2), the totals, the four most played with their battles (as «Команда»), three
+    // records with 24 px avatars. An older snapshot has no floors: no card.
+    function abyss(a) {
+      var fl = (a && Array.isArray(a.floors) && a.floors) || [], rows = [];
+      if (!fl.length) return;
+      var rk = a.ranks || {}, mp = (Array.isArray(rk.most_played) ? rk.most_played : []).slice(0, 4);
+      var line = [a.max_floor, a.stars != null ? a.stars + '★' : '', ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : ''].filter(Boolean).join(' · ');
+      if (line) rows.push(el('div', 'sub', line));
+      fl.forEach(function (f) {
+        var s = el('span', 'st'), got = 0, all = 0;
+        (f.chambers || []).forEach(function (c, i) {
+          var n = Number(c.stars) || 0, m = Number(c.max_stars) || 3;
+          for (var k = 0; k < m; k++) s.appendChild(el('i', (k < n ? 'on' : '') + (i && !k ? ' c' : ''), k < n ? '★' : '☆'));
+          got += n;
+          all += m;
+        });
+        s.setAttribute('role', 'img');
+        s.setAttribute('aria-label', got + ' из ' + all + ' ' + plural(all, ['звезды', 'звёзд', 'звёзд']));
+        rows.push(hrow('Этаж ' + f.floor, null, s));
+      });
+      var tot = [a.stars != null ? 'звёзд ' + a.stars : '', a.total_battles ? 'побед ' + (a.total_wins || 0) + ' из ' + a.total_battles : ''];
+      if (tot.join('')) rows.push(el('div', 'row small mu', tot.filter(Boolean).join(' · ')));
+      if (mp.length) {
+        rows.push(el('div', 'row small mu', 'Чаще всего'), add.apply(null, [el('div', 'team')].concat(mp.map(function (c) {
+          var v = Number(c.value) || 0;
+          return add(el('div'), ava(c.icon, c.name, 's32'), el('span', '', c.name), el('span', 'mu', grouped(v) + ' ' + plural(v, ['бой', 'боя', 'боёв'])));
+        }))));
+      }
+      RANKS.forEach(function (x) {
+        var c = Array.isArray(rk[x[0]]) ? rk[x[0]][0] : rk[x[0]];
+        if (!c || !c.name) return;
+        var r = hrow(x[1] + ' — ' + c.name, null, c.value != null ? grouped(c.value) : null);
+        r.insertBefore(ava(c.icon, c.name, 's24'), r.firstChild);
+        rows.push(r);
+      });
+      card('swords', 'Бездна', rows);
+    }
     function render(j) {
       if (current !== 'genshin') return;
       clear(body);
@@ -3621,6 +3695,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         today(n, cw && cw.day === tw.day && cw.month === tw.month ? t : {});
         bp(t.bp, t.date === q.year + '-' + q.month + '-' + q.day, n);
         team(t, s.characters || []);
+        world(s.world);
+        abyss(s.abyss);
         plan(s.plan);
       }
       codes(j.codes || []);
