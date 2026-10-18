@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 10:24">
+<meta name="published" content="2026-10-18 10:36">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -283,6 +283,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 @media (max-width:899px){.seg button{min-height:44px}}
 @media (min-width:900px){.main{margin:0 auto}.btn.wide{width:auto;min-width:200px;margin:0 auto;display:flex}}
 @media (min-width:900px) and (pointer:fine){.chips select{font-size:13px}}
+/* «Фильмы» (docs/specs/films.md): a 44×66 poster in rows, a 3-column poster grid whose tapped tile unfolds a
+   full-width block under its line, rating and genre chips that scroll edge to edge, a clear button in the field. */
+.fp{flex:none;width:44px;height:66px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);object-fit:cover}
+.fp.big{display:block;width:100%;height:auto;aspect-ratio:2/3}
+.fi{border-top:1px solid var(--line)}.fi:first-child{border-top:0}.fi>.row{border-top:0}.row.fr{align-items:flex-start}
+.fd{border-top:1px solid var(--line)}.fd .acts{margin:0;padding:0 14px 12px}
+.hs{position:relative;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
+.hs .pill{flex:none;height:44px;padding:0 14px;font-size:13px}.ch+.hs{padding-top:0}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;padding:4px 14px 14px}
+@media (min-width:900px){.fgrid{grid-template-columns:repeat(5,minmax(0,1fr))}.hs .pill{height:32px}}
+.ft{display:flex;flex-direction:column;gap:4px;min-width:0;padding:0;border:0;background:none;color:var(--fg);text-align:left;font-size:13px;line-height:1.3}
+.ft .t{font-weight:500;overflow-wrap:anywhere}.ft .mu{font-size:12px}.ft[aria-expanded="true"] .fp{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.fx{grid-column:1/-1;margin:0 -14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -332,6 +346,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-panel-bottom" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 15h18"/></symbol>
 <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+<symbol id="i-clapperboard" viewBox="0 0 24 24"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -647,17 +664,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other nine in a sheet; which four and in what order is
+  // Phone: four tabs and «Ещё» in a bottom bar, the other ten in a sheet; which four and in what order is
   // the device's own choice («Кнопки внизу» on «Что нового», localStorage tabBar), BAR until it chose.
-  // From 900 px: all thirteen in a left rail. The tab is kept in localStorage and,
+  // From 900 px: all fourteen in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'],
     ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow).
-  var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed', 'news'];
+  var NARROW = ['list', 'prices', 'wish', 'films', 'inbox', 'feed', 'news'];
   var NAMES = {};
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date'), rDate = el('span');
@@ -2272,6 +2289,308 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     load();
   }
 
+  // --- films ---
+  // TMDB through miniapp (docs/specs/films.md): films_search, films_lists, films_picks, and films_mark for
+  // «видел» with a rating, «хочу» and «убрать». A row unfolds on a tap (one at a time across the tab); a mark is
+  // drawn at once and saved in the background through mark(), its state a string «status:rating».
+  var filmQuery = '', filmGenre = 35;
+  var FILM_GENRES = [[35, 'Комедия'], [28, 'Боевик'], [53, 'Триллер'], [18, 'Драма'], [27, 'Ужасы'], [878, 'Фантастика'],
+    [16, 'Мультфильм'], [10749, 'Мелодрама']];
+  var FILM_RATES = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+  function filmsView() {
+    var byId = {}, lists = null, picks = null, opened = null, seq = 0, pseq = 0, timer = null, moreB = null;
+    var bar = el('div', 'bar'), input = el('input'), clr = add(el('button', 'fclr'), icon('x'));
+    input.type = 'text';
+    input.enterKeyHint = 'search';
+    input.placeholder = 'Фильм, от 2 букв';
+    input.value = filmQuery;
+    input.setAttribute('aria-label', 'Поиск фильма');
+    clr.type = 'button';
+    clr.setAttribute('aria-label', 'Очистить');
+    var res = el('div'), home = el('div');
+    var pickCard = mkCard('clapperboard', 'Подборка'), genres = el('div', 'hs'), pbox = el('div');
+    var wantCard = el('div'), seenCard = el('div');
+    genres.setAttribute('role', 'group');
+    genres.setAttribute('aria-label', 'Жанр');
+    add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
+      add(home, add(pickCard, genres, pbox), wantCard, seenCard), el('p', 'mu', 'Данные TMDB'));
+
+    function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
+    function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
+    // One object per film across the tab, so a mark shows wherever the film is; a mark still on its way wins.
+    function own(r) {
+      var f = byId[r.tmdb_id] || (byId[r.tmdb_id] = r), m = marks['film:' + r.tmdb_id], k;
+      if (f !== r) for (k in r) if (k !== 'status' && k !== 'rating') f[k] = r[k];
+      if (m) {
+        var d = dec(m.want);
+        f.status = d.status;
+        f.rating = d.rating;
+        m.show = function (v) { apply(f, v); };
+      } else {
+        f.status = r.status || null;
+        f.rating = r.rating == null ? null : Number(r.rating);
+      }
+      return f;
+    }
+    // What films_mark stores in films: the row as search and picks give it, the poster back to its path.
+    function cardOf(f) {
+      var m = /^https:\/\/image\.tmdb\.org\/t\/p\/w185(\/\S+)$/.exec(String(f.poster || ''));
+      return { title: f.title, title_orig: f.title_orig, year: f.year, poster_path: f.poster_path || (m ? m[1] : null),
+        vote: f.vote, genres: f.genres || [], overview: f.overview };
+    }
+    function setMark(f, s, r) {
+      var was = enc(f.status, f.rating), want = enc(s, r);
+      if (want === was) return;
+      haptic();
+      apply(f, want);
+      mark('film:' + f.tmdb_id, want, was, function (v) {
+        var d = dec(v);
+        return api('miniapp', { action: 'films_mark' }, 15000, true,
+          { tmdb_id: f.tmdb_id, status: d.status, rating: d.rating, card: cardOf(f) })
+          .then(function (j) { return enc(j.status, j.rating == null ? null : Number(j.rating)); });
+      }, function (v) { apply(f, v); }, function () { toast(SAVE_FAILED); });
+    }
+    // A state on screen: the open block repainted, the film moved between «Хочу» and «Видел».
+    function apply(f, v) {
+      var d = dec(v), moved = d.status !== f.status;
+      f.status = d.status;
+      f.rating = d.rating;
+      if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
+      if (!lists || lists.err) return;
+      if (moved) {
+        ['want', 'seen'].forEach(function (k) { lists[k] = lists[k].filter(function (x) { return x !== f; }); });
+        if (lists[f.status]) lists[f.status].unshift(f);
+      }
+      if (moved || f.status) drawLists();
+    }
+
+    function poster(f, big) {
+      var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls), u = String(f.poster || '');
+      ph.setAttribute('aria-hidden', 'true');
+      if (!/^https:\/\/image\.tmdb\.org\//.test(u)) return ph;
+      var img = el('img', cls);
+      img.alt = '';
+      img.loading = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      img.src = u;
+      img.onerror = function () { img.replaceWith(ph); };
+      return img;
+    }
+    function chip(s, on, aria, fn) {
+      var b = el('button', 'pill' + (on ? ' acc' : ''), s);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(on));
+      if (aria) b.setAttribute('aria-label', aria);
+      b.onclick = fn;
+      return b;
+    }
+    function button(cls, ic, s, fn) {
+      var b = label(el('button', cls), ic, s);
+      b.type = 'button';
+      b.onclick = fn;
+      return b;
+    }
+    // The row (and, open, the block under it) drawn into wrap; sec: r search, p picks, want, seen.
+    function paint(wrap, f, sec, open) {
+      var r = el('div', 'row fr'), t = el('div', 't', f.title);
+      if (f.year) t.appendChild(el('span', 'mu', ' · ' + f.year));
+      var tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
+        Number(f.vote) > 0 ? el('div', 'mu', '★ ' + rateText(Number(f.vote).toFixed(1))) : null);
+      add(clear(wrap), add(r, poster(f), tx, f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
+        : f.status === 'want' ? pill('Хочу') : null, icon('chevron-down', 'go')));
+      r.setAttribute('aria-expanded', String(open));
+      tap(r, function () { if (open) shut(); else { shut(); hold(wrap, f, sec); } });
+      if (!open) return;
+      r.classList.add('open');
+      var rates = el('div', 'hs');
+      rates.setAttribute('role', 'group');
+      rates.setAttribute('aria-label', 'Видел — оценка');
+      FILM_RATES.forEach(function (v) {
+        rates.appendChild(chip(rateText(v), f.status === 'seen' && f.rating === v, 'Видел, оценка ' + rateText(v),
+          function () { setMark(f, 'seen', v); }));
+      });
+      var w = button(f.status === 'want' ? 'btn' : 'btn ghost', 'bookmark', 'Хочу', function () {
+        setMark(f, f.status === 'want' ? null : 'want', null);
+      });
+      w.setAttribute('aria-pressed', String(f.status === 'want'));
+      add(wrap, add(el('div', 'det fd'), rates, add(el('div', 'acts'), w,
+        f.status ? button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); }) : null),
+      f.overview ? el('div', 'tip', String(f.overview).slice(0, 300)) : null));
+      // The chosen rating in the middle of its strip.
+      requestAnimationFrame(function () {
+        var on = rates.querySelector('.acc');
+        if (on) rates.scrollLeft = on.offsetLeft - (rates.clientWidth - on.offsetWidth) / 2;
+      });
+    }
+    // Opens f in a list row's wrap (no other open block is closed here).
+    function hold(wrap, f, sec) {
+      paint(wrap, f, sec, true);
+      opened = { f: f, sec: sec, wrap: wrap, close: function () { paint(wrap, f, sec, false); } };
+    }
+    function shut() {
+      var o = opened;
+      opened = null;
+      if (o) o.close();
+    }
+    function item(f, sec) {
+      var wrap = el('div', 'fi');
+      // A film that moved between the lists stays open in its new place.
+      if (opened && opened.f === f && sec !== 'r' && opened.sec !== 'r' && opened.sec !== 'p') hold(wrap, f, sec);
+      else paint(wrap, f, sec, false);
+      return wrap;
+    }
+    function err(box, e, retry) {
+      add(clear(box), state('alert', e && e.code === 'tmdb не настроен' ? 'TMDB ещё не подключён' : 'Не загрузилось',
+        'Повторить', retry));
+    }
+
+    // --- search ---
+    function search() {
+      var q = filmQuery.trim(), mine = ++seq;
+      clr.hidden = !filmQuery;
+      res.hidden = q.length < 2;
+      home.hidden = !res.hidden;
+      if (opened && opened.sec === 'r') opened = null;
+      if (q.length < 2) return clear(res);
+      add(clear(res), skeleton(1));
+      api('miniapp', { action: 'films_search' }, 15000, true, { q: q }).then(function (j) {
+        if (mine !== seq || current !== 'films') return;
+        var rows = (j.rows || []).map(own);
+        if (!rows.length) return add(clear(res), state('search', 'Ничего не нашлось — попробуй по-английски или короче'));
+        var c = el('div', 'card');
+        rows.forEach(function (f) { c.appendChild(item(f, 'r')); });
+        add(clear(res), c);
+      }, function (e) {
+        if (!e.login && mine === seq && current === 'films') err(res, e, search);
+      });
+    }
+    input.oninput = function () {
+      filmQuery = input.value;
+      clearTimeout(timer);
+      clr.hidden = !filmQuery;
+      if (filmQuery.trim().length < 2) return search();
+      timer = setTimeout(search, 400);
+    };
+    clr.onclick = function () {
+      clearTimeout(timer);
+      input.value = filmQuery = '';
+      search();
+      input.focus();
+    };
+
+    // --- picks ---
+    function drawGenres() {
+      clear(genres);
+      FILM_GENRES.forEach(function (g) {
+        genres.appendChild(chip(g[1], g[0] === filmGenre, null, function () {
+          if (g[0] === filmGenre) return;
+          filmGenre = g[0];
+          drawGenres();
+          loadPicks(false);
+        }));
+      });
+    }
+    function tile(grid, f) {
+      var b = add(el('button', 'ft'), poster(f, true), el('span', 't clip', f.title), f.year ? el('span', 'mu', String(f.year)) : null);
+      b.type = 'button';
+      b.setAttribute('aria-expanded', 'false');
+      b.onclick = function () {
+        if (opened && opened.f === f && opened.sec === 'p') return shut();
+        shut();
+        var tiles = Array.prototype.filter.call(grid.children, function (x) { return x.classList.contains('ft'); });
+        var i = tiles.indexOf(b), fx = el('div', 'fx');
+        var n = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+        tiles[Math.min(tiles.length - 1, Math.floor(i / n) * n + n - 1)].after(fx);
+        b.setAttribute('aria-expanded', 'true');
+        paint(fx, f, 'p', true);
+        opened = { f: f, sec: 'p', wrap: fx, close: function () {
+          fx.remove();
+          b.setAttribute('aria-expanded', 'false');
+          if (f.status) b.remove();
+        } };
+      };
+      return b;
+    }
+    function drawPicks() {
+      if (opened && opened.sec === 'p') opened = null;
+      if (!picks) return add(clear(pbox), add(el('div', 'skel'), el('i'), el('i'), el('i')));
+      if (picks.err) return err(pbox, picks.err, function () { loadPicks(false); });
+      if (!picks.rows.some(function (f) { return !f.status; }) && picks.end) return add(clear(pbox), state('clapperboard', 'Всё из подборки уже отмечено'));
+      var grid = el('div', 'fgrid');
+      picks.rows.forEach(function (f) { if (!f.status) grid.appendChild(tile(grid, f)); });
+      add(clear(pbox), grid);
+      moreB = picks.end ? null : button('btn ghost', 'chevron-down', 'Ещё', function () { loadPicks(true); });
+      if (moreB) pbox.appendChild(add(el('div', 'foot'), moreB));
+    }
+    function loadPicks(more) {
+      var page = more ? picks.page + 1 : 1, mine = ++pseq, g = filmGenre;
+      // «Ещё» only says it is loading; the grid stays as it is until the page arrives.
+      if (more) {
+        label(moreB, 'chevron-down', 'Загружаю…');
+        moreB.disabled = true;
+      } else {
+        picks = null;
+        drawPicks();
+      }
+      api('miniapp', { action: 'films_picks' }, 20000, !more, { genre: g, page: page }).then(function (j) {
+        if (mine !== pseq || current !== 'films') return;
+        var rows = (j.rows || []).map(own), have = more ? picks.rows : [];
+        picks = { rows: have.concat(rows.filter(function (f) { return have.indexOf(f) < 0; })), page: j.page || page, end: j.more === false, skips: rows.length ? 0 : (more ? picks.skips || 0 : 0) + 1 };
+        // A page the server filtered down to nothing is not the end: take the next one.
+        if (!rows.length && !picks.end && picks.skips < 5) return loadPicks(true);
+        drawPicks();
+      }, function (e) {
+        if (mine !== pseq || current !== 'films' || e.login) return;
+        if (!more) {
+          picks = { err: e };
+          return drawPicks();
+        }
+        label(moreB, 'chevron-down', 'Ещё');
+        moreB.disabled = false;
+      });
+    }
+
+    // --- lists ---
+    function listCard(box, ic, title, rows, hint, sec) {
+      var c = mkCard(ic, title);
+      if (rows) c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
+      if (!rows) c.appendChild(add(el('div', 'skel'), el('i'), el('i')));
+      else if (!rows.length) c.appendChild(el('div', 'sub', hint));
+      else rows.forEach(function (f) { c.appendChild(item(f, sec)); });
+      add(clear(box), c);
+    }
+    function drawLists() {
+      var was = opened;
+      if (lists && lists.err) {
+        add(clear(wantCard), add(mkCard('bookmark', 'Хочу посмотреть'), el('div')));
+        err(wantCard.firstChild.lastChild, lists.err, loadLists);
+        return clear(seenCard);
+      }
+      listCard(wantCard, 'bookmark', 'Хочу посмотреть', lists && lists.want, 'Пусто — открой фильм и нажми «Хочу»', 'want');
+      listCard(seenCard, 'star', 'Видел', lists && lists.seen, 'Пусто — поставь оценку фильму, который видел', 'seen');
+      // The open block was in a list and its film left both: nothing is open now.
+      if (was && was === opened && (was.sec === 'want' || was.sec === 'seen') && !was.wrap.isConnected) opened = null;
+    }
+    function loadLists() {
+      lists = null;
+      drawLists();
+      api('miniapp', { action: 'films_lists' }, 15000, true).then(function (j) {
+        if (current !== 'films') return;
+        lists = { want: (j.want || []).map(own), seen: (j.seen || []).map(own) };
+        drawLists();
+      }, function (e) {
+        if (current !== 'films' || e.login) return;
+        lists = { err: e };
+        drawLists();
+      });
+    }
+
+    drawGenres();
+    search();
+    loadPicks(false);
+    loadLists();
+  }
+
   // --- volleyball ---
   // The stored filter's PNH games (miniapp ?action=volleyball), by day as the
   // bot lists them, his own games on top. The chips are the filter the watch
@@ -3114,7 +3433,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
     genshin: genshinView
   };
   // --- desktop (≥ 900 px) ---
