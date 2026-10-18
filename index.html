@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 16:24">
+<meta name="published" content="2026-10-18 17:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -301,6 +301,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .ft .t{font-weight:500;overflow-wrap:anywhere}.ft .mu{font-size:12px}.ft[aria-expanded="true"] .fp{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .fx{grid-column:1/-1;margin:0 -14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
+/* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
+   «сериал»/«аниме» tag, a folded list card's header with its chevron. */
+.card>.seg{margin:0 14px}.hs+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}
+.ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
 /* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
    stats 3×2, the team four in a row. */
 .av{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 14px/1 var(--font);object-fit:cover;overflow:hidden}
@@ -2436,36 +2440,66 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- films ---
-  // TMDB through miniapp (docs/specs/films.md): films_search, films_lists, films_picks, and films_mark for
-  // «видел» with a rating, «хочу» and «убрать». A row unfolds on a tap (one at a time across the tab); a mark is
-  // drawn at once and saved in the background through mark(), its state a string «status:rating».
-  var filmQuery = '', filmGenre = 35;
+  // TMDB through miniapp (docs/specs/films.md, v2 docs/specs/films-v2.md): films_search (films and series),
+  // films_lists, films_picks, and films_mark for «видел» with a rating, «хочу», «смотрю», «бросил», «не интересно»
+  // and «убрать». A film is (kind, tmdb_id): movie and tv ids overlap. A row unfolds on a tap (one at a time across
+  // the tab); a mark is drawn at once and saved in the background through mark(), its state a string «status:rating».
+  var filmQuery = '';
   var FILM_GENRES = [[35, 'Комедия'], [28, 'Боевик'], [53, 'Триллер'], [18, 'Драма'], [27, 'Ужасы'], [878, 'Фантастика'],
     [16, 'Мультфильм'], [10749, 'Мелодрама']];
   var FILM_RATES = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+  // The picks' switch: each type's genre chips, the first one its default. Anime's «Фильмы» chip is a type of its
+  // own (anime_movie, all genres). The choice is kept in localStorage filmPick = {type, genre}.
+  var FILM_TYPES = [['movie', 'Фильмы'], ['tv', 'Сериалы'], ['anime', 'Аниме']];
+  var PICK_GENRES = {
+    movie: FILM_GENRES,
+    tv: [[35, 'Комедия'], [18, 'Драма'], [80, 'Криминал'], [10765, 'Фантастика'], [9648, 'Детектив'], [10759, 'Боевик'],
+      [16, 'Мультфильм'], [99, 'Документальный']],
+    anime: [[null, 'Все'], [10759, 'Экшен'], [35, 'Комедия'], [18, 'Драма'], [10765, 'Фантастика'], [9648, 'Детектив']]
+  };
+  // The status chips of an open film («Видел» is the rating strip above them), and the lists in their order.
+  var FILM_STATUS = [['want', 'Хочу'], ['watching', 'Смотрю'], ['dropped', 'Бросил'], ['skip', 'Не интересно']];
+  var FILM_LISTS = ['watching', 'want', 'seen', 'dropped', 'skip'];
+  function filmPick() {
+    var p = null;
+    try { p = JSON.parse(store('filmPick') || 'null'); } catch (e) {}
+    var ok = p && (p.type === 'anime_movie' ? p.genre === null
+      : /^(movie|tv|anime)$/.test(p.type) && PICK_GENRES[p.type].some(function (g) { return g[0] === p.genre; }));
+    return ok ? { type: p.type, genre: p.genre } : { type: 'movie', genre: 35 };
+  }
   function filmsView() {
     var byId = {}, lists = null, picks = null, opened = null, seq = 0, pseq = 0, timer = null, moreB = null;
+    var pick = filmPick(), folded = { dropped: true, skip: true };
     var bar = el('div', 'bar'), input = el('input'), clr = add(el('button', 'fclr'), icon('x'));
     input.type = 'text';
     input.enterKeyHint = 'search';
-    input.placeholder = 'Фильм, от 2 букв';
+    input.placeholder = 'Фильм или сериал, от 2 букв';
     input.value = filmQuery;
-    input.setAttribute('aria-label', 'Поиск фильма');
+    input.setAttribute('aria-label', 'Поиск фильма или сериала');
     clr.type = 'button';
     clr.setAttribute('aria-label', 'Очистить');
     var res = el('div'), home = el('div');
-    var pickCard = mkCard('clapperboard', 'Подборка'), genres = el('div', 'hs'), pbox = el('div');
-    var wantCard = el('div'), seenCard = el('div');
+    var pickCard = mkCard('clapperboard', 'Подборка'), seg = el('div', 'seg fit'), segs = {}, genres = el('div', 'hs'), pbox = el('div');
+    var watchCard = el('div'), wantCard = el('div'), seenCard = el('div'), dropCard = el('div'), skipCard = el('div');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Что подобрать');
+    FILM_TYPES.forEach(function (t) {
+      var b = segs[t[0]] = el('button', '', t[1]);
+      b.type = 'button';
+      b.onclick = function () { if (b.className !== 'on') choose(t[0], PICK_GENRES[t[0]][0][0]); };
+      seg.appendChild(b);
+    });
     genres.setAttribute('role', 'group');
     genres.setAttribute('aria-label', 'Жанр');
     add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
-      add(home, add(pickCard, genres, pbox), wantCard, seenCard), el('p', 'mu', 'Данные TMDB'));
+      add(home, add(pickCard, seg, genres, pbox), watchCard, wantCard, seenCard, dropCard, skipCard), el('p', 'mu', 'Данные TMDB'));
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
     // One object per film across the tab, so a mark shows wherever the film is; a mark still on its way wins.
     function own(r) {
-      var f = byId[r.tmdb_id] || (byId[r.tmdb_id] = r), m = marks['film:' + r.tmdb_id], k;
+      r.kind = r.kind === 'tv' ? 'tv' : 'movie';
+      var f = byId[r.kind + ':' + r.tmdb_id] || (byId[r.kind + ':' + r.tmdb_id] = r), m = marks['film:' + r.kind + ':' + r.tmdb_id], k;
       if (f !== r) for (k in r) if (k !== 'status' && k !== 'rating') f[k] = r[k];
       if (m) {
         var d = dec(m.want);
@@ -2481,22 +2515,22 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // What films_mark stores in films: the row as search and picks give it, the poster back to its path.
     function cardOf(f) {
       var m = /^https:\/\/image\.tmdb\.org\/t\/p\/w185(\/\S+)$/.exec(String(f.poster || ''));
-      return { title: f.title, title_orig: f.title_orig, year: f.year, poster_path: f.poster_path || (m ? m[1] : null),
-        vote: f.vote, genres: f.genres || [], overview: f.overview };
+      return { kind: f.kind, anime: !!f.anime, title: f.title, title_orig: f.title_orig, year: f.year,
+        poster_path: f.poster_path || (m ? m[1] : null), vote: f.vote, genres: f.genres || [], overview: f.overview };
     }
     function setMark(f, s, r) {
       var was = enc(f.status, f.rating), want = enc(s, r);
       if (want === was) return;
       haptic();
       apply(f, want);
-      mark('film:' + f.tmdb_id, want, was, function (v) {
+      mark('film:' + f.kind + ':' + f.tmdb_id, want, was, function (v) {
         var d = dec(v);
         return api('miniapp', { action: 'films_mark' }, 15000, true,
-          { tmdb_id: f.tmdb_id, status: d.status, rating: d.rating, card: cardOf(f) })
+          { kind: f.kind, tmdb_id: f.tmdb_id, status: d.status, rating: d.rating, card: cardOf(f) })
           .then(function (j) { return enc(j.status, j.rating == null ? null : Number(j.rating)); });
       }, function (v) { apply(f, v); }, function () { toast(SAVE_FAILED); });
     }
-    // A state on screen: the open block repainted, the film moved between «Хочу» and «Видел».
+    // A state on screen: the open block repainted, the film moved between the five lists.
     function apply(f, v) {
       var d = dec(v), moved = d.status !== f.status;
       f.status = d.status;
@@ -2504,7 +2538,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
       if (!lists || lists.err) return;
       if (moved) {
-        ['want', 'seen'].forEach(function (k) { lists[k] = lists[k].filter(function (x) { return x !== f; }); });
+        FILM_LISTS.forEach(function (k) { lists[k] = lists[k].filter(function (x) { return x !== f; }); });
         if (lists[f.status]) lists[f.status].unshift(f);
       }
       if (moved || f.status) drawLists();
@@ -2540,10 +2574,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function paint(wrap, f, sec, open) {
       var r = el('div', 'row fr'), t = el('div', 't', f.title);
       if (f.year) t.appendChild(el('span', 'mu', ' · ' + f.year));
+      if (f.anime || f.kind === 'tv') t.appendChild(el('span', 'mu fk', f.anime ? ' · аниме' : ' · сериал'));
+      var said = FILM_STATUS.filter(function (x) { return x[0] === f.status; })[0];
       var tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
         Number(f.vote) > 0 ? el('div', 'mu', '★ ' + rateText(Number(f.vote).toFixed(1))) : null);
       add(clear(wrap), add(r, poster(f), tx, f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
-        : f.status === 'want' ? pill('Хочу') : null, icon('chevron-down', 'go')));
+        : said ? pill(said[1], f.status === 'watching' ? 'acc' : '') : null, icon('chevron-down', 'go')));
       r.setAttribute('aria-expanded', String(open));
       tap(r, function () { if (open) shut(); else { shut(); hold(wrap, f, sec); } });
       if (!open) return;
@@ -2555,12 +2591,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         rates.appendChild(chip(rateText(v), f.status === 'seen' && f.rating === v, 'Видел, оценка ' + rateText(v),
           function () { setMark(f, 'seen', v); }));
       });
-      var w = button(f.status === 'want' ? 'btn' : 'btn ghost', 'bookmark', 'Хочу', function () {
-        setMark(f, f.status === 'want' ? null : 'want', null);
+      // A status chip sets it (the rating goes), the active one taken again clears it.
+      var sts = el('div', 'hs');
+      sts.setAttribute('role', 'group');
+      sts.setAttribute('aria-label', 'Статус');
+      FILM_STATUS.forEach(function (x) {
+        sts.appendChild(chip(x[1], f.status === x[0], null, function () {
+          setMark(f, f.status === x[0] ? null : x[0], null);
+          // «Не интересно» on a pick: the tile leaves the grid at once.
+          if (sec === 'p' && f.status === 'skip') shut();
+        }));
       });
-      w.setAttribute('aria-pressed', String(f.status === 'want'));
-      add(wrap, add(el('div', 'det fd'), rates, add(el('div', 'acts'), w,
-        f.status ? button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); }) : null),
+      add(wrap, add(el('div', 'det fd'), rates, sts,
+        f.status ? add(el('div', 'acts'), button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); })) : null,
       f.overview ? el('div', 'tip', String(f.overview).slice(0, 300)) : null));
       // The chosen rating in the middle of its strip.
       requestAnimationFrame(function () {
@@ -2626,15 +2669,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
     // --- picks ---
     function drawGenres() {
+      var t = pick.type, a = t.indexOf('anime') === 0, k;
+      for (k in segs) segs[k].className = k === (a ? 'anime' : t) ? 'on' : '';
       clear(genres);
-      FILM_GENRES.forEach(function (g) {
-        genres.appendChild(chip(g[1], g[0] === filmGenre, null, function () {
-          if (g[0] === filmGenre) return;
-          filmGenre = g[0];
-          drawGenres();
-          loadPicks(false);
-        }));
+      PICK_GENRES[a ? 'anime' : t].forEach(function (g) {
+        genres.appendChild(chip(g[1], t !== 'anime_movie' && g[0] === pick.genre, null, function () { choose(a ? 'anime' : t, g[0]); }));
       });
+      if (a) genres.appendChild(chip('Фильмы', t === 'anime_movie', 'Аниме-фильмы', function () { choose('anime_movie', null); }));
+    }
+    function choose(t, g) {
+      if (t === pick.type && g === pick.genre) return;
+      pick = { type: t, genre: g };
+      store('filmPick', JSON.stringify(pick));
+      drawGenres();
+      loadPicks(false);
+    }
+    // films_picks' body for a pick: anime series and anime films are kind tv and movie with anime set.
+    function pickBody(p, n) {
+      return { kind: /^(tv|anime)$/.test(p.type) ? 'tv' : 'movie', anime: p.type.indexOf('anime') === 0, genre: p.genre, page: n };
     }
     function tile(grid, f) {
       var b = add(el('button', 'ft'), poster(f, true), el('span', 't clip', f.title), f.year ? el('span', 'mu', String(f.year)) : null);
@@ -2668,32 +2720,37 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       moreB = picks.end ? null : button('btn ghost', 'chevron-down', 'Ещё', function () { loadPicks(true); });
       if (moreB) pbox.appendChild(add(el('div', 'foot'), moreB));
     }
-    var pg = null; // the genre whose first page is in pbox
+    var pg = null; // the pick (type:genre) whose first page is in pbox
     function loadPicks(more) {
-      var page = more ? picks.page + 1 : 1, mine = ++pseq, g = filmGenre;
-      // The first page is cache-first (docs/specs/app-cache-first.md): a cached genre is drawn at once,
+      var page = more ? picks.page + 1 : 1, mine = ++pseq, p = pick, g = p.type + ':' + p.genre;
+      // The first page is cache-first (docs/specs/app-cache-first.md): a cached pick is drawn at once,
       // another one waits under the skeleton.
       if (!more) {
         if (!cacheGet('films:picks:' + g)) {
           picks = null;
           pg = null;
+          delete shown['films:picks:' + g]; // the skeleton replaced what swr thought was on screen
           drawPicks();
         } else if (pg !== g) clear(pbox);
         return swr({ key: 'films:picks:' + g, box: pbox, n: 0, live: function () { return mine === pseq && current === 'films'; },
-          fetch: function () { return api('miniapp', { action: 'films_picks' }, 20000, true, { genre: g, page: 1 }); },
+          fetch: function () { return api('miniapp', { action: 'films_picks' }, 20000, true, pickBody(p, 1)); },
           render: function (j) { pg = g; got(j); }, retry: function () { loadPicks(false); },
           fail: function (e) { pg = null; picks = { err: e }; drawPicks(); } });
       }
       // «Ещё» only says it is loading; the grid stays as it is until the page arrives.
-      label(moreB, 'chevron-down', 'Загружаю…');
-      moreB.disabled = true;
-      api('miniapp', { action: 'films_picks' }, 20000, false, { genre: g, page: page }).then(function (j) {
+      if (moreB) {
+        label(moreB, 'chevron-down', 'Загружаю…');
+        moreB.disabled = true;
+      }
+      api('miniapp', { action: 'films_picks' }, 20000, false, pickBody(p, page)).then(function (j) {
         if (mine !== pseq || current !== 'films') return;
         got(j);
       }, function (e) {
         if (mine !== pseq || current !== 'films' || e.login) return;
-        label(moreB, 'chevron-down', 'Ещё');
-        moreB.disabled = false;
+        if (moreB) {
+          label(moreB, 'chevron-down', 'Ещё');
+          moreB.disabled = false;
+        }
       });
       function got(j) {
         var rows = (j.rows || []).map(own), have = more ? picks.rows : [];
@@ -2705,9 +2762,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
 
     // --- lists ---
-    function listCard(box, ic, title, rows, hint, sec) {
-      var c = mkCard(ic, title);
-      if (rows) c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
+    // No hint: the card shows only when it has films. fold: a header tap folds and unfolds it (kept in folded).
+    function listCard(box, ic, title, rows, hint, sec, fold) {
+      if (hint == null && !(rows && rows.length)) return clear(box);
+      var c = mkCard(ic, title), h = c.firstChild;
+      if (rows) h.appendChild(el('span', 'mu', String(rows.length)));
+      if (fold) {
+        h.appendChild(icon('chevron-down', 'go'));
+        h.setAttribute('aria-expanded', String(!folded[sec]));
+        tap(h, function () { folded[sec] = !folded[sec]; drawLists(); });
+        if (folded[sec]) return add(clear(box), c);
+      }
       if (!rows) c.appendChild(add(el('div', 'skel'), el('i'), el('i')));
       else if (!rows.length) c.appendChild(el('div', 'sub', hint));
       else rows.forEach(function (f) { c.appendChild(item(f, sec)); });
@@ -2718,22 +2783,28 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (lists && lists.err) {
         add(clear(wantCard), add(mkCard('bookmark', 'Хочу посмотреть'), el('div')));
         err(wantCard.firstChild.lastChild, lists.err, loadLists);
-        return clear(seenCard);
+        [watchCard, seenCard, dropCard, skipCard].forEach(clear);
+        return;
       }
+      listCard(watchCard, 'clock', 'Смотрю', lists && lists.watching, null, 'watching');
       listCard(wantCard, 'bookmark', 'Хочу посмотреть', lists && lists.want, 'Пусто — открой фильм и нажми «Хочу»', 'want');
       listCard(seenCard, 'star', 'Видел', lists && lists.seen, 'Пусто — поставь оценку фильму, который видел', 'seen');
-      // The open block was in a list and its film left both: nothing is open now.
-      if (was && was === opened && (was.sec === 'want' || was.sec === 'seen') && !was.wrap.isConnected) opened = null;
+      listCard(dropCard, 'x', 'Бросил', lists && lists.dropped, null, 'dropped', true);
+      listCard(skipCard, 'trash', 'Не интересно', lists && lists.skip, null, 'skip', true);
+      // The open block was in a list and its film left them all (or its list folded): nothing is open now.
+      if (was && was === opened && FILM_LISTS.indexOf(was.sec) >= 0 && !was.wrap.isConnected) opened = null;
     }
     function loadLists() {
       if (!cacheGet('films:lists')) {
         lists = null;
+        delete shown['films:lists'];
         drawLists();
       }
       swr({ key: 'films:lists', box: wantCard, n: 0, live: function () { return current === 'films'; },
         fetch: function () { return api('miniapp', { action: 'films_lists' }, 15000, true); },
         render: function (j) {
-          lists = { want: (j.want || []).map(own), seen: (j.seen || []).map(own) };
+          lists = {};
+          FILM_LISTS.forEach(function (k) { lists[k] = (j[k] || []).map(own); });
           drawLists();
         }, retry: loadLists, fail: function (e) {
           lists = { err: e };
