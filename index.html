@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 10:16">
+<meta name="published" content="2026-10-18 10:24">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -328,6 +328,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
 <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+<symbol id="i-panel-bottom" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 15h18"/></symbol>
 <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
 </svg>
@@ -645,14 +647,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other nine in a sheet.
+  // Phone: four tabs and «Ещё» in a bottom bar, the other nine in a sheet; which four and in what order is
+  // the device's own choice («Кнопки внизу» on «Что нового», localStorage tabBar), BAR until it chose.
   // From 900 px: all thirteen in a left rail. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
     ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['stats', 'chart', 'Статистика'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['dela', 'tack', 'Дела'],
     ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var MORE = ['vb', 'genshin', 'stats', 'wish', 'cinema', 'dela', 'inbox', 'feed', 'news'];
+  var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow).
   var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed', 'news'];
   var NAMES = {};
@@ -674,17 +677,37 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   sheet.setAttribute('aria-label', 'Ещё');
   sheet.setAttribute('aria-hidden', 'true');
   add(rail, add(el('div', 'brand'), add(el('span', 'mark'), icon('spark')), el('span', '', 'Помощник')));
-  sheet.appendChild(el('div', 'grab'));
   TABS.forEach(function (t) {
     NAMES[t[0]] = t[2];
     rail.appendChild(navBtn(t));
-    (MORE.indexOf(t[0]) < 0 ? tabbar : sheet).appendChild(navBtn(t));
   });
   var moreBtn = add(el('button'), add(el('span', 'ic'), icon('more')), el('span', 'lb', 'Ещё'));
   moreBtn.type = 'button';
   moreBtn.setAttribute('aria-haspopup', 'dialog');
   moreBtn.onclick = openSheet;
-  tabbar.appendChild(moreBtn);
+  // The bar's tabs: the stored keys that are still tabs, once each, four at most; nothing stored → BAR.
+  function barTabs() {
+    var v = null;
+    try { v = JSON.parse(store('tabBar') || 'null'); } catch (e) {}
+    if (!Array.isArray(v)) return BAR.slice();
+    return v.filter(function (k, i) {
+      return typeof k === 'string' && Object.prototype.hasOwnProperty.call(NAMES, k) && v.indexOf(k) === i;
+    }).slice(0, 4);
+  }
+  function tabOf(k) { return TABS.filter(function (t) { return t[0] === k; })[0]; }
+  // The bar and the sheet are drawn again on every change of the choice; the rail keeps its buttons.
+  function drawBar() {
+    var bar = barTabs();
+    MORE = TABS.map(function (t) { return t[0]; }).filter(function (k) { return bar.indexOf(k) < 0; });
+    for (var k in navs) navs[k] = navs[k].filter(function (b) { return b.parentNode === rail; });
+    clear(tabbar);
+    add(clear(sheet), el('div', 'grab'));
+    bar.forEach(function (k) { tabbar.appendChild(navBtn(tabOf(k))); });
+    MORE.forEach(function (k) { sheet.appendChild(navBtn(tabOf(k))); });
+    tabbar.appendChild(moreBtn);
+    if (current) markNav(current);
+  }
+  drawBar();
   scrim.onclick = function () { closeSheet(true); };
   function openSheet() {
     shell.classList.add('more');
@@ -753,14 +776,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     start();
   };
 
-  function show(tab) {
-    if (!isView(tab)) tab = 'home';
-    flushMarks('');
-    current = tab;
-    store('tab', tab);
-    if (browser && location.hash !== '#' + tab) {
-      try { history.replaceState(null, '', '#' + tab); } catch (e) {}
-    }
+  function markNav(tab) {
     for (var k in navs) {
       navs[k].forEach(function (b) {
         if (b.parentNode && k === tab) b.setAttribute('aria-current', 'page');
@@ -769,6 +785,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     if (MORE.indexOf(tab) >= 0) moreBtn.setAttribute('aria-current', 'page');
     else moreBtn.removeAttribute('aria-current');
+  }
+  function show(tab) {
+    if (!isView(tab)) tab = 'home';
+    flushMarks('');
+    current = tab;
+    store('tab', tab);
+    if (browser && location.hash !== '#' + tab) {
+      try { history.replaceState(null, '', '#' + tab); } catch (e) {}
+    }
+    markNav(tab);
     text(hTitle, NAMES[tab]);
     text(hDate, todayLabel());
     text(rDate, todayLabel());
@@ -2993,12 +3019,80 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return card;
   }
 
+  // --- bottom bar ---
+  // «Кнопки внизу»: the four tabs of the phone's bottom bar and their order, kept on this device (store tabBar,
+  // a JSON array of tab keys); the others go to «Ещё», the wide rail shows all. Chosen rows come first, in order.
+  function barCard() {
+    var card = mkCard('panel-bottom', 'Кнопки внизу'), line = el('div', 'sub'), rows = el('div'), foot = el('div', 'foot');
+    var reset = el('button', 'btn ghost', 'Сбросить');
+    reset.type = 'button';
+    reset.onclick = function () {
+      haptic();
+      store('tabBar', '');
+      drawBar();
+      paint('reset');
+    };
+    foot.appendChild(reset);
+    add(card, line, rows);
+    function save(keys, focus) {
+      haptic();
+      store('tabBar', JSON.stringify(keys));
+      drawBar();
+      paint(focus);
+    }
+    function btn(ic, aria, f, off, fn) {
+      var b = add(el('button', 'btn ghost x'), icon(ic, f === 'tog' ? 'mk' + (aria.on ? ' on' : '') : ''));
+      b.type = 'button';
+      b.setAttribute('aria-label', aria.label);
+      if (f === 'tog') b.setAttribute('aria-pressed', String(aria.on));
+      b.disabled = off;
+      b.onclick = fn;
+      b.f = f;
+      return b;
+    }
+    function paint(focus) {
+      var bar = barTabs(), full = bar.length >= 4;
+      text(line, full ? 'Максимум 4 — сними одну, чтобы поставить другую' : 'В панели ' + bar.length + ' из 4, остальные в «Ещё»');
+      clear(rows);
+      bar.concat(MORE).forEach(function (k) {
+        var t = tabOf(k), i = bar.indexOf(k), on = i >= 0, row = lead(el('div', 'row'), t[1]);
+        add(row, el('span', 'tx t', t[2]));
+        function move(d) {
+          var keys = bar.slice();
+          keys.splice(i, 1);
+          keys.splice(i + d, 0, k);
+          save(keys, [k, d < 0 ? 'up' : 'down']);
+        }
+        if (on) {
+          add(row, btn('chevron-up', { label: t[2] + ': выше' }, 'up', i === 0, function () { move(-1); }),
+            btn('chevron-down', { label: t[2] + ': ниже' }, 'down', i === bar.length - 1, function () { move(1); }));
+        }
+        row.appendChild(btn(on ? 'check-square' : 'square', { label: t[2] + ' в панели', on: on }, 'tog', !on && full, function () {
+          save(on ? bar.filter(function (x) { return x !== k; }) : bar.concat([k]), [k, 'tog']);
+        }));
+        row.k = k;
+        rows.appendChild(row);
+      });
+      if (store('tabBar')) card.appendChild(foot);
+      else if (foot.parentNode) card.removeChild(foot);
+      // The rows are new nodes: the keyboard stays on the button it pressed, or on its row's toggle.
+      if (focus === 'reset') return rows.querySelector('button:not(:disabled)').focus();
+      var r = focus && [].filter.call(rows.children, function (x) { return x.k === focus[0]; })[0];
+      if (r) {
+        var b = [].filter.call(r.querySelectorAll('button'), function (x) { return x.f === focus[1] && !x.disabled; })[0];
+        (b || r.lastChild).focus();
+      }
+    }
+    paint();
+    return card;
+  }
+
   // --- changelog ---
   // changelog.json is published next to the page; the publish script stamps
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    add(main, browser ? pushCard() : null, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    add(main, browser ? pushCard() : null, barCard(), body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
