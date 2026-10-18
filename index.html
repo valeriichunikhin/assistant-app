@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 17:13">
+<meta name="published" content="2026-10-18 17:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1652,9 +1652,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       cacheDrop('picks:');
       render();
     }
+    // The contract's validity word: «с чт 22.10» / «только сб 24.10» / «до ср 21.10», from Warsaw's today.
+    function validity(c, maxTo, today) {
+      var f = c.valid_from, t = c.valid_to;
+      var w = function (d) { return WEEK[wd(d)] + ' ' + dm(d); };
+      if (f && f > today) return f === t ? 'только ' + w(f) : 'с ' + w(f);
+      if (t && t < today) return 'закончилась ' + w(t);
+      return t && maxTo && t < maxTo ? 'до ' + w(t) : '';
+    }
     function render() {
       if (current !== 'picks' || !batches) return;
       clear(body);
+      var wnow = wp(Date.now()), today = wnow.year + '-' + wnow.month + '-' + wnow.day;
       var q = pickQuery.trim().toLowerCase();
       var shown = 0;
       compareCard();
@@ -1665,13 +1674,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         });
         if (q && !hits.length) return;
         shown++;
+        var maxTo = '';
+        cs.forEach(function (c) { if (c.valid_to && c.valid_to > maxTo) maxTo = c.valid_to; });
         var sel = cs.filter(function (c) { return c.selected; }).length;
         var card = mkCard('tag', b.title, 'выбрано ' + sel + ' из ' + cs.length);
         hits.forEach(function (c) {
           var row = el('div', 'row');
           var tx = el('span', 'tx');
           var dp = dealParts(c);
-          add(tx, el('b', '', dp.name), dp.note ? el('div', 'mu', dp.note) : null);
+          var vw = validity(c, maxTo, today);
+          add(tx, el('b', '', dp.name), vw ? el('span', 'mu', ' · ' + vw) : null, dp.note ? el('div', 'mu', dp.note) : null);
           var pr = el('span', 'pr');
           if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
           if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
