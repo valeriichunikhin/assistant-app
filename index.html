@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 20:48">
+<meta name="published" content="2026-10-18 21:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -231,6 +231,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chart .last{stroke:var(--solid);stroke-width:2}
 .chart .b{fill:var(--mark)}
 .chart .b.now{fill-opacity:.3;stroke:var(--mark)}
+.chart .nm{fill:var(--fg);font:12px var(--font)}.chart .hit{fill:transparent}.chart g:hover>.b{fill-opacity:.75}.chart g:focus{outline:none}.chart g:focus-visible>.b{stroke:var(--fg);stroke-width:1.5}
+.fst{padding:14px 14px 0;color:var(--muted);font-size:12px;font-weight:600}
 .s-lf{fill:var(--mark);background:var(--mark)}.s-al{fill:var(--blue);background:var(--blue)}.s-rc{fill:var(--fg);background:var(--fg)}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bar) + 12px + env(safe-area-inset-bottom));z-index:9;max-width:420px;margin:0 auto;padding:12px 16px;border:1px solid var(--line-2);border-radius:var(--r-b);background:var(--toast);color:var(--toast-fg);box-shadow:var(--shadow);font-size:13px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
 #toast.on{opacity:1;transform:none}
@@ -2167,6 +2169,101 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return box;
   }
 
+  // The films statistics' three charts (docs/specs/films-stats.md, the dataviz skill's marks): one series in --mark,
+  // thin bars with a 4 px rounded free end and a square base, 2 px+ gaps, selective direct labels in text tokens,
+  // every bar a focusable group with a <title> and an aria-label over a transparent hit band.
+  function films(n) { return n + ' ' + plural(n, ['фильм', 'фильма', 'фильмов']); }
+  function barPath(x, y, w, h, across) {
+    var r = Math.min(4, across ? h / 2 : w / 2, across ? w : h), f = function (v) { return Math.round(v * 10) / 10; };
+    return across
+      ? 'M' + f(x) + ',' + f(y) + 'H' + f(x + w - r) + 'A' + r + ',' + r + ' 0 0 1 ' + f(x + w) + ',' + f(y + r) + 'V' + f(y + h - r)
+        + 'A' + r + ',' + r + ' 0 0 1 ' + f(x + w - r) + ',' + f(y + h) + 'H' + f(x) + 'Z'
+      : 'M' + f(x) + ',' + f(y + h) + 'V' + f(y + r) + 'A' + r + ',' + r + ' 0 0 1 ' + f(x + r) + ',' + f(y) + 'H' + f(x + w - r)
+        + 'A' + r + ',' + r + ' 0 0 1 ' + f(x + w) + ',' + f(y + r) + 'V' + f(y + h) + 'Z';
+  }
+  // A bar: hit band {x, y, w, h} and the drawn bar inside it; a zero-length bar keeps only its hit band.
+  function statBar(box, band, x, y, w, h, across, label) {
+    var g = svg('g', { 'class': 'bar', role: 'img', tabindex: '0', 'aria-label': label });
+    add(g, svg('title', {}, label), svg('rect', { x: band.x, y: band.y, width: band.w, height: band.h, 'class': 'hit' }),
+      w > 0 && h > 0 ? svg('path', { d: barPath(x, y, w, h, across), 'class': 'b' }) : null);
+    return add(box, g);
+  }
+  function chartBox(W, H, label) {
+    return svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'group', 'class': 'chart', 'aria-label': label });
+  }
+  // Ratings ½ … 5 in half steps: columns, the axis ticks on whole steps, n over the tallest and over those ≥ 20 % of it.
+  function ratingsChart(rows, W) {
+    W = W > 0 ? W : 320;
+    var H = 160, L = 4, T = 20, B = 22, n = rows.length || 1, step = (W - 2 * L) / n, bw = Math.min(24, step - 4);
+    var max = Math.max.apply(null, rows.map(function (r) { return r.n; }).concat([0])), box = chartBox(W, H, 'Оценки');
+    add(box, svg('line', { x1: L, x2: W - L, y1: H - B, y2: H - B, 'class': 'ax' }));
+    rows.forEach(function (r, i) {
+      var h = max > 0 ? r.n / max * (H - T - B) : 0, cx = L + (i + 0.5) * step, x = cx - bw / 2;
+      statBar(box, { x: L + i * step, y: T, w: step, h: H - T - B }, x, H - B - h, bw, h, false,
+        rateText(r.r) + ' — ' + films(r.n));
+      if (r.r % 1 === 0) add(box, svg('text', { x: cx, y: H - 6, 'class': 'tk', 'text-anchor': 'middle' }, r.r));
+      if (max > 0 && r.n >= max * 0.2) {
+        add(box, svg('text', { x: cx, y: H - B - h - 5, 'class': r.n === max ? 'tk strong' : 'tk', 'text-anchor': 'middle' }, r.n));
+      }
+    });
+    return box;
+  }
+  // Genres by n: the name on the left, in line with the card's text (a column as wide as the longest name, measured), the bar, «62 · ★ 4,6» at its tip.
+  function genresChart(rows, W) {
+    W = W > 0 ? W : 320;
+    var rowH = 20, bh = 12, H = rows.length * rowH + 4, ctx = null, font = '';
+    try {
+      ctx = document.createElement('canvas').getContext('2d');
+      font = getComputedStyle(document.body).fontFamily;
+    } catch (e) {}
+    function width(s, px) {
+      if (!ctx) return s.length * px * 0.6;
+      ctx.font = px + 'px ' + font;
+      return ctx.measureText(s).width;
+    }
+    function tip(g) { return g.n + (g.avg != null ? ' · ★ ' + rateText(Number(g.avg).toFixed(1)) : ''); }
+    var L = Math.min(W * 0.4, 14 + Math.max.apply(null, rows.map(function (g) { return width(g.name, 12); }).concat([0])));
+    var R = 8 + Math.max.apply(null, rows.map(function (g) { return width(tip(g), 11); }).concat([0]));
+    var max = Math.max.apply(null, rows.map(function (g) { return g.n; }).concat([0])), box = chartBox(W, H, 'Жанры');
+    add(box, svg('line', { x1: L, x2: L, y1: 0, y2: H, 'class': 'ax' }));
+    rows.forEach(function (g, i) {
+      var y = i * rowH + 2, w = max > 0 ? g.n / max * (W - L - R) : 0, name = g.name;
+      while (name.length > 1 && width(name, 12) > L - 14) name = name.slice(0, -2) + '…';
+      add(box, svg('text', { x: 6, y: y + rowH / 2 + 4, 'class': 'nm' }, name));
+      statBar(box, { x: 0, y: y, w: W, h: rowH }, L, y + (rowH - bh) / 2, w, bh, true,
+        g.name + ' — ' + films(g.n) + (g.avg != null ? ', средняя ' + rateText(Number(g.avg).toFixed(1)) : ''));
+      add(box, svg('text', { x: L + w + 6, y: y + rowH / 2 + 4, 'class': 'tk' }, tip(g)));
+    });
+    return box;
+  }
+  // Decades: columns, «90-е» / «2010-е» under them and «★ 4,4» under that when n ≥ 5, n over the tallest;
+  // when the labels would touch, every other decade (from the last) keeps them.
+  function decadesChart(rows, W) {
+    W = W > 0 ? W : 320;
+    var H = 176, L = 4, T = 20, B = 38, n = rows.length || 1, step = (W - 2 * L) / n, bw = Math.min(24, step - 4);
+    var every = step < 44 ? 2 : 1, hi = 0;
+    var max = Math.max.apply(null, rows.map(function (d) { return d.n; }).concat([0])), box = chartBox(W, H, 'Десятилетия');
+    add(box, svg('line', { x1: L, x2: W - L, y1: H - B, y2: H - B, 'class': 'ax' }));
+    rows.forEach(function (d, i) {
+      var h = max > 0 ? d.n / max * (H - T - B) : 0, cx = L + (i + 0.5) * step;
+      var name = (d.decade < 2000 && d.decade % 100 ? d.decade % 100 : d.decade) + '-е';
+      statBar(box, { x: L + i * step, y: T, w: step, h: H - T - B }, cx - bw / 2, H - B - h, bw, h, false,
+        name + ' — ' + films(d.n) + (d.n >= 5 && d.avg != null ? ', средняя ' + rateText(Number(d.avg).toFixed(1)) : ''));
+      if ((n - 1 - i) % every === 0) {
+        add(box, svg('text', { x: cx, y: H - B + 15, 'class': 'tk', 'text-anchor': 'middle' }, name));
+        if (d.n >= 5 && d.avg != null) {
+          add(box, svg('text', { x: cx, y: H - B + 30, 'class': 'tk', 'text-anchor': 'middle' }, '★ ' + rateText(Number(d.avg).toFixed(1))));
+        }
+      }
+      if (d.n > rows[hi].n) hi = i;
+    });
+    if (max > 0) {
+      var top = H - B - (H - T - B) - 5;
+      add(box, svg('text', { x: L + (hi + 0.5) * step, y: top, 'class': 'tk strong', 'text-anchor': 'middle' }, max));
+    }
+    return box;
+  }
+
   // --- wishlist ---
   var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
   var WISH_PILL = { watching: '', reached: 'good', unknown: 'warn' };
@@ -2650,6 +2747,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var res = el('div'), home = el('div');
     var pickCard = mkCard('clapperboard', 'Подборка'), seg = el('div', 'seg fit'), segs = {}, genres = el('div', 'hs'), pbox = el('div');
     var watchCard = el('div'), wantCard = el('div'), seenCard = el('div'), dropCard = el('div'), skipCard = el('div');
+    var statsBox = el('div'), statsOpen = store('filmStatsOpen') === '1';
     var types = el('div', 'hs fty'), listType = store('filmListType');
     if (!LIST_TYPES.some(function (t) { return t[0] === listType; })) listType = 'all';
     types.setAttribute('role', 'group');
@@ -2665,7 +2763,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     genres.setAttribute('role', 'group');
     genres.setAttribute('aria-label', 'Жанр');
     add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
-      add(home, add(pickCard, seg, genres, pbox), types, watchCard, wantCard, seenCard, dropCard, skipCard), el('p', 'mu', 'Данные TMDB'));
+      add(home, add(pickCard, seg, genres, pbox), types, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox), el('p', 'mu', 'Данные TMDB'));
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
@@ -2799,6 +2897,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       clr.hidden = !filmQuery;
       res.hidden = q.length < 2;
       home.hidden = !res.hidden;
+      if (!home.hidden && pendingStats && statsOpen) statsBody(pendingStats[0], pendingStats[1]);
       if (opened && opened.sec === 'r') opened = null;
       if (q.length < 2) return clear(res);
       add(clear(res), skeleton(1));
@@ -2990,11 +3089,51 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         } });
     }
 
+    // --- stats (docs/specs/films-stats.md) ---
+    // Folded by default (localStorage filmStatsOpen); an unfold loads films_stats through swr and draws it.
+    function drawStats() {
+      var c = mkCard('chart', 'Статистика'), h = c.firstChild;
+      h.appendChild(icon('chevron-down', 'go'));
+      h.setAttribute('aria-expanded', String(statsOpen));
+      tap(h, function () {
+        statsOpen = !statsOpen;
+        store('filmStatsOpen', statsOpen ? '1' : '0');
+        drawStats();
+      });
+      add(clear(statsBox), c);
+      if (statsOpen) loadStats(c.appendChild(el('div')));
+    }
+    function loadStats(sb) {
+      if (!cacheGet('films:stats')) add(clear(sb), add(el('div', 'skel'), el('i'), el('i'), el('i')));
+      swr({ key: 'films:stats', box: sb, n: 0, live: function () { return current === 'films' && statsOpen; },
+        fetch: function () { return api('miniapp', { action: 'films_stats' }, 15000, true); },
+        render: function (j) { statsBody(sb, j); }, retry: function () { loadStats(sb); } });
+    }
+    // Charts are sized from the card's width: while a kept search hides «home» the width is 0, so the draw waits for search() to unhide it.
+    var pendingStats = null;
+    function statsBody(sb, j) {
+      if (home.hidden) { pendingStats = [sb, j]; return; }
+      pendingStats = null;
+      var t = j.totals || {}, W = sb.clientWidth - 16;
+      clear(sb);
+      if (!t.seen) return add(sb, state('star', 'Оценок пока нет'));
+      var avg = add(el('div', 'tile'), el('div', 'k', 'Средняя'), el('div', 'v', t.rated ? '★ ' + rateText(Number(t.avg).toFixed(1)) : '—'));
+      if (t.rated < t.seen) avg.appendChild(el('div', 'k', 'оценено ' + t.rated + ' из ' + t.seen));
+      add(sb, add(el('div', 'tiles g3'), add(el('div', 'tile'), el('div', 'k', 'Видел'), el('div', 'v', t.seen)), avg,
+        add(el('div', 'tile'), el('div', 'k', 'Хочу'), el('div', 'v', t.want || 0))));
+      add(sb, el('div', 'fst', 'Оценки'));
+      add(sb, t.rated > 0 ? ratingsChart(j.ratings || [], W) : el('div', 'sub', 'Оценок пока нет'));
+      if ((j.genres || []).length) add(sb, el('div', 'fst', 'Жанры'), genresChart(j.genres.slice(0, 8), W));
+      if ((j.decades || []).length) add(sb, el('div', 'fst', 'Десятилетия'), decadesChart(j.decades, W));
+      var k = j.kinds || {};
+      add(sb, el('div', 'sub', 'Фильмы ' + (k.movie || 0) + ' · Сериалы ' + (k.tv || 0) + ' · Аниме ' + (k.anime || 0)));
+    }
     drawGenres();
     drawTypes();
     search();
     loadPicks(false);
     loadLists();
+    drawStats();
   }
 
   // --- volleyball ---
