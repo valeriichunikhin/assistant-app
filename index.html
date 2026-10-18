@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 20:04">
+<meta name="published" content="2026-10-18 20:25">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -777,7 +777,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // --- shell ---
   // Phone: four tabs and «Ещё» in a bottom bar, the other ten in a sheet; which four and in what order is
   // the device's own choice («Кнопки внизу» on «Что нового», localStorage tabBar), BAR until it chose.
-  // From 900 px: all fourteen in a left rail. The tab is kept in localStorage and,
+  // From 900 px: all fourteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
@@ -787,6 +787,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // One-column views: 720 px wide on a desktop (.main.narrow).
   var NARROW = ['list', 'prices', 'wish', 'films', 'inbox', 'feed', 'news'];
   var NAMES = {};
+  // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
+  // {tabs: {hidden}, home: {hidden, order}}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
+  // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. The cached copy is read
+  // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
+  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'inbox', 'feed'];
+  var HOME_KEYS = ['calendar', 'plan', 'morning', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
+    'inbox', 'week', 'system'];
+  // The known keys of v, once each, in its order; anything else → [].
+  function keysIn(v, keys) {
+    return Array.isArray(v) ? v.filter(function (k, i) { return keys.indexOf(k) >= 0 && v.indexOf(k) === i; }) : [];
+  }
+  function normPrefs(p) {
+    var t = (p && p.tabs) || {}, h = (p && p.home) || {};
+    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS) } };
+  }
+  var prefsHit = cacheGet('prefs'), prefs = normPrefs(prefsHit && prefsHit.j && prefsHit.j.prefs);
+  function tabShown(k) { return k === 'home' || k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
+  function visibleTabs() { return TABS.filter(function (t) { return tabShown(t[0]); }); }
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date'), rDate = el('span');
   var main = el('main', 'main'), tabbar = el('nav', 'tabbar'), scrim = el('div', 'scrim'), sheet = el('div', 'sheet');
@@ -805,29 +823,31 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   sheet.setAttribute('aria-label', 'Ещё');
   sheet.setAttribute('aria-hidden', 'true');
   add(rail, add(el('div', 'brand'), add(el('span', 'mark'), icon('spark')), el('span', '', 'Помощник')));
-  TABS.forEach(function (t) {
-    NAMES[t[0]] = t[2];
-    rail.appendChild(navBtn(t));
-  });
+  TABS.forEach(function (t) { NAMES[t[0]] = t[2]; });
   var moreBtn = add(el('button'), add(el('span', 'ic'), icon('more')), el('span', 'lb', 'Ещё'));
   moreBtn.type = 'button';
   moreBtn.setAttribute('aria-haspopup', 'dialog');
   moreBtn.onclick = openSheet;
-  // The bar's tabs: the stored keys that are still tabs, once each, four at most; nothing stored → BAR.
+  // The bar's tabs: the stored keys that are still tabs, once each, four at most; nothing stored → BAR. A hidden
+  // tab drops out and its place goes to the next shown tab of TABS that is not in the bar yet.
   function barTabs() {
     var v = null;
     try { v = JSON.parse(store('tabBar') || 'null'); } catch (e) {}
-    if (!Array.isArray(v)) return BAR.slice();
-    return v.filter(function (k, i) {
+    var base = !Array.isArray(v) ? BAR.slice() : v.filter(function (k, i) {
       return typeof k === 'string' && Object.prototype.hasOwnProperty.call(NAMES, k) && v.indexOf(k) === i;
     }).slice(0, 4);
+    var bar = base.filter(tabShown);
+    visibleTabs().forEach(function (t) { if (bar.length < base.length && bar.indexOf(t[0]) < 0) bar.push(t[0]); });
+    return bar;
   }
   function tabOf(k) { return TABS.filter(function (t) { return t[0] === k; })[0]; }
-  // The bar and the sheet are drawn again on every change of the choice; the rail keeps its buttons.
+  // The rail, the bar and the sheet are drawn again on every change of the choice or of the hidden tabs.
   function drawBar() {
-    var bar = barTabs();
-    MORE = TABS.map(function (t) { return t[0]; }).filter(function (k) { return bar.indexOf(k) < 0; });
-    for (var k in navs) navs[k] = navs[k].filter(function (b) { return b.parentNode === rail; });
+    var bar = barTabs(), shownTabs = visibleTabs();
+    MORE = shownTabs.map(function (t) { return t[0]; }).filter(function (k) { return bar.indexOf(k) < 0; });
+    for (var k in navs) navs[k].forEach(function (b) { if (b.parentNode === rail) rail.removeChild(b); });
+    navs = {};
+    shownTabs.forEach(function (t) { rail.insertBefore(navBtn(t), rfoot || null); });
     clear(tabbar);
     add(clear(sheet), el('div', 'grab'));
     bar.forEach(function (k) { tabbar.appendChild(navBtn(tabOf(k))); });
@@ -872,8 +892,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
   function start() {
     add(clear(app), shell);
-    var h = location.hash.slice(1);
-    show(isView(h) ? h : store('tab') || 'home');
+    // Before the tab: show() starts the tab's own busy count, the settings' request is not part of it.
+    loadPrefs();
+    var h = location.hash.slice(1), last = store('tab');
+    // A link (#tab) opens even a hidden tab; the remembered one only while it is shown.
+    show(isView(h) ? h : last && tabShown(last) ? last : 'home');
   }
   // The login card: the widget's script is created here, after load, so it
   // mounts its button in place of itself.
@@ -998,7 +1021,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   function homeView() {
-    var body = el('div', 'cols');
+    // cards: HOME_KEYS key → its card (or its «недоступно» stub) of this render; slot: the key being drawn.
+    var body = el('div', 'cols'), cards = {}, slot = null, last = null;
     var again = label(el('button', 'btn ghost wide'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
@@ -1007,12 +1031,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function card(ic, title, sub, rows) {
       var c = mkCard(ic, title, sub);
       (rows || []).forEach(function (r) { c.appendChild(r); });
-      return body.appendChild(c);
+      cards[slot] = c;
+      return c;
     }
     function down(ic, title) { card(ic, title).firstChild.appendChild(pill('недоступно', 'warn')); }
     // The seven days from morning ?mode=week, a row each; hidden while the key
     // is missing (an older miniapp function).
     function plan(w) {
+      slot = 'plan';
       if (w === null) return down('calendar', 'План недели');
       if (!w || !Array.isArray(w.days)) return;
       card('calendar', 'План недели', null, w.days.map(function (d) {
@@ -1027,6 +1053,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       // earlier day is today's: «до 01:00» when it ends today, else all day.
       // calendar_view: the same after the week's rules (work hours one 💼
       // row, a game's copy dropped); m.calendar while an older morning runs.
+      slot = 'calendar';
       if (m.calendar === null) down('calendar', 'Календарь');
       else if (m.calendar_view) {
         if (m.calendar_view.length) card('calendar', 'Календарь', null, capped(m.calendar_view.map(function (x) {
@@ -1046,6 +1073,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       plan(week);
 
+      slot = 'due';
       if (!m.deadlines && !m.payments && !m.parcels) down('package', 'Сроки и посылки');
       else {
         var due = [];
@@ -1075,6 +1103,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
       // Documents within 90 days (the morning loader's window); red at 7 days
       // or less. The key is missing while an older morning function is deployed.
+      slot = 'docs';
       if (m.documents === null) down('file', 'Документы');
       else if (m.documents && m.documents.length) {
         card('file', 'Документы', null, m.documents.map(function (d) {
@@ -1087,6 +1116,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
 
       // Only on the days of the tennis rule (0 = Monday, as wd()).
+      slot = 'courts';
       if (!m.courts) down('pin', 'Корты сегодня');
       else if (!Array.isArray(m.courts.days) || m.courts.days.indexOf(wd(today)) >= 0) {
         // Slots that have not started yet, earliest first, then cheapest.
@@ -1104,6 +1134,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
       // Own games from PNH mails, the week ahead; the key is missing while an
       // older morning function is deployed.
+      slot = 'games';
       if (m.my_games === null) down('ball', 'Мои игры');
       else if (m.my_games && m.my_games.length) {
         card('ball', 'Мои игры', null, m.my_games.map(myGameRow));
@@ -1111,6 +1142,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
       // Cinema City screenings today and tomorrow, from the purchase mails;
       // hidden when there are none or the key is missing (an older morning).
+      slot = 'shows';
       if (m.my_shows === null) down('film', 'Мои сеансы');
       else if (m.my_shows && m.my_shows.length) {
         card('film', 'Мои сеансы', null, m.my_shows.map(function (s) {
@@ -1120,6 +1152,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }));
       }
 
+      slot = 'vb';
       if (!m.volleyball) down('ball', 'Волейбол');
       else if (m.volleyball.length) {
         // 🔥 on ср/пт, the priority evenings, as the volleyball digest marks them.
@@ -1134,6 +1167,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           }), 6));
       }
 
+      slot = 'genshin';
       if (!m.genshin) down('game', 'Genshin');
       else if (m.genshin.length) {
         card('game', 'Genshin · заканчивается', null, m.genshin.slice()
@@ -1146,6 +1180,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
       // Yesterday from the Shortcuts automation; hidden when it did not post
       // or the key is missing (an older morning).
+      slot = 'yesterday';
       var h = m.health;
       if (h) {
         var ws = h.workouts || [], timed = ws.filter(function (w) { return w.minutes != null; });
@@ -1207,6 +1242,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // The Mac jobs and the mail bridge (mail-events ?action=pulse), last: shown
     // only when a part went quiet or a cron job is failing.
     function pulse(ps, today) {
+      slot = 'system';
       if (!ps.some(function (x) { return x.stale; })) return;
       card('alert', 'Система', null, ps.map(function (x) {
         if (x.fails != null) return hrow(x.label, null, pill('сбой', 'bad'));
@@ -1219,22 +1255,43 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function render(j) {
       clear(body);
+      cards = {};
+      last = j;
       var p = wp(Date.now());
       var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
       if (j.morning) morning(j.morning, today, j.week);
-      else { plan(j.week); down('clock', 'Утренняя сводка'); }
+      else { plan(j.week); slot = 'morning'; down('clock', 'Утренняя сводка'); }
+      slot = 'inbox';
       if (j.inbox_new == null) down('inbox', 'Инбокс');
       else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых'), function () { show('inbox'); });
+      slot = 'week';
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
+      slot = 'system';
       if (j.pulse === null) down('alert', 'Система');
       else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
+      // His order first, the rest after in HOME_KEYS order; the hidden ones are left out.
+      var hid = prefs.home.hidden, off = HOME_KEYS.every(function (k) { return k === 'morning' || hid.indexOf(k) >= 0; });
+      if (off) {
+        body.appendChild(tap(state('square', 'Все карточки выключены — включи в «Что нового» → «Настройки»'),
+          function () { show('news'); }));
+        return;
+      }
+      homeOrder().forEach(function (k) { if (cards[k] && hid.indexOf(k) < 0) body.appendChild(cards[k]); });
       if (!body.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
     }
+    // The answer carries the settings too: taken unless a save of his is on its way or came after the request left.
     function load() {
       swr({ key: 'home', box: body, n: 4, live: function () { return current === 'home'; },
-        fetch: function () { return api('miniapp', { action: 'home' }, 30000, true); }, render: render, retry: load });
+        fetch: function () {
+          var gen = prefsGen;
+          return api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
+            if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
+            return j;
+          });
+        }, render: render, retry: load });
     }
+    prefsHook = { tab: 'home', fn: function () { if (last) render(last); } };
     load();
   }
 
@@ -1263,7 +1320,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return m.send(m.want).then(function (v) {
         m.ok = v;
         // The cached answers of the screen are older than this save: the next open draws a fresh one.
-        cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
+        // The settings write their own cache entry (sendPrefs).
+        if (key !== 'prefs') cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
         if (v !== m.want && !m.t) { m.want = v; m.show(v); }
       }, function (e) {
         clearTimeout(m.t);
@@ -3835,6 +3893,151 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return card;
   }
 
+  // --- settings (docs/specs/app-settings.md) ---
+  // A change is drawn at once and saved 400 ms after the last tap through mark() (key 'prefs', the settings' JSON as
+  // its state); a failed save puts the confirmed settings back. prefsHook: how the view on screen redraws itself.
+  var prefsHook = null;
+  // Counts his edits and confirmed saves: an answer that left before one of them carries stale settings.
+  var prefsGen = 0;
+  var HOME_NAMES = {
+    plan: 'План недели', calendar: 'Календарь', due: 'Сроки и посылки', docs: 'Документы', courts: 'Корты сегодня',
+    games: 'Мои игры', shows: 'Мои сеансы', vb: 'Волейбол', genshin: 'Genshin', yesterday: 'Вчера', inbox: 'Инбокс',
+    week: 'Неделя', system: 'Система'
+  };
+  // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
+  function homeOrder() {
+    var o = prefs.home.order;
+    return o.concat(HOME_KEYS.filter(function (k) { return o.indexOf(k) < 0; }));
+  }
+  // New settings (normalized) on screen: the rail, the bar and the sheet; a tab hidden right now gives way to
+  // «Сегодня»; else the view redraws (quiet: the caller draws it). focus: [card, key, button] to keep the keyboard.
+  function setPrefs(p, focus, quiet) {
+    if (JSON.stringify(p) === JSON.stringify(prefs)) return;
+    var was = current && tabShown(current);
+    prefs = p;
+    drawBar();
+    if (was && !tabShown(current)) show('home');
+    else if (!quiet && prefsHook && prefsHook.tab === current) prefsHook.fn(focus);
+  }
+  function editPrefs(next, focus) {
+    haptic();
+    var was = JSON.stringify(prefs);
+    prefsGen++;
+    setPrefs(normPrefs(next), focus);
+    mark('prefs', JSON.stringify(prefs), was, sendPrefs, function (s) { setPrefs(JSON.parse(s)); },
+      function () { toast(SAVE_FAILED); });
+  }
+  // The server's answer is the confirmed state; it is also the cached copy the next start draws from.
+  function sendPrefs(s) {
+    return api('miniapp', { action: 'prefs_set' }, 15000, true, { prefs: JSON.parse(s) }).then(function (j) {
+      if (!j || !j.prefs) throw new Error('prefs');
+      prefsGen++;
+      var p = normPrefs(j.prefs);
+      cacheSet('prefs', JSON.stringify({ prefs: p }));
+      return JSON.stringify(p);
+    });
+  }
+  // Cache-first: the cached copy is already in memory; a fresh one that differs redraws the shell.
+  function loadPrefs() {
+    swr({ key: 'prefs', box: shell, n: 0, live: function () { return true; },
+      // A stale answer (an edit or a save came after the request left) and an offline start both give back the settings
+      // on screen, so the cached copy is not overwritten and no second «Не обновилось» toast comes.
+      fetch: function () {
+        var gen = prefsGen;
+        return api('miniapp', { action: 'prefs_get' }, 15000, true).then(function (j) {
+          return gen === prefsGen ? j : { prefs: prefs };
+        }, function (e) { if (e.login) throw e; return { prefs: prefs }; });
+      },
+      render: function (j) { if (j && j.prefs && !marks.prefs) setPrefs(normPrefs(j.prefs)); } });
+  }
+  // A small button of a settings row: a toggle (f 'tog', aria.on) or an arrow (f 'up' / 'down').
+  function rowBtn(ic, aria, f, off, fn) {
+    var b = add(el('button', 'btn ghost x'), icon(ic, f === 'tog' ? 'mk' + (aria.on ? ' on' : '') : ''));
+    b.type = 'button';
+    b.setAttribute('aria-label', aria.label);
+    if (f === 'tog') b.setAttribute('aria-pressed', String(aria.on));
+    b.disabled = off;
+    b.onclick = fn;
+    b.f = f;
+    return b;
+  }
+  // The rows are new nodes after a change: the keyboard goes back to the button it pressed, or to the row's toggle.
+  function refocus(rows, focus, kind) {
+    if (!focus || focus[0] !== kind) return;
+    if (focus[1] === 'reset') {
+      var first = rows.querySelector('button:not(:disabled)');
+      if (first) first.focus();
+      return;
+    }
+    var r = [].filter.call(rows.children, function (x) { return x.k === focus[1]; })[0];
+    if (!r) return;
+    var b = [].filter.call(r.querySelectorAll('button'), function (x) { return x.f === focus[2] && !x.disabled; })[0];
+    (b || r.querySelector('button')).focus();
+  }
+  // «Вкладки»: every tab with a toggle; «Сегодня» and «Что нового» always stay.
+  function tabsCard() {
+    var card = mkCard('more', 'Вкладки'), rows = el('div');
+    card.appendChild(rows);
+    card.paint = function (focus) {
+      var hid = prefs.tabs.hidden;
+      clear(rows);
+      TABS.forEach(function (t) {
+        var k = t[0], row = add(lead(el('div', 'row'), t[1]), el('span', 'tx t', t[2]));
+        if (TAB_KEYS.indexOf(k) < 0) row.appendChild(el('span', 'pr mu', 'всегда'));
+        else {
+          var on = hid.indexOf(k) < 0;
+          row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: t[2] + ': показывать', on: on }, 'tog', false, function () {
+            editPrefs({ tabs: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }) }, home: prefs.home },
+              ['tab', k, 'tog']);
+          }));
+        }
+        row.k = k;
+        rows.appendChild(row);
+      });
+      refocus(rows, focus, 'tab');
+    };
+    card.paint();
+    return card;
+  }
+  // «Карточки на «Сегодня»»: a toggle, the name and ▲ ▼ per card, in the order «Сегодня» draws them; «Сбросить»
+  // brings back every card in the default order. The morning brief's own «недоступно» stub has no row and keeps
+  // its place after «План недели».
+  function homeCard() {
+    var card = mkCard('house', 'Карточки на «Сегодня»'), rows = el('div'), foot = el('div', 'foot');
+    var reset = el('button', 'btn ghost', 'Сбросить');
+    reset.type = 'button';
+    reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [] } }, ['home', 'reset']); };
+    foot.appendChild(reset);
+    card.appendChild(rows);
+    card.paint = function (focus) {
+      var hid = prefs.home.hidden, keys = homeOrder().filter(function (k) { return k !== 'morning'; });
+      clear(rows);
+      keys.forEach(function (k, i) {
+        var on = hid.indexOf(k) < 0, name = HOME_NAMES[k], row = el('div', 'row');
+        function move(d) {
+          var o = keys.slice();
+          o.splice(i, 1);
+          o.splice(i + d, 0, k);
+          o.splice(o.indexOf('plan') + 1, 0, 'morning');
+          editPrefs({ tabs: prefs.tabs, home: { hidden: hid, order: o } }, ['home', k, d < 0 ? 'up' : 'down']);
+        }
+        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Сегодня»', on: on }, 'tog', false, function () {
+          editPrefs({ tabs: prefs.tabs, home: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }),
+            order: prefs.home.order } }, ['home', k, 'tog']);
+        }), el('span', 'tx t', name),
+          rowBtn('chevron-up', { label: name + ': выше' }, 'up', i === 0, function () { move(-1); }),
+          rowBtn('chevron-down', { label: name + ': ниже' }, 'down', i === keys.length - 1, function () { move(1); }));
+        row.k = k;
+        rows.appendChild(row);
+      });
+      if (hid.length || prefs.home.order.length) card.appendChild(foot);
+      else if (foot.parentNode) card.removeChild(foot);
+      refocus(rows, focus, 'home');
+    };
+    card.paint();
+    return card;
+  }
+
   // --- bottom bar ---
   // «Кнопки внизу»: the four tabs of the phone's bottom bar and their order, kept on this device (store tabBar,
   // a JSON array of tab keys); the others go to «Ещё», the wide rail shows all. Chosen rows come first, in order.
@@ -3856,16 +4059,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       drawBar();
       paint(focus);
     }
-    function btn(ic, aria, f, off, fn) {
-      var b = add(el('button', 'btn ghost x'), icon(ic, f === 'tog' ? 'mk' + (aria.on ? ' on' : '') : ''));
-      b.type = 'button';
-      b.setAttribute('aria-label', aria.label);
-      if (f === 'tog') b.setAttribute('aria-pressed', String(aria.on));
-      b.disabled = off;
-      b.onclick = fn;
-      b.f = f;
-      return b;
-    }
     function paint(focus) {
       var bar = barTabs(), full = bar.length >= 4;
       text(line, full ? 'Максимум 4 — сними одну, чтобы поставить другую' : 'В панели ' + bar.length + ' из 4, остальные в «Ещё»');
@@ -3880,10 +4073,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           save(keys, [k, d < 0 ? 'up' : 'down']);
         }
         if (on) {
-          add(row, btn('chevron-up', { label: t[2] + ': выше' }, 'up', i === 0, function () { move(-1); }),
-            btn('chevron-down', { label: t[2] + ': ниже' }, 'down', i === bar.length - 1, function () { move(1); }));
+          add(row, rowBtn('chevron-up', { label: t[2] + ': выше' }, 'up', i === 0, function () { move(-1); }),
+            rowBtn('chevron-down', { label: t[2] + ': ниже' }, 'down', i === bar.length - 1, function () { move(1); }));
         }
-        row.appendChild(btn(on ? 'check-square' : 'square', { label: t[2] + ' в панели', on: on }, 'tog', !on && full, function () {
+        row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: t[2] + ' в панели', on: on }, 'tog', !on && full, function () {
           save(on ? bar.filter(function (x) { return x !== k; }) : bar.concat([k]), [k, 'tog']);
         }));
         row.k = k;
@@ -3899,6 +4092,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         (b || r.lastChild).focus();
       }
     }
+    card.paint = paint;
     paint();
     return card;
   }
@@ -3908,7 +4102,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    add(main, browser ? pushCard() : null, barCard(), body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    var tc = tabsCard(), hc = homeCard(), bc = barCard();
+    prefsHook = { tab: 'news', fn: function (focus) { tc.paint(focus); hc.paint(focus); bc.paint(); } };
+    add(main, browser ? pushCard() : null, tc, hc, bc, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
@@ -3948,7 +4144,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, categoryOf: categoryOf,
     todayLabel: todayLabel, show: show, views: VIEWS, markItem: markItem, keepItems: keepItems, dropMark: dropMark,
     itemKey: itemKey, markPick: markPick, keepPicks: keepPicks, flushBatch: flushBatch, pickSeg: pickSeg,
-    pickAll: pickAll, dealsAll: dealsAll, names: NAMES, tabs: TABS, main: main, hdr: hdr, rail: rail,
+    pickAll: pickAll, dealsAll: dealsAll, names: NAMES, get tabs() { return visibleTabs(); }, main: main, hdr: hdr, rail: rail,
     hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
     DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
