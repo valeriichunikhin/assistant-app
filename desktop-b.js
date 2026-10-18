@@ -366,6 +366,34 @@
   // --- wish: the add form in one row, then the watched products as a table ---
   var wishUrl = '', wishTarget = '';
   view('wish', function (main) {
+    // Whose list (docs/specs/wishlist-tetyana.md): the segment filters rows, the chip files the add under her.
+    var person = A.store('wishPerson') === 'tetyana' ? 'tetyana' : 'me', forHer = person === 'tetyana';
+    var seg = el('div', 'seg fit'), segs = {};
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Чей список');
+    [['me', 'Мой'], ['tetyana', 'Тетяна']].forEach(function (p) {
+      var b = segs[p[0]] = el('button', '', p[1]);
+      b.type = 'button';
+      b.onclick = function () { if (person !== p[0]) pick(p[0]); };
+      seg.appendChild(b);
+    });
+    var her = el('button', 'pill', 'для Тетяны');
+    her.type = 'button';
+    her.onclick = function () { setHer(!forHer); };
+    function setHer(v) {
+      forHer = v;
+      her.className = 'pill' + (v ? ' acc' : '');
+      her.setAttribute('aria-pressed', String(v));
+    }
+    function pick(p) {
+      person = p;
+      A.store('wishPerson', p);
+      for (var k in segs) segs[k].className = k === p ? 'on' : '';
+      setHer(p === 'tetyana');
+      render();
+    }
+    for (var k in segs) segs[k].className = k === person ? 'on' : '';
+    setHer(forHer);
     var form = el('form', 'dtool'), url = input('Ссылка на товар', wishUrl, 'url'), target = input('Цель, zł', wishTarget);
     url.oninput = function () { wishUrl = url.value; };
     target.setAttribute('inputmode', 'decimal');
@@ -377,12 +405,14 @@
       var u = url.value.trim(), t = target.value.replace(/\s/g, '');
       if (!u || !t) return toast('Нужны ссылка и цель');
       go.disabled = true;
-      api('telegram-webhook', { action: 'wish_add', url: u, target: t }).then(function (j) {
+      var whose = forHer ? 'tetyana' : 'me';
+      api('telegram-webhook', { action: 'wish_add', url: u, target: t, person: whose }).then(function (j) {
         go.disabled = false;
         var host = u;
         try { host = new URL(u).hostname; } catch (e) {}
         toast('Слежу: ' + (j.title || host) + (j.price != null ? ' · сейчас ' + zl(j.price) + ' zł' : ''));
         wishUrl = wishTarget = url.value = target.value = '';
+        if (whose !== person) pick(whose); // show the list the item went to
         load();
       }, function (e) {
         go.disabled = false;
@@ -390,20 +420,21 @@
       });
     };
     var body = add(el('div'), A.skeleton(1));
-    add(main, add(form, field('link', url, 'grow'), field('target', target, 'w180'), go), body);
+    add(main, seg, add(form, field('link', url, 'grow'), field('target', target, 'w180'), her, go), body);
     var rows = [];
 
     function render() {
       if (!on('wish') || !body.isConnected) return;
       clear(body);
-      if (!rows.length) {
-        body.appendChild(A.state('gift', 'Пусто. Вставь ссылку и цель.'));
+      var shown = rows.filter(function (r) { return (r.person || 'me') === person; });
+      if (!shown.length) {
+        body.appendChild(A.state('gift', person === 'tetyana' ? 'Пусто. Вставь ссылку на её товар и цель.' : 'Пусто. Вставь ссылку и цель.'));
         try { url.focus(); } catch (e) {}
         return;
       }
       var t = D.table([{ h: 'Товар' }, { h: 'Сейчас', r: true, w: '130px' }, { h: 'Цель', r: true, w: '110px' },
         { h: 'До цели', w: '200px' }, { h: 'Статус', w: '170px' }, { h: 'Проверено', r: true, w: '110px' }, { h: '', w: '96px' }],
-      rows.map(function (r) {
+      shown.map(function (r) {
         var last = r.last_price == null ? null : Number(r.last_price), goal = Number(r.target);
         var gap = el('div', 'dgap');
         if (last != null && last > 0) {
@@ -421,8 +452,8 @@
           num(last == null ? '—' : zl(last) + ' zł'), num(zl(r.target) + ' zł'), gap,
           pill(A.WISH_STATUS[r.status] || r.status, A.WISH_PILL[r.status] || ''),
           num(r.last_checked ? A.dmt(r.last_checked) : '—'), hovActs(x)];
-      }), { onRow: function (k) { A.openLink(rows[k].url); } });
-      body.appendChild(countPill(cardWith('gift', 'Слежу за ценой', null, t), rows.length));
+      }), { onRow: function (k) { A.openLink(shown[k].url); } });
+      body.appendChild(countPill(cardWith('gift', 'Слежу за ценой', null, t), shown.length));
     }
     function load() {
       api('telegram-webhook', { action: 'wish' }, undefined, true).then(function (j) {

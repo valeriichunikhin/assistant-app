@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-18 21:31">
+<meta name="published" content="2026-10-18 21:54">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -300,6 +300,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 /* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
    «сериал»/«аниме» tag, a folded list card's header with its chevron. */
 .card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty{padding:0 0 12px}
+/* Вишлист (docs/specs/wishlist-tetyana.md): the «для Тетяны» chip in the add form, as tall as the field. */
+.bar>.pill{flex:none;height:44px;padding:0 12px;font-size:13px}@media (min-width:900px){.bar>.pill{height:36px}}
 .ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
 /* Genshin v3 (docs/specs/genshin-tab-v3.md): HoYoLAB icons in circles (a letter when there is none), the build's
    stats 3×2, the team four in a row. */
@@ -2274,6 +2276,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // --- wishlist ---
   var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
   var WISH_PILL = { watching: '', reached: 'good', unknown: 'warn' };
+  // Whose list (docs/specs/wishlist-tetyana.md): rows carry person, the segment filters them here.
+  var WISH_PEOPLE = [['me', 'Мой'], ['tetyana', 'Тетяна']];
   var wishUrl = '', wishTarget = '';
   function openLink(url) {
     if (!/^https?:\/\//i.test(String(url))) return;
@@ -2281,6 +2285,31 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     try { tg.openLink(url); } catch (e) { window.open(url, '_blank'); }
   }
   function wishView() {
+    var person = store('wishPerson') === 'tetyana' ? 'tetyana' : 'me', forHer = person === 'tetyana';
+    var seg = el('div', 'seg fit'), segs = {};
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Чей список');
+    WISH_PEOPLE.forEach(function (p) {
+      var b = segs[p[0]] = el('button', '', p[1]);
+      b.type = 'button';
+      b.onclick = function () { if (person !== p[0]) pick(p[0]); };
+      seg.appendChild(b);
+    });
+    // The add form's chip follows the segment; a tap flips it for one item.
+    var her = chip('для Тетяны', forHer, null, function () { setHer(!forHer); });
+    function setHer(v) {
+      forHer = v;
+      her.className = 'pill' + (v ? ' acc' : '');
+      her.setAttribute('aria-pressed', String(v));
+    }
+    function pick(p) {
+      person = p;
+      store('wishPerson', p);
+      for (var k in segs) segs[k].className = k === p ? 'on' : '';
+      setHer(p === 'tetyana');
+      render();
+    }
+    for (var k in segs) segs[k].className = k === person ? 'on' : '';
     var form = el('form');
     var bar1 = el('div', 'bar'), bar2 = el('div', 'bar');
     var url = el('input'), target = el('input');
@@ -2301,12 +2330,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var u = url.value.trim(), t = target.value.replace(/\s/g, '');
       if (!u || !t) return toast('Нужны ссылка и цель');
       go.disabled = true;
-      api('telegram-webhook', { action: 'wish_add', url: u, target: t }).then(function (j) {
+      var whose = forHer ? 'tetyana' : 'me';
+      api('telegram-webhook', { action: 'wish_add', url: u, target: t, person: whose }).then(function (j) {
         go.disabled = false;
         var host = u;
         try { host = new URL(u).hostname; } catch (e) {}
         toast('Слежу: ' + (j.title || host) + (j.price != null ? ' · сейчас ' + zl(j.price) + ' zł' : ''));
         wishUrl = wishTarget = url.value = target.value = '';
+        if (whose !== person) pick(whose); // show the list the item went to
         load();
       }, function (e) {
         go.disabled = false;
@@ -2315,8 +2346,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
     };
     var body = el('div');
-    add(main, add(form, add(bar1, add(el('label', 'field'), icon('link'), url)),
-      add(bar2, add(el('label', 'field'), icon('target'), target), go)), body);
+    add(main, seg, add(form, add(bar1, add(el('label', 'field'), icon('link'), url)),
+      add(bar2, add(el('label', 'field'), icon('target'), target), her, go)), body);
     var rows = [];
     var armed = null, armTimer = null;
 
@@ -2333,13 +2364,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       armed = armTimer = null;
       if (current !== 'wish') return;
       clear(body);
-      if (!rows.length) {
-        add(body, state('gift', 'Пусто. Вставь ссылку и цель.'));
+      var shown = rows.filter(function (r) { return (r.person || 'me') === person; });
+      if (!shown.length) {
+        add(body, state('gift', person === 'tetyana' ? 'Пусто. Вставь ссылку на её товар и цель.' : 'Пусто. Вставь ссылку и цель.'));
         try { url.focus(); } catch (e) {}
         return;
       }
-      var card = el('div', 'card');
-      rows.forEach(function (r) {
+      var card = mkCard('gift', 'Слежу');
+      card.firstChild.appendChild(el('span', 'mu', String(shown.length)));
+      shown.forEach(function (r) {
         var row = el('div', 'row');
         var tx = el('span', 'tx');
         var a = el('a', 'lnk', r.title || r.host);
