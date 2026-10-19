@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 09:42">
+<meta name="published" content="2026-10-19 09:46">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -272,6 +272,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .cols>.state{column-span:all}
   #toast{bottom:24px}
 }
+/* Big monitors (19.10.2026, «сделай респонсивным»: on 2560 px the content sat in the middle third): the content
+   widens with the screen — four card columns from 1800 px, five from 2300 px, wider one-column views. */
+@media (min-width:1800px){.main{max-width:1760px}.main.narrow{max-width:960px}.cols{columns:4 380px}}
+@media (min-width:2300px){.main{max-width:2200px}.main.narrow{max-width:1040px}.cols{columns:5 380px}}
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* After the Geist review (11.10): the active segment reads in dark, content centred on wide screens, a grey search

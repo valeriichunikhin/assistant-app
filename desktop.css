@@ -2,6 +2,9 @@
    the page (docs/specs/miniapp-desktop.md). Everything here is for the big screen: a 12-column grid of widgets,
    tables, two panes, a poster grid, actions that appear on hover. */
 .main.desk{max-width:1440px;padding-top:20px}
+/* Big monitors: the widget grid grows with the screen (19.10.2026). */
+@media (min-width:1800px){.main.desk{max-width:1840px}}
+@media (min-width:2300px){.main.desk{max-width:2280px}}
 /* 12 columns, 16 px gutters; .span-N spans N of them (a card keeps its own look). */
 .dg{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}
 .dg>*{min-width:0}
