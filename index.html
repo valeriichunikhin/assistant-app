@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 19:02">
+<meta name="published" content="2026-10-19 22:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -4495,10 +4495,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           body.appendChild(days[g.date] = mkCard('calendar', WEEK[d] + ' ' + dm(g.date)));
           if (f.priority_weekdays.indexOf(d) >= 0) days[g.date].querySelector('h3').appendChild(icon('flame', 'sx'));
         }
+        var sub = [lv[g.lv] || levelRu(g.lv), 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · ');
+        // The same company as a game he did not want to play with again (docs/specs/volleyball-avoid.md): a flag, not a filter.
+        if (g.avoid) sub = add(el('span'), document.createTextNode(sub),
+          el('span', 'pill warn', ict('triangle-alert', 'та же компания ' + g.avoid.n + ' из ' + g.avoid.of)));
         var r = hrow(g.verified_only ? add(el('span'), document.createTextNode(g.start_at + '–' + g.stop_at + ' · ' + g.venue), icon('shield-check', 'sx'))
           : g.start_at + '–' + g.stop_at + ' · ' + g.venue,
-          [lv[g.lv] || levelRu(g.lv), 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
-          g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
+          sub, g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
         if (g.full) r.className += ' off';
         days[g.date].appendChild(goes(r));
       });
