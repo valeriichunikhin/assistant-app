@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 09:40">
+<meta name="published" content="2026-10-19 09:42">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -316,7 +316,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
 /* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
 .td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .hs>.mu{flex:none;align-self:center}.td .field input[type=number]{flex:none;width:4em}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
-.row .pr .pill+.pill{margin-left:4px}
+.row .pr .pill+.pill{margin-left:4px}.row .t .i.yt{width:16px;height:16px;margin:0 5px -3px 0;color:#ff0000}
 /* Задачи v2 (docs/specs/tasks.md): the steps checklist (✓ · title · ▲ ▼ ×), the log, the «Сводка» sheet over the page. */
 .tsh{margin:12px 0 2px;color:var(--muted);font-size:12px;font-weight:600}
 .tst{display:flex;align-items:center;gap:2px;min-height:44px;border-top:1px solid var(--line)}.tst:first-child{border-top:0}
@@ -348,6 +348,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-spark" viewBox="0 0 24 24"><polygon points="12,2 14,10 22,12 14,14 12,22 10,14 2,12 10,10" fill="currentColor" stroke="none"/><polygon points="19,3 19.8,5.2 22,6 19.8,6.8 19,9 18.2,6.8 16,6 18.2,5.2" fill="currentColor" stroke="none"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
 <symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
 <symbol id="i-check-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-youtube" viewBox="0 0 24 24"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
@@ -1686,6 +1687,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     p.title = 'Шаги: ' + t.steps_done + ' из ' + t.steps_total;
     return p;
   }
+  // The title; a task about the shared YouTube subscription (the title starts with «YouTube») carries the YouTube
+  // mark in its brand red before it (Lucide `youtube`), so those rows are told apart at a glance.
+  function taskTitle(t) {
+    var d = el('div', 't');
+    if (/^youtube\b/i.test(t.title)) d.appendChild(icon('youtube', 'yt'));
+    d.appendChild(document.createTextNode(t.title));
+    return d;
+  }
   // A task's row: its ✓ button (tick), the title, the caption, the steps pill, a red pill of the days it is late.
   function taskLine(t, areas, today, tick) {
     var ck = add(el('button', 'tb'), icon(t.done ? 'check-square' : 'square', 'mk' + (t.done ? ' on' : '')));
@@ -1698,7 +1707,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tick();
     };
     var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
-    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), el('div', 't', t.title), cap ? el('div', 'mu', cap) : null),
+    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), taskTitle(t), cap ? el('div', 'mu', cap) : null),
       late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
