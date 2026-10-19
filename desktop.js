@@ -111,7 +111,7 @@
     'infor-legal': 'infor.pl', udsc: 'UdSC', muw: 'MUW', warszawa: 'warszawa.pl', wtp: 'WTP', ukrinform: 'Ukrinform',
     tvn24: 'TVN24', polsatnews: 'Polsat News', pravda: 'Українська правда'
   };
-  var IB = { link: '🔗', text: '📝', photo: '🖼', document: '📄', voice: '🎙', video: '📹', forward: '↪️', other: '📥' };
+  var IB = { link: 'link', text: 'sticky-note', photo: 'image', document: 'file', voice: 'mic', video: 'video', forward: 'forward', other: 'inbox' };
 
   function ymd(ts) { var p = A.wp(ts); return p.year + '-' + p.month + '-' + p.day; }
   function hm(ts) { var p = A.wp(ts); return p.hour + ':' + p.minute; }
@@ -236,7 +236,7 @@
     });
     (m.my_shows || []).forEach(function (s) {
       var d = ymd(s.starts_at);
-      rows.push(hrow('🍿 ' + (s.display || s.film), [d === td ? 'сегодня' : dayName(d), hm(s.starts_at), s.cinema].filter(Boolean).join(' · ')));
+      rows.push(A.lead(hrow(s.display || s.film, [d === td ? 'сегодня' : dayName(d), hm(s.starts_at), s.cinema].filter(Boolean).join(' · ')), 'film'));
     });
     (m.deadlines || []).forEach(function (d) {
       rows.push(hrow(d.title, (d.sender ? d.sender + ' · ' : '') + 'до ' + dm(d.due_date), relPill(A.days(td, d.due_date))));
@@ -259,11 +259,11 @@
       m.courts.slots.filter(function (s) { return names[s.slug] && s.start_time >= nowHm; })
         .sort(function (x, y) { return x.start_time.localeCompare(y.start_time) || Number(x.price) - Number(y.price); })
         .slice(0, 3).forEach(function (s) {
-          rows.push(hrow('🎾 ' + s.start_time + ' · ' + names[s.slug], null, A.zl(s.price) + ' zł', 'https://playmore.pl/klub/' + s.slug + '/'));
+          rows.push(A.lead(hrow(s.start_time + ' · ' + names[s.slug], null, A.zl(s.price) + ' zł', 'https://playmore.pl/klub/' + s.slug + '/'), 'pin'));
         });
     }
     (m.genshin || []).slice().sort(function (x, y) { return Date.parse(x.ends_at) - Date.parse(y.ends_at); }).slice(0, 2)
-      .forEach(function (r) { rows.push(hrow('🎮 ' + (r.title || r.item_id), 'до ' + A.whenW(r.ends_at))); });
+      .forEach(function (r) { rows.push(A.lead(hrow(r.title || r.item_id, 'до ' + A.whenW(r.ends_at)), 'game')); });
     var h = m.health;
     if (h) {
       var hp = [h.steps != null ? A.grouped(h.steps) + ' ' + A.plural(h.steps, ['шаг', 'шага', 'шагов']) : '',
@@ -294,10 +294,11 @@
     body.appendChild(D.table([{ h: 'День' }, { h: 'Время' }, { h: 'Зал' }, { h: 'Уровень' }, { h: 'Занято', r: true }, { h: '' }],
       shown.map(function (r) {
         var g = r.g, d = A.wd(g.date);
-        return [WEEK[d] + ' ' + dm(g.date) + (pr.indexOf(d) >= 0 ? ' 🔥' : ''), add(el('span', 'num', g.start_at)),
-          g.venue + (g.verified_only ? ' 🪪' : ''), g.lv ? lv[g.lv] || g.lv : '—',
+        return [pr.indexOf(d) >= 0 ? add(el('span'), document.createTextNode(WEEK[d] + ' ' + dm(g.date)), A.icon('flame', 'sx')) : WEEK[d] + ' ' + dm(g.date),
+          add(el('span', 'num', g.start_at)),
+          g.verified_only ? add(el('span'), document.createTextNode(g.venue), A.icon('shield-check', 'sx')) : g.venue, g.lv ? lv[g.lv] || g.lv : '—',
           g.max_players != null ? add(el('span', 'num', g.taken + '/' + g.max_players)) : '—',
-          r.mine ? pill('✓ моя', 'acc') : g.busy ? pill('у тебя игра') : ''];
+          r.mine ? pill(A.ict('check', 'моя'), 'acc') : g.busy ? pill('у тебя игра') : ''];
       }), {
         onRow: function (i) { if (shown[i].g.url) A.openLink(shown[i].g.url); },
         cls: function (i) { return shown[i].g.full && !shown[i].mine ? 'off' : ''; }
@@ -328,23 +329,23 @@
       body.appendChild(D.table([{ h: 'Когда' }, { h: 'Фильм' }, { h: 'Где' }], shows.slice(0, 5).map(function (s) {
         var d = ymd(s.starts_at), ua = s.ukrainian || /ukraiński dubbing/i.test(s.film);
         return [add(el('span', 'num'), document.createTextNode(dayName(d) + ' ' + hm(s.starts_at))),
-          (s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, '')) + (ua ? ' 🇺🇦' : ''),
+          A.ua(s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, ''), ua),
           add(el('span', 'mu'), document.createTextNode([String(s.cinema || '').replace(/^Cinema City /, ''), hallRu(s.hall)].filter(Boolean).join(' · ')))];
       })));
     }
   }
 
-  // 4a. «Акции»: the ⚖️ Aldi vs Biedronka pairs (?action=compare) and the ⭐ watched products in open batches.
+  // 4a. «Акции»: the Aldi vs Biedronka pairs (?action=compare) and the watched products in open batches.
   function deals(body, a) {
     var cmp = a[0], picks = a[1], ps = (cmp && cmp.pairs) || [], stars = [];
     ((picks && picks.batches) || []).forEach(function (b) {
       (b.candidates || []).forEach(function (c) { if (/^⭐/.test(c.label)) stars.push({ b: b, c: c }); });
     });
-    if (!ps.length && !stars.length) return add(body, A.state('tag', 'Пар и ⭐ в подборках пока нет — придут с газетками'));
+    if (!ps.length && !stars.length) return add(body, A.state('tag', 'Пар и ожидаемых акций в подборках пока нет — придут с газетками'));
     if (ps.length) {
-      body.appendChild(el('div', 'wsub', '⚖️ Aldi vs Biedronka · ' + dm(cmp.week_start) + '–' + dm(A.addDays(cmp.week_start, 6))));
+      body.appendChild(el('div', 'wsub', A.ict('scale', 'Aldi vs Biedronka · ' + dm(cmp.week_start) + '–' + dm(A.addDays(cmp.week_start, 6)))));
       var side = function (p, chain, price, card) {
-        return add(el('span', 'num' + (p.cheaper === chain ? ' cw' : ''), A.zl(price) + (card ? ' 🪪' : '')));
+        return add(el('span', 'num' + (p.cheaper === chain ? ' cw' : ''), A.zl(price)), card ? A.icon('wallet-cards', 'sx') : null);
       };
       body.appendChild(D.table([{ h: 'Товар' }, { h: 'Aldi', r: true }, { h: 'Biedronka', r: true }, { h: 'Экономия', r: true }],
         ps.slice(0, 6).map(function (p) {
@@ -355,7 +356,7 @@
       if (ps.length > 6) body.appendChild(more(ps.length - 6, 'picks'));
     }
     if (stars.length) {
-      body.appendChild(el('div', 'wsub', '⭐ Жду акцию — уже в подборках'));
+      body.appendChild(el('div', 'wsub', A.ict('target', 'Жду акцию — уже в подборках')));
       body.appendChild(D.table([{ h: 'Товар' }, { h: 'Сеть' }, { h: 'Цена', r: true }, { h: 'Было', r: true }],
         stars.slice(0, 6).map(function (s) {
           var c = s.c;
@@ -378,7 +379,7 @@
       return a;
     }
     if (picks.length) {
-      A.text(head, '📰 Выжимка · ' + dm(d.day));
+      A.text(head, 'Выжимка · ' + dm(d.day));
       picks.forEach(function (p) {
         body.appendChild(add(el('div', 'row'), add(el('span', 'tx'), document.createTextNode(p.line + ' · '),
           link(SOURCES[p.source] || p.source, p.url))));
@@ -398,7 +399,7 @@
   // 5a. «Жду акцию»: the price_watch rows; a click searches the product in «Цены».
   function watch(body, j) {
     var rows = j.rows || [];
-    if (!rows.length) return add(body, A.state('trending', 'Ничего не жду — 👀 в «Ценах»'));
+    if (!rows.length) return add(body, A.state('trending', 'Ничего не жду — отметь товар в «Ценах»'));
     A.capped(rows.map(function (w) {
       var r = A.lead(hrow(w.product_name + (w.size ? ' · ' + w.size : ''), w.chain || 'все сети'), 'target');
       return A.tap(r, function () { prices(w.product_name); });
@@ -408,9 +409,9 @@
   // 5b. «Дела»: the next six by date.
   function dela(body, j) {
     var items = (j.items || []).slice().sort(function (x, y) { return x.days - y.days; });
-    if (!items.length) return add(body, A.state('check', 'Открытых дел нет 👌'));
+    if (!items.length) return add(body, A.state('check', 'Открытых дел нет'));
     items.slice(0, 6).forEach(function (i) {
-      var tile = el('span', 'ptile', A.DELA_ICON[i.kind] || '📌');
+      var tile = add(el('span', 'ptile'), A.icon(A.DELA_ICON[i.kind] || 'tack'));
       tile.setAttribute('aria-hidden', 'true');
       var r = add(el('div', 'row'), tile, add(el('span', 'tx'), el('div', 't', i.title),
         el('div', 'mu num', (i.sub || A.DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due))),
@@ -427,7 +428,7 @@
     var rows = (j.rows || []).slice(-5).reverse();
     if (!rows.length) return add(body, A.state('inbox', 'Инбокс пуст'));
     rows.forEach(function (r) {
-      var tile = el('span', 'ptile', IB[r.kind] || IB.other), acts = el('div', 'acts hov');
+      var tile = add(el('span', 'ptile'), A.icon(IB[r.kind] || IB.other)), acts = el('div', 'acts hov');
       tile.setAttribute('aria-hidden', 'true');
       [['done', 'check', 'Готово'], ['skip', 'x', 'Пропустить']].forEach(function (k) {
         var b = A.label(el('button', 'pg'), k[1], k[2]);

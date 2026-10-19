@@ -62,7 +62,7 @@
 .dprod .dmeta{display:flex;align-items:center;gap:6px;margin-top:auto;min-height:20px}
 .dprod .dmeta .mu{font:12px var(--font-num)}
 .dprod.tap .dpic .tb{pointer-events:none}
-.dprod .dstar{position:absolute;top:14px;right:14px;font-size:14px;line-height:1}
+.dprod .dstar{position:absolute;top:14px;right:14px;font-size:14px;line-height:1;color:var(--link)}.dprod .dstar .i{display:block;width:16px;height:16px}
 .dprod .dmk{position:absolute;top:14px;left:14px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink)}
 .dprod .dmk .i{width:14px;height:14px;stroke-width:3}
 .dprod>.hov{position:absolute;top:14px;right:14px;margin:0}

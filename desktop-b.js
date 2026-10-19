@@ -76,14 +76,14 @@
   function countPill(card, n, kind) { card.firstChild.appendChild(pill(String(n), kind)); return card; }
   function stripStar(s) { return String(s || '').replace(/^⭐ /, ''); }
 
-  // A deal product as a grid cell: a big picture, the name, the price and the old one, the chain, a ⭐ when it is
+  // A deal product as a grid cell: a big picture, the name, the price and the old one, the chain, a target when it is
   // one he waits for (deal_batch prefixes the label with «⭐ »), actions on hover.
   // The line (deal_batch) holds the full name, the mechanic, 🪪 and the 90-day verdict; the label is cut to 21 characters.
   // The rest drops the price segment («7,98 13,99») and «−43%»: the cell shows both already (a trailing 🪪 stays).
   function lineParts(c) {
     if (A.dealParts) {  // index.html's reading: the full name and a Russian note of the deal
       var dp = A.dealParts(c);
-      return { name: dp.name.replace(/^⭐ /, ''), rest: dp.note.replace(/^⚠️ не скидка( · )?/, ''), warn: /^⚠️/.test(dp.note) };
+      return { name: dp.name, rest: dp.note, warn: dp.warn };
     }
     var s = A.plain(c.line).replace(/^⭐ /, ''), warn = /^⚠️/.test(s);
     s = s.replace(/^⚠️ не скидка · /, '');
@@ -104,7 +104,7 @@
       c.valid_to ? el('span', 'mu', 'до ' + dm(c.valid_to)) : null);
     add(cell, add(el('div', 'dpic'), A.prodPic(name, c.image_url, chain, c.category, true, c.emoji)),
       el('div', 'pn', name), pr, lp.rest ? el('div', 'dln mu', lp.rest) : null, meta);
-    if (/^⭐ /.test(c.label || '')) cell.appendChild(el('span', 'dstar', '⭐'));
+    if (/^⭐ /.test(c.label || '')) cell.appendChild(add(el('span', 'dstar'), icon('target')));
     if (c.selected) cell.appendChild(add(el('span', 'dmk'), icon('check')));
     if (actions) cell.appendChild(actions);
     return cell;
@@ -275,13 +275,13 @@
         cats.appendChild(b);
       });
     }
-    // ⚖️ the week's Aldi vs Biedronka pairs as a table; hidden while searching or filtering, as on the phone.
+    // The week's Aldi vs Biedronka pairs as a table; hidden while searching or filtering, as on the phone.
     function compareCard() {
       var ps = cmp && cmp.pairs || [];
       if (!ps.length || pickQ.trim() || pickCat) return;
       var save = 0, n = 0;
       function side(p, chain, price, cardOnly) {
-        return el('span', 'num' + (p.cheaper === chain ? ' cw' : ''), zl(price) + (cardOnly ? ' 🪪' : ''));
+        return add(el('span', 'num' + (p.cheaper === chain ? ' cw' : ''), zl(price)), cardOnly ? icon('wallet-cards', 'sx') : null);
       }
       var t = D.table([{ h: 'Товар' }, { h: 'Aldi', r: true, w: '120px' }, { h: 'Biedronka', r: true, w: '120px' },
         { h: 'Экономия', r: true, w: '110px' }], ps.map(function (p) {
@@ -292,7 +292,7 @@
         num(p.cheaper === 'equal' ? '=' : '−' + zl(p.diff))];
       }));
       t.classList.add('cmp');
-      var card = cardWith('tag', '⚖️ Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(A.addDays(cmp.week_start, 6)), t);
+      var card = cardWith('scale', 'Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(A.addDays(cmp.week_start, 6)), t);
       if (n) card.appendChild(el('div', 'foot mu', 'Если брать там, где дешевле: ≈ ' + zl(save) + ' zł на ' + n + ' ' +
         A.plural(n, ['товаре', 'товарах', 'товарах'])));
       body.appendChild(card);
@@ -451,7 +451,7 @@
         return [add(el('div', 'tx'), add(el('div', 't'), link(r.title || r.host, r.url),
           r.in_stock === false ? pill('нет в наличии') : null), el('div', 'mu', r.host)),
           num(last == null ? '—' : zl(last) + ' zł'), num(zl(r.target) + ' zł'), gap,
-          pill(A.WISH_STATUS[r.status] || r.status, A.WISH_PILL[r.status] || ''),
+          pill(r.status === 'reached' ? A.ict('target', A.WISH_STATUS.reached) : A.WISH_STATUS[r.status] || r.status, A.WISH_PILL[r.status] || ''),
           num(r.last_checked ? A.dmt(r.last_checked) : '—'), hovActs(x)];
       }), { onRow: function (k) { A.openLink(shown[k].url); } });
       body.appendChild(countPill(cardWith('gift', 'Слежу за ценой', null, t), shown.length));
@@ -489,7 +489,7 @@
       A.haptic();
       api('telegram-webhook', { action: 'deadline_add', title: t, date: d }).then(function (j) {
         go.disabled = false;
-        toast('📄 ' + j.title + ' · ' + dm(j.due) + ' — напомню за 7 и за 1 день');
+        toast(j.title + ' · ' + dm(j.due) + ' — напомню за 7 и за 1 день', 'calendar-clock');
         delaText = delaDue = what.value = when.value = '';
         load();
       }, function () { go.disabled = false; });
@@ -508,7 +508,7 @@
       if (!on('dela') || !body.isConnected) return;
       clear(body);
       if (!items.length) {
-        body.appendChild(A.state('check', 'Открытых дел нет 👌'));
+        body.appendChild(A.state('check', 'Открытых дел нет'));
         try { what.focus(); } catch (e) {}
         return;
       }
@@ -519,14 +519,14 @@
         { k: 'Потом', v: String(items.length - over - week) }]));
       var t = D.table([{ h: '', w: '52px' }, { h: 'Что' }, { h: 'Срок', r: true, w: '90px' }, { h: 'Осталось', w: '150px' },
         { h: 'Вид', w: '120px' }, { h: '', w: '230px' }], items.map(function (i) {
-        var tile = el('span', 'ptile', A.DELA_ICON[i.kind] || '📌');
+        var tile = add(el('span', 'ptile'), icon(A.DELA_ICON[i.kind] || 'tack'));
         tile.setAttribute('aria-hidden', 'true');
         var acts = hovActs(i.can_done ? confirmed('check', 'Сделано', function () {
           act({ action: 'dela_done', kind: i.kind, id: i.id }, function () { return A.DELA_DONE[i.kind]; });
         }) : null, i.can_snooze ? pg('clock', 'Отложить', function () {
           act({ action: 'dela_snooze', kind: i.kind, id: i.id }, function (j) { return 'Отложено до ' + dm(j.snoozed_until); });
         }) : null);
-        return [tile, add(el('div', 'tx'), add(el('div', 't', i.title), i.snoozed_until ? pill('⏰ до ' + dm(i.snoozed_until)) : null),
+        return [tile, add(el('div', 'tx'), add(el('div', 't', i.title), i.snoozed_until ? pill(A.ict('clock', 'до ' + dm(i.snoozed_until))) : null),
           i.sub ? el('div', 'mu', i.sub) : null),
         num((i.approx ? '≈' : '') + dm(i.due)), pill(left(i.days), i.days <= 3 ? 'bad' : ''),
         el('span', 'mu', A.DELA_KIND[i.kind] || ''), acts];
@@ -542,8 +542,8 @@
   });
 
   // --- inbox: the drops on the left, the selected one in full on the right ---
-  var IB = { link: ['🔗', 'ссылка'], text: ['📝', 'текст'], photo: ['🖼', 'фото'], document: ['📄', 'файл'],
-    voice: ['🎙', 'голос'], video: ['📹', 'кружок'], forward: ['↪️', 'пересылка'], other: ['📥', 'другое'] };
+  var IB = { link: ['link', 'ссылка'], text: ['sticky-note', 'текст'], photo: ['image', 'фото'], document: ['file', 'файл'],
+    voice: ['mic', 'голос'], video: ['video', 'кружок'], forward: ['forward', 'пересылка'], other: ['inbox', 'другое'] };
   var URLS = /(https?:\/\/\S+)/;
   var inboxStep = null; // ↑/↓ move the selection while «Инбокс» is open
   document.addEventListener('keydown', function (e) {
@@ -603,7 +603,7 @@
       if (sel >= rows.length) sel = rows.length - 1;
       var list = countPill(A.mkCard('inbox', 'Новые', '↑ ↓ — выбрать'), rows.length), pane = el('div');
       var nodes = rows.map(function (r, i) {
-        var k = IB[r.kind] || IB.other, tile = el('span', 'ptile', k[0]);
+        var k = IB[r.kind] || IB.other, tile = add(el('span', 'ptile'), icon(k[0]));
         tile.setAttribute('aria-hidden', 'true');
         var row = add(el('div', 'row'), tile, add(el('span', 'tx'), el('div', 't one', firstLine(r)),
           el('div', 'mu num', A.whenW(r.received_at) + ' · ' + k[1])));
@@ -656,12 +656,12 @@
     function solo() { panes.classList.toggle('solo', !dig.firstChild && !med.firstChild); }
     right.classList.remove('side'); // the stream is the long column: it scrolls with the page
 
-    // «📰 Выжимка»: the group's morning digest; nothing when there is none.
+    // «Выжимка»: the group's morning digest; nothing when there is none.
     function digest(d) {
       var picks = (d && d.picks) || [];
       clear(dig);
       if (!on('feed') || !dig.isConnected || !picks.length) return solo();
-      var card = A.mkCard('news', '📰 Выжимка · ' + dm(d.day));
+      var card = A.mkCard('news', 'Выжимка · ' + dm(d.day));
       picks.forEach(function (p) {
         card.appendChild(add(el('div', 'row'), add(el('span', 'tx'), document.createTextNode(p.line + ' · '),
           link(SOURCES[p.source] || p.source, p.url))));
@@ -698,7 +698,7 @@
       t.classList.add('fixed');
       body.appendChild(countPill(cardWith('news', 'Лента', null, t), rows.length));
     }
-    // «События»: openings with the place, upcoming events by section, each a table with «📅 В календарь» (the bot's .ics).
+    // «События»: openings with the place, upcoming events by section, each a table with «В календарь» (the bot's .ics).
     function when(ts) {
       var q = A.wp(ts);
       return A.WEEK[A.wd(q.year + '-' + q.month + '-' + q.day)] + ' ' + q.day + '.' + q.month +
@@ -714,7 +714,7 @@
         var t = D.table([{ h: 'Когда', w: '150px' }, { h: 'Что' }, { h: 'Где', w: '120px' }, { h: '', w: '148px' }], rows.map(function (r) {
           var ts = g[0] ? r.starts_at : r.published_at || r.seen_at, ics = null;
           if (r.starts_at && r.id) {
-            ics = pg(null, '📅 В календарь', function () {
+            ics = pg('calendar-plus', 'В календарь', function () {
               A.haptic();
               api('telegram-webhook', { action: 'calendar_ics', id: r.id }).then(function () { toast('Файл отправил в чат с ботом'); }, noop);
             });

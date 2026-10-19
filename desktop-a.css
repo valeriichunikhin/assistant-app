@@ -15,7 +15,7 @@
 :is(.da-prices,.da-cine,.da-vb,.da-stats) .card>.ch+.tbl,:is(.da-prices,.da-cine,.da-vb,.da-stats) .card>.sub+.tbl{margin-top:0}
 :is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl td .num{font-family:var(--font-num);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 :is(.da-prices,.da-cine,.da-vb,.da-stats) .tbl td.r .num{display:block;text-align:right}
-/* Prices: the product cell, the selected row, the 👀 toggle. */
+/* Prices: the product cell, the selected row, the «Жду акцию» toggle. */
 .da-res{margin:0}
 .da-res .tbl th{padding-top:10px}
 .da-cap{display:flex;justify-content:space-between;gap:12px;padding:10px 14px 4px;font-size:13px}
@@ -26,7 +26,7 @@
 .da-eye{display:grid;place-items:center;width:32px;height:32px;margin-left:auto;padding:0;border:1px solid var(--line);border-radius:var(--r-s);background:none;font-size:15px;filter:grayscale(1);transition:opacity .12s,border-color .12s}
 .da-eye.on{border-color:var(--mark);background:var(--accent-soft);filter:none;opacity:1}
 @media (hover:hover){.da-eye:hover{border-color:var(--line-2);filter:none}}
-/* A keyword watch («жду по слову») covers the row: a dashed 👀, always shown; a click watches this product itself. */
+/* A keyword watch («жду по слову») covers the row: a dashed target, always shown; a click watches this product itself. */
 .da-eye.kw{border-style:dashed;border-color:var(--mark);filter:none;opacity:1}
 /* The price with its condition under it («при покупке 4»). */
 .da-pc{text-align:right}
@@ -53,7 +53,8 @@
 .da-month{padding:12px 14px 0;color:var(--muted-2);font:500 12px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase}
 .da-month+.pgrid{padding-top:10px}
 .da-stars{margin-top:4px}
-.da-stars .st{width:20px;height:24px;font-size:15px}
+.da-stars .st{width:20px;height:24px;font-size:15px}.da-stars .st .i{width:15px;height:15px}
+.da-stars :is(.st.on,.st.half) .i{color:var(--mark)}.da-stars .st.on .i{fill:currentColor}.da-eye .i{width:16px;height:16px}
 .tbl .da-stars{margin:0}
 .da-fine{padding-top:10px;font-size:12px;color:var(--muted-2)}
 /* Volleyball: the filter toolbar, the week strips, the game cards. */

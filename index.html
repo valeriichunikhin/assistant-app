@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 09:46">
+<meta name="published" content="2026-10-19 10:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -134,6 +134,9 @@ button{cursor:pointer}
 .pill.good,.pill.warn,.pill.bad{border-color:color-mix(in srgb,currentColor 45%,transparent);background:color-mix(in srgb,currentColor 8%,transparent)}
 .pill.acc{border-color:transparent;background:var(--accent-soft);color:var(--link)}
 .t .pill,.mu .pill{margin-left:6px}
+/* An icon inline before a label (ict): captions, pills, chips, buttons; .sx is one after the text (the Ukrainian version). */
+.ii>.i{width:15px;height:15px;margin-right:5px;vertical-align:-3px}.pill .ii>.i{width:14px;height:14px;margin-right:4px}
+.i.sx{width:14px;height:14px;margin-left:5px;vertical-align:-2px}#toast>.i{width:16px;height:16px;margin-right:6px;vertical-align:-3px}
 .cmp span{white-space:nowrap}
 .cmp .cw{font-weight:600;color:var(--link)}
 .meter{height:6px;margin:6px 0 2px;border-radius:3px;background:var(--track);overflow:hidden}
@@ -180,7 +183,7 @@ button{cursor:pointer}
 .ptile.big{width:56px;height:56px;font-size:30px}
 .ptile .bd{position:absolute;right:-6px;bottom:-6px;padding:2px;border-radius:6px;background:var(--solid);box-shadow:0 0 0 1px var(--line);font-size:12px}
 .ptile.none{color:var(--muted)}
-.ptile .i{width:18px;height:18px}
+.ptile .i{width:18px;height:18px}.ptile .bd .i{display:block;width:12px;height:12px}
 .tb{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-4px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer}
 .tb:has(.big){width:64px;height:64px}
 .poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);object-fit:cover}
@@ -332,7 +335,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .tsum>div{max-height:85vh;overflow-y:auto;padding:6px 16px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow)}
 .tsum pre{margin:0 0 4px;color:var(--fg);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 @media (min-width:900px){.tsum>div{width:100%;max-width:640px;margin:0 auto}}
-.st{font-size:15px;letter-spacing:1px}.st i{font-style:normal;color:var(--muted-2)}.st i.on{color:var(--mark)}.st i+i.c{margin-left:8px}
+.st{font-size:15px;letter-spacing:1px}.st .i{width:14px;height:14px;margin-right:1px;vertical-align:-2px;color:var(--muted-2)}.st .i.on{color:var(--mark);fill:currentColor}.st .i+.i.c{margin-left:8px}
 /* «LinkedIn» (docs/specs/linkedin.md): the draft's text field (16px, so iOS does not zoom), «Картинка: …», an idea's buttons under its text. */
 .lta{display:block;width:100%;min-height:220px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface);color:var(--fg);font:16px/1.45 var(--font);resize:vertical}
 .lta:focus{outline:2px solid var(--fg);outline-offset:2px}.td .lpic{margin-top:8px;overflow-wrap:anywhere}.td .tsh+.hs{padding-top:4px}
@@ -396,6 +399,33 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></symbol>
 <symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
 <symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+<symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+<symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
+<symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+<symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M16 19h6"/><path d="M16 2v4"/><path d="M19 16v6"/><path d="M21 12.598V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8.5"/><path d="M3 10h18"/><path d="M8 2v4"/></symbol>
+<symbol id="i-calendar-clock" viewBox="0 0 24 24"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/></symbol>
+<symbol id="i-medal" viewBox="0 0 24 24"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M12 18v-2h-.5"/></symbol>
+<symbol id="i-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></symbol>
+<symbol id="i-bike" viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></symbol>
+<symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></symbol>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+<symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-wallet-cards" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"/><path d="M3 11h3c.8 0 1.6.3 2.1.9l1.1.9c1.6 1.6 4.1 1.6 5.7 0l1.1-.9c.5-.5 1.3-.9 2.1-.9H21"/></symbol>
+<symbol id="i-id-card" viewBox="0 0 24 24"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></symbol>
+<symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></symbol>
+<symbol id="i-landmark" viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></symbol>
+<symbol id="i-undo-2" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+<symbol id="i-forward" viewBox="0 0 24 24"><path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></symbol>
+<symbol id="i-sticky-note" viewBox="0 0 24 24"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></symbol>
+<symbol id="i-file-image" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -406,7 +436,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function el(tag, cls, s) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
-    if (s != null) text(e, s);
+    if (s != null && s.nodeType) e.appendChild(s);
+    else if (s != null) text(e, s);
     return e;
   }
   function add(parent) {
@@ -464,8 +495,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
   var toastEl = document.getElementById('toast');
   var toastTimer;
-  function toast(s) {
-    text(toastEl, s || 'Не получилось, попробуй ещё раз');
+  function toast(s, ic) {
+    add(clear(toastEl), ic && s ? icon(ic) : null, document.createTextNode(s || 'Не получилось, попробуй ещё раз'));
     toastEl.className = 'on';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
@@ -575,8 +606,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (x) note.push(x);
       if (card) note.push('по карте');
     });
-    if (warn) note.unshift('⚠️ не скидка');
-    return { name: (star ? '⭐ ' : '') + name, note: note.join(' · ') };
+    return { name: name, note: note.join(' · '), star: star, warn: !!warn };
   }
   function noop() {}
 
@@ -589,6 +619,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function label(b, ic, s) {
     add(clear(b), ic ? icon(ic) : null, document.createTextNode(s));
     return b;
+  }
+  // An icon inline before a text (.ii): a chip, a pill, a caption.
+  function ict(ic, s) { return add(el('span', 'ii'), icon(ic), document.createTextNode(s)); }
+  // A text with the Ukrainian version's mark after it (the cinemas); a plain string when there is none.
+  function ua(s, on) { return on ? add(el('span'), document.createTextNode(s), icon('languages', 'sx')) : s; }
+  // Parts (strings or nodes) into e, joined by « · »; empty ones left out.
+  function dotted(e, parts) {
+    parts.filter(Boolean).forEach(function (p, i) { add(e, i ? document.createTextNode(' · ') : null, p.nodeType ? p : document.createTextNode(p)); });
+    return e;
   }
   function mkCard(ic, title, sub) {
     return add(el('div', 'card'), add(el('div', 'ch'), add(el('span', 'ico'), icon(ic)), el('h3', '', title)),
@@ -650,7 +689,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // A product's picture: its photo when image_url is one (an Aldi row, or an
   // image file off Biedronka), else a tile with the product's own emoji (the
   // server's, by name), else the category's (the server's category wins), with
-  // a 📄 badge when image_url is the Biedronka leaflet page. A photo or a
+  // a file-image badge when image_url is the Biedronka leaflet page. A photo or a
   // badged tile is a button that opens the picture; a broken photo falls back
   // to the plain tile.
   function prodPic(name, url, chain, cat, big, emoji) {
@@ -670,7 +709,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     b.type = 'button';
     b.setAttribute('aria-label', photo ? 'Фото товара' : 'Страница газетки');
     b.onclick = function (ev) { ev.stopPropagation(); openLink(url); };
-    if (!photo) return add(b, add(tile, el('span', 'bd', '📄')));
+    if (!photo) return add(b, add(tile, add(el('span', 'bd'), icon('file-image'))));
     var img = el('img', cls + ' photo');
     img.alt = '';
     img.loading = 'lazy';
@@ -1013,8 +1052,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var WEEK = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
   var KINDS = { new: 'новых игр', freed: 'освободилось мест', list: 'списков', digest: 'сводок' };
   // Shortcuts' workout types, by a word of the name, as the morning brief names them.
-  var WORKOUTS = [[/volleyball/i, '🏐 Волейбол'], [/tennis/i, '🎾 Теннис'], [/running/i, '🏃 Бег'],
-    [/walking/i, '🚶 Ходьба'], [/cycling/i, '🚴 Велосипед'], [/strength/i, '🏋️ Силовая'], [/^other$/i, '🏅 Другое']];
+  var WORKOUTS = [[/volleyball/i, 'ball', 'Волейбол'], [/tennis/i, 'circle-dot', 'Теннис'], [/running/i, 'activity', 'Бег'],
+    [/walking/i, 'footprints', 'Ходьба'], [/cycling/i, 'bike', 'Велосипед'], [/strength/i, 'dumbbell', 'Силовая'], [/^other$/i, 'medal', 'Другое']];
   function grouped(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
   function sleepLine(min) { return Math.floor(min / 60) + ' ч ' + ('0' + min % 60).slice(-2) + ' мин'; }
   // Year, month, day, hour and minute of a moment in Warsaw.
@@ -1142,9 +1181,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       // Documents within 90 days (the morning loader's window); red at 7 days
       // or less. The key is missing while an older morning function is deployed.
       slot = 'docs';
-      if (m.documents === null) down('file', 'Документы');
+      if (m.documents === null) down('id-card', 'Документы');
       else if (m.documents && m.documents.length) {
-        card('file', 'Документы', null, m.documents.map(function (d) {
+        card('id-card', 'Документы', null, m.documents.map(function (d) {
           var n = days(today, d.expires_on);
           var r = hrow(d.name, dm(d.expires_on) + '.' + d.expires_on.slice(0, 4),
             pill(n < 0 ? 'просрочено ' + (-n) + ' дн' : n === 0 ? 'сегодня' : 'через ' + n + ' дн', n <= 7 ? 'bad' : ''));
@@ -1193,14 +1232,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       slot = 'vb';
       if (!m.volleyball) down('ball', 'Волейбол');
       else if (m.volleyball.length) {
-        // 🔥 on ср/пт, the priority evenings, as the volleyball digest marks them.
-        var day = (wd(today) === 2 || wd(today) === 4 ? '🔥 ' : '') + WEEK[wd(today)] + ' ' + dm(today) + ' ';
+        // A flame on ср/пт, the priority evenings, as the volleyball digest marks them.
+        var hot = wd(today) === 2 || wd(today) === 4, day = WEEK[wd(today)] + ' ' + dm(today) + ' ';
         card('ball', 'Волейбол', 'свободных игр сегодня: ' + m.volleyball.length, capped(m.volleyball.slice()
           .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })
           .map(function (g) {
             var taken = g.max_players != null && g.free_spots != null
               ? (g.max_players - g.free_spots) + '/' + g.max_players : '';
-            return hrow(day + g.start_at + ' · ' + g.venue, taken ? 'занято ' + taken : null,
+            var main = day + g.start_at + ' · ' + g.venue;
+            return hrow(hot ? ict('flame', main) : main, taken ? 'занято ' + taken : null,
               g.price == null ? null : zl(g.price) + ' zł', 'https://pilkanahali.pl/zajecia/' + g.activity_id);
           }), 6));
       }
@@ -1227,15 +1267,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var parts = [h.steps != null ? grouped(h.steps) + ' ' + plural(h.steps, ['шаг', 'шага', 'шагов']) : '',
           mins != null ? mins + ' мин тренировок' : '', h.sleep_min != null ? 'сон ' + sleepLine(h.sleep_min) : '']
           .filter(Boolean);
-        var kinds = {}, order = [];
+        var kinds = {}, order = [], ics = {};
         ws.forEach(function (w) {
-          var name = '🏅 ' + w.type;
-          WORKOUTS.some(function (k) { return k[0].test(w.type) && (name = k[1]); });
-          if (!(name in kinds)) { kinds[name] = 0; order.push(name); }
+          var name = w.type, ic = 'medal';
+          WORKOUTS.some(function (k) { return k[0].test(w.type) && (ic = k[1], name = k[2]); });
+          if (!(name in kinds)) { kinds[name] = 0; order.push(name); ics[name] = ic; }
           kinds[name] += w.minutes || 0;
         });
         var rows = parts.length ? [hrow(parts.join(' · '))] : [];
-        order.forEach(function (k) { rows.push(hrow(k, null, kinds[k] ? kinds[k] + ' мин' : null)); });
+        order.forEach(function (k) { rows.push(hrow(ict(ics[k], k), null, kinds[k] ? kinds[k] + ' мин' : null)); });
         if (rows.length) card('watch', 'Вчера', null, rows);
       }
     }
@@ -1623,10 +1663,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (d === 1 && h !== 11) return (repeat === 'weekly' ? 'каждую ' : 'каждый ') + every + ' ' + u[0];
     return 'каждые ' + every + ' ' + (d >= 2 && d <= 4 && (h < 12 || h > 14) ? u[1] : u[2]);
   }
-  // «пт 24.10 · 15:00 · 🔁 еженедельно · Pomoc · из созвона»
+  // «пт 24.10 · 15:00 · [repeat] еженедельно · Pomoc · из созвона» as a muted line; nothing to say: null.
   function taskCaption(t, areas) {
-    return [t.due_date ? WEEK[wd(t.due_date)] + ' ' + dm(t.due_date) : '', t.due_time ? String(t.due_time).slice(0, 5) : '',
-      t.repeat ? '🔁 ' + REPEAT_LABEL(t.repeat, t.repeat_every) : '', areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean).join(' · ');
+    var parts = [t.due_date ? WEEK[wd(t.due_date)] + ' ' + dm(t.due_date) : '', t.due_time ? String(t.due_time).slice(0, 5) : '',
+      t.repeat ? ict('repeat', REPEAT_LABEL(t.repeat, t.repeat_every)) : '', areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean);
+    return parts.length ? dotted(el('div', 'mu'), parts) : null;
   }
   function taskKey(t) { return 'task:' + t.id; }
   function setDone(t, v) {
@@ -1711,7 +1752,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tick();
     };
     var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
-    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), taskTitle(t), cap ? el('div', 'mu', cap) : null),
+    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
       late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
@@ -1756,7 +1797,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         plus.disabled = false;
         taskDraft = input.value = '';
         var t = (j && j.task) || j || {};
-        toast('✅ ' + (t.title || s) + parsedLine((j && j.parsed) || t));
+        toast((t.title || s) + parsedLine((j && j.parsed) || t), 'check-square');
         if (t.id != null && !tasks.some(function (x) { return x.id === t.id; })) tasks.push(own(t));
         // A filter that would hide the new task goes back to «Все».
         if (area && t.area !== area) {
@@ -1814,7 +1855,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // v2: the steps, the note field and the log under the v1 fields, from tasks_get. more[id] keeps them across the
     // tab's redraws: steps on screen, ok (as last confirmed), log (the 50 newest), all (the log unfolded); busy: a
     // tasks_steps_set under way, again: the steps changed meanwhile, newly: a step was ticked (the log has a new row).
-    var LOG_TEXT = { created: function () { return 'создана'; }, step_done: function (r) { return '✓ ' + r.text; } };
+    var LOG_TEXT = { created: function () { return 'создана'; }, step_done: function (r) { return ict('check', r.text); } };
     function stepCopy(x) { return { id: x.id, title: x.title, done_at: x.done_at || null }; }
     // The row's «3/7» follows the steps on screen; the task object of the list gets the counts too.
     function recount(t, st) {
@@ -1946,8 +1987,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           st.steps[i] = y;
           changed(t, st, [i + k, k < 0 ? 'up' : 'down']);
         }
-        var up = sb('▲', 'Выше: ' + x.title, function () { move(-1); }, i === 0);
-        var dn = sb('▼', 'Ниже: ' + x.title, function () { move(1); }, i === st.steps.length - 1);
+        var up = add(sb(null, 'Выше: ' + x.title, function () { move(-1); }, i === 0), icon('chevron-up'));
+        var dn = add(sb(null, 'Ниже: ' + x.title, function () { move(1); }, i === st.steps.length - 1), icon('chevron-down'));
         var rm = add(sb(null, 'Удалить шаг: ' + x.title, function () {
           st.steps.splice(i, 1);
           changed(t, st, [i, 'x']);
@@ -2345,7 +2386,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         plus.disabled = false;
         liDraft = input.value = '';
         var p = j && j.post;
-        toast('💼 Идея: ' + ((p && p.idea) || s));
+        toast('Идея: ' + ((p && p.idea) || s), 'lightbulb');
         if (p && p.id != null && !posts.some(function (x) { return x.id === p.id; })) posts.push(p);
         fresh();
         render();
@@ -2371,7 +2412,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (!e.login) toast(e.code === 'bad request' && bad ? bad : ERRORS[e.code] || SAVE_FAILED);
       });
     }
-    // «✍️ Черновик» of an idea (no note) and «Переписать» of a draft (what to fix): the Mac takes it within ten minutes.
+    // «Черновик» (pen-line) of an idea (no note) and «Переписать» of a draft (what to fix): the Mac takes it within ten minutes.
     function want(p, note) {
       var was = { draft_wanted_at: p.draft_wanted_at, rewrite_note: p.rewrite_note }, b = { id: p.id };
       if (note) b.note = note;
@@ -2384,7 +2425,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         fresh();
         u(p).note = '';
         take(p, j && j.post);
-        toast(note ? '✏️ Попросил переписать — новый черновик придёт в Telegram' : '✍️ Попросил черновик — придёт в Telegram');
+        toast(note ? 'Попросил переписать — новый черновик придёт в Telegram' : 'Попросил черновик — придёт в Telegram', 'pen-line');
         render();
       }, function () {
         p.draft_wanted_at = was.draft_wanted_at;
@@ -2555,9 +2596,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       wrap.lid = p.id;
       return add(wrap, r, open ? details(p, today) : null);
     }
-    // An idea of the bank: «✍️ Черновик» (li_want) and «Убрать» (li_delete) under its text.
+    // An idea of the bank: «Черновик» (li_want) and «Убрать» (li_delete) under its text.
     function ideaRow(p) {
-      var asked = !!p.draft_wanted_at, w = el('button', 'pill', asked ? 'пишется…' : '✍️ Черновик'), x = el('button', 'pill', 'Убрать');
+      var asked = !!p.draft_wanted_at, w = el('button', 'pill', asked ? 'пишется…' : ict('pen-line', 'Черновик')), x = el('button', 'pill', 'Убрать');
       w.type = x.type = 'button';
       w.disabled = asked;
       w.setAttribute('aria-label', 'Черновик: ' + p.idea);
@@ -2801,11 +2842,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (redraw) return;
     var batches = null, cmp = null;
 
-    // ⚖️ the week's Aldi vs Biedronka pairs (?action=compare); hidden while searching.
+    // The week's Aldi vs Biedronka pairs (?action=compare); hidden while searching.
     function compareCard() {
       var ps = cmp && cmp.pairs || [];
       if (!ps.length || pickQuery.trim()) return;
-      var card = mkCard('tag', '⚖️ Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(addDays(cmp.week_start, 6)));
+      var card = mkCard('scale', 'Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(addDays(cmp.week_start, 6)));
       var save = 0, n = 0;
       ps.forEach(function (p) {
         var side = function (chain, price, cardOnly) {
@@ -2859,7 +2900,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           var tx = el('span', 'tx');
           var dp = dealParts(c);
           var vw = validity(c, maxTo, today);
-          add(tx, el('b', '', dp.name), vw ? el('span', 'mu', ' · ' + vw) : null, dp.note ? el('div', 'mu', dp.note) : null);
+          add(tx, el('b', '', dp.star ? ict('target', dp.name) : dp.name), vw ? el('span', 'mu', ' · ' + vw) : null,
+            dp.note || dp.warn ? dotted(el('div', 'mu'), [dp.warn ? ict('triangle-alert', 'не скидка') : '', dp.note]) : null);
           var pr = el('span', 'pr');
           if (c.price != null) add(pr, el('span', '', zl(c.price) + ' zł'));
           if (c.old_price != null) add(pr, el('span', 'old', zl(c.old_price)));
@@ -2981,7 +3023,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function price(pr, r) {
       pr.eye = !!watchOf(r);
-      text(pr, (pr.eye ? '👀 ' : '') + zl(r.last_price) + ' zł');
+      add(clear(pr), pr.eye ? ict('target', zl(r.last_price) + ' zł') : document.createTextNode(zl(r.last_price) + ' zł'));
       if (r.conditional) add(pr, el('span', 'mech', mechRu(r.mechanic) || 'с условием'));
     }
     // The size only when the name does not end with it.
@@ -2992,7 +3034,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 
     // The query whose rows are on screen, and those rows with their price cells.
     var drawnQ = null, drawn = [];
-    // Cached rows were drawn before «Жду акцию» came: only a 👀 that changed is redrawn.
+    // Cached rows were drawn before «Жду акцию» came: only a «Жду акцию» mark that changed is redrawn.
     function eyes() { drawn.forEach(function (x) { if (x[0].eye !== !!watchOf(x[1])) price(x[0], x[1]); }); }
     function search() {
       var q = priceQuery.trim();
@@ -3057,9 +3099,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       backHandler = back;
       if (hasBack()) try { tg.BackButton.onClick(back); tg.BackButton.show(); } catch (e) {}
       window.scrollTo(0, 0);
-      var foot = el('div', 'foot'), buy = el('button', 'btn ghost', '🛒 В список'), wb = el('button', 'btn ghost'), w = null;
+      var foot = el('div', 'foot'), buy = label(el('button', 'btn ghost'), 'cart', 'В список'), wb = el('button', 'btn ghost'), w = null;
       buy.type = wb.type = 'button';
-      function mark() { text(wb, '👀 Жду акцию' + (w ? ' ✓' : '')); if (pr) price(pr, r); }
+      function mark() { add(label(wb, 'target', 'Жду акцию'), w ? icon('check', 'sx') : null); if (pr) price(pr, r); }
       buy.onclick = function () {
         api('telegram-webhook', { action: 'add', text: sized(r, ' '), one: 1 }).then(function (j) {
           toast('Добавил: ' + j.added.join(', '));
@@ -3074,7 +3116,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             w = was ? null : { id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name };
             if (w) watch.push(w);
             mark();
-            toast(w ? 'Жду акцию — ⭐ в подборках' : 'Больше не жду');
+            toast(w ? 'Жду акцию — отмечу в подборках' : 'Больше не жду', w ? 'target' : null);
           }, function (e) { if (e.code === 'no such item') loadWatch().then(function () { w = watchOf(r); mark(); }); });
       };
       add(foot, buy, wb);
@@ -3387,7 +3429,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- wishlist ---
-  var WISH_STATUS = { watching: 'слежу', reached: '🎯 цель достигнута', unknown: 'цена не читается' };
+  var WISH_STATUS = { watching: 'слежу', reached: 'цель достигнута', unknown: 'цена не читается' };
   var WISH_PILL = { watching: '', reached: 'good', unknown: 'warn' };
   // Whose list (docs/specs/wishlist-tetyana.md): rows carry person, the segment filters them here.
   var WISH_PEOPLE = [['me', 'Мой'], ['tetyana', 'Тетяна']];
@@ -3499,7 +3541,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           f.style.width = Math.max(2, Math.min(1, goal / last) * 100) + '%';
           meter.appendChild(f);
         }
-        add(tx, add(el('div', 't'), a, pill(WISH_STATUS[r.status] || r.status, WISH_PILL[r.status] || ''),
+        add(tx, add(el('div', 't'), a, pill(r.status === 'reached' ? ict('target', WISH_STATUS.reached) : WISH_STATUS[r.status] || r.status, WISH_PILL[r.status] || ''),
           r.in_stock === false ? pill('нет в наличии') : null),
           r.note ? el('div', 'mu', r.note) : null,
           el('div', 'mu num', 'сейчас ' + (r.last_price == null ? '—' : zl(r.last_price) + ' zł') +
@@ -3663,7 +3705,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         a.onclick = function (ev) { ev.preventDefault(); openLink(f.link); };
         t.appendChild(a);
       } else text(t, f.display);
-      if (f.ukrainian) t.appendChild(document.createTextNode(' 🇺🇦'));
+      if (f.ukrainian) t.appendChild(icon('languages', 'sx'));
       return t;
     }
     // The cinemas as pills, tappable when there is a ticket link; none: null.
@@ -3671,7 +3713,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!list || !list.length) return null;
       var row = el('div', 'acts');
       list.forEach(function (s) {
-        var t = s.cinema + (s.ukrainian ? ' 🇺🇦' : '');
+        var t = ua(s.cinema, s.ukrainian);
         var p = s.url ? el('button', 'pill acc', t) : pill(t);
         if (s.url) {
           p.type = 'button';
@@ -3682,7 +3724,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return row;
     }
     // «Хочу» toggles: say what the server did, not what the tap meant.
-    function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
+    function wantToast(j) { return j && j.status === 'want' ? 'Хочу: отмечено' : 'Убрал из «хочу»'; }
     function markChip(f, m, s, on, done, back) {
       return chip(s, on, null, function () { act({ action: 'film_mark', film: f.id, mark: m }, done, back); });
     }
@@ -3704,10 +3746,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function about(f) {
       if (!abouts[f.id]) return null;
-      var meta = [Number(f.vote) > 0 ? '★ ' + rateText(Number(f.vote).toFixed(1)) + ' TMDB' : '', (f.genres || []).join(', ')]
-        .filter(Boolean).join(' · ');
+      var meta = [Number(f.vote) > 0 ? ict('star', rateText(Number(f.vote).toFixed(1)) + ' TMDB') : '', (f.genres || []).join(', ')]
+        .filter(Boolean);
       return add(el('div', 'tip'), f.overview ? el('div', '', String(f.overview).slice(0, 300)) : null,
-        meta ? el('div', 'mu', meta) : null,
+        meta.length ? dotted(el('div', 'mu'), meta) : null,
         /^https?:\/\//i.test(String(f.link || '')) ? add(el('div', 'acts'), btn('link', 'Cinema City', function () { openLink(f.link); })) : null);
     }
     function premiere(box, f) {
@@ -3799,7 +3841,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var shows = (j.my_shows || []).filter(function (s) { return !s.past; });
       var watched = j.watched || [], early = j.early || [], prem = j.premieres || [], want = j.want || [], soon = j.soon || [];
       if (!want.length && !prem.length && !soon.length && !early.length && !shows.length && !watched.length) {
-        add(body, state('film', 'Премьер на две недели пока нет'), j.skipped ? el('p', 'mu', '🚫 не интересно: ' + j.skipped) : null);
+        add(body, state('film', 'Премьер на две недели пока нет'), j.skipped ? el('p', 'mu', ict('x', 'не интересно: ' + j.skipped)) : null);
         return;
       }
       var c;
@@ -3836,7 +3878,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (shows.length) {
         c = mkCard('clock', 'Мои сеансы');
         shows.forEach(function (s) {
-          c.appendChild(hrow((s.display || s.film) + (s.ukrainian ? ' 🇺🇦' : ''), whenW(s.starts_at) + ' · ' + [s.cinema, hallRu(s.hall)].filter(Boolean).join(', ')));
+          c.appendChild(hrow(ua(s.display || s.film, s.ukrainian), whenW(s.starts_at) + ' · ' + [s.cinema, hallRu(s.hall)].filter(Boolean).join(', ')));
         });
         body.appendChild(c);
       }
@@ -3849,7 +3891,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         });
         body.appendChild(c);
       }
-      if (j.skipped) body.appendChild(el('p', 'mu', '🚫 не интересно: ' + j.skipped));
+      if (j.skipped) body.appendChild(el('p', 'mu', ict('x', 'не интересно: ' + j.skipped)));
     }
     function load() {
       swr({ key: 'cinema', box: body, n: 2, live: function () { return current === 'cinema'; },
@@ -3868,7 +3910,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     [16, 'Мультфильм'], [10749, 'Мелодрама']];
   var FILM_RATES = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
   // The picks' switch: each type's genre chips, the first one its default. Anime's «Фильмы» chip is a type of its
-  // own (anime_movie, all genres). «Для тебя» (recs, docs/specs/films-recs.md) has no genres. random: the «🎲 Случайные»
+  // own (anime_movie, all genres). «Для тебя» (recs, docs/specs/films-recs.md) has no genres. random: the «Случайные» (dices)
   // chip (docs/specs/films-random.md). The choice is kept in localStorage filmPick = {type, genre, random}.
   var FILM_TYPES = [['recs', 'Для тебя'], ['movie', 'Фильмы'], ['tv', 'Сериалы'], ['anime', 'Аниме']];
   var PICK_GENRES = {
@@ -3996,7 +4038,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (f.anime || f.kind === 'tv') t.appendChild(el('span', 'mu fk', f.anime ? ' · аниме' : ' · сериал'));
       var said = FILM_STATUS.filter(function (x) { return x[0] === f.status; })[0];
       var tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
-        Number(f.vote) > 0 ? el('div', 'mu', '★ ' + rateText(Number(f.vote).toFixed(1))) : null, inCinema(f.cinema));
+        Number(f.vote) > 0 ? el('div', 'mu', ict('star', rateText(Number(f.vote).toFixed(1)))) : null, inCinema(f.cinema));
       add(clear(wrap), add(r, poster(f), tx, f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
         : said ? pill(said[1], f.status === 'watching' ? 'acc' : '') : null, icon('chevron-down', 'go')));
       r.setAttribute('aria-expanded', String(open));
@@ -4093,7 +4135,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         genres.appendChild(chip(g[1], t !== 'anime_movie' && g[0] === pick.genre, null, function () { choose(a ? 'anime' : t, g[0]); }));
       });
       if (a) genres.appendChild(chip('Фильмы', t === 'anime_movie', 'Аниме-фильмы', function () { choose('anime_movie', null); }));
-      genres.appendChild(chip('🎲 Случайные', pick.random, null, function () {
+      genres.appendChild(chip(ict('dices', 'Случайные'), pick.random, null, function () {
         pick = { type: pick.type, genre: pick.genre, random: !pick.random };
         store('filmPick', JSON.stringify(pick));
         drawGenres();
@@ -4312,7 +4354,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var t = j.totals || {}, W = sb.clientWidth - 16;
       clear(sb);
       if (!t.seen) return add(sb, state('star', 'Оценок пока нет'));
-      var avg = add(el('div', 'tile'), el('div', 'k', 'Средняя'), el('div', 'v', t.rated ? '★ ' + rateText(Number(t.avg).toFixed(1)) : '—'));
+      var avg = add(el('div', 'tile'), el('div', 'k', 'Средняя'), el('div', 'v', t.rated ? ict('star', rateText(Number(t.avg).toFixed(1))) : '—'));
       if (t.rated < t.seen) avg.appendChild(el('div', 'k', 'оценено ' + t.rated + ' из ' + t.seen));
       add(sb, add(el('div', 'tiles g3'), add(el('div', 'tile'), el('div', 'k', 'Видел'), el('div', 'v', t.seen)), avg,
         add(el('div', 'tile'), el('div', 'k', 'Хочу'), el('div', 'v', t.want || 0))));
@@ -4393,10 +4435,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       j.games.forEach(function (g) {
         var d = wd(g.date), price = g.price == null ? '' : (g.price % 1 ? zl(g.price) : g.price) + ' zł';
         if (!days[g.date]) {
-          body.appendChild(days[g.date] = mkCard('calendar', WEEK[d] + ' ' + dm(g.date) +
-            (f.priority_weekdays.indexOf(d) >= 0 ? ' 🔥' : '')));
+          body.appendChild(days[g.date] = mkCard('calendar', WEEK[d] + ' ' + dm(g.date)));
+          if (f.priority_weekdays.indexOf(d) >= 0) days[g.date].querySelector('h3').appendChild(icon('flame', 'sx'));
         }
-        var r = hrow(g.start_at + '–' + g.stop_at + ' · ' + g.venue + (g.verified_only ? ' 🪪' : ''),
+        var r = hrow(g.verified_only ? add(el('span'), document.createTextNode(g.start_at + '–' + g.stop_at + ' · ' + g.venue), icon('shield-check', 'sx'))
+          : g.start_at + '–' + g.stop_at + ' · ' + g.venue,
           [lv[g.lv] || levelRu(g.lv), 'занято ' + g.taken + '/' + g.max_players, price].filter(Boolean).join(' · '),
           g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
         if (g.full) r.className += ' off';
@@ -4489,18 +4532,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         c.style.backgroundImage = 'linear-gradient(' + veil + ',' + veil + '), url("' + p.namecard + '")';
       }
       if (s.notes_at) c.firstChild.appendChild(el('span', 'mu', 'обновлено ' + at(s.notes_at)));
-      // HoYoLAB's Abyss replaces Enka's floor: «Бездна 8-3 · 24★ · до 16.11».
+      // HoYoLAB's Abyss replaces Enka's floor: «Бездна 8-3 · [star] 24 · до 16.11».
       if (a && a.max_floor) {
-        c.appendChild(el('div', 'sub', ['Бездна ' + a.max_floor, a.stars != null ? a.stars + '★' : '',
-          ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : ''].filter(Boolean).join(' · ')));
+        c.appendChild(dotted(el('div', 'sub'), ['Бездна ' + a.max_floor, a.stars != null ? ict('star', String(a.stars)) : '',
+          ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : '']));
       }
     }
-    // An accent meter of current/max; ⚠️ from 160, when it is close to running over.
+    // An accent meter of current/max; a warning from 160, when it is close to running over.
     function resin(r) {
       var full = r.current >= r.max || Date.parse(r.resin_full_at) <= Date.now();
       var m = Math.round((Date.parse(r.resin_full_at) - Date.now()) / 60000), h = Math.floor(m / 60);
       var left = m > 0 ? ' · через ' + [h ? h + ' ч' : '', m % 60 ? m % 60 + ' мин' : ''].filter(Boolean).join(' ') : '';
-      var row = hrow((r.current >= 160 ? '⚠️ ' : '') + r.current + '/' + r.max,
+      var row = hrow(r.current >= 160 ? ict('triangle-alert', r.current + '/' + r.max) : r.current + '/' + r.max,
         full ? 'полная' : r.resin_full_at ? 'полная в ' + at(r.resin_full_at) + left : null);
       var bar = el('div', 'meter'), f = el('i');
       f.style.width = (r.max > 0 ? Math.min(100, r.current / r.max * 100) : 0) + '%';
@@ -4831,20 +4874,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       card('compass', 'Исследование', rows);
     }
     var RANKS = [['strongest_strike', 'Сильнейший удар'], ['most_kills', 'Больше всего убийств'], ['most_bursts', 'Взрывов стихий']];
-    // «Бездна» after «Исследование»: the header's line, a row per floor with a star per chamber's max (won ★ in
-    // --mark, the rest ☆ in --muted-2), the totals, the four most played with their battles (as «Команда»), three
+    // «Бездна» after «Исследование»: the header's line, a row per floor with a star per chamber's max (won filled in
+    // --mark, the rest outlined in --muted-2), the totals, the four most played with their battles (as «Команда»), three
     // records with 24 px avatars. An older snapshot has no floors: no card.
     function abyss(a) {
       var fl = (a && Array.isArray(a.floors) && a.floors) || [], rows = [];
       if (!fl.length) return;
       var rk = a.ranks || {}, mp = (Array.isArray(rk.most_played) ? rk.most_played : []).slice(0, 4);
-      var line = [a.max_floor, a.stars != null ? a.stars + '★' : '', ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : ''].filter(Boolean).join(' · ');
-      if (line) rows.push(el('div', 'sub', line));
+      var line = [a.max_floor, a.stars != null ? ict('star', String(a.stars)) : '', ddmm(a.end_at) ? 'до ' + ddmm(a.end_at) : ''].filter(Boolean);
+      if (line.length) rows.push(dotted(el('div', 'sub'), line));
       fl.forEach(function (f) {
         var s = el('span', 'st'), got = 0, all = 0;
         (f.chambers || []).forEach(function (c, i) {
           var n = Number(c.stars) || 0, m = Number(c.max_stars) || 3;
-          for (var k = 0; k < m; k++) s.appendChild(el('i', (k < n ? 'on' : '') + (i && !k ? ' c' : ''), k < n ? '★' : '☆'));
+          for (var k = 0; k < m; k++) s.appendChild(icon('star', (k < n ? 'on' : '') + (i && !k ? ' c' : '')));
           got += n;
           all += m;
         });
@@ -4903,7 +4946,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // days, later. «Сделано» takes two taps, «Отложить» moves the reminders
   // three days on (dela_done, dela_snooze); «+ Срок» adds a deadline by hand
   // (deadline_add). The tab reloads after each.
-  var DELA_ICON = { dl: '📄', pay: '🏦', pk: '📦', rt: '↩️', doc: '🪪', sub: '💳' };
+  // The Lucide icon of each kind (the tile in front of the row); anything else: the tab's tack.
+  var DELA_ICON = { dl: 'calendar-clock', pay: 'landmark', pk: 'package', rt: 'undo-2', doc: 'id-card', sub: 'credit-card' };
   var DELA_KIND = { dl: 'свой срок', pay: 'платёж', pk: 'посылка', rt: 'возврат', doc: 'документ', sub: 'списание' };
   var DELA_DONE = { dl: 'Сделано', pay: 'Оплачено', pk: 'Забрал', rt: 'Оставляю' };
   var delaText = '', delaDue = '';
@@ -4932,7 +4976,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       haptic();
       api('telegram-webhook', { action: 'deadline_add', title: t, date: d }).then(function (j) {
         go.disabled = false;
-        toast('📄 ' + j.title + ' · ' + dm(j.due) + ' — напомню за 7 и за 1 день');
+        toast(j.title + ' · ' + dm(j.due) + ' — напомню за 7 и за 1 день', 'calendar-clock');
         delaText = delaDue = what.value = when.value = '';
         load();
       }, function () { go.disabled = false; });
@@ -4962,7 +5006,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function left(n) { return n < 0 ? 'просрочено ' + -n + ' дн' : n === 0 ? 'сегодня' : 'через ' + n + ' дн'; }
     function row(i) {
-      var tile = el('span', 'ptile', DELA_ICON[i.kind] || '📌');
+      var tile = add(el('span', 'ptile'), icon(DELA_ICON[i.kind] || 'tack'));
       tile.setAttribute('aria-hidden', 'true');
       var acts = el('div', 'acts');
       if (i.can_done) {
@@ -4988,7 +5032,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return add(el('div', 'row dela'), tile, add(el('span', 'tx'),
         el('div', 't', i.title),
         add(el('div', 'mu num', (i.sub || DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due)),
-          i.snoozed_until ? pill('⏰ до ' + dm(i.snoozed_until)) : null)),
+          i.snoozed_until ? pill(ict('clock', 'до ' + dm(i.snoozed_until))) : null)),
         add(el('span', 'pr'), pill(left(i.days), i.days <= 3 ? 'bad' : '')), acts.firstChild ? acts : null);
     }
     function render(items) {
@@ -4998,7 +5042,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (current !== 'dela') return;
       clear(body);
       if (!items.length) {
-        add(body, state('check', 'Открытых дел нет 👌'));
+        add(body, state('check', 'Открытых дел нет'));
         try { what.focus(); } catch (e) {}
         return;
       }
@@ -5026,8 +5070,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // inbox_mark: its answer as a toast, then a reload. «Следить» only for a row
   // with a URL and a target price, «В список» only for one with something to list
   // (the server decides: can_watch, can_list).
-  var IB = { link: ['🔗', 'ссылка'], text: ['📝', 'текст'], photo: ['🖼', 'фото'], document: ['📄', 'файл'],
-    voice: ['🎙', 'голос'], video: ['📹', 'кружок'], forward: ['↪️', 'пересылка'], other: ['📥', 'другое'] };
+  var IB = { link: ['link', 'ссылка'], text: ['sticky-note', 'текст'], photo: ['image', 'фото'], document: ['file', 'файл'],
+    voice: ['mic', 'голос'], video: ['video', 'кружок'], forward: ['forward', 'пересылка'], other: ['inbox', 'другое'] };
   var URLS = /(https?:\/\/\S+)/;
   function inboxView() {
     var body = add(main, el('div')).lastChild;
@@ -5058,7 +5102,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return b;
     }
     function row(r) {
-      var k = IB[r.kind] || IB.other, tile = el('span', 'ptile', k[0]);
+      var k = IB[r.kind] || IB.other, tile = add(el('span', 'ptile'), icon(k[0]));
       tile.setAttribute('aria-hidden', 'true');
       return add(el('div', 'row dela ib'), tile, add(el('span', 'tx'), r.text ? linked(r.text) : el('div', 't', k[1]),
         el('div', 'mu num', [whenW(r.received_at), r.file_name].filter(Boolean).join(' · '))),
@@ -5104,13 +5148,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     });
     add(main, seg, dig, med, body);
 
-    // «📰 Выжимка»: the group's morning digest, a row per pick (the line, the
+    // «Выжимка»: the group's morning digest, a row per pick (the line, the
     // source label as the link); hidden when there is none.
     function digest(d) {
       var picks = (d && d.picks) || [];
       clear(dig);
       if (current !== 'feed' || !picks.length) return;
-      var card = mkCard('news', '📰 Выжимка · ' + dm(d.day));
+      var card = mkCard('news', 'Выжимка · ' + dm(d.day));
       picks.forEach(function (p) {
         var a = el('a', 'lnk', SOURCES[p.source] || p.source);
         if (/^https?:\/\//i.test(p.url)) a.href = p.url;
@@ -5189,9 +5233,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           add(row, add(el('span', 'tx'), el('b', '', r.title), el('div', 'mu',
             (g[0] ? [at && when(at), r.place] : [r.place, p && p.day + '.' + p.month]).filter(Boolean).join(' · '))));
           if (/^https?:\/\//i.test(r.url)) tap(row, function () { openLink(r.url); });
-          // «📅 В календарь»: the bot sends the event's file to the private chat.
+          // «В календарь»: the bot sends the event's file to the private chat.
           if (r.starts_at && r.id) {
-            var ics = el('button', 'btn ghost x', '📅 В календарь');
+            var ics = label(el('button', 'btn ghost x'), 'calendar-plus', 'В календарь');
             ics.type = 'button';
             ics.onclick = function (ev) {
               ev.stopPropagation();
@@ -5541,7 +5585,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var wideQuery = window.matchMedia ? matchMedia('(min-width:900px)') : null;
   function wide() { return !!(wideQuery && wideQuery.matches); }
   window.APP = {
-    el: el, add: add, text: text, clear: clear, icon: icon, label: label, mkCard: mkCard, pill: pill, lead: lead,
+    el: el, add: add, text: text, clear: clear, icon: icon, label: label, mkCard: mkCard, pill: pill, lead: lead, ict: ict, ua: ua, dotted: dotted,
     skeleton: skeleton, state: state, failed: failed, toast: toast, undoToast: undoToast, haptic: haptic, tap: tap,
     api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, dealParts: dealParts, whenW: whenW, wd: wd, wp: wp, days: days,
     addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,

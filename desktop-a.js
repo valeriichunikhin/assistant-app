@@ -101,11 +101,11 @@
           watch = watch.filter(function (x) { return x !== was; });
           if (!was) watch.push({ id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name });
           refresh();
-          A.toast(was ? 'Больше не жду' : 'Жду акцию — ⭐ в подборках');
+          A.toast(was ? 'Больше не жду' : 'Жду акцию — отмечу в подборках', was ? null : 'target');
         }, function (e) { if (e.code === 'no such item') loadWatch(true).then(refresh); });
     }
     function eye(r) {
-      var b = btn('da-eye', '👀', function (ev) { ev.stopPropagation(); toggle(r); });
+      var b = add(btn('da-eye', null, function (ev) { ev.stopPropagation(); toggle(r); }), icon('target'));
       function set() {
         var w = watchOf(r), on = own(w), kw = !!w && !on;
         b.className = 'da-eye' + (on ? ' on' : kw ? ' kw' : ' hov');
@@ -150,7 +150,7 @@
             return [prodCell(r), r.chain, priceCell(r), num(zl(r.min_90d)), r.n, eye(r)];
           }), { onRow: function (i) { pick(i, true); } });
         add(results, add(el('div', 'da-cap'), el('span', '', rows.length + ' ' + A.plural(rows.length, ['товар', 'товара', 'товаров'])),
-          el('span', 'mu', [asked, '👀 — жду акцию'].filter(Boolean).join(' · '))), t);
+          A.dotted(el('span', 'mu'), [asked, A.ict('target', 'жду акцию')])), t);
         function pick(i, byHand) {
           Array.prototype.forEach.call(t.tBodies[0].rows, function (tr, k) { tr.classList.toggle('sel', k === i); });
           open(rows[i], byHand);
@@ -177,7 +177,7 @@
       ch.replaceChild(pic(r, true), ch.firstChild);
       ch.appendChild(add(el('span', 'tx'), ch.lastChild, el('div', 'mu', r.chain)));
       var inner = add(el('div'), A.skeleton(1));
-      var foot = el('div', 'foot'), buy = el('button', 'btn ghost', '🛒 В список'), wb = el('button', 'btn ghost');
+      var foot = el('div', 'foot'), buy = A.label(el('button', 'btn ghost'), 'cart', 'В список'), wb = el('button', 'btn ghost');
       buy.type = wb.type = 'button';
       buy.onclick = function () {
         api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : ''), one: 1 }).then(function (j) {
@@ -187,7 +187,7 @@
       wb.onclick = function () { toggle(r); };
       detailMark = function () {
         var w = watchOf(r);
-        text(wb, '👀 Жду акцию' + (own(w) ? ' ✓' : w ? ' · по слову «' + w.product_name + '»' : ''));
+        add(A.label(wb, 'target', 'Жду акцию' + (!own(w) && w ? ' · по слову «' + w.product_name + '»' : '')), own(w) ? icon('check', 'sx') : null);
       };
       detailMark();
       add(foot, buy, wb);
@@ -224,7 +224,7 @@
     function idle() {
       var mine = ++dseq;
       detailMark = noop;
-      var wc = card('target', 'Жду акцию', 'бот отметит ⭐ в подборках, когда будет скидка'), wbox = add(el('div'), A.skeleton(1));
+      var wc = card('target', 'Жду акцию', 'бот отметит в подборках, когда будет скидка'), wbox = add(el('div'), A.skeleton(1));
       var rc = card('clock', 'Недавно смотрел'), list = seen();
       add(clear(right), add(wc, wbox), rc);
       if (!list.length) rc.appendChild(el('div', 'row small mu', 'Пока пусто — открой товар из поиска'));
@@ -237,7 +237,7 @@
         loadWatch().then(function () {
           if (mine !== dseq || !live('prices')) return;
           clear(wbox);
-          if (!watch.length) return wbox.appendChild(el('div', 'row small mu', 'Ничего не жду — 👀 у товара в поиске'));
+          if (!watch.length) return wbox.appendChild(el('div', 'row small mu', 'Ничего не жду — отметь товар в поиске'));
           wbox.appendChild(D.table([{ h: 'Товар' }, { h: 'Сеть' }, { h: 'С', r: true }, { h: '', w: '44px' }],
             watch.map(function (w) {
               var x = add(btn('btn ghost x hov', '', function (ev) {
@@ -280,7 +280,7 @@
         if (live('cinema')) load();
       }, noop);
     }
-    function wantToast(j) { return j && j.status === 'want' ? '🎟 Хочу: отмечено' : 'Убрал из «хочу»'; }
+    function wantToast(j) { return j && j.status === 'want' ? 'Хочу: отмечено' : 'Убрал из «хочу»'; }
     // «Смотрел» and «Не интересно» answer with «… · Вернуть»: the page's undoToast (its 10 s), its button sending the
     // film back — to «хочу» (h) for a «Хочу» film, else to new (c).
     function undoMark(s, f) {
@@ -309,14 +309,14 @@
       bar.setAttribute('role', 'group');
       bar.setAttribute('aria-label', 'Оценка');
       for (var k = 1; k <= 5; k++) {
-        var st = el('span', 'st' + (rating >= k ? ' on' : rating >= k - 0.5 ? ' half' : ''), '★');
+        var st = add(el('span', 'st' + (rating >= k ? ' on' : rating >= k - 0.5 ? ' half' : '')), icon('star'));
         [k * 10 - 5, k * 10].forEach(function (t) {
           var b = el('button');
           b.type = 'button';
           b.setAttribute('aria-label', 'Оценка ' + A.rateText(t / 10));
           b.onclick = function (ev) {
             ev.stopPropagation();
-            act({ action: 'film_rate', film: id, tenths: t }, '⭐ ' + A.rateText(t / 10) + ' — записал');
+            act({ action: 'film_rate', film: id, tenths: t }, 'Оценка ' + A.rateText(t / 10) + ' — записал');
           };
           st.appendChild(b);
         });
@@ -329,14 +329,14 @@
       if (!list || !list.length) return null;
       var row = el('div', 'da-pills');
       list.forEach(function (s) {
-        var t = s.cinema + (s.ukrainian ? ' 🇺🇦' : '');
+        var t = A.ua(s.cinema, s.ukrainian);
         row.appendChild(s.url ? btn('pill acc', t, function () { A.openLink(s.url); }) : A.pill(t));
       });
       return row;
     }
     function cell(f, line, actions, extra) {
       var c = D.posterCell(f, line, actions), box = c.querySelector('.pbox'), pn = c.querySelector('.pn');
-      if (f.ukrainian && pn) pn.appendChild(document.createTextNode(' 🇺🇦'));
+      if (f.ukrainian && pn) pn.appendChild(icon('languages', 'sx'));
       if (/^https?:\/\//i.test(String(f.link || ''))) {
         box.classList.add('da-link');
         box.title = 'О фильме';
@@ -398,7 +398,7 @@
       else {
         c.appendChild(D.table([{ h: 'Когда' }, { h: 'Фильм · кинотеатр, зал' }], shows.map(function (s) {
           var ua = s.ukrainian || /ukraiński dubbing/i.test(s.film);
-          return [num(A.whenW(s.starts_at)), two((s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, '')) + (ua ? ' 🇺🇦' : ''),
+          return [num(A.whenW(s.starts_at)), two(A.ua(s.display || s.film.replace(/\s*ukraiński dubbing.*$/i, ''), ua),
             [String(s.cinema || '').replace(/^Cinema City /, ''), hallRu(s.hall)].filter(Boolean).join(', '))];
         })));
       }
@@ -412,11 +412,11 @@
             x.setAttribute('aria-label', 'Снять отметку');
           }
           return [num(dm(w.date)), two(w.display, w.source === 'mark' ? 'отмечен' : null),
-            w.id ? stars(w.id, w.rating) : w.rating != null ? num('⭐ ' + A.rateText(w.rating)) : '', x];
+            w.id ? stars(w.id, w.rating) : w.rating != null ? num(A.ict('star', A.rateText(w.rating))) : '', x];
         })));
         tables.appendChild(c);
       }
-      if (j.skipped) tables.appendChild(el('p', 'mu da-note', '🚫 не интересно: ' + j.skipped));
+      if (j.skipped) tables.appendChild(el('p', 'mu da-note', A.ict('x', 'не интересно: ' + j.skipped)));
     }
     function load() {
       api('miniapp', { action: 'cinema' }, 25000, true).then(render, function (e) {
@@ -527,7 +527,8 @@
         var strip = el('div', 'week7'), n = 0;
         for (var i = 0; i < 7; i++) {
           var d = A.addDays(mon, i), col = el('div', d < j.today ? 'da-past' : d === j.today ? 'da-today' : '');
-          col.appendChild(add(el('div', 'd'), el('b', '', A.WEEK[i]), document.createTextNode(' ' + dm(d) + (f.priority_weekdays.indexOf(i) >= 0 ? ' 🔥' : ''))));
+          col.appendChild(add(el('div', 'd'), el('b', '', A.WEEK[i]), document.createTextNode(' ' + dm(d)),
+            f.priority_weekdays.indexOf(i) >= 0 ? icon('flame', 'sx') : null));
           (byDay[d] || []).forEach(function (g) { n++; col.appendChild(game(g)); });
           if (!byDay[d] && d >= j.today) col.appendChild(el('div', 'da-none', '—'));
           strip.appendChild(col);
@@ -539,7 +540,7 @@
         var price = g.price == null ? '' : (g.price % 1 ? zl(g.price) : g.price) + ' zł';
         var b = add(el('div', 'da-g' + (g.mine ? ' mine' : '') + (g.full ? ' full' : '')),
           el('b', 'num da-gtm', g.start_at + (g.stop_at ? '–' + g.stop_at : '')),
-          add(el('div', 'da-gt'), el('span', 'da-gv', g.venue + (g.verified_only ? ' 🪪' : '')),
+          add(el('div', 'da-gt'), add(el('span', 'da-gv', g.venue), g.verified_only ? icon('shield-check', 'sx') : null),
             g.max_players != null ? el('span', 'num', g.taken + '/' + g.max_players) : null),
           el('div', 'mu', [lv[g.lv] || g.lv, price].filter(Boolean).join(' · ')),
           g.mine ? A.pill('ты записан', 'acc') : g.busy ? A.pill('у тебя игра') : null);
