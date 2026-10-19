@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 10:20">
+<meta name="published" content="2026-10-19 10:57">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -2150,6 +2150,31 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         cp.focus();
       }, function () { sm.disabled = false; });
     }
+    // A YouTube subscription task (the title starts with «YouTube»): «Получил · +6 мес» / «+12 мес» set the period the
+    // person paid for (repeat monthly ×6 or yearly; the title's «· полгода / · год» follows) and roll the task to the
+    // next ask date in one tap, the same roll as its ✓ (tasks_edit, then tasks_done).
+    function ytPaid(t) {
+      if (t.done || !/^youtube\b/i.test(t.title)) return null;
+      var row = add(el('div', 'acts'), el('span', 'mu', 'Получил'));
+      [[6, 'monthly', 6, 'полгода'], [12, 'yearly', 1, 'год']].forEach(function (o) {
+        var b = el('button', 'btn ghost', '+' + o[0] + ' мес');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Получил деньги, продлить на ' + o[0] + ' месяцев');
+        b.onclick = function () {
+          var title = /·\s*(год|полгода)\s*$/.test(t.title) ? t.title.replace(/(год|полгода)\s*$/, o[3]) : t.title;
+          [].forEach.call(row.querySelectorAll('button'), function (x) { x.disabled = true; });
+          haptic();
+          api('miniapp', { action: 'tasks_edit' }, 15000, false, { id: t.id, repeat: o[1], repeat_every: o[2], title: title })
+            .then(function (j) {
+              var r = (j && j.task) || {};
+              ['title', 'repeat', 'repeat_every', 'due_date'].forEach(function (f) { if (f in r) t[f] = r[f]; });
+              markTask(t, render, function () { if (more[t.id] && !more[t.id].busy) delete more[t.id]; });
+            }, function () { render(); });
+        };
+        row.appendChild(b);
+      });
+      return row;
+    }
     // The block under an open row: the title, the area, the due day and time, the steps, note and log, «Сводка», «Убрать».
     function details(t, today) {
       var d = el('div', 'det td'), ti = el('input'), di = el('input'), tm = el('input');
@@ -2236,7 +2261,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       sm.onclick = function () { summary(t, sm); };
       return add(d, add(el('div', 'bar'), add(el('label', 'field'), ti)), ac, dc,
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
-        rc, rv, stepsBox(t, d), add(el('div', 'acts'), sm, rm));
+        rc, rv, ytPaid(t), stepsBox(t, d), add(el('div', 'acts'), sm, rm));
     }
     function item(t, today) {
       var wrap = el('div', 'fi'), open = opened === t.id;
@@ -4702,7 +4727,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!list.length) return;
       var soon = Date.now() + 2 * 86400000;
       card('calendar', 'События', list.map(function (e) {
-        var p = wp(e.ends_at), r = hrow(e.title, 'до ' + p.day + '.' + p.month + (e.tip_text ? ' · совет' : ''));
+        // HoYoLAB titles start with «Событие «…»:»; the card is the events, so the word goes and the name stays.
+        var name = String(e.title || '').replace(/^Событие\s+«([^»]+)»\s*:?\s*/, function (m, n) { return n + (m.indexOf(':') >= 0 ? ': ' : ''); })
+          .replace(/^События\s+Молитв/, 'Молитвы').replace(/:\s*$/, '');
+        var p = wp(e.ends_at), r = hrow(name, 'до ' + p.day + '.' + p.month + (e.tip_text ? ' · совет' : ''));
         var lime = Date.parse(e.ends_at) <= soon, ld = el('span', 'lead');
         if (/Молитв|Wish/i.test(e.title)) ld.appendChild(icon('sparkles'));
         else if (lime) ld.appendChild(el('i', 'dot')).style.background = 'var(--mark)';
@@ -4869,15 +4897,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function world(w) {
       var rs = (w && Array.isArray(w.regions) && w.regions) || [], st = (w && w.stats) || {}, ch = 0;
       if (!rs.length) return;
-      var rows = rs.map(function (g) {
+      var zero = [], rows = rs.map(function (g) {
         var pct = Math.max(0, Math.min(100, Number(g.pct) || 0)), bar = el('div', 'meter'), f = el('i');
         var r = hrow(g.name, g.level ? 'реп. ' + g.level : null, pct.toFixed(1).replace('.', ',') + ' %');
         f.style.width = pct + '%';
         r.firstChild.insertBefore(add(bar, f), r.firstChild.children[1] || null);
         r.insertBefore(ava(g.icon, g.name, 's28 rg'), r.firstChild);
         r.className += ' xr';
+        // Regions not opened yet (0 % and no reputation) wait behind «ещё N» at the end of the list.
+        if (!pct && !g.level) { zero.push(r); return null; }
         return r;
-      });
+      }).filter(Boolean);
+      if (zero.length) {
+        var more0 = el('button', 'pg', 'ещё ' + zero.length + ' · 0 %');
+        more0.type = 'button';
+        more0.setAttribute('aria-expanded', 'false');
+        more0.onclick = function () {
+          var at = more0.parentNode;
+          zero.forEach(function (z) { at.insertBefore(z, more0); });
+          more0.remove();
+          if (zero[0].focus) { zero[0].tabIndex = -1; zero[0].focus(); }
+        };
+        rows.push(add(el('div', 'row small'), more0));
+      }
       Object.keys(st.chests || {}).forEach(function (k) { ch += Number(st.chests[k]) || 0; });
       var tot = [['достижений', st.achievements], ['дней в игре', st.days_active], ['телепортов', st.waypoints],
         ['подземелий', st.domains], ['сундуков', st.chests ? ch : null]]

@@ -91,7 +91,7 @@
     if (typing) return;
     if (e.key === '/') {
       var s = A.current === 'prices' ? A.main.querySelector('input[type="search"]') : A.hdr.querySelector('.dsearch input');
-      if (s) { e.preventDefault(); s.focus(); }
+      if (s && !s.closest('.off')) { e.preventDefault(); s.focus(); }
       return;
     }
     var n = e.key === '0' ? 9 : parseInt(e.key, 10) - 1;
@@ -516,7 +516,8 @@
   var lastTab = null;
   function onTab() {
     var p = A.current === 'prices';
-    box.classList.toggle('off', p);
+    // Genshin has nothing to search for in shops (19.10.2026): the field is hidden there too.
+    box.classList.toggle('off', p || A.current === 'genshin');
     if (!p && lastTab === 'prices') { clearTimeout(timer); input.value = ''; }
     lastTab = A.current;
   }
