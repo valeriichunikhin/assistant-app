@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 01:35">
+<meta name="published" content="2026-10-19 02:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -329,6 +329,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .tsum pre{margin:0 0 4px;color:var(--fg);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 @media (min-width:900px){.tsum>div{width:100%;max-width:640px;margin:0 auto}}
 .st{font-size:15px;letter-spacing:1px}.st i{font-style:normal;color:var(--muted-2)}.st i.on{color:var(--mark)}.st i+i.c{margin-left:8px}
+/* «LinkedIn» (docs/specs/linkedin.md): the draft's text field (16px, so iOS does not zoom), «Картинка: …», an idea's buttons under its text. */
+.lta{display:block;width:100%;min-height:220px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface);color:var(--fg);font:16px/1.45 var(--font);resize:vertical}
+.lta:focus{outline:2px solid var(--fg);outline-offset:2px}.td .lpic{margin-top:8px;overflow-wrap:anywhere}.td .tsh+.hs{padding-top:4px}
+.row.li{flex-wrap:wrap;gap:6px 12px}.row.li>.acts{flex-basis:100%;margin:0}
 </style>
 </head>
 <body>
@@ -385,6 +389,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z"/></symbol>
 <symbol id="i-compass" viewBox="0 0 24 24"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></symbol>
 <symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></symbol>
+<symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
+<symbol id="i-lightbulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -802,24 +808,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other ten in a sheet; which four and in what order is
+  // Phone: four tabs and «Ещё» in a bottom bar, the other eleven in a sheet; which four and in what order is
   // the device's own choice («Кнопки внизу» on «Что нового», localStorage tabBar), BAR until it chose.
-  // From 900 px: all fourteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
+  // From 900 px: all fifteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
     ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['tasks', 'check-square', 'Задачи'],
-    ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
+    ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow).
-  var NARROW = ['list', 'prices', 'wish', 'films', 'tasks', 'inbox', 'feed', 'news'];
+  var NARROW = ['list', 'prices', 'wish', 'films', 'tasks', 'li', 'inbox', 'feed', 'news'];
   var NAMES = {};
   // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
   // {tabs: {hidden}, home: {hidden, order}}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
   // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'inbox', 'feed'];
-  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
+  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'li', 'inbox', 'feed'];
+  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The known keys of v, once each, in its order; anything else → [].
   function keysIn(v, keys) {
@@ -1298,6 +1304,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         c.appendChild(paint());
       });
     }
+    // Today's post: its idea, the language and how far it got; a tap opens the tab.
+    function liCard(p) {
+      var c = card('linkedin', 'LinkedIn', 'сегодня пост');
+      var st = p.status === 'ready' ? pill('готов', 'good') : p.status === 'posted' ? pill('опубликован', 'acc')
+        : pill(p.status === 'draft' ? 'черновик' : 'черновика ещё нет', 'warn');
+      tap(c.firstChild, function () { show('li'); });
+      c.appendChild(tap(hrow(p.idea, String(p.lang || 'pl').toUpperCase(), st), function () { show('li'); }));
+    }
     function render(j) {
       clear(body);
       cards = {};
@@ -1313,6 +1327,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       slot = 'tasks';
       if (j.tasks === null) down('check-square', 'Задачи');
       else if (j.tasks && (j.tasks.overdue || (j.tasks.today || []).length)) tasksCard(j.tasks, today);
+      // LinkedIn (docs/specs/linkedin.md): today's post, only when there is one.
+      slot = 'linkedin';
+      if (j.linkedin === null) down('linkedin', 'LinkedIn');
+      else if (j.linkedin && j.linkedin.today) liCard(j.linkedin.today);
       slot = 'week';
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
@@ -2164,6 +2182,372 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }, retry: load });
     }
     drawChips();
+    load();
+  }
+
+  // --- LinkedIn (docs/specs/linkedin.md) ---
+  // li_posts on one screen: the idea field with its PL/EN chip, «План» (the next 14 days; li_list's slots are the free
+  // Tue/Thu), «Черновики» (draft and ready, unfold to edit), «Идеи» (the bank), «Опубликовано» (folded, links).
+  var liDraft = '', liPostedOpen = false;
+  var LI_STATUS = { idea: 'идея', draft: 'черновик', ready: 'готов', posted: 'опубликован', skipped: 'пропущен' };
+  var LI_PILL = { idea: '', draft: 'warn', ready: 'good', posted: 'acc', skipped: '' };
+  // «сегодня», «завтра», else «вт 21.10».
+  function liDay(d, today) { return d === today ? 'сегодня' : d === addDays(today, 1) ? 'завтра' : WEEK[wd(d)] + ' ' + dm(d); }
+  function liLang(p) { return String(p.lang || 'pl').toUpperCase(); }
+  function liView() {
+    // ui[id]: what the screen keeps of a draft across redraws — text (typed, not saved yet), mode ('posted' | 'rewrite'),
+    // url and note (half-typed). focusEl: the field to focus once the render is on the page.
+    var posts = [], month = 0, slots = [], opened = null, refocus = null, ui = {}, focusEl = null;
+    var lang = store('liLang') === 'en' ? 'en' : 'pl';
+    var bar = el('form', 'bar'), input = el('input'), body = el('div');
+    input.placeholder = 'Идея поста…';
+    input.value = liDraft;
+    input.enterKeyHint = 'done';
+    input.maxLength = 300;
+    input.setAttribute('aria-label', 'Идея поста');
+    input.oninput = function () { liDraft = input.value; };
+    var lc = el('button', 'pill acc');
+    lc.type = 'button';
+    function paintLang() {
+      text(lc, lang.toUpperCase());
+      lc.setAttribute('aria-label', 'Язык поста: ' + (lang === 'en' ? 'английский' : 'польский'));
+    }
+    lc.onclick = function () {
+      lang = lang === 'pl' ? 'en' : 'pl';
+      store('liLang', lang);
+      paintLang();
+    };
+    paintLang();
+    var plus = add(el('button', 'btn'), icon('plus'));
+    plus.type = 'submit';
+    plus.setAttribute('aria-label', 'Добавить');
+    add(main, add(bar, add(el('label', 'field'), icon('linkedin'), input), lc, plus), body);
+    function fresh() {
+      cacheDrop('li');
+      cacheDrop('home');
+    }
+    function u(p) { return ui[p.id] || (ui[p.id] = {}); }
+    // The server's row over ours; true when something on screen changed (updated_at alone does not count).
+    var LI_SEEN = ['idea', 'draft', 'lang', 'status', 'planned_on', 'posted_at', 'url', 'draft_wanted_at', 'rewrite_note', 'image',
+      'image_prompt'];
+    function take(p, r) {
+      if (!r || r.id !== p.id) return false;
+      var moved = LI_SEEN.some(function (f) { return f in r && r[f] !== p[f]; });
+      for (var k in r) p[k] = r[k];
+      return moved;
+    }
+    bar.onsubmit = function (ev) {
+      ev.preventDefault();
+      var s = input.value.trim();
+      if (!s) return;
+      plus.disabled = true;
+      haptic();
+      api('miniapp', { action: 'li_add' }, 15000, true, { idea: s, lang: lang }).then(function (j) {
+        plus.disabled = false;
+        liDraft = input.value = '';
+        var p = j && j.post;
+        toast('💼 Идея: ' + ((p && p.idea) || s));
+        if (p && p.id != null && !posts.some(function (x) { return x.id === p.id; })) posts.push(p);
+        fresh();
+        render();
+        load();
+      }, function (e) {
+        plus.disabled = false;
+        if (!e.login) toast(e.code === 'bad request' ? 'Нужна идея, до 300 знаков' : ERRORS[e.code]);
+      });
+    };
+    // patch on screen at once, then li_edit; quiet: the screen already shows it (the draft's textarea). bad: the toast of a
+    // refused value; after: what follows a confirmed save. A failure puts the old values back.
+    function edit(p, patch, quiet, bad, after) {
+      var was = {}, b = { id: p.id }, k;
+      for (k in patch) { was[k] = p[k]; p[k] = b[k] = patch[k]; }
+      if (!quiet) render();
+      return api('miniapp', { action: 'li_edit' }, 15000, true, b).then(function (j) {
+        fresh();
+        if (take(p, j && j.post) || !quiet) render();
+        if (after) after();
+      }, function (e) {
+        for (var f in was) p[f] = was[f];
+        render();
+        if (!e.login) toast(e.code === 'bad request' && bad ? bad : ERRORS[e.code] || SAVE_FAILED);
+      });
+    }
+    // «✍️ Черновик» of an idea (no note) and «Переписать» of a draft (what to fix): the Mac takes it within ten minutes.
+    function want(p, note) {
+      var was = { draft_wanted_at: p.draft_wanted_at, rewrite_note: p.rewrite_note }, b = { id: p.id };
+      if (note) b.note = note;
+      haptic();
+      p.draft_wanted_at = new Date().toISOString();
+      if (note) p.rewrite_note = note;
+      u(p).mode = null;
+      render();
+      api('miniapp', { action: 'li_want' }, 15000, false, b).then(function (j) {
+        fresh();
+        u(p).note = '';
+        take(p, j && j.post);
+        toast(note ? '✏️ Попросил переписать — новый черновик придёт в Telegram' : '✍️ Попросил черновик — придёт в Telegram');
+        render();
+      }, function () {
+        p.draft_wanted_at = was.draft_wanted_at;
+        p.rewrite_note = was.rewrite_note;
+        render();
+      });
+    }
+    function drop(p) {
+      var was = p.status;
+      haptic();
+      p.status = 'skipped';
+      opened = null;
+      render();
+      api('miniapp', { action: 'li_delete' }, 15000, false, { id: p.id }).then(function () {
+        fresh();
+        backToast('Убрал', function () {
+          api('miniapp', { action: 'li_edit' }, 15000, false, { id: p.id, status: was }).then(function () {
+            fresh();
+            delete shown.li;
+            load();
+          }, noop);
+        });
+      }, function () {
+        p.status = was;
+        render();
+      });
+    }
+    // «Скопировать» as the tasks summary copies: the Clipboard API, else a hidden textarea.
+    function copy(cp, s) {
+      function done() {
+        label(cp, 'check', 'скопировано');
+        setTimeout(function () { label(cp, 'copy', 'Скопировать'); }, 1500);
+      }
+      function fallback() {
+        var ta = document.createElement('textarea'), ok = false;
+        ta.value = s;
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        ta.remove();
+        cp.focus();
+        if (ok) done(); else toast('Не скопировалось');
+      }
+      (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(done, fallback);
+    }
+    // A one-field form under the draft's buttons: «Опубликовал» (the link, may be empty) or «Переписать» (what to fix).
+    function modeForm(p, kind) {
+      var st = u(p), f = el('form', 'bar'), fi = el('input'), ok = el('button', 'btn', kind === 'posted' ? 'Сохранить' : 'Отправить');
+      ok.type = 'submit';
+      fi.maxLength = kind === 'posted' ? 500 : 1000;
+      fi.enterKeyHint = 'done';
+      if (kind === 'posted') {
+        fi.type = 'url';
+        fi.inputMode = 'url';
+        fi.placeholder = 'Ссылка — можно пусто';
+        fi.setAttribute('aria-label', 'Ссылка на пост');
+      } else {
+        fi.placeholder = 'Что поправить…';
+        fi.setAttribute('aria-label', 'Что поправить');
+      }
+      fi.value = st[kind === 'posted' ? 'url' : 'note'] || '';
+      fi.oninput = function () { st[kind === 'posted' ? 'url' : 'note'] = fi.value; };
+      fi.onkeydown = function (ev) {
+        if (ev.key !== 'Escape') return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        st.mode = null;
+        refocus = p.id;
+        render();
+      };
+      f.onsubmit = function (ev) {
+        ev.preventDefault();
+        var v = fi.value.trim();
+        if (kind === 'rewrite') {
+          if (!v) { fi.focus(); return; }
+          return want(p, v);
+        }
+        if (v && !/^https:\/\/\S+$/.test(v)) { toast('Ссылка — https://…'); return; }
+        haptic();
+        st.mode = null;
+        st.url = '';
+        // posted_at is the server's (li_edit sets it); the one here only orders «Опубликовано» until the answer.
+        var patch = { status: 'posted' };
+        if (v) patch.url = v;
+        if (!p.posted_at) p.posted_at = new Date().toISOString();
+        opened = null;
+        edit(p, patch, false, 'Ссылка — https://…, до 500 знаков', load);
+      };
+      if (st.mode === kind) focusEl = fi;
+      return add(f, add(el('label', 'field'), icon(kind === 'posted' ? 'link' : 'file'), fi), ok);
+    }
+    // The block under an open draft: the text, «Картинка: …», the day, the buttons and the open form.
+    function details(p, today) {
+      var st = u(p), d = el('div', 'det td'), ta = el('textarea', 'lta');
+      ta.value = st.text != null ? st.text : p.draft || '';
+      ta.maxLength = 3000;
+      ta.setAttribute('aria-label', 'Текст поста');
+      ta.oninput = function () { st.text = ta.value; };
+      ta.onblur = function () {
+        var v = ta.value.trim();
+        if (!v || v === String(p.draft || '').trim()) {
+          if (!v) ta.value = p.draft || '';
+          delete st.text;
+          return;
+        }
+        edit(p, { draft: v }, true, 'Текст — до 3000 знаков', function () { if (st.text === ta.value) delete st.text; });
+      };
+      var pic = [p.image === 'card' ? 'карточка-цитата' : p.image === 'flux' ? 'FLUX' : '', p.image_prompt || ''].filter(Boolean).join(' · ');
+      // The day: his planned one and the free Tue/Thu; the active one taken again clears it.
+      var dc = el('div', 'hs'), ds = (p.planned_on ? [p.planned_on] : []).concat(slots.filter(function (x) { return x !== p.planned_on; })).sort();
+      dc.setAttribute('role', 'group');
+      dc.setAttribute('aria-label', 'День публикации');
+      ds.forEach(function (x) {
+        dc.appendChild(chip(liDay(x, today), p.planned_on === x, 'День публикации: ' + liDay(x, today), function () {
+          edit(p, { planned_on: p.planned_on === x ? null : x }, false, null, load);
+        }));
+      });
+      var cp = label(el('button', 'btn ghost'), 'copy', 'Скопировать'), acts = el('div', 'acts');
+      cp.type = 'button';
+      cp.onclick = function () { copy(cp, ta.value); };
+      acts.appendChild(cp);
+      if (p.status === 'draft') {
+        var ok = label(el('button', 'btn'), 'check', 'Готов');
+        ok.type = 'button';
+        // Ready without a day takes the nearest free slot, as «✅ Готов» in the bot does.
+        ok.onclick = function () {
+          haptic();
+          var patch = { status: 'ready' };
+          if (!p.planned_on && slots[0]) patch.planned_on = slots[0];
+          edit(p, patch, false, null, load);
+        };
+        acts.appendChild(ok);
+      }
+      [['posted', 'link', 'Опубликовал'], ['rewrite', null, 'Переписать']].forEach(function (m) {
+        var b = label(el('button', 'btn ghost'), m[1], m[2]);
+        b.type = 'button';
+        b.setAttribute('aria-expanded', String(st.mode === m[0]));
+        b.onclick = function () {
+          st.mode = st.mode === m[0] ? null : m[0];
+          render();
+        };
+        acts.appendChild(b);
+      });
+      return add(d, ta, pic ? el('div', 'mu lpic', 'Картинка: ' + pic) : null,
+        p.draft_wanted_at && p.rewrite_note ? el('div', 'mu lpic', 'Переписывается: ' + p.rewrite_note) : null,
+        ds.length ? el('div', 'tsh', 'День') : null, ds.length ? dc : null, acts,
+        st.mode ? modeForm(p, st.mode) : null);
+    }
+    function item(p, today) {
+      var wrap = el('div', 'fi'), open = opened === p.id;
+      var r = add(el('div', 'row tap' + (open ? ' open' : '')), add(el('span', 'tx'), el('div', 't', p.idea),
+        el('div', 'mu', [liLang(p), p.planned_on ? liDay(p.planned_on, today) : ''].filter(Boolean).join(' · '))),
+      add(el('span', 'pr'), pill(LI_STATUS[p.status] || p.status, LI_PILL[p.status])), icon('chevron-down', 'go'));
+      var tx = r.querySelector('.tx');
+      function toggle() {
+        opened = open ? null : p.id;
+        refocus = p.id;
+        render();
+      }
+      tx.tabIndex = 0;
+      tx.setAttribute('role', 'button');
+      tx.setAttribute('aria-expanded', String(open));
+      tx.onkeydown = function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
+      };
+      r.onclick = toggle;
+      wrap.lid = p.id;
+      return add(wrap, r, open ? details(p, today) : null);
+    }
+    // An idea of the bank: «✍️ Черновик» (li_want) and «Убрать» (li_delete) under its text.
+    function ideaRow(p) {
+      var asked = !!p.draft_wanted_at, w = el('button', 'pill', asked ? 'пишется…' : '✍️ Черновик'), x = el('button', 'pill', 'Убрать');
+      w.type = x.type = 'button';
+      w.disabled = asked;
+      w.setAttribute('aria-label', 'Черновик: ' + p.idea);
+      x.setAttribute('aria-label', 'Убрать: ' + p.idea);
+      w.onclick = function () { want(p, null); };
+      x.onclick = function () { drop(p); };
+      return add(el('div', 'row li'), add(el('span', 'tx'), el('div', 't', p.idea),
+        el('div', 'mu', liLang(p) + (asked ? ' · черновик пишется на Mac' : ''))), add(el('div', 'acts'), w, x));
+    }
+    function byPlan(a, b) {
+      return String(a.planned_on || '9999').localeCompare(String(b.planned_on || '9999')) ||
+        String(a.created_at || '').localeCompare(String(b.created_at || ''));
+    }
+    function render() {
+      if (current !== 'li') return;
+      var today = warsawToday(), end = addDays(today, 13), live = posts.filter(function (p) { return p.status !== 'skipped'; });
+      clear(body);
+      // «План»: a row per post of the 14 days, a muted row per free slot.
+      var plan = mkCard('calendar', 'План'), any = false;
+      for (var d = today; d <= end; d = addDays(d, 1)) {
+        var day = live.filter(function (p) { return p.planned_on === d; }).sort(byPlan);
+        day.forEach(function (p) {
+          var r = hrow(p.idea, liDay(d, today) + ' · ' + liLang(p), pill(LI_STATUS[p.status] || p.status, LI_PILL[p.status]));
+          if (p.status === 'draft' || p.status === 'ready') {
+            tap(r, function () {
+              opened = p.id;
+              refocus = p.id;
+              render();
+            });
+          }
+          plan.appendChild(r);
+          any = true;
+        });
+        if (!day.length && slots.indexOf(d) >= 0) {
+          plan.appendChild(el('div', 'row small mu', liDay(d, today) + ' · свободно'));
+          any = true;
+        }
+      }
+      if (!any) plan.appendChild(el('div', 'row small mu', 'На две недели ничего не запланировано'));
+      body.appendChild(plan);
+      var drafts = live.filter(function (p) { return p.status === 'draft' || p.status === 'ready'; }).sort(byPlan);
+      if (drafts.length) {
+        var c = mkCard('file', 'Черновики');
+        c.firstChild.appendChild(el('span', 'mu', String(drafts.length)));
+        drafts.forEach(function (p) { c.appendChild(item(p, today)); });
+        body.appendChild(c);
+      }
+      var ideas = live.filter(function (p) { return p.status === 'idea'; })
+        .sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); });
+      if (ideas.length) {
+        var ic = mkCard('lightbulb', 'Идеи');
+        ic.firstChild.appendChild(el('span', 'mu', String(ideas.length)));
+        ideas.forEach(function (p) { ic.appendChild(ideaRow(p)); });
+        body.appendChild(ic);
+      }
+      var done = live.filter(function (p) { return p.status === 'posted'; })
+        .sort(function (a, b) { return String(b.posted_at || '').localeCompare(String(a.posted_at || '')); });
+      if (done.length || month) {
+        var pc = mkCard('check', 'Опубликовано'), h = pc.firstChild;
+        add(h, el('span', 'mu', 'за месяц ' + month), icon('chevron-down', 'go'));
+        h.setAttribute('aria-expanded', String(liPostedOpen));
+        tap(h, function () { liPostedOpen = !liPostedOpen; render(); });
+        if (liPostedOpen) {
+          done.forEach(function (p) {
+            pc.appendChild(hrow(p.idea, [p.posted_at ? dmt(p.posted_at) : '', liLang(p)].filter(Boolean).join(' · '),
+              p.url ? icon('link') : null, p.url || null));
+          });
+        }
+        body.appendChild(pc);
+      }
+      if (!drafts.length && !ideas.length && !done.length) body.appendChild(state('linkedin', 'Идей пока нет — напиши первую в поле выше'));
+      if (focusEl && focusEl.isConnected) focusEl.focus();
+      else if (refocus != null) {
+        var w = [].filter.call(body.querySelectorAll('.fi'), function (x) { return x.lid === refocus; })[0];
+        if (w) w.querySelector('.tx').focus();
+      }
+      focusEl = null;
+      refocus = null;
+    }
+    function load() {
+      swr({ key: 'li', box: body, n: 2, live: function () { return current === 'li'; },
+        fetch: function () { return api('miniapp', { action: 'li_list' }, 15000, true); },
+        render: function (j) {
+          posts = (j.posts || []).filter(function (p) { return p && p.id != null; });
+          month = Number(j.month_posted) || 0;
+          slots = Array.isArray(j.slots) ? j.slots : [];
+          render();
+        }, retry: load });
+    }
     load();
   }
 
@@ -4824,7 +5208,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var HOME_NAMES = {
     plan: 'План недели', calendar: 'Календарь', due: 'Сроки и посылки', docs: 'Документы', courts: 'Корты сегодня',
     games: 'Мои игры', shows: 'Мои сеансы', vb: 'Волейбол', genshin: 'Genshin', yesterday: 'Вчера', inbox: 'Инбокс',
-    week: 'Неделя', system: 'Система', tasks: 'Задачи'
+    week: 'Неделя', system: 'Система', tasks: 'Задачи', linkedin: 'LinkedIn'
   };
   // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
   function homeOrder() {
@@ -5048,7 +5432,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
     genshin: genshinView
   };
   // --- desktop (≥ 900 px) ---
