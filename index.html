@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 10:57">
+<meta name="published" content="2026-10-19 19:02">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -428,6 +428,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-id-card" viewBox="0 0 24 24"><path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/></symbol>
 <symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></symbol>
 <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></symbol>
+<symbol id="i-building-2" viewBox="0 0 24 24"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></symbol>
+<symbol id="i-briefcase-business" viewBox="0 0 24 24"><path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></symbol>
+<symbol id="i-toggle-right" viewBox="0 0 24 24"><circle cx="15" cy="12" r="3"/><rect width="20" height="14" x="2" y="5" rx="7"/></symbol>
 <symbol id="i-undo-2" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
 <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
@@ -874,8 +878,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var NARROW = ['list', 'prices', 'wish', 'films', 'tasks', 'li', 'inbox', 'feed', 'news'];
   var NAMES = {};
   // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
-  // {tabs: {hidden}, home: {hidden, order}}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
-  // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. The cached copy is read
+  // {tabs: {hidden}, home: {hidden, order}, muted}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
+  // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. muted: the switched-off
+  // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
+  // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
   var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
@@ -885,10 +891,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return Array.isArray(v) ? v.filter(function (k, i) { return keys.indexOf(k) >= 0 && v.indexOf(k) === i; }) : [];
   }
   function normPrefs(p) {
-    var t = (p && p.tabs) || {}, h = (p && p.home) || {};
-    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS) } };
+    var t = (p && p.tabs) || {}, h = (p && p.home) || {}, m = p && p.muted;
+    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS) },
+      muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [] };
+  }
+  // The switchable modules [{env, name}] as the server last listed them.
+  function normModules(v) {
+    return Array.isArray(v) ? v.filter(function (x) { return x && typeof x.env === 'string' && typeof x.name === 'string'; })
+      .map(function (x) { return { env: x.env, name: x.name }; }) : null;
   }
   var prefsHit = cacheGet('prefs'), prefs = normPrefs(prefsHit && prefsHit.j && prefsHit.j.prefs);
+  var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
   function tabShown(k) { return k === 'home' || k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
   function visibleTabs() { return TABS.filter(function (t) { return tabShown(t[0]); }); }
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
@@ -1408,6 +1421,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           var gen = prefsGen;
           return api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
             if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
+            if (j) setModules(j.modules);
             return j;
           });
         }, render: render, retry: load });
@@ -5428,7 +5442,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (was && !tabShown(current)) show('home');
     else if (!quiet && prefsHook && prefsHook.tab === current) prefsHook.fn(focus);
   }
+  // A new list of modules from the server: kept for the next start, the «Модули» card redrawn.
+  function setModules(v) {
+    var m = normModules(v);
+    if (!m || JSON.stringify(m) === JSON.stringify(modules)) return;
+    modules = m;
+    cacheSet('prefs', JSON.stringify({ prefs: prefs, modules: modules }));
+    if (prefsHook && prefsHook.tab === current && prefsHook.modules) prefsHook.modules();
+  }
+  // next without muted keeps the modules as they are (the tab and card switches send the whole settings).
   function editPrefs(next, focus) {
+    if (!next.muted) next = { tabs: next.tabs, home: next.home, muted: prefs.muted };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -5442,7 +5466,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!j || !j.prefs) throw new Error('prefs');
       prefsGen++;
       var p = normPrefs(j.prefs);
-      cacheSet('prefs', JSON.stringify({ prefs: p }));
+      cacheSet('prefs', JSON.stringify({ prefs: p, modules: modules }));
       return JSON.stringify(p);
     });
   }
@@ -5454,10 +5478,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       fetch: function () {
         var gen = prefsGen;
         return api('miniapp', { action: 'prefs_get' }, 15000, true).then(function (j) {
-          return gen === prefsGen ? j : { prefs: prefs };
-        }, function (e) { if (e.login) throw e; return { prefs: prefs }; });
+          return gen === prefsGen ? j : { prefs: prefs, modules: (j && j.modules) || modules };
+        }, function (e) { if (e.login) throw e; return { prefs: prefs, modules: modules }; });
       },
-      render: function (j) { if (j && j.prefs && !marks.prefs) setPrefs(normPrefs(j.prefs)); } });
+      render: function (j) {
+        if (j && j.prefs && !marks.prefs) setPrefs(normPrefs(j.prefs));
+        if (j) setModules(j.modules);
+      } });
   }
   // A small button of a settings row: a toggle (f 'tog', aria.on) or an arrow (f 'up' / 'down').
   function rowBtn(ic, aria, f, off, fn) {
@@ -5504,6 +5531,36 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         rows.appendChild(row);
       });
       refocus(rows, focus, 'tab');
+    };
+    card.paint();
+    return card;
+  }
+  // «Модули» (docs/specs/module-switches.md): a topic of the group per row — its icon, name and toggle; a module
+  // switched off is silent in Telegram and its Mac jobs do not run. The list is the server's (the topics set there).
+  var MODULE_ICONS = {
+    TELEGRAM_TOPIC_VOLLEYBALL: 'ball', TELEGRAM_TOPIC_WISHLIST: 'gift', TELEGRAM_TOPIC_GROCERIES: 'cart',
+    TELEGRAM_TOPIC_DOKUMENTY: 'id-card', TELEGRAM_TOPIC_RECEIPTS: 'receipt', TELEGRAM_TOPIC_PARCELS: 'package',
+    TELEGRAM_TOPIC_GENSHIN: 'game', TELEGRAM_TOPIC_TENNIS: 'circle-dot', TELEGRAM_TOPIC_NEWS: 'news',
+    TELEGRAM_TOPIC_CINEMA: 'film', TELEGRAM_TOPIC_MEDICINE: 'steth', TELEGRAM_TOPIC_EVENTS: 'calendar',
+    TELEGRAM_TOPIC_CALLS: 'phone', TELEGRAM_TOPIC_FLATS: 'building-2', TELEGRAM_TOPIC_GIGS: 'briefcase-business'
+  };
+  function modulesCard() {
+    var card = mkCard('toggle-right', 'Модули'), rows = el('div');
+    add(card, el('div', 'sub', 'Выключенный модуль молчит в Telegram и не тратит лимит; данные остаются'), rows);
+    card.paint = function (focus) {
+      var off = prefs.muted;
+      clear(rows);
+      if (!modules.length) rows.appendChild(el('div', 'sub', 'Список придёт с сервера'));
+      modules.forEach(function (m) {
+        var k = m.env, on = off.indexOf(k) < 0, row = add(lead(el('div', 'row'), MODULE_ICONS[k] || 'bell'), el('span', 'tx t', m.name));
+        row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: m.name + ': включён', on: on }, 'tog', false, function () {
+          editPrefs({ tabs: prefs.tabs, home: prefs.home, muted: on ? off.concat([k]) : off.filter(function (x) { return x !== k; }) },
+            ['module', k, 'tog']);
+        }));
+        row.k = k;
+        rows.appendChild(row);
+      });
+      refocus(rows, focus, 'module');
     };
     card.paint();
     return card;
@@ -5611,9 +5668,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), hc = homeCard(), bc = barCard();
-    prefsHook = { tab: 'news', fn: function (focus) { tc.paint(focus); hc.paint(focus); bc.paint(); } };
-    add(main, browser ? pushCard() : null, tc, hc, bc, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    var tc = tabsCard(), mc = modulesCard(), hc = homeCard(), bc = barCard();
+    prefsHook = { tab: 'news', fn: function (focus) { tc.paint(focus); mc.paint(focus); hc.paint(focus); bc.paint(); },
+      modules: function () { mc.paint(); } };
+    add(main, browser ? pushCard() : null, tc, mc, hc, bc, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
