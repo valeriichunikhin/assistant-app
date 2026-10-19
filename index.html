@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 10:12">
+<meta name="published" content="2026-10-19 10:20">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -31,6 +31,7 @@
   --fg:#fff;--muted:#9aa0b4;--muted-2:#8c92a8;--accent:#7656ff;--accent-ink:#fff;--mark:#8b6cff;--link:#a891ff;
   --accent-soft:rgba(139,108,255,.16);--good:#3ecf8e;--good-bg:rgba(62,207,142,.12);--warn:#f5a623;
   --warn-bg:rgba(245,166,35,.12);--bad:#ff6166;--bad-bg:rgba(255,97,102,.12);--blue:#52a8ff;
+  --area-fba:#ff9999;--area-clinic:#5cc8ff;--area-personal:#5fdc8c;--area-home:#ffc24a;
   --toast:#1d1b33;--toast-act:var(--link);--toast-fg:#fff;--scrim:rgba(0,0,0,.6);--shadow:0 8px 24px rgba(0,0,0,.35);
   --r:20px;--r-b:14px;--r-s:10px;--bar:60px;--rail:240px;
   --font:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -41,7 +42,8 @@
   --line-2:rgba(20,22,41,.16);--track:rgba(20,22,41,.08);--press:rgba(20,22,41,.05);--fg:#141629;
   --muted:#5b5f7a;--muted-2:#60647d;--accent:#6d4aff;--accent-ink:#fff;--mark:#6d4aff;--link:#5b36f2;--accent-soft:rgba(109,74,255,.12);
   --good:#0d7a4a;--good-bg:rgba(13,122,74,.1);--warn:#9a5a00;--warn-bg:rgba(200,128,0,.12);--bad:#c62828;
-  --bad-bg:rgba(198,40,40,.1);--blue:#0070f3;--toast:#141629;--toast-act:#a891ff;--toast-fg:#fff;--scrim:rgba(0,0,0,.3);
+  --bad-bg:rgba(198,40,40,.1);--blue:#0070f3;--area-fba:#9f1f14;--area-clinic:#075985;--area-personal:#0b5e2e;--area-home:#863f00;
+  --toast:#141629;--toast-act:#a891ff;--toast-fg:#fff;--scrim:rgba(0,0,0,.3);
   --shadow:0 8px 24px rgba(20,22,41,.1)}}
 :root[data-theme="light"]{color-scheme:light;
   --bg0:#eef0ff;--grad:linear-gradient(160deg,#eef0ff 0%,#fde7f3 100%);--glass:rgba(255,255,255,.6);--solid:#fff;
@@ -49,7 +51,8 @@
   --line-2:rgba(20,22,41,.16);--track:rgba(20,22,41,.08);--press:rgba(20,22,41,.05);--fg:#141629;
   --muted:#5b5f7a;--muted-2:#60647d;--accent:#6d4aff;--accent-ink:#fff;--mark:#6d4aff;--link:#5b36f2;--accent-soft:rgba(109,74,255,.12);
   --good:#0d7a4a;--good-bg:rgba(13,122,74,.1);--warn:#9a5a00;--warn-bg:rgba(200,128,0,.12);--bad:#c62828;
-  --bad-bg:rgba(198,40,40,.1);--blue:#0070f3;--toast:#141629;--toast-act:#a891ff;--toast-fg:#fff;--scrim:rgba(0,0,0,.3);
+  --bad-bg:rgba(198,40,40,.1);--blue:#0070f3;--area-fba:#9f1f14;--area-clinic:#075985;--area-personal:#0b5e2e;--area-home:#863f00;
+  --toast:#141629;--toast-act:#a891ff;--toast-fg:#fff;--scrim:rgba(0,0,0,.3);
   --shadow:0 8px 24px rgba(20,22,41,.1)}
 *{box-sizing:border-box}
 html,body{margin:0;color:var(--fg)}
@@ -324,6 +327,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 /* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
 .td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .hs>.mu{flex:none;align-self:center}.td .field input[type=number]{flex:none;width:4em}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
 .row .pr .pill+.pill{margin-left:4px}.row .t .i.yt{width:16px;height:16px;margin:0 5px -3px 0;color:#ff0000}
+/* Task areas told by colour (Valerii, 19.10.2026): FBA red, Pomoc sky blue, Личное green, Дом amber — the caption's
+   pill (.ap, inline so the line keeps its height), a 3px bar on the row's left (.row.ar) and the pressed area chip. */
+.a-fba{--ac:var(--area-fba)}.a-clinic{--ac:var(--area-clinic)}.a-personal{--ac:var(--area-personal)}.a-home{--ac:var(--area-home)}
+.ap{padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);font-size:12px;font-weight:500;white-space:nowrap}
+.row.ar{box-shadow:inset 3px 0 0 var(--ac)}
+.pill.acc.ar{border-color:color-mix(in srgb,var(--ac) 45%,transparent);background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
 /* Задачи v2 (docs/specs/tasks.md): the steps checklist (✓ · title · ▲ ▼ ×), the log, the «Сводка» sheet over the page. */
 .tsh{margin:12px 0 2px;color:var(--muted);font-size:12px;font-weight:600}
 .tst{display:flex;align-items:center;gap:2px;min-height:44px;border-top:1px solid var(--line)}.tst:first-child{border-top:0}
@@ -1648,6 +1657,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var a = (areas || TASK_AREAS).filter(function (x) { return x[0] === k; })[0];
     return a ? a[1] : '';
   }
+  // The area in a task's caption: its name on a tint of its colour (.ap); no area, nothing.
+  function areaPill(k, areas) {
+    var s = areaName(k, areas);
+    return s ? el('span', 'ap a-' + k, s) : '';
+  }
   // twin of repeatLabel() in _shared/tasks.ts; edit both together
   var REPEAT_ONE = { daily: 'ежедневно', weekly: 'еженедельно', monthly: 'ежемесячно', yearly: 'ежегодно' };
   // The unit after a number: 1/21 (каждый 21 день), 2–4/22–24, 5–20/25…
@@ -1663,10 +1677,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (d === 1 && h !== 11) return (repeat === 'weekly' ? 'каждую ' : 'каждый ') + every + ' ' + u[0];
     return 'каждые ' + every + ' ' + (d >= 2 && d <= 4 && (h < 12 || h > 14) ? u[1] : u[2]);
   }
-  // «пт 24.10 · 15:00 · [repeat] еженедельно · Pomoc · из созвона» as a muted line; nothing to say: null.
+  // «пт 24.10 · 15:00 · [repeat] еженедельно · [Pomoc] · из созвона» as a muted line; nothing to say: null.
   function taskCaption(t, areas) {
     var parts = [t.due_date ? WEEK[wd(t.due_date)] + ' ' + dm(t.due_date) : '', t.due_time ? String(t.due_time).slice(0, 5) : '',
-      t.repeat ? ict('repeat', REPEAT_LABEL(t.repeat, t.repeat_every)) : '', areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean);
+      t.repeat ? ict('repeat', REPEAT_LABEL(t.repeat, t.repeat_every)) : '', areaPill(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean);
     return parts.length ? dotted(el('div', 'mu'), parts) : null;
   }
   function taskKey(t) { return 'task:' + t.id; }
@@ -1752,7 +1766,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tick();
     };
     var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
-    return add(el('div', 'row' + (t.done ? ' done' : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
+    return add(el('div', 'row' + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
       late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
@@ -2159,7 +2173,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       dc.setAttribute('role', 'group');
       dc.setAttribute('aria-label', 'Срок');
       areas.forEach(function (a) {
-        ac.appendChild(chip(a[1], t.area === a[0], null, function () { edit(t, { area: t.area === a[0] ? null : a[0] }); }));
+        var b = chip(a[1], t.area === a[0], null, function () { edit(t, { area: t.area === a[0] ? null : a[0] }); });
+        b.className += ' ar a-' + a[0];
+        ac.appendChild(b);
       });
       // The active day taken again clears the due date (and its time).
       [[today, 'сегодня'], [addDays(today, 1), 'завтра']].concat([4, 5, 6].map(function (w) { return [nextWd(today, w), WEEK[w]]; }))
@@ -2251,13 +2267,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function drawChips() {
       clear(chips);
       [['', 'Все']].concat(areas).forEach(function (a) {
-        chips.appendChild(chip(a[1], area === a[0], null, function () {
+        var b = chip(a[1], area === a[0], null, function () {
           if (area === a[0]) return;
           area = a[0];
           store('taskArea', area);
           opened = null;
           render();
-        }));
+        });
+        if (a[0]) b.className += ' ar a-' + a[0];
+        chips.appendChild(b);
       });
     }
     function byDue(a, b) {
@@ -3846,7 +3864,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       var c;
       if (want.length) {
-        c = mkCard('target', 'Хочу');
+        c = mkCard('bookmark', 'Хочу');
         want.forEach(function (f) { c.appendChild(live(f, wanted)); });
         body.appendChild(c);
       }
