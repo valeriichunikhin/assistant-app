@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 02:13">
+<meta name="published" content="2026-10-19 09:40">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -315,7 +315,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .av.s32{width:32px;height:32px;font-size:13px}img.av.rg{background:#2c2f45;object-fit:contain}
 .row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
 /* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
-.td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
+.td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .hs>.mu{flex:none;align-self:center}.td .field input[type=number]{flex:none;width:4em}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
 .row .pr .pill+.pill{margin-left:4px}
 /* Задачи v2 (docs/specs/tasks.md): the steps checklist (✓ · title · ▲ ▼ ×), the log, the «Сводка» sheet over the page. */
 .tsh{margin:12px 0 2px;color:var(--muted);font-size:12px;font-weight:600}
@@ -1603,10 +1603,25 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var a = (areas || TASK_AREAS).filter(function (x) { return x[0] === k; })[0];
     return a ? a[1] : '';
   }
-  // «пт 24.10 · 15:00 · Pomoc · из созвона»
+  // twin of repeatLabel() in _shared/tasks.ts; edit both together
+  var REPEAT_ONE = { daily: 'ежедневно', weekly: 'еженедельно', monthly: 'ежемесячно', yearly: 'ежегодно' };
+  // The unit after a number: 1/21 (каждый 21 день), 2–4/22–24, 5–20/25…
+  var REPEAT_UNIT = {
+    daily: ['день', 'дня', 'дней'], weekly: ['неделю', 'недели', 'недель'], monthly: ['месяц', 'месяца', 'месяцев'], yearly: ['год', 'года', 'лет']
+  };
+  // «ежемесячно» at every = 1, else «каждые 2 недели», «каждые 5 дней», «каждый 21 день», «каждую 21 неделю».
+  function REPEAT_LABEL(repeat, every) {
+    if (every == null) every = 1;
+    if (!REPEAT_ONE[repeat]) return '';
+    if (every === 1) return REPEAT_ONE[repeat];
+    var u = REPEAT_UNIT[repeat], d = every % 10, h = every % 100;
+    if (d === 1 && h !== 11) return (repeat === 'weekly' ? 'каждую ' : 'каждый ') + every + ' ' + u[0];
+    return 'каждые ' + every + ' ' + (d >= 2 && d <= 4 && (h < 12 || h > 14) ? u[1] : u[2]);
+  }
+  // «пт 24.10 · 15:00 · 🔁 еженедельно · Pomoc · из созвона»
   function taskCaption(t, areas) {
     return [t.due_date ? WEEK[wd(t.due_date)] + ' ' + dm(t.due_date) : '', t.due_time ? String(t.due_time).slice(0, 5) : '',
-      areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean).join(' · ');
+      t.repeat ? '🔁 ' + REPEAT_LABEL(t.repeat, t.repeat_every) : '', areaName(t.area, areas), TASK_SRC[t.source] || ''].filter(Boolean).join(' · ');
   }
   function taskKey(t) { return 'task:' + t.id; }
   function setDone(t, v) {
@@ -1615,7 +1630,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     t.done_at = v ? t.done_at || new Date().toISOString() : null;
   }
   // The ✓ of a task, on the tab and on «Сегодня»: flipped and drawn (render) at once, tasks_done 400 ms after the last tap.
-  function markTask(t, render) {
+  // An open repeating task (v3) goes through rollTask instead; moved(t), when given, runs after it moves.
+  function markTask(t, render, moved) {
+    if (t.repeat && !t.done) return rollTask(t, render, moved);
     var was = !!t.done;
     setDone(t, !was);
     render();
@@ -1625,6 +1642,42 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         return r.status ? r.status === 'done' : v;
       });
     }, function (v) { setDone(t, v); render(); }, function () { toast(SAVE_FAILED); });
+  }
+  // «Сделано» on a repeating task: the server moves it to the next due date and it stays open (the answer's rolled
+  // {from, to}, the steps open again); the toast «Сделано · дальше пн 26.10» brings it back once.
+  function rollTask(t, render, moved) {
+    if (t.rolling) return;
+    t.rolling = true;
+    api('miniapp', { action: 'tasks_done' }, 15000, true, { id: t.id, done: true }).then(function (j) {
+      var ro = j && j.rolled;
+      t.rolling = false;
+      cacheDrop('tasks');
+      cacheDrop('home');
+      if (!ro) {
+        setDone(t, true);
+        return render();
+      }
+      t.due_date = ro.to;
+      t.rolled_from = ro.from;
+      if (t.steps_total > 0) t.steps_done = 0;
+      if (moved) moved(t);
+      render();
+      backToast('Сделано · дальше ' + WEEK[wd(ro.to)] + ' ' + dm(ro.to), function () {
+        api('miniapp', { action: 'tasks_done' }, 15000, false, { id: t.id, done: false }).then(function (k) {
+          var back = k && k.rolled;
+          cacheDrop('tasks');
+          cacheDrop('home');
+          if (!back) return;
+          t.due_date = back.to;
+          t.rolled_from = null;
+          if (moved) moved(t);
+          render();
+        }, noop);
+      });
+    }, function (e) {
+      t.rolling = false;
+      if (!e.login) toast(SAVE_FAILED);
+    });
   }
   // «3/7»: the done steps of a task that has steps (v2).
   function stepsPill(t) {
@@ -1715,7 +1768,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var r = (j && j.task) || j, moved = false;
         fresh();
         if (!r || r.id !== t.id) return;
-        ['title', 'note', 'area', 'due_date', 'due_time'].forEach(function (f) {
+        ['title', 'note', 'area', 'due_date', 'due_time', 'repeat', 'repeat_every', 'rolled_from'].forEach(function (f) {
           if (f in r && r[f] !== t[f]) { t[f] = r[f]; moved = true; }
         });
         if (moved) render();
@@ -2074,18 +2127,51 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (tm.value && !t.due_date) p.due_date = today;
         edit(t, p);
       };
+      // v3: «Повтор» — a repeat without a due date starts today; «каждые N» (1–52) while one is set.
+      var rc = add(el('div', 'hs'), el('span', 'mu', 'Повтор')), rv = null;
+      rc.setAttribute('role', 'group');
+      rc.setAttribute('aria-label', 'Повтор');
+      [[null, 'нет'], ['daily', 'день'], ['weekly', 'неделя'], ['monthly', 'месяц'], ['yearly', 'год']].forEach(function (o) {
+        rc.appendChild(chip(o[1], (t.repeat || null) === o[0], null, function () {
+          if ((t.repeat || null) === o[0]) return;
+          var p = { repeat: o[0] };
+          if (o[0] && !t.due_date) p.due_date = today;
+          edit(t, p);
+        }));
+      });
+      if (t.repeat) {
+        var ni = el('input'), n0 = t.repeat_every || 1;
+        ni.type = 'number';
+        ni.min = '1';
+        ni.max = '52';
+        ni.step = '1';
+        ni.inputMode = 'numeric';
+        ni.enterKeyHint = 'done';
+        ni.value = String(n0);
+        ni.setAttribute('aria-label', 'Повтор: каждые');
+        ni.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); ni.blur(); } };
+        ni.onchange = function () {
+          var n = Number(ni.value);
+          if (!(n >= 1 && n <= 52 && n % 1 === 0)) { ni.value = String(n0); return; }
+          if (n !== n0) edit(t, { repeat_every: n });
+        };
+        // The label's own words around the number: «каждую [1] неделю», «каждые [2] недели» (1 reads as 21).
+        var lw = REPEAT_LABEL(t.repeat, n0 === 1 ? 21 : n0).split(' ');
+        rv = add(el('div', 'bar'), add(el('label', 'field'), el('span', 'mu', lw[0]), ni,
+          el('span', 'mu', lw.slice(2).join(' '))));
+      }
       var rm = label(el('button', 'btn ghost'), 'trash', 'Убрать'), sm = label(el('button', 'btn ghost'), 'file', 'Сводка');
       rm.type = sm.type = 'button';
       rm.onclick = function () { drop(t); };
       sm.onclick = function () { summary(t, sm); };
       return add(d, add(el('div', 'bar'), add(el('label', 'field'), ti)), ac, dc,
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
-        stepsBox(t, d), add(el('div', 'acts'), sm, rm));
+        rc, rv, stepsBox(t, d), add(el('div', 'acts'), sm, rm));
     }
     function item(t, today) {
       var wrap = el('div', 'fi'), open = opened === t.id;
       var r = taskLine(t, areas, today, function () {
-        markTask(t, render);
+        markTask(t, render, function () { if (more[t.id] && !more[t.id].busy) delete more[t.id]; });
         if (t.done) backToast('Сделано', function () { markTask(t, render); });
       });
       var tx = r.querySelector('.tx');
