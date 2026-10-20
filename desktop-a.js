@@ -303,28 +303,14 @@
     function about(f) {
       return /^https?:\/\//i.test(String(f.link || '')) ? pg('link', 'О фильме', function () { A.openLink(f.link); }) : null;
     }
-    // Five stars, each pressed on its left half (x,5) or right half (x) — cinemaView's star bar, smaller.
+    // The rating as «Фильмы» draws it: the FILM_RATES chips (1 … 5 by 0,5), the current one pressed (APP.rateStrip).
     function stars(id, rating) {
-      var bar = el('div', 'stars da-stars');
-      bar.setAttribute('role', 'group');
-      bar.setAttribute('aria-label', 'Оценка');
-      for (var k = 1; k <= 5; k++) {
-        var half = rating < k && rating >= k - 0.5;
-        // A half star is the outline with its left half filled: a second star clipped over it (.hf).
-        var st = add(el('span', 'st' + (rating >= k ? ' on' : half ? ' half' : '')), icon('star'), half ? icon('star', 'hf') : null);
-        [k * 10 - 5, k * 10].forEach(function (t) {
-          var b = el('button');
-          b.type = 'button';
-          b.setAttribute('aria-label', 'Оценка ' + A.rateText(t / 10));
-          b.onclick = function (ev) {
-            ev.stopPropagation();
-            act({ action: 'film_rate', film: id, tenths: t }, 'Оценка ' + A.rateText(t / 10) + ' — записал');
-          };
-          st.appendChild(b);
-        });
-        bar.appendChild(st);
-      }
-      return bar;
+      var strip = A.rateStrip(rating, function (v) {
+        act({ action: 'film_rate', film: id, tenths: Math.round(v * 10) }, 'Оценка ' + A.rateText(v) + ' — записал');
+      });
+      strip.classList.add('da-rates');
+      strip.addEventListener('click', function (ev) { ev.stopPropagation(); });
+      return strip;
     }
     // The cinemas as small pills, a button where there is a ticket link.
     function pills(list) {
@@ -407,14 +393,17 @@
       tables.appendChild(c);
       if (watched.length) {
         c = card('check', 'Смотрел');
-        c.appendChild(D.table([{ h: 'Дата' }, { h: 'Фильм' }, { h: 'Оценка' }, { h: '', w: '40px' }], watched.map(function (w) {
+        c.appendChild(D.table([{ h: 'Дата' }, { h: 'Фильм и оценка' }, { h: '', w: '40px' }], watched.map(function (w) {
           var x = null;
           if (w.id && w.source === 'mark') {
             x = add(btn('btn ghost x hov', '', function () { act({ action: 'film_mark', film: w.id, mark: 'clear' }, 'Отметка снята'); }), icon('x'));
             x.setAttribute('aria-label', 'Снять отметку');
           }
-          return [num(dm(w.date)), two(w.display, w.source === 'mark' ? 'отмечен' : null),
-            w.id ? stars(w.id, w.rating) : w.rating != null ? num(A.ict('star', A.rateText(w.rating))) : '', x];
+          // The rating strip goes under the title: nine chips do not fit a column of their own.
+          var t = two(w.display, w.source === 'mark' ? 'отмечен' : null);
+          if (w.id) t.appendChild(stars(w.id, w.rating));
+          else if (w.rating != null) t.appendChild(num(A.ict('star', A.rateText(w.rating))));
+          return [num(dm(w.date)), t, x];
         })));
         tables.appendChild(c);
       }
