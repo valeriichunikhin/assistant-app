@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 11:11">
+<meta name="published" content="2026-10-20 11:17">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -31,6 +31,7 @@
   --fg:#fff;--muted:#9aa0b4;--muted-2:#8c92a8;--accent:#7656ff;--accent-ink:#fff;--mark:#8b6cff;--link:#a891ff;
   --accent-soft:rgba(139,108,255,.16);--good:#3ecf8e;--good-bg:rgba(62,207,142,.12);--warn:#f5a623;
   --warn-bg:rgba(245,166,35,.12);--bad:#ff6166;--bad-bg:rgba(255,97,102,.12);--blue:#52a8ff;
+  --el-pyro:#ef7938;--el-hydro:#4cc2f1;--el-anemo:#74c2a8;--el-electro:#af8ec1;--el-dendro:#a5c83b;--el-cryo:#9fd6e3;--el-geo:#fab632;
   --area-fba:#ff9999;--area-clinic:#5cc8ff;--area-personal:#5fdc8c;--area-home:#ffc24a;
   --toast:#1d1b33;--toast-act:var(--link);--toast-fg:#fff;--scrim:rgba(0,0,0,.6);--shadow:0 8px 24px rgba(0,0,0,.35);
   --r:20px;--r-b:14px;--r-s:10px;--bar:60px;--rail:240px;
@@ -324,6 +325,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    chips, a fixed percent column so the meters share one length, the Abyss stars (won in --mark, the rest --muted-2). */
 .av.s32{width:32px;height:32px;font-size:13px}img.av.rg{background:#2c2f45;object-fit:contain}
 .row.ocu{flex-wrap:wrap;gap:6px}.xr .pr{min-width:60px}.team .mu{font-size:12px}
+.elc{--el:var(--el-geo)}.elc.e-pyro{--el:var(--el-pyro)}.elc.e-hydro{--el:var(--el-hydro)}.elc.e-anemo{--el:var(--el-anemo)}.elc.e-electro{--el:var(--el-electro)}.elc.e-dendro{--el:var(--el-dendro)}.elc.e-cryo{--el:var(--el-cryo)}
+.elc{background:linear-gradient(90deg,color-mix(in srgb,var(--el) 13%,transparent),transparent 85%);box-shadow:inset 3px 0 0 var(--el)}.elc .av{box-shadow:0 0 0 2px var(--el)}.team>.elc{border-radius:12px;padding:6px 2px}
+.det.elc{background-color:var(--surface-2)}
+.tb.ml{width:36px;height:36px;margin:-4px -6px -4px 0;color:var(--link)}.tb.ml .i{width:18px;height:18px}
 /* «Задачи» (docs/specs/tasks.md): the open row's block — title, chips, date and time, «Убрать». */
 .td{padding:10px 14px 12px}.td .hs{margin:0 -14px;padding:10px 14px 0}.td .hs>.mu{flex:none;align-self:center}.td .field input[type=number]{flex:none;width:4em}.td .bar{margin:10px 0 0}.td .bar:first-child{margin:0}.td .acts{margin-top:10px}
 .row .pr .pill+.pill{margin-left:4px}.row .t .i.yt{width:16px;height:16px;margin:0 5px -3px 0;color:#ff0000}
@@ -447,6 +452,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-briefcase-business" viewBox="0 0 24 24"><path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></symbol>
 <symbol id="i-toggle-right" viewBox="0 0 24 24"><circle cx="15" cy="12" r="3"/><rect width="20" height="14" x="2" y="5" rx="7"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
 <symbol id="i-undo-2" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
 <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
@@ -1799,8 +1805,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tick();
     };
     var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
+    // A task from a mail: its envelope opens the mail in Gmail.
+    var ml = null;
+    if (t.mail_url) {
+      ml = add(el('button', 'tb ml'), icon('mail'));
+      ml.type = 'button';
+      ml.setAttribute('aria-label', 'Открыть письмо: ' + t.title);
+      ml.onclick = function (ev) { ev.stopPropagation(); openLink(t.mail_url); };
+    }
     return add(el('div', 'row' + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
-      late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null);
+      late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null, ml);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
   function nextWd(today, w) { return addDays(today, (w - wd(today) + 6) % 7 + 1); }
@@ -2293,9 +2307,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       rm.type = sm.type = 'button';
       rm.onclick = function () { drop(t); };
       sm.onclick = function () { summary(t, sm); };
+      var mb = null;
+      if (t.mail_url) {
+        mb = label(el('button', 'btn ghost'), 'mail', 'Открыть письмо');
+        mb.type = 'button';
+        mb.onclick = function () { openLink(t.mail_url); };
+      }
       return add(d, add(el('div', 'bar'), add(el('label', 'field'), ti)), ac, dc,
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
-        rc, rv, ytPaid(t), stepsBox(t, d), add(el('div', 'acts'), sm, rm));
+        rc, rv, ytPaid(t), stepsBox(t, d), add(el('div', 'acts'), mb, sm, rm));
     }
     function item(t, today) {
       var wrap = el('div', 'fi'), open = opened === t.id;
@@ -4846,6 +4866,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // A block of rows under an unfolded row.
     function det(rows) { return add.apply(null, [el('div', 'det')].concat(rows)); }
+    // The element's class of a character (Russian name or code in any case: Пиро, pyro, Fire …); '' when unknown.
+    var ELEM = { 'пиро': 'pyro', pyro: 'pyro', fire: 'pyro', 'гидро': 'hydro', hydro: 'hydro', water: 'hydro', 'анемо': 'anemo', anemo: 'anemo',
+      wind: 'anemo', 'электро': 'electro', electro: 'electro', electric: 'electro', 'дендро': 'dendro', dendro: 'dendro', grass: 'dendro',
+      'крио': 'cryo', cryo: 'cryo', ice: 'cryo', 'гео': 'geo', geo: 'geo', rock: 'geo' };
+    function elementKey(x) { return ELEM[String(x || '').trim().toLowerCase()] || ''; }
+    // Tints a character's card with its element; no known element, no change.
+    function tint(node, x) {
+      var k = elementKey(x);
+      if (k) node.classList.add('elc', 'e-' + k);
+      return node;
+    }
     // A HoYoLAB icon in a circle (cls: s48, s28, s24; none is 36 px) or, without a usable one, the name's first letter.
     function ava(u, name, cls) {
       var ph = el('span', 'av' + (cls ? ' ' + cls : ''), String(name || '?').charAt(0).toUpperCase());
@@ -5107,7 +5138,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var r = hrow(c.name, c.weapon ? c.weapon + ' (' + c.weapon_level + ')' : null, 'ур. ' + c.level + ' · C' + c.constellation);
         var b = by[c.name];
         r.insertBefore(ava(c.icon || (b && b.icon), c.name), r.firstChild);
-        return b ? folding(r, function () { return buildRows(b); }, one) : r;
+        tint(r, c.element || (b && b.element));
+        return b ? folding(r, function () { return tint(buildRows(b), b.element); }, one) : r;
       });
       var box = card('top', 'Персонажи', rows.slice(0, 20));
       if (rows.length > 20) {
@@ -5204,13 +5236,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // «Команда» after «Боевой пропуск»: four avatars (icons from the characters
     // by name) with names under them, then the Mac's note. A list or «a, b, c».
-    function team(t, list) {
+    function team(t, list, builds) {
+      var bb = {};
+      (builds || []).forEach(function (b) { bb[b.name] = b; });
       var names = Array.isArray(t.team) ? t.team : t.team ? String(t.team).split(/\s*,\s*/) : [], by = {};
       names = names.filter(Boolean);
       if (!names.length) return;
       list.forEach(function (c) { by[c.name] = c; });
       card('users', 'Команда', [add.apply(null, [el('div', 'team')].concat(names.map(function (n) {
-        return add(el('div'), ava(by[n] && by[n].icon, n, 's48'), el('span', '', n));
+        return tint(add(el('div'), ava(by[n] && by[n].icon, n, 's48'), el('span', '', n)), (by[n] && by[n].element) || (bb[n] && bb[n].element));
       }))), t.team_note ? el('div', 'sub', t.team_note) : null].filter(Boolean));
     }
     var OCULI = { anemo: 'Анемо', geo: 'Гео', electro: 'Электро', dendro: 'Дендро', hydro: 'Гидро', pyro: 'Пиро', luno: 'Луно' };
@@ -5307,7 +5341,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var t = s.today || {}, q = wp(Date.now());
         today(n, cw && cw.day === tw.day && cw.month === tw.month ? t : {});
         bp(t.bp, t.date === q.year + '-' + q.month + '-' + q.day, n);
-        team(t, s.characters || []);
+        team(t, s.characters || [], s.builds || []);
         world(s.world);
         abyss(s.abyss);
         plan(s.plan);
