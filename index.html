@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 19:35">
+<meta name="published" content="2026-10-20 19:48">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -4414,6 +4414,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var FILM_STATUS = [['want', 'Хочу'], ['watching', 'Смотрю'], ['dropped', 'Бросил'], ['skip', 'Не интересно']];
   var FILM_LISTS = ['watching', 'want', 'seen', 'dropped', 'skip'];
   // The lists' type filter (docs/specs/cinema-dropped.md), kept in localStorage filmListType.
+  // «Для тебя»'s kind filter (docs/specs/films-recs.md, «Дополнение 20.10»), kept in localStorage recsOnly.
+  var RECS_ONLY = [['all', 'Все'], ['movie', 'Фильмы'], ['tv', 'Сериалы'], ['anime', 'Аниме']];
   var LIST_TYPES = [['all', 'Все'], ['movie', 'Фильмы'], ['tv', 'Сериалы'], ['anime', 'Аниме']];
   function filmPick() {
     var p = null;
@@ -4423,7 +4425,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return ok ? { type: p.type, genre: p.genre, random: p.random === true } : { type: 'movie', genre: 35, random: false };
   }
   function filmsView() {
-    var byId = {}, lists = null, picks = null, opened = null, seq = 0, pseq = 0, timer = null, moreB = null, recsAt = null;
+    var byId = {}, lists = null, picks = null, opened = null, seq = 0, pseq = 0, timer = null, moreB = null, recsAt = null, recsOnly = store('recsOnly');
+    if (!RECS_ONLY.some(function (o) { return o[0] === recsOnly; })) recsOnly = 'all';
     var pick = filmPick(), folded = { dropped: true, skip: true };
     var bar = el('div', 'bar'), input = el('input'), clr = add(el('button', 'fclr'), icon('x'));
     input.type = 'text';
@@ -4624,7 +4627,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       for (k in segs) segs[k].className = k === (a ? 'anime' : t) ? 'on' : '';
       clear(genres);
       // «Для тебя»: no genres, one muted line with the time of the last recount (films_recs computed_at).
-      if (t === 'recs') return genres.appendChild(el('div', 'mu', 'по твоим оценкам' + (recsAt ? ' · обновлено ' + stamp(recsAt) : '')));
+      if (t === 'recs') {
+        RECS_ONLY.forEach(function (o) {
+          genres.appendChild(chip(o[1], o[0] === recsOnly, null, function () {
+            if (o[0] === recsOnly) return;
+            recsOnly = o[0];
+            store('recsOnly', recsOnly);
+            drawGenres();
+            loadPicks(false);
+          }));
+        });
+        var note = el('div', 'mu', 'по твоим оценкам' + (recsAt ? ' · обновлено ' + stamp(recsAt) : ''));
+        note.style.whiteSpace = 'nowrap';
+        return genres.appendChild(note);
+      }
       PICK_GENRES[a ? 'anime' : t].forEach(function (g) {
         genres.appendChild(chip(g[1], t !== 'anime_movie' && g[0] === pick.genre, null, function () { choose(a ? 'anime' : t, g[0]); }));
       });
@@ -4650,7 +4666,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     // films_picks' body for a pick: anime series and anime films are kind tv and movie with anime set; films_recs' only a page.
     function pickBody(p, n) {
-      if (p.type === 'recs') return { page: n };
+      if (p.type === 'recs') return { page: n, only: recsOnly };
       return { kind: /^(tv|anime)$/.test(p.type) ? 'tv' : 'movie', anime: p.type.indexOf('anime') === 0, genre: p.genre, page: n,
         random: p.random };
     }
@@ -4682,7 +4698,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!picks) return add(clear(pbox), add(el('div', 'skel'), el('i'), el('i'), el('i')));
       if (picks.err) return err(pbox, picks.err, function () { loadPicks(false); });
       if (!picks.rows.some(function (f) { return !f.status; }) && (picks.end || (picks.random && picks.skips >= 5))) {
-        return add(clear(pbox), state('clapperboard', picks.recs && !picks.rows.length ? 'Рекомендации появятся после ночного пересчёта'
+        return add(clear(pbox), state('clapperboard', picks.recs && !picks.rows.length ? (recsOnly === 'all' ? 'Рекомендации появятся после ночного пересчёта'
+          : 'Пока нечего предложить — оцени больше ' + { movie: 'фильмов', tv: 'сериалов', anime: 'аниме' }[recsOnly])
           : 'Всё из подборки уже отмечено'));
       }
       var grid = el('div', 'fgrid');
@@ -4695,7 +4712,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var pg = null; // the cache key whose first page is in pbox
     function loadPicks(more) {
       var page = more ? picks.page + 1 : 1, mine = ++pseq, p = pick, recs = p.type === 'recs', rnd = !recs && p.random;
-      var act = recs ? 'films_recs' : 'films_picks', key = recs ? 'films:recs:1' : 'films:picks:' + p.type + ':' + p.genre;
+      var act = recs ? 'films_recs' : 'films_picks', key = recs ? 'films:recs:' + recsOnly + ':1' : 'films:picks:' + p.type + ':' + p.genre;
       // The first page is cache-first (docs/specs/app-cache-first.md): a cached pick is drawn at once,
       // another one waits under the skeleton.
       if (!more && !rnd) {
