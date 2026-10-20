@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 19:48">
+<meta name="published" content="2026-10-20 20:07">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -319,6 +319,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .fp.big{display:block;width:100%;height:auto;aspect-ratio:2/3}
 .fi{border-top:1px solid var(--line)}.fi:first-child{border-top:0}.fi>.row{border-top:0}.row.fr{align-items:flex-start}
 .fd{border-top:1px solid var(--line)}.fd .acts{margin:0;padding:0 14px 12px}
+.fr .fpl{flex:none;height:36px;padding:0 12px;font-size:13px}.fr .meter{max-width:220px}.mu.fwt{color:var(--link)}
+.fsr{padding:0 14px 10px}.fsl .pill{margin-left:8px}.fsr .hs{margin:0 -14px;padding:8px 14px 0}.fsr .hs .pill{height:44px}
+.fsr select{flex:none;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font:16px var(--font)}
+@media (min-width:900px){.fsr .hs .pill,.fsr select{height:32px}.fsr select{font-size:13px}}
 .hs{position:relative;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
 .hs .pill{flex:none;height:44px;padding:0 14px;font-size:13px}.ch+.hs{padding-top:0}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;padding:4px 14px 14px}
@@ -4461,6 +4465,95 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     add(lbox, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox);
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
+    // A series' progress (docs/specs/series-progress.md): «S2 · серия 5 из 10», «жду S3E5 · 24.10».
+    function epAt(e) { return 'S' + e.season + 'E' + e.episode; }
+    function progText(p) { return 'S' + p.season + ' · ' + (p.episode ? 'серия ' + p.episode + (p.of ? ' из ' + p.of : '') : 'не начат'); }
+    function waitText(p) {
+      var n = p.next_air;
+      return n ? 'жду ' + epAt(n) + (n.date ? ' · ' + dm(n.date) : '') : 'жду новый сезон';
+    }
+    function meter(p) {
+      var m = el('div', 'meter'), i = add(m, el('i')).firstChild;
+      i.style.width = (p.of ? Math.min(100, Math.round(p.episode / p.of * 100)) : 0) + '%';
+      m.setAttribute('aria-hidden', 'true');
+      return m;
+    }
+    function series(f) { return f.kind === 'tv' && f.status === 'watching'; }
+    // series_get once per open (the seasons for the pickers); series_next / series_set move him, the answer repainted.
+    function seriesLoad(f) {
+      if (f.seasonsAt === 'busy') return;
+      f.seasonsAt = 'busy';
+      api('miniapp', { action: 'series_get' }, 15000, true, { tmdb_id: f.tmdb_id }).then(function (j) {
+        f.seasons = j.meta.seasons || [];
+        f.progress = j.progress;
+        f.seasonsAt = Date.now();
+        if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
+      }, function () {
+        f.seasonsAt = 'err';
+        if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
+      });
+    }
+    function seriesMove(f, action, body, b) {
+      if (f.moving) return;
+      f.moving = true;
+      if (b) b.disabled = true;
+      haptic();
+      api('miniapp', { action: action }, 15000, false, Object.assign({ tmdb_id: f.tmdb_id }, body)).then(function (j) {
+        f.moving = false;
+        f.progress = j.progress;
+        if (j.meta) f.seasons = j.meta.seasons || f.seasons;
+        if (j.status === 'seen') toast('Досмотрел — поставь оценку', 'star');
+        else if (action === 'series_next' && !j.moved) toast(j.progress.waiting ? 'Всё вышедшее посмотрено' : 'Дальше серий нет');
+        apply(f, enc(j.status, j.status === 'seen' ? f.rating : null));
+      }, function () {
+        f.moving = false;
+        if (b) b.disabled = false;
+      });
+    }
+    function plusOne(f, cls) {
+      var b = button(cls, 'plus', cls.indexOf('fpl') >= 0 ? '1' : '1 серия', function (ev) {
+        if (ev) ev.stopPropagation();
+        seriesMove(f, 'series_next', {}, b);
+      });
+      b.setAttribute('aria-label', '+1 серия');
+      return b;
+    }
+    // The open series' block: the progress, its bar, «+1 серия», the season and episode pickers, the next episode.
+    function seriesBlock(f) {
+      var p = f.progress, box = el('div', 'fsr');
+      if (!f.seasonsAt || (f.seasonsAt !== 'busy' && f.seasonsAt !== 'err' && Date.now() - f.seasonsAt > 600000)) seriesLoad(f);
+      if (!p) return add(box, el('div', 'mu', f.seasonsAt === 'err' ? 'Серии не загрузились' : 'Загружаю серии…'));
+      var line = add(el('div', 'fsl'), el('b', '', progText(p)));
+      if (p.waiting) line.appendChild(pill(waitText(p), 'acc'));
+      else if (p.next_air) line.appendChild(el('span', 'mu', ' · выйдет ' + epAt(p.next_air) + (p.next_air.date ? ' · ' + dm(p.next_air.date) : '')));
+      add(box, line, meter(p));
+      var row = el('div', 'hs');
+      row.setAttribute('role', 'group');
+      row.setAttribute('aria-label', 'Серии');
+      if (!p.waiting) row.appendChild(plusOne(f, 'pill acc'));
+      var ss = f.seasons || [];
+      if (ss.length) {
+        var sel = el('select'), eps = el('select'), cur = ss.filter(function (x) { return x.n === p.season; })[0];
+        sel.setAttribute('aria-label', 'Сезон');
+        eps.setAttribute('aria-label', 'Последняя просмотренная серия');
+        ss.forEach(function (x) {
+          var o = el('option', '', 'Сезон ' + x.n);
+          o.value = x.n;
+          sel.appendChild(o);
+        });
+        for (var k = 0; k <= (cur ? cur.episodes : 0); k++) {
+          var o = el('option', '', k ? 'серия ' + k : 'не начат');
+          o.value = k;
+          eps.appendChild(o);
+        }
+        sel.value = String(p.season);
+        eps.value = String(p.episode);
+        sel.onchange = function () { seriesMove(f, 'series_set', { season: Number(sel.value), episode: 0 }); };
+        eps.onchange = function () { seriesMove(f, 'series_set', { season: p.season, episode: Number(eps.value) }); };
+        add(row, sel, eps);
+      }
+      return add(box, row);
+    }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
     // One object per film across the tab, so a mark shows wherever the film is; a mark still on its way wins.
     function own(r) {
@@ -4534,9 +4627,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (f.year) t.appendChild(el('span', 'mu', ' · ' + f.year));
       if (f.anime || f.kind === 'tv') t.appendChild(el('span', 'mu fk', f.anime ? ' · аниме' : ' · сериал'));
       var said = FILM_STATUS.filter(function (x) { return x[0] === f.status; })[0];
-      var tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
-        Number(f.vote) > 0 ? el('div', 'mu', ict('star', rateText(Number(f.vote).toFixed(1)))) : null, inCinema(f.cinema));
-      add(clear(wrap), add(r, poster(f), tx, f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
+      // A series he watches shows its progress and «+1» in place of «Смотрю», or a line with what it waits for.
+      var sp = series(f) && f.progress, tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
+        sp ? el('div', 'mu', progText(sp)) : null, sp ? meter(sp) : null, sp && sp.waiting ? el('div', 'mu fwt', waitText(sp)) : null,
+        Number(f.vote) > 0 && !sp ? el('div', 'mu', ict('star', rateText(Number(f.vote).toFixed(1)))) : null, inCinema(f.cinema));
+      add(clear(wrap), add(r, poster(f), tx, sp ? (sp.waiting ? null : plusOne(f, 'pill acc fpl'))
+        : f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
         : said ? pill(said[1], f.status === 'watching' ? 'acc' : '') : null, icon('chevron-down', 'go')));
       r.setAttribute('aria-expanded', String(open));
       tap(r, function () { if (open) shut(); else { shut(); hold(wrap, f, sec); } });
@@ -4554,7 +4650,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           if (sec === 'p' && f.status === 'skip') shut();
         }));
       });
-      add(wrap, add(el('div', 'det fd'), rates, sts,
+      add(wrap, add(el('div', 'det fd'), rates, sts, series(f) ? seriesBlock(f) : null,
         f.status ? add(el('div', 'acts'), button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); })) : null,
       f.overview ? el('div', 'tip', String(f.overview).slice(0, 300)) : null));
     }
