@@ -52,8 +52,14 @@
 .da-pills .pill{height:20px;padding:0 6px;font-size:11px}
 .da-month{padding:12px 14px 0;color:var(--muted-2);font:500 12px/1.2 var(--font);letter-spacing:.04em;text-transform:uppercase}
 .da-month+.pgrid{padding-top:10px}
-.da-stars{margin-top:4px}
-.da-stars .st{width:20px;height:24px;font-size:15px}.da-stars .st .i{width:15px;height:15px}
+.da-stars{display:flex;flex-wrap:nowrap;margin-top:4px}
+/* Each star holds two invisible buttons, its left and right half (x,5 and x); the focus ring stays visible. */
+.da-stars .st{position:relative;flex:none;display:grid;place-items:center;width:20px;height:24px;font-size:15px;letter-spacing:0}
+.da-stars .st .i{width:15px;height:15px;margin:0;vertical-align:0;color:var(--muted-2)}
+.da-stars .st .i.hf{position:absolute;inset:0;margin:auto;clip-path:inset(0 50% 0 0);fill:currentColor}
+.da-stars .st button{position:absolute;top:0;bottom:0;left:0;width:50%;min-width:0;min-height:0;margin:0;padding:0;border:0;border-radius:4px;background:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.da-stars .st button+button{left:50%}
+.da-stars .st button:focus-visible{outline:2px solid var(--fg);outline-offset:0}
 .da-stars :is(.st.on,.st.half) .i{color:var(--mark)}.da-stars .st.on .i{fill:currentColor}.da-eye .i{width:16px;height:16px}
 .tbl .da-stars{margin:0}
 .da-fine{padding-top:10px;font-size:12px;color:var(--muted-2)}
@@ -80,3 +86,5 @@
 .da-gv{min-width:0;font-weight:500;font-size:13px;overflow-wrap:anywhere}
 .da-g .mu{font-size:12px}
 .da-g .pill{margin-top:5px;height:18px;font-size:11px}
+/* «Фильмы» picks (the phone view's .fgrid): as many columns as fit; desktop-a.js trims the tail to whole rows. */
+.fgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}

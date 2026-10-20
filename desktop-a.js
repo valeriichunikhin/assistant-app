@@ -309,7 +309,9 @@
       bar.setAttribute('role', 'group');
       bar.setAttribute('aria-label', 'Оценка');
       for (var k = 1; k <= 5; k++) {
-        var st = add(el('span', 'st' + (rating >= k ? ' on' : rating >= k - 0.5 ? ' half' : '')), icon('star'));
+        var half = rating < k && rating >= k - 0.5;
+        // A half star is the outline with its left half filled: a second star clipped over it (.hf).
+        var st = add(el('span', 'st' + (rating >= k ? ' on' : half ? ' half' : '')), icon('star'), half ? icon('star', 'hf') : null);
         [k * 10 - 5, k * 10].forEach(function (t) {
           var b = el('button');
           b.type = 'button';
@@ -642,4 +644,24 @@
     }
     load();
   });
+
+  // --- «Фильмы» picks: whole rows ---
+  // The tab keeps its phone view (index.html filmsView); desktop-a.css lets its poster grid (.fgrid) fill the width in
+  // as many columns as fit. While «Ещё» can load more, the tiles past the last whole row wait hidden, so the grid ends
+  // on a full row; they show with the next page or when a mark removes a tile above them. Never fewer than one row.
+  function rows() {
+    if (!live('films')) return;
+    Array.prototype.forEach.call(A.main.querySelectorAll('.fgrid'), function (g) {
+      var tiles = Array.prototype.filter.call(g.children, function (x) { return x.classList.contains('ft'); });
+      var n = getComputedStyle(g).gridTemplateColumns.split(' ').length || 1, foot = g.nextElementSibling;
+      var more = !!(foot && foot.classList.contains('foot') && foot.querySelector('button'));
+      var keep = more && tiles.length > n ? tiles.length - tiles.length % n : tiles.length;
+      tiles.forEach(function (t, i) { t.style.display = i >= keep ? 'none' : ''; }); // .ft's display:flex beats [hidden]
+    });
+  }
+  // A draw or a removed tile (mutations), a new width or this file's stylesheet arriving (sizes); the picks may also
+  // be on screen before this script, hence the first call.
+  if (window.MutationObserver) new MutationObserver(rows).observe(A.main, { childList: true, subtree: true });
+  if (window.ResizeObserver) new ResizeObserver(function () { requestAnimationFrame(rows); }).observe(A.main); // outside the observer's own loop
+  rows();
 })();

@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 17:56">
+<meta name="published" content="2026-10-20 18:38">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -371,9 +371,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .lev{margin-top:4px}.lev+.lev{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.lev .ldoc{margin-top:6px}.lnote{font-style:italic}
 .ldocs-l{margin:6px 0 0;padding-left:22px;font-size:13px}.ldocs-l li{margin:2px 0;overflow-wrap:anywhere}
 .lta.ldocs{min-height:140px;margin:0 0 10px}
+/* A document with its own PDF (docs/specs/legal.md, «каждый документ отдельно»): the row is a button with the file icon
+   and its pages; «Что я высылал» shows one block per shipment, the Polish text for the office is only copied or printed. */
+.ldf{display:inline-flex;vertical-align:baseline;align-items:baseline;gap:6px;width:100%;min-height:32px;padding:6px 0;border:0;background:none;color:var(--link);font:inherit;line-height:1.4;text-align:left;cursor:pointer}
+.ldf .i{flex:none;width:14px;height:14px;align-self:flex-start;margin-top:2px}.ldf .tx{flex:1;min-width:0;overflow-wrap:anywhere}.ldf .mu{flex:none;font-size:12px}
+.ldf:disabled{opacity:.5}.ldocs-l li.lf{margin:0}
+.lwp{margin:0 0 10px;padding:10px 12px 6px;border:1px solid var(--line);border-radius:var(--r-s)}.lwp .ldocs-l{margin-top:4px}
+.tsum .acts.ltop{margin:0 0 12px}.tsum .lprint{display:none}
 @media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
   body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
-  body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh{display:none}body.printing .tsum pre{color:#000;font:12pt/1.5 serif}}
+  body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh,body.printing .tsum .lwk{display:none}
+  body.printing .tsum .lprint{display:block}body.printing .tsum pre{color:#000;font:12pt/1.5 serif}}
 </style>
 </head>
 <body>
@@ -2547,10 +2555,62 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         render();
       }, function () { if (b) b.disabled = false; });
     }
-    // «Что я высылал»: the server's Polish text, «Kopiuj» and «Drukuj» (window.print shows only the sheet's text).
+    // One document's PDF: legal_doc_url signs it for 300 s. In a browser the tab opens on the tap itself (Safari
+    // blocks a window opened after a request) and goes to the link when it comes; in Telegram openLink.
+    function openDoc(d, b) {
+      var w = browser ? window.open('', '_blank') : null;
+      if (w) try { w.opener = null; } catch (e) {}
+      b.disabled = true;
+      haptic();
+      api('miniapp', { action: 'legal_doc_url' }, 15000, false, { id: d.id }).then(function (j) {
+        b.disabled = false;
+        if (w) w.location.href = j.url; else openLink(j.url);
+      }, function () {
+        b.disabled = false;
+        if (w) w.close();
+      });
+    }
+    // An event's documents: the items in their order, each with its PDF when one has that title, then the PDFs the
+    // items do not list (the cover letter and the like).
+    function docList(e) {
+      var docs = (e.docs || []).slice(), out = [];
+      (e.items || []).forEach(function (s) {
+        var d = null;
+        for (var k = 0; k < docs.length; k++) if (docs[k].title === s) { d = docs.splice(k, 1)[0]; break; }
+        out.push({ s: s, d: d });
+      });
+      docs.forEach(function (d) { out.push({ s: d.title, d: d }); });
+      return out;
+    }
+    // The list: a document with a PDF is a button (the file icon, its pages) that opens it; one without is text.
+    function docOl(list) {
+      var ol = el('ol', 'ldocs-l');
+      list.forEach(function (x) {
+        if (!x.d) return ol.appendChild(el('li', '', x.s));
+        var b = add(el('button', 'ldf'), icon('file'), el('span', 'tx', x.s), x.d.pages ? el('span', 'mu', x.d.pages + ' стр.') : null);
+        b.type = 'button';
+        b.setAttribute('aria-label', x.s + ' — открыть PDF');
+        b.onclick = function () { openDoc(x.d, b); };
+        ol.appendChild(add(el('li', 'lf'), b));
+      });
+      return ol;
+    }
+    // «Что я высылал»: one block per shipment, oldest first as in the office's list, the documents opening as in the
+    // chronicle; the server's Polish text only behind «Kopiuj» and «Drukuj» (window.print shows only that text).
     function wykaz(x, from) {
       var s = String(x.wykaz || ''), cp = btn('btn', 'copy', 'Kopiuj'), pr = btn('btn ghost', 'file', 'Drukuj'), cl = btn('btn ghost', null, 'Закрыть');
-      var close = legalSheet('Что я высылал', [el('pre', 'code', s), add(el('div', 'acts'), cp, pr, cl)], from);
+      var sent = (x.events || []).filter(function (e) { return docList(e).length; }).sort(function (a, b) {
+        return a.on_date < b.on_date ? -1 : a.on_date > b.on_date ? 1 : a.id - b.id;
+      });
+      var box = el('div', 'lwk');
+      sent.forEach(function (e) {
+        var list = docList(e);
+        box.appendChild(add(el('div', 'lwp'), el('div', 'ldt', dmy(e.on_date)),
+          dotted(el('div', 'mu'), [pairName(LEGAL_EVENT, e.kind), pairName(LEGAL_SENT, e.sent_via),
+            list.length + ' ' + plural(list.length, ['документ', 'документа', 'документов'])]), docOl(list)));
+      });
+      if (!sent.length) box.appendChild(el('div', 'row mu', 'Пока ничего не отправлено'));
+      var close = legalSheet('Что я высылал', [add(el('div', 'acts ltop'), cp, pr, cl), box, el('pre', 'lprint', s)], from);
       cp.onclick = function () {
         copyText(s, function () {
           label(cp, 'check', 'скопировано');
@@ -2687,7 +2747,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return c;
     }
     // The chronicle: a vertical line, one packet per date (the date large), each event's type, how it went and its
-    // proof; the documents under it, unfolded on a wide screen and folded on the phone until tapped.
+    // proof; the documents under it, unfolded on a wide screen and folded on the phone until tapped (one with its own
+    // PDF opens on a tap).
     function chronicle(x, title) {
       var c = mkCard('calendar', 'Хроника', title), tl = el('div', 'ltl'), by = [], last = null;
       (x.events || []).forEach(function (e) {
@@ -2698,7 +2759,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       by.forEach(function (p) {
         var pk = add(el('div', 'lpk'), el('div', 'ldt', dmy(p.d)));
         p.ev.forEach(function (e) {
-          var items = e.items || [], open = legalDocs[e.id] != null ? legalDocs[e.id] : wide();
+          var items = docList(e), open = legalDocs[e.id] != null ? legalDocs[e.id] : wide();
           var head = dotted(el('div', 't'), [pairName(LEGAL_EVENT, e.kind), e.title]);
           var sub = dotted(el('div', 'mu'), [pairName(LEGAL_SENT, e.sent_via), e.proof ? 'подтверждение: ' + e.proof : '']);
           var box = add(el('div', 'lev'), head, sub.firstChild ? sub : null, e.note ? el('div', 'mu lnote', e.note) : null);
@@ -2712,11 +2773,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
               render();
             };
             box.appendChild(tg2);
-            if (open) {
-              var ol = el('ol', 'ldocs-l');
-              items.forEach(function (s) { ol.appendChild(el('li', '', s)); });
-              box.appendChild(ol);
-            }
+            if (open) box.appendChild(docOl(items));
           }
           pk.appendChild(box);
         });
