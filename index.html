@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 11:17">
+<meta name="published" content="2026-10-20 17:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -106,7 +106,10 @@ button{cursor:pointer}
 .card{background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);margin:0 0 16px;overflow:hidden;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
 .ch{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 14px 6px}
 .ch:last-child{padding-bottom:10px}
-.card.hero{background-size:cover;background-position:center}
+/* The Genshin namecard: a faint picture under the card's own surface, fading out behind the text (20.10.2026: the
+   card under a 72 % veil read as a pink block). */
+.card.hero{position:relative;isolation:isolate}
+.card.hero::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--nc) center/cover;opacity:.16;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 10%,#000 70%);mask-image:linear-gradient(90deg,transparent 10%,#000 70%)}
 .ch .ico{display:grid;place-items:center;flex:none;width:28px;height:28px;border:1px solid var(--line);border-radius:var(--r-s);color:var(--muted)}
 .ch .ico .i{width:16px;height:16px}
 .ch h3{flex:1;min-width:0;margin:0;font:800 14px/1.3 var(--font);letter-spacing:-.02em}
@@ -272,17 +275,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .seg.fit{width:auto}
   .seg.fit button{flex:1 0 auto}
   .chips .pill,.chips select{height:32px}
-  /* Cards flow down columns (up to three of 380 px) instead of a row grid: a short card no longer leaves a hole under
-     itself when its neighbour is tall (the Genshin tab's header beside «Сегодня», 18.10.2026). */
-  .cols{columns:3 380px;column-gap:16px;margin-bottom:16px}
-  .cols>.card{margin:0 0 16px;break-inside:avoid}
-  .cols>.state{column-span:all}
+  /* Cards pack like a masonry, up to three columns of at least 380 px (20.10.2026). CSS columns drew a staircase in
+     Safari: WebKit misplaces the cards' blur layers (backdrop-filter) inside a column box. Now a grid of 1 px rows;
+     packing in the script gives every child a row span of its height plus the 16 px gap, and the grid's auto-placement
+     puts each next card at the top of the shortest column, in reading order. */
+  .cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 32px)/3)),1fr));grid-auto-rows:1px;column-gap:16px;align-items:start;margin-bottom:16px}
+  .cols>*{min-width:0;margin:0}
+  .cols>.state{grid-column:1/-1}
   #toast{bottom:24px}
 }
 /* Big monitors (19.10.2026, «сделай респонсивным»: on 2560 px the content sat in the middle third): the content
    widens with the screen — four card columns from 1800 px, five from 2300 px, wider one-column views. */
-@media (min-width:1800px){.main{max-width:1760px}.main.narrow{max-width:960px}.cols{columns:4 380px}}
-@media (min-width:2300px){.main{max-width:2200px}.main.narrow{max-width:1040px}.cols{columns:5 380px}}
+@media (min-width:1800px){.main{max-width:1760px}.main.narrow{max-width:960px}.cols{grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 48px)/4)),1fr))}}
+@media (min-width:2300px){.main{max-width:2200px}.main.narrow{max-width:1040px}.cols{grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 64px)/5)),1fr))}}
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* After the Geist review (11.10): the active segment reads in dark, content centred on wide screens, a grey search
@@ -932,6 +937,32 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var main = el('main', 'main'), tabbar = el('nav', 'tabbar'), scrim = el('div', 'scrim'), sheet = el('div', 'sheet');
   var navs = {};
   var current = null;
+  // Masonry for .cols (20.10.2026): every child of a .cols box gets a row span of its height plus the 16 px gap; the
+  // CSS makes the box a grid of 1 px rows from 900 px, and on the phone it is a block where the span means nothing.
+  // A ResizeObserver keeps the span true when a card unfolds, an image lands or the window resizes; a MutationObserver
+  // on main hands it the children as the views add them. Without the observers the grid is plain rows.
+  if (window.ResizeObserver && window.MutationObserver) {
+    var packRO = new ResizeObserver(function (es) {
+      es.forEach(function (e) {
+        e.target.style.gridRowEnd = 'span ' + (Math.ceil(e.target.getBoundingClientRect().height) + 16);
+      });
+    });
+    var packAll = function (n, fn) {
+      if (n.nodeType !== 1) return;
+      if (n.parentNode && n.parentNode.classList && n.parentNode.classList.contains('cols')) fn(n);
+      Array.prototype.forEach.call(n.querySelectorAll('.cols>*'), fn);
+    };
+    new MutationObserver(function (ms) {
+      ms.forEach(function (m) {
+        m.removedNodes.forEach(function (n) {
+          if (n.nodeType !== 1) return;
+          packRO.unobserve(n);
+          Array.prototype.forEach.call(n.querySelectorAll('.cols>*'), function (k) { packRO.unobserve(k); });
+        });
+        m.addedNodes.forEach(function (n) { packAll(n, function (k) { packRO.observe(k); }); });
+      });
+    }).observe(main, { childList: true, subtree: true });
+  }
   function navBtn(t) {
     var b = add(el('button'), add(el('span', 'ic'), icon(t[1])), el('span', 'lb', t[2]));
     b.type = 'button';
@@ -4923,9 +4954,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var c = card('game', line || 'Genshin', []);
       if (imgOk(String(p.avatar || ''))) c.firstChild.firstChild.replaceWith(ava(p.avatar, p.nickname, 's40'));
       if (imgOk(String(p.namecard || ''))) {
-        var veil = 'color-mix(in srgb, var(--solid) 72%, transparent)';
         c.classList.add('hero');
-        c.style.backgroundImage = 'linear-gradient(' + veil + ',' + veil + '), url("' + p.namecard + '")';
+        c.style.setProperty('--nc', 'url("' + p.namecard + '")');
       }
       if (s.notes_at) c.firstChild.appendChild(el('span', 'mu', 'обновлено ' + at(s.notes_at)));
       // HoYoLAB's Abyss replaces Enka's floor: «Бездна 8-3 · [star] 24 · до 16.11».
