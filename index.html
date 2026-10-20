@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-19 22:22">
+<meta name="published" content="2026-10-20 11:11">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -349,6 +349,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .lta{display:block;width:100%;min-height:220px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface);color:var(--fg);font:16px/1.45 var(--font);resize:vertical}
 .lta:focus{outline:2px solid var(--fg);outline-offset:2px}.td .lpic{margin-top:8px;overflow-wrap:anywhere}.td .tsh+.hs{padding-top:4px}
 .row.li{flex-wrap:wrap;gap:6px 12px}.row.li>.acts{flex-basis:100%;margin:0}
+/* «Легализация» (docs/specs/legal.md): a sheet's title and chips, the folder path, the citizenship row, the actions under
+   the case; the chronicle as a timeline (a line on the left, a dot per date, the date large); print shows only the
+   «Что я высылал» sheet's text. */
+.lsh{margin:0 0 10px;font:800 16px/1.3 var(--font)}.tsum .hs{margin:0 -16px;padding:0 16px 10px}.tsum .bar{margin:0 0 10px}
+.lfold{overflow-wrap:anywhere;font-size:13px}.row.lcit .t{color:var(--good)}.lacts{margin:0;padding:4px 14px 12px}
+.ltl{position:relative;margin:4px 14px 14px 22px;padding-left:20px;border-left:2px solid var(--line)}
+.lpk{position:relative;padding:4px 0 12px}.lpk:last-child{padding-bottom:2px}
+.lpk::before{content:"";position:absolute;left:-28px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--mark);box-shadow:0 0 0 3px var(--solid)}
+.ldt{font:700 18px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.lev{margin-top:4px}.lev+.lev{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.lev .ldoc{margin-top:6px}.lnote{font-style:italic}
+.ldocs-l{margin:6px 0 0;padding-left:22px;font-size:13px}.ldocs-l li{margin:2px 0;overflow-wrap:anywhere}
+.lta.ldocs{min-height:140px;margin:0 0 10px}
+@media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
+  body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
+  body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh{display:none}body.printing .tsum pre{color:#000;font:12pt/1.5 serif}}
 </style>
 </head>
 <body>
@@ -438,6 +453,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
 <symbol id="i-forward" viewBox="0 0 24 24"><path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></symbol>
 <symbol id="i-sticky-note" viewBox="0 0 24 24"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></symbol>
+<symbol id="i-stamp" viewBox="0 0 24 24"><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/><path d="M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z"/><path d="M5 22h14"/></symbol>
 <symbol id="i-file-image" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol>
 </svg>
 <div id="app"></div>
@@ -865,13 +881,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
 
   // --- shell ---
-  // Phone: four tabs and «Ещё» in a bottom bar, the other eleven in a sheet; which four and in what order is
+  // Phone: four tabs and «Ещё» in a bottom bar, the other twelve in a sheet; which four and in what order is
   // the device's own choice («Кнопки внизу» on «Что нового», localStorage tabBar), BAR until it chose.
-  // From 900 px: all fifteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
+  // From 900 px: all sixteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['list', 'cart', 'Список'], ['picks', 'tag', 'Акции'], ['prices', 'trending', 'Цены'],
     ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['tasks', 'check-square', 'Задачи'],
+    ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow).
@@ -883,7 +900,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'li', 'inbox', 'feed'];
+  var TAB_KEYS = ['list', 'picks', 'prices', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The known keys of v, once each, in its order; anything else → [].
@@ -1666,6 +1683,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var TASK_AREAS = [['fba', 'FBA'], ['clinic', 'Pomoc'], ['home', 'Дом'], ['personal', 'Личное']];
   var TASK_SRC = { call: 'из созвона', voice: 'из голосового', bot: 'из бота', claude: 'от Claude' };
   var taskDraft = '', taskDoneOpen = false;
+  // A task to open when «Задачи» is drawn next (a tap on it in «Легализация»).
+  var taskOpenId = null;
   function warsawToday() { var p = wp(Date.now()); return p.year + '-' + p.month + '-' + p.day; }
   function areaName(k, areas) {
     var a = (areas || TASK_AREAS).filter(function (x) { return x[0] === k; })[0];
@@ -1786,7 +1805,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
   function nextWd(today, w) { return addDays(today, (w - wd(today) + 6) % 7 + 1); }
   function tasksView() {
-    var tasks = [], areas = TASK_AREAS, opened = null, refocus = null, area = store('taskArea') || '', more = {};
+    var tasks = [], areas = TASK_AREAS, opened = taskOpenId, refocus = taskOpenId, area = taskOpenId ? '' : store('taskArea') || '', more = {};
+    taskOpenId = null;
     var bar = el('form', 'bar'), input = el('input');
     input.placeholder = 'Новая задача…';
     input.value = taskDraft;
@@ -2379,6 +2399,291 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }, retry: load });
     }
     drawChips();
+    load();
+  }
+
+  // --- «Легализация» (docs/specs/legal.md) ---
+  // miniapp legal_list for the cases, then legal_case for each: the card (number copied by a tap, days since filing,
+  // status, «Проверил сегодня», the folder, the citizenship date after a positive pobyt stały decision), «Что дальше»
+  // (the case's open tasks; a tap opens the task in «Задачи») and the chronicle as a timeline, one packet per date.
+  var LEGAL_KIND = { pobyt_staly: 'Pobyt stały', pobyt_czasowy: 'Pobyt czasowy', karta_pobytu: 'Karta pobytu', obywatelstwo: 'Гражданство', inne: 'Другое' };
+  var LEGAL_STATUS = [['w_toku', 'в работе', 'acc'], ['wezwanie', 'вызов', 'warn'], ['decyzja_pozytywna', 'положительное решение', 'good'],
+    ['decyzja_negatywna', 'отказ', 'bad'], ['zamknieta', 'закрыто', '']];
+  var LEGAL_EVENT = [['wniosek', 'заявление'], ['doslanie', 'досылка'], ['wezwanie', 'вызов'], ['zwrotka', 'zwrotka'], ['decyzja', 'решение'],
+    ['status', 'статус'], ['inne', 'другое']];
+  var LEGAL_SENT = [['osobiscie', 'лично'], ['polecona', 'заказным письмом'], ['mos', 'через MOS'], ['email', 'e-mail'], ['inne', 'иначе']];
+  // The documents unfolded or folded by hand, by event id (the default: unfolded on a wide screen, folded on the phone).
+  var legalDocs = {};
+  function pairName(list, k) { var a = list.filter(function (x) { return x[0] === k; })[0]; return a ? a[1] : ''; }
+  function dmy(d) { return d ? dm(d) + '.' + d.slice(0, 4) : ''; }
+  // The Clipboard API, else a hidden textarea (some webviews deny the API); done() after a copy.
+  function copyText(s, done) {
+    function fallback() {
+      var ta = document.createElement('textarea'), ok = false;
+      ta.value = s;
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      ta.remove();
+      if (ok) done(); else toast('Не скопировалось');
+    }
+    (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(done, fallback);
+  }
+  // A sheet over the page (as the tasks summary): a title, the nodes, closed by Escape, the scrim and Telegram's Back.
+  // Returns close().
+  function legalSheet(title, nodes, from) {
+    var z = el('div', 'tsum'), box = add(el('div'), el('div', 'grab'), el('h3', 'lsh', title)), h = document.body.classList;
+    z.setAttribute('role', 'dialog');
+    z.setAttribute('aria-modal', 'true');
+    z.setAttribute('aria-label', title);
+    nodes.forEach(function (n) { if (n) box.appendChild(n); });
+    function close() {
+      z.remove();
+      h.remove('zoomed');
+      h.remove('printing');
+      hideBack();
+      if (from && from.isConnected) from.focus();
+    }
+    backHandler = close;
+    z.onclick = function (ev) { if (ev.target === z) close(); };
+    z.onkeydown = function (ev) { if (ev.key === 'Escape') close(); };
+    if (hasBack()) try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
+    h.add('zoomed');
+    add(document.body, add(z, box));
+    haptic();
+    var f = box.querySelector('input, textarea, button');
+    if (f) f.focus();
+    return close;
+  }
+  function legalView() {
+    var body = el('div', 'cols'), data = null;
+    main.appendChild(body);
+    function fresh() {
+      cacheDrop('legal');
+      cacheDrop('tasks');
+      cacheDrop('home');
+    }
+    function load() {
+      swr({ key: 'legal', box: body, n: 2, live: function () { return current === 'legal'; },
+        fetch: function () {
+          return api('miniapp', { action: 'legal_list' }, 15000, true).then(function (j) {
+            return Promise.all(((j && j.cases) || []).map(function (c) {
+              return api('miniapp', { action: 'legal_case' }, 15000, true, { id: c.id });
+            }));
+          }).then(function (all) { return { cases: all }; });
+        },
+        render: function (j) { data = j; render(); }, retry: load });
+    }
+    function btn(cls, ic, s, fn) {
+      var b = label(el('button', cls), ic, s);
+      b.type = 'button';
+      b.onclick = fn;
+      return b;
+    }
+    // legal_case_set with patch; the answer replaces the case, a new citizenship task is announced.
+    function setCase(x, patch, b) {
+      if (b) b.disabled = true;
+      haptic();
+      patch.id = x.case.id;
+      return api('miniapp', { action: 'legal_case_set' }, 15000, false, patch).then(function (j) {
+        if (j && j.case) x.case = j.case;
+        if (j && j.task) {
+          x.tasks = (x.tasks || []).concat([j.task]);
+          toast('Задача: ' + j.task.title + ' · ' + dm(j.task.due_date), 'check-square');
+        }
+        fresh();
+        render();
+      }, function () { if (b) b.disabled = false; });
+    }
+    // «Что я высылал»: the server's Polish text, «Kopiuj» and «Drukuj» (window.print shows only the sheet's text).
+    function wykaz(x, from) {
+      var s = String(x.wykaz || ''), cp = btn('btn', 'copy', 'Kopiuj'), pr = btn('btn ghost', 'file', 'Drukuj'), cl = btn('btn ghost', null, 'Закрыть');
+      var close = legalSheet('Что я высылал', [el('pre', 'code', s), add(el('div', 'acts'), cp, pr, cl)], from);
+      cp.onclick = function () {
+        copyText(s, function () {
+          label(cp, 'check', 'скопировано');
+          setTimeout(function () { label(cp, 'copy', 'Kopiuj'); }, 1500);
+        });
+      };
+      // The class stays until the sheet closes: it only matters under @media print.
+      pr.onclick = function () {
+        document.body.classList.add('printing');
+        try { window.print(); } catch (e) {}
+      };
+      cl.onclick = close;
+    }
+    // «Добавить событие»: date, type, title, how it went, proof, the documents one per line, a note.
+    function addEvent(x, from) {
+      var today = warsawToday(), kind = 'doslanie', via = null;
+      var di = el('input'), ti = el('input'), pi = el('input'), ni = el('input'), ta = el('textarea', 'lta ldocs');
+      di.type = 'date';
+      di.value = today;
+      di.setAttribute('aria-label', 'Дата');
+      ti.placeholder = 'Заголовок (необязательно)';
+      ti.maxLength = 200;
+      ti.setAttribute('aria-label', 'Заголовок');
+      pi.placeholder = 'Подтверждение: квитанция, zwrotka…';
+      pi.maxLength = 1000;
+      pi.setAttribute('aria-label', 'Подтверждение');
+      ni.placeholder = 'Заметка';
+      ni.maxLength = 1000;
+      ni.setAttribute('aria-label', 'Заметка');
+      ta.placeholder = 'Документы — по одному в строке';
+      ta.setAttribute('aria-label', 'Документы, по одному в строке');
+      var kc = el('div', 'hs'), vc = el('div', 'hs');
+      kc.setAttribute('role', 'group');
+      kc.setAttribute('aria-label', 'Тип');
+      vc.setAttribute('role', 'group');
+      vc.setAttribute('aria-label', 'Как отправлено');
+      function chips() {
+        clear(kc);
+        clear(vc);
+        LEGAL_EVENT.forEach(function (o) { kc.appendChild(chip(o[1], kind === o[0], null, function () { kind = o[0]; chips(); })); });
+        LEGAL_SENT.forEach(function (o) { vc.appendChild(chip(o[1], via === o[0], null, function () { via = via === o[0] ? null : o[0]; chips(); })); });
+      }
+      chips();
+      var save = btn('btn', 'plus', 'Добавить'), cancel = btn('btn ghost', null, 'Отмена');
+      var close = legalSheet('Новое событие', [add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di)), kc,
+        add(el('div', 'bar'), add(el('label', 'field'), ti)), vc, add(el('div', 'bar'), add(el('label', 'field'), pi)), ta,
+        add(el('div', 'bar'), add(el('label', 'field'), ni)), add(el('div', 'acts'), save, cancel)], from);
+      cancel.onclick = close;
+      save.onclick = function () {
+        var items = ta.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+        if (!di.value) return toast('Нужна дата');
+        if (items.length > 40) return toast('Не больше 40 документов');
+        if (items.some(function (s) { return s.length > 200; })) return toast('Название документа — до 200 знаков');
+        save.disabled = true;
+        haptic();
+        api('miniapp', { action: 'legal_event_add' }, 15000, false, { case_id: x.case.id, on_date: di.value, kind: kind,
+          title: ti.value, items: items, note: ni.value, sent_via: via, proof: pi.value }).then(function () {
+          close();
+          toast('Событие добавлено', 'check');
+          fresh();
+          delete shown.legal;
+          load();
+        }, function () { save.disabled = false; });
+      };
+    }
+    // «Статус»: the status chips, the decision's date and a short note, one legal_case_set.
+    function editStatus(x, from) {
+      var c = x.case, st = c.status, di = el('input'), ni = el('input'), sc = el('div', 'hs');
+      sc.setAttribute('role', 'group');
+      sc.setAttribute('aria-label', 'Статус');
+      function chips() {
+        clear(sc);
+        LEGAL_STATUS.forEach(function (o) { sc.appendChild(chip(o[1], st === o[0], null, function () { st = o[0]; chips(); })); });
+      }
+      chips();
+      di.type = 'date';
+      di.value = c.decision_on || '';
+      di.setAttribute('aria-label', 'Дата решения');
+      ni.value = c.status_note || '';
+      ni.placeholder = 'Заметка к статусу';
+      ni.maxLength = 1000;
+      ni.setAttribute('aria-label', 'Заметка к статусу');
+      var save = btn('btn', 'check', 'Сохранить'), cancel = btn('btn ghost', null, 'Отмена');
+      var close = legalSheet('Статус дела', [sc, add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'решение'), di)),
+        add(el('div', 'bar'), add(el('label', 'field'), ni)), add(el('div', 'acts'), save, cancel)], from);
+      cancel.onclick = close;
+      save.onclick = function () {
+        setCase(x, { status: st, decision_on: di.value || null, status_note: ni.value }, save).then(close);
+      };
+    }
+    function caseCard(x, today) {
+      var c = x.case, s = LEGAL_STATUS.filter(function (o) { return o[0] === c.status; })[0] || [c.status, c.status, ''];
+      var card = mkCard('stamp', c.title, [LEGAL_KIND[c.kind] !== c.title ? LEGAL_KIND[c.kind] : '', c.office].filter(Boolean).join(' · '));
+      if (c.case_no) {
+        var num = hrow(c.case_no, 'номер дела · тап — скопировать', icon('copy'));
+        tap(num, function () { copyText(c.case_no, function () { toast('Номер скопирован', 'copy'); }); });
+        card.appendChild(num);
+      }
+      card.appendChild(hrow(c.days != null ? 'в работе ' + c.days + ' ' + plural(c.days, ['день', 'дня', 'дней']) : 'дата подачи не записана',
+        c.filed_on ? 'подано ' + dmy(c.filed_on) : null, pill(s[1], s[2])));
+      if (c.status_note) card.appendChild(el('div', 'row mu', c.status_note));
+      var checked = c.status_checked_on === today, ck = btn('pg', 'check', checked ? 'Проверено' : 'Проверил сегодня', function () {
+        setCase(x, { status_checked_on: today }, ck);
+      });
+      ck.disabled = checked;
+      card.appendChild(hrow(c.status_checked_on ? 'статус проверен: ' + dmy(c.status_checked_on) : 'статус ещё не проверял', null, ck));
+      if (c.citizenship) {
+        card.appendChild(add(el('div', 'row lcit'), add(el('span', 'tx'), el('div', 't', 'Гражданство: подавать не раньше ' + dmy(c.citizenship.from)),
+          el('div', 'mu', c.citizenship.note))));
+      }
+      if (c.folder) card.appendChild(add(el('div', 'row'), add(el('span', 'tx'), el('div', 'mu', 'Папка'), el('div', 'lfold', c.folder))));
+      var acts = el('div', 'acts lacts');
+      var wk = btn('btn ghost', 'file', 'Что я высылал', function () { wykaz(x, wk); });
+      var ev = btn('btn ghost', 'plus', 'Добавить событие', function () { addEvent(x, ev); });
+      var stb = btn('btn ghost', 'pen-line', 'Статус', function () { editStatus(x, stb); });
+      card.appendChild(add(acts, wk, ev, stb));
+      return card;
+    }
+    // «Что дальше»: the open tasks of the case as rows of «Задачи»; ✓ marks it done, a tap on the row opens it there.
+    function nextCard(x, today, title) {
+      var open = (x.tasks || []).filter(function (t) { t.done = t.status === 'done'; return t.status === 'open'; });
+      var c = mkCard('check-square', 'Что дальше', title);
+      if (!open.length) c.appendChild(el('div', 'row mu', 'Открытых задач нет — добавь в «Задачах» с «Побыт:» в начале'));
+      open.forEach(function (t) {
+        var r = taskLine(t, TASK_AREAS, today, function () {
+          markTask(t, function () { fresh(); render(); });
+        });
+        tap(r, function () {
+          taskOpenId = t.id;
+          show('tasks');
+        });
+        c.appendChild(r);
+      });
+      return c;
+    }
+    // The chronicle: a vertical line, one packet per date (the date large), each event's type, how it went and its
+    // proof; the documents under it, unfolded on a wide screen and folded on the phone until tapped.
+    function chronicle(x, title) {
+      var c = mkCard('calendar', 'Хроника', title), tl = el('div', 'ltl'), by = [], last = null;
+      (x.events || []).forEach(function (e) {
+        if (!last || last.d !== e.on_date) by.push(last = { d: e.on_date, ev: [] });
+        last.ev.push(e);
+      });
+      if (!by.length) c.appendChild(el('div', 'row mu', 'Событий пока нет'));
+      by.forEach(function (p) {
+        var pk = add(el('div', 'lpk'), el('div', 'ldt', dmy(p.d)));
+        p.ev.forEach(function (e) {
+          var items = e.items || [], open = legalDocs[e.id] != null ? legalDocs[e.id] : wide();
+          var head = dotted(el('div', 't'), [pairName(LEGAL_EVENT, e.kind), e.title]);
+          var sub = dotted(el('div', 'mu'), [pairName(LEGAL_SENT, e.sent_via), e.proof ? 'подтверждение: ' + e.proof : '']);
+          var box = add(el('div', 'lev'), head, sub.firstChild ? sub : null, e.note ? el('div', 'mu lnote', e.note) : null);
+          if (items.length) {
+            var tg2 = add(el('button', 'pg ldoc'), icon(open ? 'chevron-up' : 'chevron-down'),
+              document.createTextNode('документы: ' + items.length));
+            tg2.type = 'button';
+            tg2.setAttribute('aria-expanded', String(open));
+            tg2.onclick = function () {
+              legalDocs[e.id] = !open;
+              render();
+            };
+            box.appendChild(tg2);
+            if (open) {
+              var ol = el('ol', 'ldocs-l');
+              items.forEach(function (s) { ol.appendChild(el('li', '', s)); });
+              box.appendChild(ol);
+            }
+          }
+          pk.appendChild(box);
+        });
+        tl.appendChild(pk);
+      });
+      return add(c, by.length ? tl : null);
+    }
+    function render() {
+      if (current !== 'legal') return;
+      var cases = ((data && data.cases) || []).filter(function (x) { return x && x.case; }), today = warsawToday();
+      clear(body);
+      if (!cases.length) return body.appendChild(state('stamp', 'Дел пока нет'));
+      // With several cases the second and third cards name their case.
+      cases.forEach(function (x) {
+        var sub = cases.length > 1 ? x.case.title : null;
+        add(body, caseCard(x, today), nextCard(x, today, sub), chronicle(x, sub));
+      });
+    }
     load();
   }
 
@@ -5696,7 +6001,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   var VIEWS = {
     home: homeView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
     genshin: genshinView
   };
   // --- desktop (≥ 900 px) ---
