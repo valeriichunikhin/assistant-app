@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 18:40">
+<meta name="published" content="2026-10-20 19:06">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -282,6 +282,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 32px)/3)),1fr));grid-auto-rows:1px;column-gap:16px;align-items:start;margin-bottom:16px}
   .cols>*{min-width:0;margin:0}
   .cols>.state{grid-column:1/-1}
+  /* «Фильмы»: an empty list holder takes no slot in the packing; search results in columns of rows (20.10.2026). */
+  .flists>:empty{display:none}
+  .flists>div>.card{margin:0}
+  .fres{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+  .fres>.fi{border-top:0;border-bottom:1px solid var(--line);margin-bottom:-1px}
+  /* «LinkedIn»: drafts and ideas up to 1100 px, the plan and the posted beside them. */
+  .lig{display:grid;grid-template-columns:minmax(0,1100px) minmax(360px,1fr);column-gap:16px;align-items:start}
+  .lig>*{min-width:0}
   #toast{bottom:24px}
   /* «Что нового», settings cards: rows of ~36 px and a small checkbox-like switch (21.10.2026). */
   .set .row{min-height:36px;padding:3px 12px;gap:10px}
@@ -916,8 +924,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'list', 'picks', 'prices'], MORE = [];
-  // One-column views: 720 px wide on a desktop (.main.narrow).
-  var NARROW = ['list', 'prices', 'wish', 'films', 'tasks', 'li', 'inbox', 'feed', 'news'];
+  // One-column views: 720 px wide on a desktop (.main.narrow). Each of these has a desktop view (desktop-a/b.js), so the cap
+  // holds only until those scripts land; «Фильмы», «Задачи», «LinkedIn» and «Что нового» use the full width with their cards
+  // in columns (20.10.2026, «сделай респонсивность под все»).
+  var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed'];
   var NAMES = {};
   // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
   // {tabs: {hidden}, home: {hidden, order}, muted}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
@@ -1876,7 +1886,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var plus = add(el('button', 'btn'), icon('plus'));
     plus.type = 'submit';
     plus.setAttribute('aria-label', 'Добавить');
-    var chips = el('div', 'hs tch'), body = el('div');
+    // Wide screen: the groups («Просрочено», «Сегодня», «Скоро»…) side by side in the card packing.
+    var chips = el('div', 'hs tch'), body = el('div', wide() ? 'cols' : '');
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', 'Метка');
     add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), chips, body);
@@ -2815,7 +2826,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // url and note (half-typed). focusEl: the field to focus once the render is on the page.
     var posts = [], month = 0, slots = [], opened = null, refocus = null, ui = {}, focusEl = null;
     var lang = store('liLang') === 'en' ? 'en' : 'pl';
-    var bar = el('form', 'bar'), input = el('input'), body = el('div');
+    // Wide screen (.lig): «Черновики» and «Идеи» in a column of up to 1100 px, where a draft reads and edits at a line's
+    // length; «План» and «Опубликовано» beside it.
+    var bar = el('form', 'bar'), input = el('input'), body = el('div', wide() ? 'lig' : '');
     input.placeholder = 'Идея поста…';
     input.value = liDraft;
     input.enterKeyHint = 'done';
@@ -3092,6 +3105,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (current !== 'li') return;
       var today = warsawToday(), end = addDays(today, 13), live = posts.filter(function (p) { return p.status !== 'skipped'; });
       clear(body);
+      // The phone keeps one column in this order: plan, drafts, ideas, posted.
+      var lig = body.className === 'lig', lmain = lig ? body.appendChild(el('div')) : body, lside = lig ? body.appendChild(el('div')) : body;
       // «План»: a row per post of the 14 days, a muted row per free slot.
       var plan = mkCard('calendar', 'План'), any = false;
       for (var d = today; d <= end; d = addDays(d, 1)) {
@@ -3114,13 +3129,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }
       }
       if (!any) plan.appendChild(el('div', 'row small mu', 'На две недели ничего не запланировано'));
-      body.appendChild(plan);
+      lside.appendChild(plan);
       var drafts = live.filter(function (p) { return p.status === 'draft' || p.status === 'ready'; }).sort(byPlan);
       if (drafts.length) {
         var c = mkCard('file', 'Черновики');
         c.firstChild.appendChild(el('span', 'mu', String(drafts.length)));
         drafts.forEach(function (p) { c.appendChild(item(p, today)); });
-        body.appendChild(c);
+        lmain.appendChild(c);
       }
       var ideas = live.filter(function (p) { return p.status === 'idea'; })
         .sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); });
@@ -3128,7 +3143,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var ic = mkCard('lightbulb', 'Идеи');
         ic.firstChild.appendChild(el('span', 'mu', String(ideas.length)));
         ideas.forEach(function (p) { ic.appendChild(ideaRow(p)); });
-        body.appendChild(ic);
+        lmain.appendChild(ic);
       }
       var done = live.filter(function (p) { return p.status === 'posted'; })
         .sort(function (a, b) { return String(b.posted_at || '').localeCompare(String(a.posted_at || '')); });
@@ -3143,9 +3158,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
               p.url ? icon('link') : null, p.url || null));
           });
         }
-        body.appendChild(pc);
+        lside.appendChild(pc);
       }
-      if (!drafts.length && !ideas.length && !done.length) body.appendChild(state('linkedin', 'Идей пока нет — напиши первую в поле выше'));
+      if (!drafts.length && !ideas.length && !done.length) lmain.appendChild(state('linkedin', 'Идей пока нет — напиши первую в поле выше'));
       if (focusEl && focusEl.isConnected) focusEl.focus();
       else if (refocus != null) {
         var w = [].filter.call(body.querySelectorAll('.fi'), function (x) { return x.lid === refocus; })[0];
@@ -4436,8 +4451,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     });
     genres.setAttribute('role', 'group');
     genres.setAttribute('aria-label', 'Жанр');
+    // Wide screen: the picks across the width, the lists and «Статистика» under them in the card packing.
+    var lbox = wide() ? el('div', 'cols flists') : home;
     add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
-      add(home, add(pickCard, seg, genres, pbox), types, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox), el('p', 'mu', 'Данные TMDB'));
+      add(home, add(pickCard, seg, genres, pbox), types, lbox === home ? null : lbox), el('p', 'mu', 'Данные TMDB'));
+    add(lbox, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox);
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
@@ -4579,7 +4597,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (mine !== seq || current !== 'films') return;
         var rows = (j.rows || []).map(own);
         if (!rows.length) return add(clear(res), state('search', 'Ничего не нашлось — попробуй по-английски или короче'));
-        var c = el('div', 'card');
+        var c = el('div', wide() ? 'card fres' : 'card');
         rows.forEach(function (f) { c.appendChild(item(f, 'r')); });
         add(clear(res), c);
       }, function (e) {
