@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-20 18:38">
+<meta name="published" content="2026-10-20 18:40">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -283,6 +283,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .cols>*{min-width:0;margin:0}
   .cols>.state{grid-column:1/-1}
   #toast{bottom:24px}
+  /* «Что нового», settings cards: rows of ~36 px and a small checkbox-like switch (21.10.2026). */
+  .set .row{min-height:36px;padding:3px 12px;gap:10px}
+  .set .row .btn.x{min-height:30px;min-width:30px;padding:0;background:none;box-shadow:none}
+  .set .row .btn.x:focus-visible{outline-offset:-2px}
+  .set .row .mk{width:20px;height:20px}
+  .set .sub{padding-top:2px;padding-bottom:6px}
 }
 /* Big monitors (19.10.2026, «сделай респонсивным»: on 2560 px the content sat in the middle third): the content
    widens with the screen — four card columns from 1800 px, five from 2300 px, wider one-column views. */
@@ -6100,7 +6106,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var tc = tabsCard(), mc = modulesCard(), hc = homeCard(), bc = barCard();
     prefsHook = { tab: 'news', fn: function (focus) { tc.paint(focus); mc.paint(focus); hc.paint(focus); bc.paint(); },
       modules: function () { mc.paint(); } };
-    add(main, browser ? pushCard() : null, tc, mc, hc, bc, body, el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована')));
+    var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
+    if (wide()) {
+      // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
+      body.className = 'cols';
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tc, hc, bc), body, note);
+    } else add(main, browser ? pushCard() : null, tc, mc, hc, bc, body, note);
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
