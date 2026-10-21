@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-21 21:11">
+<meta name="published" content="2026-10-21 21:18">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -6343,8 +6343,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // --- notification center (docs/specs/notif-center.md) ---
   // Every push the functions send, kept 30 days whether the app rang or not: by day, newest first, a row per entry
   // (time, the topic's icon and name, the whole text); unread rows carry an accent bar. Chips filter by topic (the
-  // topics of the rows loaded); «Прочитать всё» marks the lot; «Открыть» goes where the push would have (its tab),
-  // marking the entry read. Opened from a push (#notif/<id>) the entry is ringed, scrolled to the middle and read.
+  // topics of the rows loaded); a day's header reads that day (21.10.2026: «Прочитать всё» removed on his word, the
+  // day's check is enough); «Открыть» goes where the push would have (its tab), marking the entry read. Opened from a push (#notif/<id>) the entry is ringed, scrolled to the middle and read.
   var NOTIF_ICONS = { Assistant: 'spark', Claude: 'inbox', 'Тревоги': 'triangle-alert' };
   function notifIcon(r) {
     var t = r.tab && tabOf(r.tab), m = modules.filter(function (x) { return x.name === r.title; })[0];
@@ -6355,11 +6355,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var focus = notifFocus, seen = false, topic = null, rows = [], more = false, extra = [], readLocal = {}, readAll = false;
     notifFocus = null;
     var top = el('div', 'ntop'), chips = el('div', 'hs'), body = el('div', wide() ? 'cols' : ''), foot = el('div');
-    var all = label(el('button', 'btn ghost'), 'check', 'Прочитать всё');
-    all.type = 'button';
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', 'Темы');
-    add(main, add(top, chips, all), body, foot);
+    add(main, add(top, chips), body, foot);
     function live() { return current === 'notif'; }
     function dayName(date, today) {
       return date === today ? 'Сегодня' : date === addDays(today, -1) ? 'Вчера' : WEEK[wd(date)] + ' ' + dm(date);
@@ -6414,8 +6412,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           chips.appendChild(b);
         });
       }
-      all.style.display = notifUnread || list.some(function (r) { return !r.read_at; }) ? '' : 'none';
-      top.style.display = chips.firstChild || all.style.display !== 'none' ? '' : 'none';
+      top.style.display = chips.firstChild ? '' : 'none';
       clear(body);
       clear(foot);
       var shownRows = list.filter(function (r) { return !topic || (r.title || 'Assistant') === topic; });
@@ -6463,7 +6460,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         requestAnimationFrame(function () { el0.scrollIntoView({ block: 'center' }); });
       }
     }
-    all.onclick = function () { haptic(); read(null); draw(); };
     function load() {
       swr({ key: 'notif', box: body, n: 3, live: live,
         fetch: function () { return api('miniapp', { action: 'notif_list' }, 15000, true, {}); },
