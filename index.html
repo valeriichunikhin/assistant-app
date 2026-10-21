@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-21 12:20">
+<meta name="published" content="2026-10-21 21:11">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -438,6 +438,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.nt.unr .t{font-weight:700}
 .row.nt.hl{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
 @media (min-width:900px){.row.nt>.pg{margin-top:0}}
+/* «Уведомления»: the day header's check (reads that day) keeps the header's 44 px, the count sits before it. */
+.ch>.pg{min-height:32px;padding:0 10px}.ch>.mu+.pg{margin-left:-2px}
 </style>
 </head>
 <body>
@@ -6418,12 +6420,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       clear(foot);
       var shownRows = list.filter(function (r) { return !topic || (r.title || 'Assistant') === topic; });
       if (!shownRows.length) return add(body, state('bell', topic ? 'По этой теме пусто' : 'Уведомлений за 30 дней нет'));
-      var cards = {}, hit = null;
+      var cards = {}, hit = null, unread = {};
       shownRows.forEach(function (r) {
         var w = wp(r.at), date = w.year + '-' + w.month + '-' + w.day;
-        if (!cards[date]) body.appendChild(cards[date] = mkCard('bell', dayName(date, today)));
+        if (!cards[date]) {
+          body.appendChild(cards[date] = mkCard('bell', dayName(date, today)));
+          unread[date] = [];
+        }
+        if (!r.read_at) unread[date].push(r.id);
         var x = cards[date].appendChild(row(r));
         if (r.id === focus) hit = { el: x, r: r };
+      });
+      // A day with unread rows: their count and a check in its header that reads that day — the rows shown, so a
+      // topic filter reads only its own (21.10.2026, «кнопку справа от Сегодня»).
+      Object.keys(cards).forEach(function (date) {
+        var ids = unread[date];
+        if (!ids.length) return;
+        var b = add(el('button', 'pg'), icon('check'));
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Прочитать: ' + dayName(date, today));
+        b.onclick = function () { haptic(); read(ids); draw(); };
+        add(cards[date].firstChild, el('span', 'mu num', String(ids.length)), b);
       });
       if (more) {
         var m = label(el('button', 'btn ghost wide'), 'chevron-down', 'Показать ещё');
