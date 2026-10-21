@@ -215,10 +215,13 @@
     w.days.forEach(function (d) {
       var c = el('div', d.date === td ? 'now' : '');
       add(c, add(el('div', 'd'), el('b', '', WEEK[A.wd(d.date)]), document.createTextNode(' ' + dm(d.date))));
-      d.items.forEach(function (x) {
+      // Untimed tasks past two fold into «N задач», as on the phone (21.10.2026).
+      var ts = d.items.filter(function (x) { return x.kind === 'task' && !x.time; });
+      d.items.filter(function (x) { return x.kind !== 'task' || x.time || ts.length <= 2; }).forEach(function (x) {
         add(c, add(el('div', 'it it-' + (x.kind || '')), el('span', 'ie', x.icon + ' '),
           x.time ? el('span', 'tm', x.time + ' ') : null, document.createTextNode(x.text)));
       });
+      if (ts.length > 2) add(c, add(el('div', 'it it-task'), el('span', 'ie', '☑️ '), document.createTextNode(ts.length + ' ' + A.plural(ts.length, ['задача', 'задачи', 'задач']))));
       if (d.free_evening) c.appendChild(el('div', 'it free', 'свободно'));
       g.appendChild(c);
     });
