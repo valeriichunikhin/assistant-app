@@ -90,7 +90,7 @@
     var t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
     if (typing) return;
     if (e.key === '/') {
-      var s = A.current === 'prices' ? A.main.querySelector('input[type="search"]') : A.hdr.querySelector('.dsearch input');
+      var s = A.shopIs('prices') ? A.main.querySelector('input[type="search"]') : A.hdr.querySelector('.dsearch input');
       if (s && !s.closest('.off')) { e.preventDefault(); s.focus(); }
       return;
     }
@@ -499,8 +499,8 @@
     D.query = q;
     if (input.value.trim() !== q) input.value = q;
     var had = document.activeElement === input;
-    D.typed = had && A.current !== 'prices';
-    if (A.current !== 'prices') A.show('prices');
+    D.typed = had && !A.shopIs('prices');
+    if (!A.shopIs('prices')) A.show('prices');
     var f = A.main.querySelector('input[type="search"]');
     if (f && f.value !== q) { f.value = q; f.dispatchEvent(new Event('input', { bubbles: true })); }
   }
@@ -518,11 +518,11 @@
   // show() retitles the header on every tab change: hide the field on «Цены», empty it elsewhere.
   var lastTab = null;
   function onTab() {
-    var p = A.current === 'prices';
+    var p = A.shopIs('prices');
     // Genshin has nothing to search for in shops (19.10.2026): the field is hidden there too.
     box.classList.toggle('off', p || A.current === 'genshin');
     if (!p && lastTab === 'prices') { clearTimeout(timer); input.value = ''; }
-    lastTab = A.current;
+    lastTab = p ? 'prices' : A.current;
   }
   if (window.MutationObserver) new MutationObserver(onTab).observe(A.hTitle, { childList: true, characterData: true, subtree: true });
   onTab();

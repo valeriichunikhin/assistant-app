@@ -134,7 +134,7 @@
       }
       loading(results);
       Promise.all([api('miniapp', { action: 'prices', q: q }, 0, true), loadWatch(true)]).then(function (a) {
-        if (mine !== seq || !live('prices')) return;
+        if (mine !== seq || !A.shopIs('prices')) return;
         var rows = a[0].rows || [], used = a[0].query_pl;
         var asked = used && used.toLowerCase() !== q.toLowerCase() ? 'искал: ' + used : '';
         marks = [];
@@ -156,7 +156,7 @@
           open(rows[i], byHand);
         }
         pick(0, false);
-      }, function (e) { if (!e.login && mine === seq && live('prices')) A.failed(results, search); });
+      }, function (e) { if (!e.login && mine === seq && A.shopIs('prices')) A.failed(results, search); });
     }
     input.oninput = function () {
       D.query = input.value;
@@ -193,7 +193,7 @@
       add(foot, buy, wb);
       add(clear(right), add(c, inner));
       api('miniapp', { action: 'series', chain: r.chain, key: r.product_key }, 0, true).then(function (j) {
-        if (mine !== dseq || !live('prices')) return;
+        if (mine !== dseq || !A.shopIs('prices')) return;
         c.removeChild(inner);
         var rows = j.rows || [], s = j.stats || {};
         if (!rows.length) return add(c, A.state('trending', 'Наблюдений нет'), foot);
@@ -216,7 +216,7 @@
           })));
         right.appendChild(h);
       }, function (e) {
-        if (!e.login && mine === dseq && live('prices')) A.failed(inner, function () { open(r, false); });
+        if (!e.login && mine === dseq && A.shopIs('prices')) A.failed(inner, function () { open(r, false); });
       });
     }
 
@@ -235,7 +235,7 @@
       }
       function draw() {
         loadWatch().then(function () {
-          if (mine !== dseq || !live('prices')) return;
+          if (mine !== dseq || !A.shopIs('prices')) return;
           clear(wbox);
           if (!watch.length) return wbox.appendChild(el('div', 'row small mu', 'Ничего не жду — отметь товар в поиске'));
           wbox.appendChild(D.table([{ h: 'Товар' }, { h: 'Сеть' }, { h: 'С', r: true }, { h: '', w: '44px' }],
@@ -244,20 +244,20 @@
                 ev.stopPropagation();
                 api('telegram-webhook', { action: 'watch_remove', id: w.id }).then(function () {
                   A.toast('Больше не жду');
-                  if (mine === dseq && live('prices')) draw();
-                }, function (e) { if (e.code === 'no such item' && mine === dseq && live('prices')) draw(); });
+                  if (mine === dseq && A.shopIs('prices')) draw();
+                }, function (e) { if (e.code === 'no such item' && mine === dseq && A.shopIs('prices')) draw(); });
               }), icon('x'));
               x.setAttribute('aria-label', 'Больше не ждать');
               return [prodName(w), w.chain || 'любая', num(w.added_at ? A.dmt(w.added_at) : ''), x];
             }), { onRow: function (i) { D.query = input.value = watch[i].product_name; search(); } }));
-        }, function (e) { if (!e.login && mine === dseq && live('prices')) A.failed(wbox, draw); });
+        }, function (e) { if (!e.login && mine === dseq && A.shopIs('prices')) A.failed(wbox, draw); });
       }
       draw();
     }
     search();
     if (typed) {
       setTimeout(function () {
-        if (!live('prices')) return;
+        if (!A.shopIs('prices')) return;
         input.focus();
         try { input.setSelectionRange(input.value.length, input.value.length); } catch (e) {}
       }, 0);

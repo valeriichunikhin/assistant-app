@@ -148,7 +148,7 @@
       A.markItem(i, function () { render(k); });
     }
     function render(k) {
-      if (!on('list') || !lbody.isConnected) return;
+      if (!A.shopIs('list') || !lbody.isConnected) return;
       var back = typeof k === 'number' && lbody.contains(document.activeElement) ? k : -1;
       var open = items.filter(function (i) { return !i.done; }).length, bought = items.length - open;
       add(clear(head), stat('осталось', open), stat('куплено', bought));
@@ -203,11 +203,11 @@
         items = j.items || [];
         A.keepItems(items, render);
         render();
-      }, function (e) { if (!e.login && on('list')) A.failed(lbody, load); });
+      }, function (e) { if (!e.login && A.shopIs('list')) A.failed(lbody, load); });
     }
     function loadPicks() {
       api('telegram-webhook', { action: 'picks' }, undefined, true).then(function (j) {
-        if (!on('list') || !rbody.isConnected) return;
+        if (!A.shopIs('list') || !rbody.isConnected) return;
         clear(rbody);
         var bs = (j.batches || []).filter(function (b) { return (b.candidates || []).length; });
         if (!bs.length) return rbody.appendChild(A.state('tag', 'Подборок акций пока нет — новые приходят с газетками (вс, пн, чт)'));
@@ -229,7 +229,7 @@
           });
           rbody.appendChild(grid);
         });
-      }, function (e) { if (!e.login && on('list')) A.failed(rbody, loadPicks); });
+      }, function (e) { if (!e.login && A.shopIs('list')) A.failed(rbody, loadPicks); });
     }
     load();
     loadPicks();
@@ -302,7 +302,7 @@
       render();
     }
     function render() {
-      if (!on('picks') || !body.isConnected || !batches) return;
+      if (!A.shopIs('picks') || !body.isConnected || !batches) return;
       chips();
       clear(body);
       var q = pickQ.trim().toLowerCase(), shown = 0;
@@ -358,10 +358,19 @@
         batches = j.batches || [];
         A.keepPicks(batches, render);
         render();
-      }, function (e) { if (!e.login && on('picks')) A.failed(body, load); });
+      }, function (e) { if (!e.login && A.shopIs('picks')) A.failed(body, load); });
     }
     load();
   });
+
+  // --- «Покупки» (docs/specs/shop-tab.md): the phone's «Список · Акции · Цены» switch, then the wide view of the
+  // segment registered above (or desktop-a's «Цены»); the phone's segment view while that file is still on its way ---
+  D.views.shop = function () {
+    if (!D.table) return A.views.shop();
+    A.main.appendChild(A.shopSegs());
+    var k = ['list', 'picks', 'prices'].filter(A.shopIs)[0];
+    (D.views[k] || A.views[k])();
+  };
 
   // --- wish: the add form in one row, then the watched products as a table ---
   var wishUrl = '', wishTarget = '';
