@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-21 10:15">
+<meta name="published" content="2026-10-21 12:20">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -302,6 +302,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    widens with the screen — four card columns from 1800 px, five from 2300 px, wider one-column views. */
 @media (min-width:1800px){.main{max-width:1760px}.main.narrow{max-width:960px}.cols{grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 48px)/4)),1fr))}}
 @media (min-width:2300px){.main{max-width:2200px}.main.narrow{max-width:1040px}.cols{grid-template-columns:repeat(auto-fill,minmax(max(380px,calc((100% - 64px)/5)),1fr))}}
+/* «Задачи» on a wide screen (21.10.2026, «чтобы все столбцы помещались на один экран»): the groups as a board in the
+   chain Просрочено → Сегодня → Скоро → Позже → Без срока → Сделано, empty ones too, read left to right (the masonry of
+   .cols put «Без срока» under «Просрочено»). Three columns in two rows up to 1800 px; from there all six in one row over
+   the full window width, each column scrolling inside and ending at the window's bottom (--tb-top: the board's distance
+   from the page top, set by the view). «Сделано» is folded most of the time, so it is the narrower column; a row opens by
+   a tap on it, so the one-row board drops its chevron. */
+.tboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start;margin-bottom:16px}
+.tboard>.card{margin:0}
+.tbl>.fi:first-child{border-top:1px solid var(--line)}
+.tboard .none{padding:4px 14px 12px;color:var(--muted)}
+@media (min-width:1800px){
+  .tboard{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,.8fr);margin:0}
+  .main:has(>.tboard){max-width:none;padding-bottom:16px}
+  .tboard>.card{display:flex;flex-direction:column;max-height:calc(100dvh - var(--tb-top,160px) - 16px)}
+  .tboard>.card>.ch{flex:none}
+  .tboard .tbl{overflow-y:auto;min-height:0;overscroll-behavior:contain}
+  .tboard .fi>.row>.go{display:none}
+}
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* After the Geist review (11.10): the active segment reads in dark, content centred on wide screens, a grey search
@@ -1945,8 +1963,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var plus = add(el('button', 'btn'), icon('plus'));
     plus.type = 'submit';
     plus.setAttribute('aria-label', 'Добавить');
-    // Wide screen: the groups («Просрочено», «Сегодня», «Скоро»…) side by side in the card packing.
-    var chips = el('div', 'hs tch'), body = el('div', wide() ? 'cols' : '');
+    // Wide screen: the groups («Просрочено», «Сегодня», «Скоро»…) as a board (CSS .tboard).
+    var chips = el('div', 'hs tch'), body = el('div', wide() ? 'tboard' : '');
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', 'Метка');
     add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), chips, body);
@@ -2492,30 +2510,34 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         else g.later.push(t);
       });
       clear(body);
-      var any = false;
+      // A big screen: every group a column of the board, empty ones too, so the chain keeps its place (CSS .tboard).
+      var board = wide(), any = false;
+      function rowsBox(c) { return board ? c.appendChild(el('div', 'tbl')) : c; }
       // «Позже»: past the seven days of «Скоро», so no task is left out.
       [['over', 'alert', 'Просрочено'], ['today', 'clock', 'Сегодня'], ['soon', 'calendar', 'Скоро'], ['later', 'layers', 'Позже'],
         ['none', 'bookmark', 'Без срока']].forEach(function (k) {
         var rows = g[k[0]].sort(byDue);
-        if (!rows.length) return;
-        any = true;
-        var c = mkCard(k[1], k[2]);
+        if (!rows.length && !board) return;
+        if (rows.length) any = true;
+        var c = mkCard(k[1], k[2]), box = rowsBox(c);
         c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
-        rows.forEach(function (t) { c.appendChild(item(t, today)); });
+        rows.forEach(function (t) { box.appendChild(item(t, today)); });
+        if (!rows.length) box.appendChild(el('div', 'none', '—'));
         body.appendChild(c);
       });
-      if (!any) body.appendChild(state('check-square', area ? 'В «' + areaName(area, areas) + '» открытых задач нет' : 'Задач нет — напиши первую в поле выше'));
-      if (g.done.length) {
-        var c = mkCard('check', 'Сделано'), h = c.firstChild;
+      if (!any && !board) body.appendChild(state('check-square', area ? 'В «' + areaName(area, areas) + '» открытых задач нет' : 'Задач нет — напиши первую в поле выше'));
+      if (g.done.length || board) {
+        var c = mkCard('check', 'Сделано'), h = c.firstChild, box = rowsBox(c);
         add(h, el('span', 'mu', String(g.done.length)), icon('chevron-down', 'go'));
         h.setAttribute('aria-expanded', String(taskDoneOpen));
         tap(h, function () { taskDoneOpen = !taskDoneOpen; render(); });
         if (taskDoneOpen) {
           g.done.sort(function (a, b) { return String(b.done_at || '').localeCompare(String(a.done_at || '')); })
-            .forEach(function (t) { c.appendChild(item(t, today)); });
+            .forEach(function (t) { box.appendChild(item(t, today)); });
         }
         body.appendChild(c);
       }
+      if (board) body.style.setProperty('--tb-top', Math.round(body.getBoundingClientRect().top + window.scrollY) + 'px');
       if (refocus != null) {
         var w = [].filter.call(body.querySelectorAll('.fi'), function (x) { return x.tid === refocus; })[0];
         refocus = null;
