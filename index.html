@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 22:03">
+<meta name="published" content="2026-10-22 23:02">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -469,6 +469,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mhow{margin:0 0 8px;padding-left:20px;font-size:14px;line-height:1.5}.mhow li{margin:0 0 8px}
 .mhow code{padding:1px 4px;border-radius:4px;background:var(--surface-2);font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
 .mny .state .mu{font-size:13px}
+/* Budgets and subscriptions (docs/specs/money-2.md): a category's bar against its budget turns amber from 80 % and red
+   from 100 %; the month's budget line over the categories; «⋯» opens the budget sheet; «Подписки» five rows, then more. */
+.mbar>i.warn{background:var(--warn)}.mbar>i.over{background:var(--bad)}
+.row.mcat .btn.x.mmore{margin:0 -8px 0 -4px;padding:0;min-width:36px;background:none;box-shadow:none;color:var(--muted)}
+.mbud{display:block;width:100%;padding:10px 14px 12px;border:0;border-top:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.mbud .mbl{display:flex;align-items:baseline;gap:8px;margin:0 0 7px;font-size:14px;line-height:1.3}
+.mbud .mbl .tx{flex:1;min-width:0}.mbud .mbl .num{flex:none;font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.mbud .mbl .num.warn{color:var(--warn)}.mbud .mbl .num.over{color:var(--bad)}
+.mlink{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
+.mlink .i{width:16px;height:16px}
+.row.msub .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mmorebtn{display:block;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
 @media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
   body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
   body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh,body.printing .tsum .lwk{display:none}
@@ -6493,9 +6505,134 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return add(el('div', 'state'), icon('wallet'), el('p', '', 'Трат пока нет'),
       el('p', 'mu', 'Оплаты Apple Pay приходят сами, когда на iPhone включена автоматизация «Транзакция». Наличные и BLIK — кнопкой «Трата».'), how);
   }
+  // Budgets (docs/specs/money-2.md §1): «1 240» in whole złoty for the budget lines; a bar's class from its share of
+  // the budget — amber from 80 %, red from 100 %.
+  function moneyInt(v) { return grouped(String(Math.round(Math.abs(Number(v) || 0)))); }
+  function moneyBudgetCls(p) { return p >= 1 ? 'over' : p >= 0.8 ? 'warn' : ''; }
+  function moneyBar(p, cls) {
+    var bar = add(el('div', 'mbar'), el('i', cls || ''));
+    bar.firstChild.style.width = Math.max(Math.min(p, 1) * 100, 1).toFixed(1) + '%';
+    return bar;
+  }
+  // The sheet «Бюджет: Кафе» (key a category or 'total') for the month on screen (j): the amount a month, «Сохранить»,
+  // «Убрать» when one is set. done() reloads the view after a confirmed write.
+  function moneyBudgetSheet(key, j, done, from) {
+    var budgets = j.budgets || {}, cur = budgets[key], close = noop;
+    var spent = key === 'total' ? j.total || 0 : ((j.by_category || []).filter(function (b) { return b.category === key; })[0] || { sum: 0 }).sum;
+    var amt = el('input');
+    amt.placeholder = 'Сумма в месяц';
+    amt.setAttribute('aria-label', 'Сумма в месяц');
+    amt.inputMode = 'decimal';
+    amt.value = cur ? moneyNum(cur).replace(/\s/g, '').replace(/,00$/, '') : '';
+    function send(monthly, btn) {
+      btn.disabled = true;
+      haptic();
+      api('miniapp', { action: 'money_budget_set' }, undefined, false, { category: key, monthly: monthly }).then(function () {
+        cacheDrop('money');
+        close();
+        toast(monthly ? 'Бюджет сохранён' : 'Бюджет убран', 'check');
+        done();
+      }, function () { btn.disabled = false; });
+    }
+    var save = label(el('button', 'btn'), 'check', 'Сохранить');
+    save.type = 'button';
+    save.onclick = function () {
+      var a = moneyIn(amt.value);
+      if (!a) return toast('Сумма — число больше нуля');
+      send(a, save);
+    };
+    var del = null;
+    if (cur) {
+      del = label(el('button', 'btn ghost'), 'trash', 'Убрать');
+      del.type = 'button';
+      del.onclick = function () { send(null, del); };
+    }
+    close = legalSheet(key === 'total' ? 'Бюджет на месяц' : 'Бюджет: ' + moneyCat(key)[1], [
+      add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, el('span', 'mu', 'zł в месяц'))),
+      el('div', 'mu msrc', 'За ' + monthLabel(j.month || monthNow()).toLowerCase() + ' потрачено ' + moneyInt(spent) + ' zł' +
+        (cur ? ' · ' + Math.round(spent / cur * 100) + ' %' : '')),
+      el('div', 'mu msrc', 'При 80 % и 100 % придёт строка в Telegram, без сумм.'),
+      add(el('div', 'bar mact'), save, del)], from);
+  }
+  // «По категориям» for the phone and the desktop: the month's budget line (or «Задать бюджет на месяц»), a row per
+  // category — its bar against the budget when it has one («из 1 500 zł · 83 %»), else its share of the month — and
+  // «⋯» for the budget sheet; the budgeted categories without spends this month come last. A tap on a row is
+  // onFilter(category); done() reloads after a budget is written.
+  function moneyCats(j, onFilter, done) {
+    var cats = mkCard('layers', 'По категориям'), total = j.total || 0, budgets = j.budgets || {}, tb = budgets.total;
+    if (tb) {
+      var tp = total / tb, line = el('button', 'mbud');
+      line.type = 'button';
+      add(line, add(el('div', 'mbl'), el('span', 'tx', 'Бюджет на месяц: ' + moneyInt(total) + ' из ' + moneyInt(tb) + ' zł'),
+        el('span', 'num ' + moneyBudgetCls(tp), Math.round(tp * 100) + ' %')), moneyBar(tp, moneyBudgetCls(tp)));
+      line.onclick = function () { moneyBudgetSheet('total', j, done, line); };
+      cats.appendChild(line);
+    } else {
+      var set = add(el('button', 'mlink'), icon('plus'), document.createTextNode('Задать бюджет на месяц'));
+      set.type = 'button';
+      set.onclick = function () { moneyBudgetSheet('total', j, done, set); };
+      cats.appendChild(set);
+    }
+    var list = (j.by_category || []).slice();
+    Object.keys(budgets).forEach(function (k) {
+      if (k !== 'total' && !list.some(function (b) { return b.category === k; })) list.push({ category: k, sum: 0, count: 0 });
+    });
+    list.forEach(function (b) {
+      var c = moneyCat(b.category), on = MONEY.filter === b.category, share = total ? b.sum / total : 0, bud = budgets[b.category];
+      var p = bud ? b.sum / bud : share, cls = bud ? moneyBudgetCls(p) : '';
+      var tile = add(el('span', 'ptile'), icon(c[2]));
+      tile.setAttribute('aria-hidden', 'true');
+      var more = add(el('button', 'btn ghost x mmore'), icon('more'));
+      more.type = 'button';
+      more.setAttribute('aria-label', 'Бюджет: ' + c[1]);
+      more.onclick = function (ev) { ev.stopPropagation(); moneyBudgetSheet(b.category, j, done, more); };
+      var r = add(el('div', 'row mcat' + (on ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), moneyBar(p, cls)),
+        add(el('span', 'pr'), document.createTextNode(moneyFmt(b.sum)),
+          el('span', 'mu', bud ? 'из ' + moneyInt(bud) + ' zł · ' + Math.round(p * 100) + ' %'
+            : b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))), more);
+      r.setAttribute('aria-pressed', String(on));
+      tap(r, function () { onFilter(on ? null : b.category); });
+      cats.appendChild(r);
+    });
+    return cats;
+  }
+  // «Подписки» (docs/specs/money-2.md §3): what the server finds in a year of spends (money_subs), drawn into box —
+  // nothing when it finds none. Five rows, then «ещё N»; a row's sum is its monthly one, they add up to the header.
+  function moneySubs(box, live) {
+    swr({ key: 'money:subs', box: box, n: 0, live: live,
+      fetch: function () { return api('miniapp', { action: 'money_subs' }, undefined, true); },
+      render: function (j) { moneySubsDraw(box, j); } });
+  }
+  function moneySubsDraw(box, j) {
+    clear(box);
+    var list = (j && j.subs) || [];
+    if (!list.length) return;
+    var card = mkCard('repeat', 'Подписки', '≈ ' + moneyInt(j.total_monthly) + ' zł в месяц'), rows = el('div');
+    function paint() {
+      clear(rows);
+      list.slice(0, MONEY.subsAll ? list.length : 5).forEach(function (s) {
+        var c = moneyCat(s.category), tile = add(el('span', 'ptile'), icon(c[2])), p = wp(s.next_at);
+        tile.setAttribute('aria-hidden', 'true');
+        rows.appendChild(add(el('div', 'row msub'), tile, add(el('span', 'tx'), el('div', 't', s.name),
+          el('div', 'mu num', 'след. ≈ ' + p.day + '.' + p.month + (s.months > 1 ? ' · ' + s.months + ' мес. подряд' : ''))), el('span', 'pr', moneyFmt(s.monthly, s.currency))));
+      });
+      if (list.length > 5) {
+        var more = el('button', 'mmorebtn', MONEY.subsAll ? 'Свернуть' : 'ещё ' + (list.length - 5));
+        more.type = 'button';
+        more.setAttribute('aria-expanded', String(!!MONEY.subsAll));
+        more.onclick = function () { MONEY.subsAll = !MONEY.subsAll; paint(); };
+        rows.appendChild(more);
+      }
+    }
+    paint();
+    add(box, add(card, rows));
+  }
   function moneyView() {
-    var body = add(main, el('div', 'mny')).lastChild, data = null;
-    function load() { moneyLoad(body, render, load); }
+    var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div');
+    function load() {
+      moneyLoad(body, render, load);
+      moneySubs(subs, function () { return current === 'money'; });
+    }
     function row(r) {
       var c = moneyCat(r.category), tile = add(el('span', 'ptile'), icon(c[2]));
       tile.setAttribute('aria-hidden', 'true');
@@ -6522,20 +6659,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           other ? el('div', 'mvs', other) : null), add1)));
       var rows = j.rows || [];
       if (!rows.length) return body.appendChild(add(el('div', 'card'), moneyEmpty()));
-      var cats = mkCard('layers', 'По категориям'), total = j.total || 0;
-      (j.by_category || []).forEach(function (b) {
-        var c = moneyCat(b.category), on = MONEY.filter === b.category, share = total ? b.sum / total : 0;
-        var tile = add(el('span', 'ptile'), icon(c[2]));
-        tile.setAttribute('aria-hidden', 'true');
-        var bar = add(el('div', 'mbar'), el('i'));
-        bar.firstChild.style.width = Math.max(share * 100, 1).toFixed(1) + '%';
-        var r = add(el('div', 'row mcat' + (on ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), bar),
-          add(el('span', 'pr'), document.createTextNode(moneyFmt(b.sum)),
-            el('span', 'mu', b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))));
-        r.setAttribute('aria-pressed', String(on));
-        tap(r, function () { MONEY.filter = on ? null : b.category; haptic(); render(data); });
-        cats.appendChild(r);
-      });
+      var cats = moneyCats(j, function (k) { MONEY.filter = k; haptic(); render(data); }, load);
       var list = mkCard('wallet', 'Траты');
       if (MONEY.filter) {
         var f = chip(moneyCat(MONEY.filter)[1], true, 'Снять фильтр', function () { MONEY.filter = null; render(data); });
@@ -6559,7 +6683,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       close();
       if (!shownRows.length) list.appendChild(el('div', 'mday', 'В этой категории трат нет'));
       if (j.more) list.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' трат месяца'));
-      add(body, cats, list);
+      add(body, cats, subs, list);
     }
     load();
   }
@@ -6967,7 +7091,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     TELEGRAM_TOPIC_DOKUMENTY: 'id-card', TELEGRAM_TOPIC_RECEIPTS: 'receipt', TELEGRAM_TOPIC_PARCELS: 'package',
     TELEGRAM_TOPIC_GENSHIN: 'game', TELEGRAM_TOPIC_TENNIS: 'circle-dot', TELEGRAM_TOPIC_NEWS: 'news',
     TELEGRAM_TOPIC_CINEMA: 'film', TELEGRAM_TOPIC_MEDICINE: 'steth', TELEGRAM_TOPIC_EVENTS: 'calendar',
-    TELEGRAM_TOPIC_CALLS: 'phone', TELEGRAM_TOPIC_FLATS: 'building-2', TELEGRAM_TOPIC_GIGS: 'briefcase-business'
+    TELEGRAM_TOPIC_CALLS: 'phone', TELEGRAM_TOPIC_FLATS: 'building-2', TELEGRAM_TOPIC_GIGS: 'briefcase-business', money: 'wallet'
   };
   function modulesCard() {
     var card = mkCard('toggle-right', 'Модули'), rows = el('div');
@@ -7283,7 +7407,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
     DELA_DONE: DELA_DONE, delaHint: delaHint, swr: swr, chip: chip, MONEY: MONEY, MONEY_CATS: MONEY_CATS, moneyCat: moneyCat,
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
-    moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
+    moneyCats: moneyCats, moneySubs: moneySubs, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };

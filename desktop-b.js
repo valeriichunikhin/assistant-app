@@ -554,9 +554,12 @@
   // right (docs/specs/money.md). The month, the filter, the sheets and the formats are index.html's (APP.MONEY…), so
   // the phone and the Mac show the same month. ---
   view('money', function (main) {
-    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null;
+    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null, subs = el('div');
     add(main, tool, body);
-    function load() { A.moneyLoad(body, render, load); }
+    function load() {
+      A.moneyLoad(body, render, load);
+      A.moneySubs(subs, function () { return on('money'); });
+    }
     function render(j) {
       if (!on('money') || !body.isConnected) return;
       data = j;
@@ -571,20 +574,7 @@
       (j.other || []).forEach(function (o) { tiles.push({ k: 'Не в злотых', v: A.moneyFmt(o.sum, o.currency) }); });
       body.appendChild(D.tiles(tiles));
       if (!rows.length) return body.appendChild(add(el('div', 'card'), A.moneyEmpty()));
-      var cats = A.mkCard('layers', 'По категориям'), total = j.total || 0;
-      (j.by_category || []).forEach(function (b) {
-        var c = A.moneyCat(b.category), sel = M.filter === b.category, share = total ? b.sum / total : 0;
-        var tile = add(el('span', 'ptile'), icon(c[2]));
-        tile.setAttribute('aria-hidden', 'true');
-        var bar = add(el('div', 'mbar'), el('i'));
-        bar.firstChild.style.width = Math.max(share * 100, 1).toFixed(1) + '%';
-        var r = add(el('div', 'row mcat' + (sel ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), bar),
-          add(el('span', 'pr'), document.createTextNode(A.moneyFmt(b.sum)),
-            el('span', 'mu', b.count + ' ' + A.plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + A.moneyShare(share))));
-        r.setAttribute('aria-pressed', String(sel));
-        A.tap(r, function () { M.filter = sel ? null : b.category; render(data); });
-        cats.appendChild(r);
-      });
+      var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load);
       var list = rows.filter(function (r) { return !M.filter || r.category === M.filter; });
       var t = D.table([{ h: '', w: '52px' }, { h: 'Где' }, { h: 'Категория', w: '190px' }, { h: 'Когда', w: '210px' },
         { h: 'Сумма', r: true, w: '130px' }, { h: '', w: '120px' }], list.map(function (r) {
@@ -601,7 +591,7 @@
         card.firstChild.appendChild(f);
       }
       if (j.more) card.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' трат месяца'));
-      var p = D.panes(card, cats);
+      var p = D.panes(card, add(el('div'), cats, subs));
       p.classList.add('dmoney');
       body.appendChild(p);
     }
