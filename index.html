@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 09:04">
+<meta name="published" content="2026-10-22 09:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -96,6 +96,12 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
 .main.in{animation:fade .12s ease-out}
 @keyframes fade{from{opacity:0;transform:translateY(3px)}}
+/* gestures (docs/specs/gestures.md): a tab to the right comes in from the right, to the left from the left; a sideways
+   swipe nudges the page before its segment switches */
+.main.in-r{animation:in-r .18s ease-out}.main.in-l{animation:in-l .18s ease-out}
+@keyframes in-r{from{transform:translateX(24px);opacity:0}}
+@keyframes in-l{from{transform:translateX(-24px);opacity:0}}
+.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .12s,opacity .12s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
 .rail{display:none}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;height:calc(var(--bar) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:500 11px/1.1 var(--font)}
@@ -1060,7 +1066,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function navBtn(t) {
     var b = add(el('button'), add(el('span', 'ic'), icon(t[1])), el('span', 'lb', t[2]));
     b.type = 'button';
-    b.onclick = function () { closeSheet(); show(t[0]); };
+    // The active tab again (the sheet closed): to the top, smoothly; already at the top, drawn again as a pull down does.
+    b.onclick = function () {
+      var open = shell.classList.contains('more');
+      closeSheet();
+      if (t[0] === current && !open) {
+        if (document.scrollingElement.scrollTop >= 4) return window.scrollTo({ top: 0, behavior: 'smooth' });
+        haptic();
+      }
+      show(t[0]);
+    };
     (navs[t[0]] = navs[t[0]] || []).push(b);
     return b;
   }
@@ -1114,13 +1129,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   drawBar();
   scrim.onclick = function () { closeSheet(true); };
+  // Inside Telegram a vertical swipe closes the Mini App; while the sheet is open its pull down closes the sheet instead
+  // (Bot API 7.7; older clients keep their swipe, and the gesture is the browser's only).
+  function vSwipes(on) {
+    try { if (!browser && tg.isVersionAtLeast('7.7')) tg[on ? 'enableVerticalSwipes' : 'disableVerticalSwipes'](); } catch (e) {}
+  }
   function openSheet() {
+    vSwipes(false);
     shell.classList.add('more');
     sheet.setAttribute('aria-hidden', 'false');
     var b = sheet.querySelector('[aria-current]') || sheet.querySelector('button');
     if (b) b.focus();
   }
   function closeSheet(refocus) {
+    if (shell.classList.contains('more')) vSwipes(true);
     if (refocus && shell.classList.contains('more')) moreBtn.focus();
     shell.classList.remove('more');
     sheet.setAttribute('aria-hidden', 'true');
@@ -1189,6 +1211,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // down past 72 px and let go, the tab is drawn again as on a tab switch (show: from the cache, then fresh); the circle
   // hides once the busy bar is out, no sooner than 500 ms and no later than 2 s. A sideways move (chips, segments)
   // drops the gesture until the next touch; touchmove is blocked only once the gesture has begun.
+  // touchOwner: which gesture took the touch ('ptr' | 'x' | 'sheet' | null) — the first to decide the direction owns it.
+  var touchOwner = null;
   function pullToRefresh() {
     if (wide()) return;
     var ptr = add(el('div'), icon('refresh')), y0 = null, x0 = 0, dy = 0, on = false, buzzed = false;
@@ -1211,6 +1235,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function back() {
       y0 = null;
       on = buzzed = false;
+      if (touchOwner === 'ptr') touchOwner = null;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
       ptr.style.transform = ptr.style.opacity = ico.style.transform = '';
       ptr.className = '';
@@ -1235,8 +1260,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       dy = e.touches[0].clientY - y0;
       if (!on) {
         if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-        if (Math.abs(dx) >= Math.abs(dy) || dy < 0) { y0 = null; return; }
+        if (Math.abs(dx) >= Math.abs(dy) || dy < 0 || touchOwner) { y0 = null; return; }
         on = true;
+        touchOwner = 'ptr';
         ptr.className = 'drag';
         main.classList.remove('pull-back');
         main.classList.add('pull');
@@ -1259,6 +1285,131 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     document.addEventListener('touchend', end);
     document.addEventListener('touchcancel', function () { if (on) back(); else y0 = null; });
+  }
+  // Gestures on the phone (docs/specs/gestures.md), under the same touch screen under 900 px as the pull, in a browser
+  // and in Telegram: a sideways swipe switches the tab's first segment, a swipe from the left edge goes back (a browser
+  // only: Telegram has its own Back), the «Ещё» sheet follows a pull down and closes past 80 px, «Показать ещё» presses
+  // itself when it comes on screen. The direction is decided once per touch, past 8 px, and the first gesture to decide
+  // it owns the touch (touchOwner); touchmove is blocked only once the gesture is ours. Two fingers drop it.
+  function gestures() {
+    if (wide()) return;
+    var g = null, springT = 0, still = matchMedia('(prefers-reduced-motion: reduce)');
+    // A start a sideways gesture leaves alone: a chart, or anything that scrolls sideways itself.
+    function sideways(t) {
+      if (t.closest('.chart,svg:not(.i),.hs,.seg.fit,.week7')) return true;
+      for (var n = t; n && n !== main && n !== document.body; n = n.parentElement) {
+        var ox = getComputedStyle(n).overflowX;
+        if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth) return true;
+      }
+      return false;
+    }
+    function release() {
+      if (touchOwner === 'x' || touchOwner === 'sheet') touchOwner = null;
+      g = null;
+    }
+    // Below the threshold the sheet springs back as the page does after a short pull.
+    function springBack() {
+      sheet.style.transition = 'transform .35s cubic-bezier(.2,.8,.2,1)';
+      sheet.style.transform = '';
+      springT = setTimeout(function () { sheet.style.transition = ''; }, 400);
+    }
+    // The tab's switch: the first .seg in main, and only while it is drawn and on screen («Фильмы» hides its «Подборка»
+    // under a search, and its card can lie far below).
+    function topSeg() {
+      var seg = main.querySelector('.seg'), r = seg && seg.getBoundingClientRect();
+      return seg && seg.getClientRects().length && r.bottom > 0 && r.top < innerHeight ? seg : null;
+    }
+    // The neighbour of the segment that is on: the page nudges that way, then the button's own click does the rest.
+    function swipeSeg(step) {
+      var seg = topSeg(), bs = seg ? [].filter.call(seg.children, function (b) { return b.tagName === 'BUTTON'; }) : [];
+      var i = -1;
+      bs.forEach(function (b, k) { if (b.classList.contains('on')) i = k; });
+      var b = i < 0 ? null : bs[i + step];
+      if (!b) return;
+      if (still.matches) return b.click();
+      main.classList.add(step > 0 ? 'swipe-l' : 'swipe-r');
+      setTimeout(function () {
+        if (b.isConnected) b.click();
+        // A segment that redraws in place, not through show(), still comes in as a tab does.
+        if (main.classList.contains('swipe-l') || main.classList.contains('swipe-r')) {
+          main.classList.remove('swipe-l', 'swipe-r', 'in', 'in-r', 'in-l');
+          void main.offsetWidth;
+          main.classList.add('in');
+        }
+      }, 120);
+    }
+    document.addEventListener('touchstart', function (e) {
+      if (g && g.on && g.kind === 'sheet') springBack();
+      release();
+      if (e.touches.length !== 1 || !shell.parentNode) return;
+      var t = e.target, p = e.touches[0], kind = null;
+      if (!t.closest || t.closest('input,textarea,select,[contenteditable]')) return;
+      if (t.closest('.sheet')) {
+        if (!shell.classList.contains('more')) return;
+        // In Telegram only where its own vertical swipe can be turned off (Bot API 7.7, as vSwipes).
+        try { if (!browser && !tg.isVersionAtLeast('7.7')) return; } catch (x) { return; }
+        for (var n = t; n; n = n === sheet ? null : n.parentElement) if (n.scrollTop > 0) return;
+        kind = 'sheet';
+      } else if (sideways(t)) return;
+      else if (backHandler) kind = browser && p.clientX <= 24 ? 'edge' : null;
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr') && topSeg()) kind = 'seg';
+      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false };
+    }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+      if (!g) return;
+      g.dx = e.touches[0].clientX - g.x0;
+      g.dy = e.touches[0].clientY - g.y0;
+      if (!g.on) {
+        if (Math.abs(g.dx) < 8 && Math.abs(g.dy) < 8) return;
+        var side = Math.abs(g.dx) > Math.abs(g.dy);
+        if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0))) { g = null; return; }
+        g.on = true;
+        touchOwner = g.kind === 'sheet' ? 'sheet' : 'x';
+        if (g.kind === 'sheet') { clearTimeout(springT); sheet.style.transition = 'none'; }
+      }
+      if (e.cancelable) e.preventDefault();
+      if (g.kind === 'sheet' && !still.matches) sheet.style.transform = 'translateY(' + Math.max(g.dy, 0).toFixed(1) + 'px)';
+    }, { passive: false });
+    document.addEventListener('touchend', function (e) {
+      if (!g || e.touches.length) return;
+      var k = g.on && g.kind, dx = g.dx, dy = g.dy;
+      release();
+      if (k === 'sheet') {
+        if (dy < 80) return springBack();
+        sheet.style.transition = sheet.style.transform = '';
+        closeSheet(true);
+      } else if (k === 'edge') {
+        if (dx >= 80 && Math.abs(dy) < 60 && backHandler) backHandler();
+      } else if (k === 'seg' && Math.abs(dx) >= 60 && Math.abs(dy) < 40) swipeSeg(dx < 0 ? 1 : -1);
+    });
+    document.addEventListener('touchcancel', function () {
+      if (g && g.on && g.kind === 'sheet') springBack();
+      release();
+    });
+    // «Показать ещё» at the foot of a screen presses itself on screen, once in 800 ms at most and never while it is
+    // disabled (its request in flight); the button stays as the way back. The targets follow main's children.
+    if (window.IntersectionObserver && window.MutationObserver) {
+      var moreAt = 0, moreRaf = 0, moreIO = new IntersectionObserver(function (es) {
+        es.forEach(function (x) {
+          var b = x.target, wait = 800 - (Date.now() - moreAt);
+          if (!x.isIntersecting || b.disabled || !b.isConnected) return;
+          // Too soon: looked at again when the 800 ms are up (observing anew reports where it is now).
+          if (wait > 0) return setTimeout(function () { moreIO.unobserve(b); if (b.isConnected) moreIO.observe(b); }, wait);
+          moreAt = Date.now();
+          b.click();
+        });
+      });
+      new MutationObserver(function () {
+        if (moreRaf) return;
+        moreRaf = requestAnimationFrame(function () {
+          moreRaf = 0;
+          moreIO.disconnect();
+          Array.prototype.forEach.call(main.querySelectorAll('.btn.ghost.wide'), function (b) {
+            if (b.textContent === 'Показать ещё') moreIO.observe(b);
+          });
+        });
+      }).observe(main, { childList: true, subtree: true });
+    }
   }
   // The login card: the widget's script is created here, after load, so it
   // mounts its button in place of itself.
@@ -1313,6 +1464,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     if (!isView(tab)) tab = 'home';
     flushMarks('');
+    // From one shown tab to another on the phone: in from the side it lies on (in-r / in-l), in the order of his bar with
+    // the «Ещё» sheet to its right; the same tab or a screen that is not a tab comes in as before (in).
+    var keys = barTabs().concat(MORE), from = keys.indexOf(current), to = keys.indexOf(tab);
+    var entry = wide() || from < 0 || to < 0 || from === to ? 'in' : to > from ? 'in-r' : 'in-l';
     current = tab;
     busyGen++;
     busyN = 0;
@@ -1332,9 +1487,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     main.classList.toggle('desk', !!desk);
     hideBack();
     clear(main);
-    main.classList.remove('in');
+    main.classList.remove('in', 'in-r', 'in-l', 'swipe-l', 'swipe-r');
     void main.offsetWidth;
-    main.classList.add('in');
+    main.classList.add(entry);
     window.scrollTo(0, 0);
     (desk || VIEWS[tab])();
   }
@@ -6679,6 +6834,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   if (browser && !login && !appKey) loginCard();
   else start();
   if (browser && window.matchMedia && matchMedia('(pointer: coarse)').matches) pullToRefresh();
+  if (window.matchMedia && matchMedia('(pointer: coarse)').matches) gestures();
   // The Home Screen app's service worker shows the pushes; Telegram's webview has no use for it.
   if (browser && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(noop);
 })();
