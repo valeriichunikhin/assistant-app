@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 10:16">
+<meta name="published" content="2026-10-22 10:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1377,8 +1377,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var i = -1;
       bs.forEach(function (b, k) { if (b.classList.contains('on')) i = k; });
       var b = i < 0 ? null : bs[i + step];
-      if (!b) return;
-      if (still.matches) return b.click();
+      if (!b) return false;
+      if (still.matches) { b.click(); return true; }
       main.classList.add(step > 0 ? 'swipe-l' : 'swipe-r');
       setTimeout(function () {
         if (b.isConnected) b.click();
@@ -1389,6 +1389,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           main.classList.add('in');
         }
       }, 320);
+      return true;
+    }
+    // 9. No switch on the tab, or its last segment: the neighbouring tab of the bar («Сегодня → Genshin и так далее»,
+    // 22.10.2026); the page nudges the same way, then show() brings the tab in from that side.
+    function swipeTab(step) {
+      var keys = barTabs(), i = keys.indexOf(current), k = i < 0 ? null : keys[i + step];
+      if (!k) return;
+      if (still.matches) return show(k);
+      main.classList.add(step > 0 ? 'swipe-l' : 'swipe-r');
+      setTimeout(function () { if (current !== k) show(k); }, 320);
     }
     document.addEventListener('touchstart', function (e) {
       if (g && g.on && g.kind === 'sheet') springBack();
@@ -1406,8 +1416,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       else if (backHandler) kind = browser && p.clientX <= 24 ? 'edge' : null;
       // The row is asked before the segment: a swipe that starts on a row is the row's.
       else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && (row = swipeRow(t))) kind = 'row';
-      // «Фильмы» keep their switch to a tap (22.10.2026, his word): the poster grid is too easy to brush sideways.
-      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr') && current !== 'films' && topSeg()) kind = 'seg';
+      // «Фильмы» keep their switch to a tap (22.10.2026, his word): the poster grid is too easy to brush sideways —
+      // there, and on a tab without a switch, a sideways swipe goes to the neighbouring tab of the bar.
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr')) kind = current !== 'films' && topSeg() ? 'seg' : 'tab';
       if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && row.querySelector(':scope>.x') };
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
@@ -1445,7 +1456,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         closeSheet(true);
       } else if (k === 'edge') {
         if (dx >= 80 && Math.abs(dy) < 60 && backHandler) backHandler();
-      } else if (k === 'seg' && Math.abs(dx) >= 60 && Math.abs(dy) < 40) swipeSeg(dx < 0 ? 1 : -1);
+      } else if ((k === 'seg' || k === 'tab') && Math.abs(dx) >= 60 && Math.abs(dy) < 40) {
+        var step = dx < 0 ? 1 : -1;
+        if (k !== 'seg' || !swipeSeg(step)) swipeTab(step);
+      }
       else if (k === 'row') {
         // A redraw during the swipe took the row off the screen: its handlers hold the old data, so nothing is done.
         if (!row.isConnected) { quiet = Date.now() + 200; return; }
@@ -5979,10 +5993,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var more0 = el('button', 'pg', 'ещё ' + zero.length + ' · 0 %');
         more0.type = 'button';
         more0.setAttribute('aria-expanded', 'false');
+        // The rows go into the card in place of the button's own row — not inside it, where they sat side by side
+        // as columns with their names one letter a line (22.10.2026, his screenshot).
         more0.onclick = function () {
-          var at = more0.parentNode;
-          zero.forEach(function (z) { at.insertBefore(z, more0); });
-          more0.remove();
+          var wrap = more0.parentNode, at = wrap.parentNode;
+          zero.forEach(function (z) { at.insertBefore(z, wrap); });
+          wrap.remove();
           if (zero[0].focus) { zero[0].tabIndex = -1; zero[0].focus(); }
         };
         rows.push(add(el('div', 'row small'), more0));
