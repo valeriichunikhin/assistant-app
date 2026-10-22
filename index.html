@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 10:09">
+<meta name="published" content="2026-10-22 10:14">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -77,14 +77,14 @@ button{cursor:pointer}
 @keyframes busy{to{transform:translateX(233.333%)}}
 /* pull to refresh (docs/specs/pull-to-refresh.md): a 36 px circle that slides out from under the header with the
    touch; it exists only in a browser on a touch screen under 900 px. Inline transform and opacity while dragged. */
-#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;will-change:transform,opacity;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s ease,background .15s,color .15s,box-shadow .2s}
+#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;will-change:transform,opacity;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .3s ease,background .2s,color .2s,box-shadow .25s}
 #ptr.drag{transition:background .15s,color .15s,box-shadow .2s}
-#ptr .i{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#ptr .i{transition:transform .3s cubic-bezier(.4,0,.2,1)}
 #ptr.drag .i{transition:none}
 #ptr.ready{box-shadow:var(--shadow),0 0 0 4px var(--accent-soft)}
 /* the page follows the finger a little and springs back (22.10.2026, «плавнее») */
 .main.pull{transition:none;will-change:transform}
-.main.pull-back{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.main.pull-back{transition:transform .5s cubic-bezier(.4,0,.2,1)}
 #ptr.ready,#ptr.spin{opacity:1;transform:translateY(24px);background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 #ptr.ready .i{transform:rotate(180deg)}
 #ptr.spin .i{animation:rotate .8s linear infinite}
@@ -94,21 +94,21 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .out{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:none;color:var(--muted);font-size:13px;transition:background .12s}
 .out .i{width:16px;height:16px}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
-.main.in{animation:fade .22s cubic-bezier(.2,.8,.2,1)}
-@keyframes fade{from{opacity:0;transform:translateY(3px)}}
+.main.in{animation:fade .34s cubic-bezier(.4,0,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
 /* gestures (docs/specs/gestures.md): a tab to the right comes in from the right, to the left from the left; a sideways
    swipe nudges the page before its segment switches */
-.main.in-r{animation:in-r .26s cubic-bezier(.2,.8,.2,1)}.main.in-l{animation:in-l .26s cubic-bezier(.2,.8,.2,1)}
-@keyframes in-r{from{transform:translateX(24px);opacity:0}}
-@keyframes in-l{from{transform:translateX(-24px);opacity:0}}
-.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .16s cubic-bezier(.2,.8,.2,1),opacity .16s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
+.main.in-r{animation:in-r .42s cubic-bezier(.4,0,.2,1)}.main.in-l{animation:in-l .42s cubic-bezier(.4,0,.2,1)}
+@keyframes in-r{from{transform:translateX(36px);opacity:0}}
+@keyframes in-l{from{transform:translateX(-36px);opacity:0}}
+.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .24s cubic-bezier(.4,0,.2,1),opacity .24s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
 /* A row's swipe (docs/specs/gestures-2.md): the row slides, the strip fills the gap it leaves, its mark at the near edge. */
 .swh{position:relative;overflow:hidden}.row.swr{position:relative;z-index:1;will-change:transform}
 .swp{position:absolute;overflow:hidden;color:var(--bg0);pointer-events:none}.swp.r{left:0;background:var(--good)}.swp.l{right:0;background:var(--bad)}
 .swp .i{position:absolute;top:50%;margin-top:-10px}.swp.r .i{left:24px}.swp.l .i{right:24px}
-.row.swb{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.swp.swb{transition:width .3s cubic-bezier(.2,.8,.2,1)}
+.row.swb{transition:transform .4s cubic-bezier(.4,0,.2,1)}.swp.swb{transition:width .4s cubic-bezier(.4,0,.2,1)}
 /* The bar steps away on a scroll down and comes back on the way up (gestures-2.md, 8). */
-.tabbar{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.tabbar.hid{transform:translateY(calc(100% + env(safe-area-inset-bottom)))}
+.tabbar{transition:transform .42s cubic-bezier(.4,0,.2,1)}.tabbar.hid{transform:translateY(calc(100% + env(safe-area-inset-bottom)))}
 .rail{display:none}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;height:calc(var(--bar) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:500 11px/1.1 var(--font)}
@@ -116,10 +116,10 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .tabbar .lb{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tabbar [aria-current]{color:var(--accent)}
 .tabbar [aria-current] .ic{background:var(--accent-soft)}
-.scrim{position:fixed;inset:0;z-index:6;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:6px 12px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow);transform:translateY(105%);visibility:hidden;transition:transform .24s cubic-bezier(.2,.8,.2,1),visibility 0s .24s}
-.more .scrim{opacity:1;visibility:visible;transition:opacity .2s}
-.more .sheet{transform:none;visibility:visible;transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.scrim{position:fixed;inset:0;z-index:6;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:6px 12px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow);transform:translateY(105%);visibility:hidden;transition:transform .36s cubic-bezier(.4,0,.2,1),visibility 0s .36s}
+.more .scrim{opacity:1;visibility:visible;transition:opacity .3s}
+.more .sheet{transform:none;visibility:visible;transition:transform .36s cubic-bezier(.4,0,.2,1)}
 .grab{width:36px;height:4px;margin:4px auto 10px;border-radius:2px;background:var(--line)}
 .sheet button,.rail>button{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0 12px;border:0;border-radius:var(--r-b);background:none;color:var(--fg);font:500 15px/1.2 var(--font);text-align:left;transition:background .12s}
 .sheet .ic,.rail .ic{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:var(--r-s);color:var(--muted)}
@@ -195,7 +195,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .field input{flex:1;min-width:0;height:42px;padding:0;border:0;background:none;outline:none;-webkit-appearance:none;appearance:none}
 .field input::placeholder{color:var(--muted-2)}
 .seg{display:flex;gap:2px;margin:0 0 16px;padding:2px;border:1px solid var(--line);border-radius:var(--r-b)}
-.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;transition:color .2s,background .2s,box-shadow .2s}
+.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;transition:color .3s,background .3s,box-shadow .3s}
 .seg.fit{overflow-x:auto;scrollbar-width:none}
 .seg.fit button{flex:1 0 auto}
 .seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -1251,7 +1251,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         main.classList.remove('pull');
         main.classList.add('pull-back');
         main.style.transform = '';
-        setTimeout(function () { main.classList.remove('pull-back'); }, 450);
+        setTimeout(function () { main.classList.remove('pull-back'); }, 550);
       }
     }
     document.addEventListener('touchstart', function (e) {
@@ -1353,7 +1353,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         r.classList.remove('swr', 'swb');
         s.remove();
         if (h && !h.querySelector('.swp')) h.classList.remove('swh');
-      }, 300);
+      }, 400);
     }
     // A tap right after a row's swipe does not open the row.
     document.addEventListener('click', function (e) {
@@ -1361,9 +1361,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }, true);
     // Below the threshold the sheet springs back as the page does after a short pull.
     function springBack() {
-      sheet.style.transition = 'transform .35s cubic-bezier(.2,.8,.2,1)';
+      sheet.style.transition = 'transform .45s cubic-bezier(.4,0,.2,1)';
       sheet.style.transform = '';
-      springT = setTimeout(function () { sheet.style.transition = ''; }, 400);
+      springT = setTimeout(function () { sheet.style.transition = ''; }, 500);
     }
     // The tab's switch: the first .seg in main, and only while it is drawn and on screen («Фильмы» hides its «Подборка»
     // under a search, and its card can lie far below).
@@ -1388,7 +1388,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           void main.offsetWidth;
           main.classList.add('in');
         }
-      }, 160);
+      }, 240);
     }
     document.addEventListener('touchstart', function (e) {
       if (g && g.on && g.kind === 'sheet') springBack();
