@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 23:42">
+<meta name="published" content="2026-10-23 00:19">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -488,6 +488,32 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.macc .tx{justify-content:center}
 .mchips .pill .ptile.am{width:20px;height:20px;margin:0 6px 0 -4px;padding:1px;border-radius:5px}.mchips .pill .ptile.am .i{width:13px;height:13px;margin:0}
 .mchips .pill .ptile.am img{border-radius:3px}
+/* Charts (docs/specs/money-4.md): the drawing fills its wrapper (no side padding, the width is measured), the readout
+   floats over it; the month on screen in --mark, the others muted, the running month half-filled under its dashed
+   forecast; reference lines hairline (the mean solid, a budget dashed); the hours strip deepens with the sum. */
+.mny .card>.seg{margin:0 14px 10px}
+.mch{position:relative;margin:0 8px}.tsum .mch{margin:0}
+.chart.mchart{padding:0;overflow:visible;touch-action:pan-y}
+.chart .b.dim{fill:var(--muted-2);fill-opacity:.38}.chart .b.part{fill-opacity:.5}
+.chart .fc{fill:none;stroke:var(--mark);stroke-width:1.5;stroke-dasharray:3 3}
+.chart .ref{stroke:var(--muted);stroke-width:1}.chart .bud{stroke:var(--fg);stroke-opacity:.55;stroke-width:1;stroke-dasharray:5 4}
+.chart .gl{stroke:var(--line)}.chart .xh{stroke:var(--muted);stroke-width:1}
+.chart .tk.sel{fill:var(--fg);font-weight:600}
+.chart .tk.halo{paint-order:stroke;stroke:var(--solid);stroke-width:4px;stroke-linejoin:round}
+.chart .ln.cur{stroke:var(--mark);stroke-width:2.5;stroke-linecap:round}.chart .ln.prev{stroke:var(--muted-2);stroke-width:1.5;stroke-opacity:.8}
+.chart .ln.avg{stroke:var(--muted-2);stroke-width:1.5;stroke-dasharray:4 3}
+.chart .fcl{stroke:var(--mark);stroke-width:2;stroke-dasharray:4 4;stroke-linecap:round}
+.chart .dot{fill:var(--mark);stroke:var(--solid);stroke-width:2}
+.chart .hc{fill:var(--mark)}.chart .hc.z{fill:var(--line);fill-opacity:1}
+.chart g.pick{cursor:pointer}.chart g.cell:hover>.hc{stroke:var(--fg);stroke-width:1}.chart g.cell:focus{outline:none}.chart g.cell:focus-visible>.hc{stroke:var(--fg);stroke-width:1.5}
+.chart rect.hit:focus{outline:none}
+.mtip{position:absolute;z-index:2;max-width:240px;padding:6px 9px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--solid);box-shadow:var(--shadow);pointer-events:none;font-size:12px;line-height:1.35}
+.mtip b{display:block;font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}.mtip span{display:block;color:var(--muted)}
+.mcap{padding:6px 14px 14px;color:var(--muted);font-size:12px;line-height:1.4}.tsum .mcap{padding:8px 0 4px}
+.mempty{display:grid;place-items:center;margin:0 14px;color:var(--muted-2);font-size:13px}
+.mt3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 0 4px}.mt3 .fst{padding:4px 14px 6px}
+.mtop5{margin:6px 0 0}.mtop5 .fst{padding:10px 0 6px}.mtop5 .row{padding-left:0;padding-right:0}
+.row.mcat .btn.x.mopen{margin-left:-8px}
 @media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
   body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
   body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh,body.printing .tsum .lwk{display:none}
@@ -6677,10 +6703,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       more.type = 'button';
       more.setAttribute('aria-label', 'Бюджет: ' + c[1]);
       more.onclick = function (ev) { ev.stopPropagation(); moneyBudgetSheet(b.category, j, done, more); };
+      // «›» (and the icon) open the category in full (docs/specs/money-4.md).
+      var open = add(el('button', 'btn ghost x mmore mopen'), icon('chevron-right'));
+      open.type = 'button';
+      open.setAttribute('aria-label', 'Подробно: ' + c[1]);
+      open.onclick = tile.onclick = function (ev) { ev.stopPropagation(); moneyCatSheet(b.category, j, open); };
       var r = add(el('div', 'row mcat' + (on ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), moneyBar(p, cls)),
         add(el('span', 'pr'), document.createTextNode(moneyFmt(b.sum)),
           el('span', 'mu', bud ? 'из ' + moneyInt(bud) + ' zł · ' + Math.round(p * 100) + ' %'
-            : b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))), more);
+            : b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))), more, open);
       r.setAttribute('aria-pressed', String(on));
       tap(r, function () { onFilter(on ? null : b.category); });
       cats.appendChild(r);
@@ -6749,10 +6780,404 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     add(box, add(card, rows));
     if (!BRANDS) moneyBrands(function () { if (box.isConnected) moneySubsDraw(box, j); });
   }
+  // Charts (docs/specs/money-4.md; the dataviz skill's marks, as «Статистика» of «Фильмы» draws them): one series in
+  // --mark, the rest in muted ink; thin bars with a 4 px rounded free end (barPath) on a hairline baseline; selective
+  // labels in text tokens; a readout on hover, focus and tap, the value first; a line of text under each chart with
+  // its numbers, so nothing hides in the readout. money_trends draws three ways: «По месяцам», «Темп месяца», «Когда
+  // трачу» — the phone switches between them (.seg: the tab's swipe switches it too), the desktop puts the three side
+  // by side. Each is drawn to the width it is given (W) and to H: 200 px on the phone, 240 on the desktop.
+  var MT_MODES = [['months', 'По месяцам'], ['pace', 'Темп месяца'], ['when', 'Когда трачу']];
+  var MONTHS_S = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  var MONTHS_G = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  var WD_S = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+  var WD_P = ['по понедельникам', 'по вторникам', 'по средам', 'по четвергам', 'по пятницам', 'по субботам', 'по воскресеньям'];
+  function mtMon(m) { return MONTHS_S[Number(m.slice(5, 7)) - 1]; }
+  // An axis tick: 800, «5к», «12,5к».
+  function mtK(v) { return v < 1000 ? String(Math.round(v)) : String(Math.round(v / 100) / 10).replace('.', ',') + 'к'; }
+  // Whole złoty with no-break spaces, so a number never breaks across lines: «13 711 zł».
+  function mtInt(v) { return moneyInt(v).replace(/ /g, '\u00a0'); }
+  function mtZl(v) { return mtInt(v) + '\u00a0zł'; }
+  // Roughly how wide an 11 px label is (digits and short words), for keeping labels inside and apart.
+  function mtW(s) { return String(s).length * 6.3; }
+  function mtEmpty(H) {
+    var e = el('div', 'mempty', 'Мало данных для графика');
+    e.style.height = H + 'px';
+    return e;
+  }
+  // The readout of a chart: one box over its wrapper, the value strong and what it is under it, placed over (x, y) of
+  // the drawing (below it when there is no room above) and kept inside the wrapper.
+  function mtTip(wrap) {
+    var tip = el('div', 'mtip');
+    tip.hidden = true;
+    wrap.appendChild(tip);
+    return {
+      show: function (box, W, x, y, v, s) {
+        add(clear(tip), el('b', '', v), s ? el('span', '', s) : null);
+        tip.hidden = false;
+        var r = box.getBoundingClientRect(), w = wrap.getBoundingClientRect(), k = r.width / W;
+        var left = r.left - w.left + x * k, top = r.top - w.top + y * k, tw = tip.offsetWidth, th = tip.offsetHeight;
+        tip.style.left = Math.max(0, Math.min(wrap.clientWidth - tw, left - tw / 2)) + 'px';
+        tip.style.top = (top - th - 10 >= 0 ? top - th - 10 : top + 14) + 'px';
+      },
+      hide: function () { tip.hidden = true; }
+    };
+  }
+  // A mark's readout: the mouse on hover, the keyboard on focus, a finger on tap (unless tap is the mark's own act).
+  function mtHover(g, tip, box, W, x, y, v, s, tapToo) {
+    function on() { tip.show(box, W, x, y, v, s); }
+    g.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') on(); });
+    g.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') tip.hide(); });
+    g.addEventListener('focus', on);
+    g.addEventListener('blur', tip.hide);
+    if (tapToo) g.addEventListener('click', on);
+  }
+  // A column: its hit band {x, y, w, h} and the drawn bar inside it (none at zero), focusable, named by label.
+  function mtBar(box, band, x, y, w, h, cls, label) {
+    var g = svg('g', { 'class': 'bar', role: 'img', tabindex: '0', 'aria-label': label });
+    add(g, svg('rect', { x: band.x, y: band.y, width: band.w, height: band.h, 'class': 'hit' }),
+      w > 0 && h > 0.5 ? svg('path', { d: barPath(x, y, w, h, false), 'class': 'b' + (cls ? ' ' + cls : '') }) : null);
+    box.appendChild(g);
+    return g;
+  }
+  // The months that count for «в среднем»: those with spends, the current one left out while it runs.
+  function mtFull(t) {
+    var now = monthNow();
+    return (t.months || []).filter(function (m) { return m.total > 0 && m.month !== now; });
+  }
+  // «По месяцам» (and a category's months in its sheet): a column per month, the month on screen in --mark and the
+  // rest muted; the current month, not over yet, half-filled under a dashed outline up to its forecast; the mean of
+  // the full months as a hairline, a budget as a dashed one, both labelled on the left (side by side when they would
+  // touch); the sum over the month on screen (on its bar, not on its forecast) and over the largest (when the two
+  // labels would touch, the month on screen keeps its own).
+  // o: {vals: [{month, v}], fc: the current month's forecast or null, avg, budget, pick(month) or null}.
+  function mtMonths(o, W, H) {
+    var L = 4, R = 4, T = 22, B = 22, n = o.vals.length || 1, step = (W - L - R) / n, bw = Math.min(24, step - 6);
+    var now = monthNow(), sel = MONEY.month, vals = o.vals;
+    var top = Math.max.apply(null, vals.map(function (m) { return m.v; }).concat([o.fc || 0, o.avg || 0, o.budget || 0, 0]));
+    if (!vals.some(function (m) { return m.v > 0; })) return mtEmpty(H);
+    var wrap = el('div', 'mch'), box = chartBox(W, H, 'Траты по месяцам'), tip;
+    box.classList.add('mchart');
+    wrap.appendChild(box);
+    tip = mtTip(wrap);
+    function y(v) { return H - B - v / top * (H - T - B); }
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
+    var iSel = -1, iMax = 0;
+    vals.forEach(function (m, i) {
+      var cx = L + (i + 0.5) * step, x = cx - bw / 2, h = H - B - y(m.v), on = m.month === sel;
+      var part = m.month === now && o.fc != null && o.fc > m.v, fc = part ? o.fc : null;
+      if (part) add(box, svg('path', { d: barPath(x, y(fc), bw, H - B - y(fc), false), 'class': 'fc' }));
+      var label = monthLabel(m.month) + ' — ' + mtZl(m.v) + (fc ? ', прогноз ≈ ' + mtZl(fc) : '');
+      var g = mtBar(box, { x: L + i * step, y: T - 10, w: step, h: H - T - B + 10 }, x, H - B - h, bw, h,
+        (on ? '' : 'dim') + (part ? ' part' : ''), label);
+      mtHover(g, tip, box, W, cx, y(Math.max(m.v, fc || 0)), mtZl(m.v), monthLabel(m.month) + (fc ? ' · прогноз ≈ ' + mtZl(fc) : ''), !o.pick);
+      if (o.pick && m.month >= MONEY_FROM && m.month <= now && !on) {
+        g.classList.add('pick');
+        g.addEventListener('click', function () { o.pick(m.month); });
+        g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); o.pick(m.month); } });
+      }
+      add(box, svg('text', { x: cx, y: H - 6, 'class': on ? 'tk sel' : 'tk', 'text-anchor': 'middle' }, mtMon(m.month)));
+      if (on) iSel = i;
+      if (m.v > vals[iMax].v) iMax = i;
+    });
+    function over(i, cls) {
+      var m = vals[i], s = mtInt(m.v), cx = L + (i + 0.5) * step, half = mtW(s) / 2, yy = y(m.v) - 6;
+      cx = Math.min(Math.max(cx, L + half), W - R - half);
+      add(box, svg('text', { x: cx, y: yy, 'class': cls, 'text-anchor': 'middle' }, s));
+      return [cx - half, cx + half];
+    }
+    var a = iSel >= 0 ? over(iSel, 'tk strong') : null;
+    if (iMax !== iSel && vals[iMax].v > 0) {
+      var cxm = L + (iMax + 0.5) * step, hm = mtW(mtInt(vals[iMax].v)) / 2;
+      if (!a || cxm + hm < a[0] - 4 || cxm - hm > a[1] + 4) over(iMax, 'tk halo');
+    }
+    var lx = L + 2;
+    if (o.avg > 0) {
+      var as = 'ср. ' + mtInt(o.avg);
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(o.avg), y2: y(o.avg), 'class': 'ref' }),
+        svg('text', { x: lx, y: y(o.avg) - 4, 'class': 'tk halo' }, as));
+      if (o.budget > 0 && Math.abs(y(o.budget) - y(o.avg)) < 14) lx += mtW(as) + 10;
+    }
+    if (o.budget > 0) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(o.budget), y2: y(o.budget), 'class': 'bud' }),
+        svg('text', { x: lx, y: y(o.budget) - 4, 'class': 'tk halo' }, 'бюджет ' + mtInt(o.budget)));
+    }
+    return wrap;
+  }
+  // «Темп месяца»: the running sum by day — this month in --mark and heavier, the previous one muted, the mean of the
+  // three before dashed; the month's budget as a hairline; today as a ringed dot with its sum, the forecast dashed on
+  // to the month's end. The lines are named at the right edge (no legend: the names ride the line ends, nudged apart
+  // only as far as they would touch). A crosshair on hover or touch snaps to the day and reads all three.
+  function mtPace(t, W, H) {
+    var p = t.pace || {}, N = p.days_in_month || 30, cur = (p.current || []).slice(0, N), prev = (p.previous || []).slice(0, N);
+    var avg = (p.average || []).slice(0, N), fc = p.forecast, bud = p.budget_total, today = p.today_day;
+    if (!cur.length && !prev.length && !avg.length) return mtEmpty(H);
+    var pm = monthStep(t.month, -1), L = 34, R = 64, T = 14, B = 22;
+    var last = function (a) { return a.length ? a[a.length - 1] : 0; };
+    var top = Math.max(last(cur), last(prev), last(avg), fc || 0, bud || 0, 1);
+    var steps = [100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000], st = steps[steps.length - 1];
+    for (var k = 0; k < steps.length; k++) if (top / steps[k] <= 4) { st = steps[k]; break; }
+    top = Math.max(top, Math.ceil(top / st) * st);
+    var wrap = el('div', 'mch'), box = chartBox(W, H, 'Темп месяца'), tip;
+    box.classList.add('mchart');
+    wrap.appendChild(box);
+    tip = mtTip(wrap);
+    function x(d) { return L + (d - 1) / Math.max(N - 1, 1) * (W - L - R); }
+    function y(v) { return H - B - v / top * (H - T - B); }
+    function line(a, cls) {
+      if (a.length < 2) return;
+      add(box, svg('polyline', { points: a.map(function (v, i) { return x(i + 1).toFixed(1) + ',' + y(v).toFixed(1); }).join(' '), 'class': cls }));
+    }
+    for (var v = st; v <= top + 0.5; v += st) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), 'class': 'gl' }),
+        svg('text', { x: L - 6, y: y(v) + 4, 'class': 'tk', 'text-anchor': 'end' }, mtK(v)));
+    }
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }),
+      svg('text', { x: L - 6, y: H - B + 4, 'class': 'tk', 'text-anchor': 'end' }, '0'));
+    [1, 10, 20, N].forEach(function (d) {
+      add(box, svg('text', { x: x(d), y: H - 6, 'class': 'tk', 'text-anchor': d === 1 ? 'start' : d === N ? 'end' : 'middle' }, d));
+    });
+    if (bud > 0) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(bud), y2: y(bud), 'class': 'bud' }),
+        svg('text', { x: L + 4, y: y(bud) - 4, 'class': 'tk halo' }, 'бюджет ' + mtInt(bud)));
+    }
+    line(avg, 'ln avg');
+    line(prev, 'ln prev');
+    var dn = cur.length, cv = last(cur);
+    if (fc != null && dn && dn < N) add(box, svg('line', { x1: x(dn), y1: y(cv), x2: x(N), y2: y(fc), 'class': 'fcl' }));
+    line(cur, 'ln cur');
+    // The line ends' names: sorted top to bottom, pushed 12 px apart, kept inside the drawing.
+    var ends = [];
+    if (dn) ends.push({ y: y(fc != null && dn < N ? fc : cv), s: mtMon(t.month), cls: 'tk sel' });
+    if (prev.length) ends.push({ y: y(last(prev)), s: mtMon(pm), cls: 'tk' });
+    if (avg.length) ends.push({ y: y(last(avg)), s: 'ср. 3 мес', cls: 'tk' });
+    ends.sort(function (a, b) { return a.y - b.y; });
+    ends.forEach(function (e, i) { if (i && e.y - ends[i - 1].y < 12) e.y = ends[i - 1].y + 12; });
+    var over = ends.length ? ends[ends.length - 1].y - (H - B) : 0;
+    if (over > 0) ends.forEach(function (e) { e.y -= over; });
+    ends.forEach(function (e) { add(box, svg('text', { x: W - R + 6, y: e.y + 4, 'class': e.cls }, e.s)); });
+    // Today (or the month's last day) as a ringed dot with its sum.
+    if (dn) {
+      var tx = x(dn), ty = y(cv), s = mtInt(cv), half = mtW(s) / 2;
+      add(box, svg('circle', { cx: tx, cy: ty, r: 4.5, 'class': 'dot' }),
+        svg('text', { x: Math.min(Math.max(tx, L + half), W - R - half), y: ty - 10 < T ? ty + 18 : ty - 10, 'class': 'tk strong', 'text-anchor': 'middle' }, s));
+    }
+    // The crosshair: a hairline at the day under the pointer, the readout over the highest line there.
+    var xh = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, 'class': 'xh' });
+    xh.style.display = 'none';
+    var hit = svg('rect', { x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'hit', tabindex: '0', role: 'img',
+      'aria-label': 'Темп: ' + monthLabel(t.month) + ' — ' + mtZl(cv) + (fc != null ? ', прогноз ≈ ' + mtZl(fc) : '') });
+    add(box, xh, hit);
+    var day = dn || N;
+    function at(d) {
+      day = Math.min(Math.max(d, 1), N);
+      var vals = [], hiY = H - B;
+      function put(a, name) {
+        if (day <= a.length) { vals.push(name + ' ' + mtZl(a[day - 1])); hiY = Math.min(hiY, y(a[day - 1])); }
+      }
+      put(prev, mtMon(pm));
+      put(avg, 'ср. 3 мес');
+      var val = day <= dn ? mtZl(cur[day - 1]) : fc != null && dn ? '≈ ' + mtZl(cv + (fc - cv) * (day - dn) / (N - dn)) : '—';
+      if (day <= dn) hiY = Math.min(hiY, y(cur[day - 1]));
+      xh.setAttribute('x1', x(day));
+      xh.setAttribute('x2', x(day));
+      xh.style.display = '';
+      tip.show(box, W, x(day), hiY, val, day + ' ' + MONTHS_G[Number(t.month.slice(5, 7)) - 1] + (vals.length ? ' · ' + vals.join(' · ') : ''));
+    }
+    function fromEvent(e) {
+      var r = box.getBoundingClientRect();
+      at(Math.round(((e.clientX - r.left) * W / r.width - L) / (W - L - R) * (N - 1)) + 1);
+    }
+    function off() { xh.style.display = 'none'; tip.hide(); }
+    hit.addEventListener('pointermove', fromEvent);
+    hit.addEventListener('pointerdown', fromEvent);
+    hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') off(); });
+    hit.addEventListener('focus', function () { at(day); });
+    hit.addEventListener('blur', off);
+    hit.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); at(day + (e.key === 'ArrowLeft' ? -1 : 1)); }
+    });
+    return wrap;
+  }
+  // «Когда трачу»: 90 days by weekday as columns (the dearest day priced), then the 24 hours as a strip whose cells
+  // deepen with the sum (one hue, light to dark; an hour without spends stays the hairline grey), the dearest hour named.
+  function mtWhen(t, W, H) {
+    var w = t.weekdays || {}, days = w.days || [], hours = w.hours || [];
+    var dMax = Math.max.apply(null, days.map(function (d) { return d.sum; }).concat([0]));
+    var hMax = Math.max.apply(null, hours.map(function (d) { return d.sum; }).concat([0]));
+    if (!dMax) return mtEmpty(H);
+    var L = 4, R = 4, T = 20, sh = H > 220 ? 26 : 22, yb = H - 58 - sh, s0 = yb + 26;
+    var wrap = el('div', 'mch'), box = chartBox(W, H, 'Когда трачу'), tip;
+    box.classList.add('mchart');
+    wrap.appendChild(box);
+    tip = mtTip(wrap);
+    var step = (W - L - R) / 7, bw = Math.min(24, step - 6), iMax = 0;
+    add(box, svg('line', { x1: L, x2: W - R, y1: yb, y2: yb, 'class': 'ax' }));
+    days.forEach(function (d, i) {
+      var cx = L + (i + 0.5) * step, h = d.sum / dMax * (yb - T);
+      var s = d.count + ' ' + plural(d.count, ['трата', 'траты', 'трат']) + ' · ' + WD_P[i] + ' за 90 дней';
+      var g = mtBar(box, { x: L + i * step, y: T - 10, w: step, h: yb - T + 10 }, cx - bw / 2, yb - h, bw, h, '',
+        WD_S[i] + ' — ' + mtZl(d.sum) + ', ' + s);
+      mtHover(g, tip, box, W, cx, yb - h, mtZl(d.sum), s, true);
+      add(box, svg('text', { x: cx, y: yb + 15, 'class': 'tk', 'text-anchor': 'middle' }, WD_S[i]));
+      if (d.sum > days[iMax].sum) iMax = i;
+    });
+    var mx = L + (iMax + 0.5) * step, ms = mtInt(dMax), mh = mtW(ms) / 2;
+    add(box, svg('text', { x: Math.min(Math.max(mx, L + mh), W - R - mh), y: T - 6, 'class': 'tk strong', 'text-anchor': 'middle' }, ms));
+    var cw = (W - L - R) / 24, hBest = -1;
+    hours.forEach(function (h, i) {
+      var x0 = L + i * cw, s = ('0' + i).slice(-2) + ':00–' + ('0' + ((i + 1) % 24)).slice(-2) + ':00';
+      var g = svg('g', { 'class': 'cell', role: 'img', tabindex: '0', 'aria-label': s + ' — ' + mtZl(h.sum) });
+      var c = svg('rect', { x: x0 + 1, y: s0, width: Math.max(cw - 2, 1), height: sh, rx: 2, 'class': h.sum > 0 ? 'hc' : 'hc z' });
+      if (h.sum > 0) c.setAttribute('fill-opacity', (0.14 + 0.86 * h.sum / hMax).toFixed(2));
+      add(g, svg('rect', { x: x0, y: s0 - 4, width: cw, height: sh + 8, 'class': 'hit' }), c);
+      box.appendChild(g);
+      mtHover(g, tip, box, W, x0 + cw / 2, s0, mtZl(h.sum), s + ' · ' + h.count + ' ' + plural(h.count, ['трата', 'траты', 'трат']), true);
+      if (h.sum > 0 && (hBest < 0 || h.sum > hours[hBest].sum)) hBest = i;
+    });
+    // Hour ticks every six hours; the dearest hour's own label stands in for a tick it would touch.
+    var bx = hBest >= 0 ? L + (hBest + 0.5) * cw : -99, ty = s0 + sh + 14;
+    [0, 6, 12, 18].forEach(function (hh) {
+      var tx = L + hh * cw + (hh ? cw / 2 : 0);
+      if (Math.abs(tx - bx) > 26) add(box, svg('text', { x: tx, y: ty, 'class': 'tk', 'text-anchor': hh ? 'middle' : 'start' }, hh));
+    });
+    if (hBest >= 0) {
+      var hs = hBest + ' ч', hw = mtW(hs) / 2;
+      add(box, svg('text', { x: Math.min(Math.max(bx, L + hw), W - R - hw), y: ty, 'class': 'tk strong', 'text-anchor': 'middle' }, hs));
+    }
+    return wrap;
+  }
+  // The numbers under a chart, one line of text.
+  function mtCaption(mode, t) {
+    var p = t.pace || {}, mon = monthLabel(t.month).split(' ')[0], s = [];
+    if (mode === 'months') {
+      var m = (t.months || [])[(t.months || []).length - 1] || { total: 0 }, full = mtFull(t);
+      s.push(mon + ': ' + mtZl(m.total));
+      if (p.forecast != null) s.push('прогноз ≈ ' + mtZl(p.forecast));
+      if (full.length) s.push('в среднем ' + mtZl(full.reduce(function (a, x) { return a + x.total; }, 0) / full.length) + ' в месяц');
+    } else if (mode === 'pace') {
+      var cur = p.current || [], dn = cur.length, prev = p.previous || [];
+      if (!dn) return '';
+      s.push((dn < p.days_in_month ? 'За ' + dn + ' ' + plural(dn, ['день', 'дня', 'дней']) : 'Весь месяц') + ': ' + mtZl(cur[dn - 1]));
+      if (p.forecast != null) s.push('прогноз ≈ ' + mtZl(p.forecast));
+      if (prev.length) s.push(monthLabel(monthStep(t.month, -1)).split(' ')[0].toLowerCase() + (dn < p.days_in_month ? ' к этому дню ' : ' ') +
+        mtZl(prev[Math.min(dn, prev.length) - 1]));
+      if (p.budget_total) s.push('бюджет ' + mtZl(p.budget_total));
+    } else {
+      var w = t.weekdays || {}, days = w.days || [], hours = w.hours || [], di = -1, hi = -1;
+      days.forEach(function (d, i) { if (d.sum > 0 && (di < 0 || d.sum > days[di].sum)) di = i; });
+      hours.forEach(function (d, i) { if (d.sum > 0 && (hi < 0 || d.sum > hours[hi].sum)) hi = i; });
+      if (di < 0) return '';
+      s.push('Больше всего ' + WD_P[di] + ': ' + mtZl(days[di].sum) + ' за 90 дней');
+      if (hi >= 0) s.push('по часам — ' + hi + ':00–' + ((hi + 1) % 24) + ':00');
+    }
+    return s.join(' · ');
+  }
+  function mtDraw(area, mode, t, W, H, pick) {
+    var node;
+    if (mode === 'pace') node = mtPace(t, W, H);
+    else if (mode === 'when') node = mtWhen(t, W, H);
+    else {
+      var full = mtFull(t), p = t.pace || {};
+      node = mtMonths({ vals: (t.months || []).map(function (m) { return { month: m.month, v: m.total }; }), fc: p.forecast,
+        avg: full.length ? full.reduce(function (a, x) { return a + x.total; }, 0) / full.length : 0, budget: 0, pick: pick }, W, H);
+    }
+    var cap = node.className === 'mempty' ? '' : mtCaption(mode, t);
+    add(area, node, cap ? el('div', 'mcap', cap) : null);
+  }
+  // money_trends for the month on screen into box (kept for the category sheet in MONEY.trends); load() is the view's,
+  // for a tap on a month's column. Another month's charts leave at once; a failure leaves the card out.
+  function moneyTrends(box, live, wide, load) {
+    if (!MONEY.month) MONEY.month = monthNow();
+    var m = MONEY.month;
+    box.mtWide = wide;
+    box.mtGo = function (mm) {
+      if (mm === MONEY.month || mm < MONEY_FROM || mm > monthNow()) return;
+      MONEY.month = mm;
+      MONEY.filter = MONEY.acct = null;
+      haptic();
+      load();
+    };
+    if (box.mtMonth !== m) { clear(box); box.mtPend = null; }
+    swr({ key: 'money:trends:' + m, box: box, n: 0, live: function () { return live() && MONEY.month === m; },
+      fetch: function () { return api('miniapp', { action: 'money_trends' }, undefined, true, { month: m }); },
+      render: function (t) { moneyTrendsDraw(box, t); } });
+  }
+  // The card «Графики»: drawn to the box's width, so a box not on the page yet keeps the answer (mtPend) for the view
+  // to draw once it places the box (moneyTrendsDraw(box) with no answer).
+  function moneyTrendsDraw(box, t) {
+    t = t || box.mtPend;
+    if (!t) return;
+    if (!box.isConnected || !box.clientWidth) { box.mtPend = t; return; }
+    box.mtPend = null;
+    box.mtMonth = t.month;
+    if (t.month === MONEY.month) MONEY.trends = t;
+    var card = mkCard('chart', 'Графики');
+    add(clear(box), card);
+    if (box.mtWide) {
+      var grid = add(card, el('div', 'mt3')).lastChild;
+      MT_MODES.forEach(function (md) {
+        var col = add(grid, add(el('div', 'mtc'), el('div', 'fst', md[1]))).lastChild;
+        mtDraw(col, md[0], t, col.clientWidth - 16, 240, box.mtGo);
+      });
+      return;
+    }
+    var mode = store('moneyChart'), seg = el('div', 'seg'), area = el('div'), segs = {};
+    if (!MT_MODES.some(function (md) { return md[0] === mode; })) mode = 'months';
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'График');
+    MT_MODES.forEach(function (md) {
+      var b = segs[md[0]] = el('button', '', md[1]);
+      b.type = 'button';
+      b.onclick = function () { if (mode !== md[0]) { mode = md[0]; store('moneyChart', mode); haptic(); paint(); } };
+      seg.appendChild(b);
+    });
+    add(card, seg, area);
+    function paint() {
+      for (var k in segs) segs[k].className = k === mode ? 'on' : '';
+      mtDraw(clear(area), mode, t, card.clientWidth - 16, 200, box.mtGo);
+    }
+    paint();
+  }
+  // A category in full (docs/specs/money-4.md «Категория подробно»): its 12 months as «По месяцам» draws them with its
+  // budget as a line, «в среднем за месяц», and the month's five largest merchants from the rows on screen (PLN; a
+  // merchant's digit tail cut, as the subscriptions do) with their logos.
+  function moneyCatSheet(key, j, from) {
+    var c = moneyCat(key), t = MONEY.trends && MONEY.trends.month === j.month ? MONEY.trends : null;
+    var budget = (j.budgets || {})[key] || 0, chartBox = el('div', 'mcs'), nodes = [chartBox], full = t ? mtFull(t) : [];
+    var avg = full.length ? full.reduce(function (a, m) { return a + (m.by_category[key] || 0); }, 0) / full.length : 0;
+    if (t) nodes.push(el('div', 'mcap', (full.length ? 'В среднем за месяц ' + mtZl(avg) : 'Полных месяцев ещё нет') +
+      (budget ? ' · бюджет ' + mtZl(budget) : '')));
+    var by = {}, list = [];
+    (j.rows || []).forEach(function (r) {
+      if (r.category !== key || r.currency !== 'PLN') return;
+      var m = String(r.merchant || 'Без названия').replace(/\s+/g, ' ').trim(), name = m.replace(/(?:[\s*#]+\S*\d\S*)+$/, '').trim() || m;
+      var k = name.toLowerCase(), e = by[k] || (by[k] = { name: name, sum: 0, count: 0 });
+      if (!e.count) list.push(e);
+      e.sum += Math.round(Number(r.amount) * 100);
+      e.count++;
+    });
+    list.sort(function (a, b) { return b.sum - a.sum; });
+    if (list.length) {
+      var top = el('div', 'mtop5');
+      add(top, el('div', 'fst', 'Где больше всего · ' + monthLabel(j.month).toLowerCase()));
+      list.slice(0, 5).forEach(function (e) {
+        top.appendChild(add(el('div', 'row'), moneyTile(e.name, c[2]), add(el('span', 'tx'), el('div', 't', e.name),
+          el('div', 'mu', e.count + ' ' + plural(e.count, ['покупка', 'покупки', 'покупок']))), el('span', 'pr', moneyFmt(e.sum / 100))));
+      });
+      nodes.push(top);
+    }
+    legalSheet(c[1], nodes, from);
+    if (!t) return add(chartBox, mtEmpty(120));
+    var p = t.pace || {}, now = monthNow(), vals = t.months.map(function (m) { return { month: m.month, v: m.by_category[key] || 0 }; });
+    var cur = vals[vals.length - 1], fc = cur.month === now && p.today_day >= 5 ? cur.v / p.today_day * p.days_in_month : null;
+    var W = chartBox.clientWidth;
+    chartBox.appendChild(mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: null }, W, wide() ? 240 : 200));
+  }
   function moneyView() {
-    var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div');
+    var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div'), charts = el('div');
     function load() {
       moneyLoad(body, render, load);
+      moneyTrends(charts, function () { return current === 'money'; }, false, load);
       moneySubs(subs, function () { return current === 'money'; });
     }
     function row(r) {
@@ -6782,6 +7207,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!rows.length) return body.appendChild(add(el('div', 'card'), moneyEmpty()));
       var cats = moneyCats(j, function (k) { MONEY.filter = k; haptic(); render(data); }, load);
       var accts = moneyAccts(j, function (k) { MONEY.acct = k; haptic(); render(data); });
+      body.appendChild(charts);
+      moneyTrendsDraw(charts);
       var list = mkCard('wallet', 'Траты');
       moneyFilterChips(list.firstChild, function () { render(data); });
       var shownRows = rows.filter(moneyShown), day = null, head = null, sum = 0;
@@ -7525,7 +7952,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
     DELA_DONE: DELA_DONE, delaHint: delaHint, swr: swr, chip: chip, MONEY: MONEY, MONEY_CATS: MONEY_CATS, moneyCat: moneyCat,
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
-    moneyCats: moneyCats, moneySubs: moneySubs, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
+    moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };

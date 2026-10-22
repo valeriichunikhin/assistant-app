@@ -552,12 +552,14 @@
 
   // --- money: the month switch and «Трата» on top, the sums, the spends table on the left, the categories, the
   // accounts and the subscriptions on the right (docs/specs/money.md, money-3.md). The month, the filter, the sheets and the formats are index.html's (APP.MONEY…), so
-  // the phone and the Mac show the same month. ---
+  // the phone and the Mac show the same month. «Графики» (money-4.md) spans the width over the table: the three charts
+  // side by side. ---
   view('money', function (main) {
-    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null, subs = el('div');
+    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null, subs = el('div'), charts = el('div');
     add(main, tool, body);
     function load() {
       A.moneyLoad(body, render, load);
+      A.moneyTrends(charts, function () { return on('money'); }, true, load);
       A.moneySubs(subs, function () { return on('money'); });
     }
     function render(j) {
@@ -574,6 +576,8 @@
       (j.other || []).forEach(function (o) { tiles.push({ k: 'Не в злотых', v: A.moneyFmt(o.sum, o.currency) }); });
       body.appendChild(D.tiles(tiles));
       if (!rows.length) return body.appendChild(add(el('div', 'card'), A.moneyEmpty()));
+      body.appendChild(charts);
+      A.moneyTrendsDraw(charts);
       var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load);
       var accts = A.moneyAccts(j, function (k) { M.acct = k; render(data); });
       var list = rows.filter(A.moneyShown);
