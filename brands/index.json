@@ -1,0 +1,292 @@
+[
+ {
+  "slug": "biedronka",
+  "re": "biedronka",
+  "name": "Biedronka"
+ },
+ {
+  "slug": "zabka",
+  "re": "żabka|zabka",
+  "name": "Żabka"
+ },
+ {
+  "slug": "lidl",
+  "re": "\\blidl",
+  "name": "Lidl"
+ },
+ {
+  "slug": "aldi",
+  "re": "\\baldi\\b",
+  "name": "Aldi"
+ },
+ {
+  "slug": "carrefour",
+  "re": "carrefour",
+  "name": "Carrefour"
+ },
+ {
+  "slug": "rossmann",
+  "re": "rossmann",
+  "name": "Rossmann"
+ },
+ {
+  "slug": "pepco",
+  "re": "pepco",
+  "name": "Pepco"
+ },
+ {
+  "slug": "tkmaxx",
+  "re": "tk ?maxx",
+  "name": "TK Maxx"
+ },
+ {
+  "slug": "halfprice",
+  "re": "half ?price",
+  "name": "HalfPrice"
+ },
+ {
+  "slug": "uniqlo",
+  "re": "uniqlo",
+  "name": "Uniqlo"
+ },
+ {
+  "slug": "mcdonalds",
+  "re": "mcdonald",
+  "name": "McDonald's"
+ },
+ {
+  "slug": "starbucks",
+  "re": "starbucks",
+  "name": "Starbucks"
+ },
+ {
+  "slug": "kfc",
+  "re": "\\bkfc\\b",
+  "name": "KFC"
+ },
+ {
+  "slug": "ubereats",
+  "re": "uber ?\\*? ?eats",
+  "name": "Uber Eats"
+ },
+ {
+  "slug": "uber",
+  "re": "\\buber\\b",
+  "name": "Uber"
+ },
+ {
+  "slug": "bolt",
+  "re": "\\bbolt\\b",
+  "name": "Bolt"
+ },
+ {
+  "slug": "glovo",
+  "re": "glovo",
+  "name": "Glovo"
+ },
+ {
+  "slug": "wolt",
+  "re": "\\bwolt\\b",
+  "name": "Wolt"
+ },
+ {
+  "slug": "pyszne",
+  "re": "pyszne",
+  "name": "Pyszne.pl"
+ },
+ {
+  "slug": "netflix",
+  "re": "netflix",
+  "name": "Netflix"
+ },
+ {
+  "slug": "spotify",
+  "re": "spotify",
+  "name": "Spotify"
+ },
+ {
+  "slug": "youtube",
+  "re": "youtube",
+  "name": "YouTube"
+ },
+ {
+  "slug": "apple",
+  "re": "icloud|\\bapple\\b",
+  "name": "Apple"
+ },
+ {
+  "slug": "playstation",
+  "re": "playstation",
+  "name": "PlayStation"
+ },
+ {
+  "slug": "steam",
+  "re": "\\bsteam",
+  "name": "Steam"
+ },
+ {
+  "slug": "blizzard",
+  "re": "blizzard",
+  "name": "Blizzard"
+ },
+ {
+  "slug": "play",
+  "re": "play24|(?<!google )\\bplay\\b",
+  "name": "Play"
+ },
+ {
+  "slug": "netia",
+  "re": "\\bnetia",
+  "name": "Netia"
+ },
+ {
+  "slug": "lifecell",
+  "re": "lifecell",
+  "name": "lifecell"
+ },
+ {
+  "slug": "klarna",
+  "re": "klarna",
+  "name": "Klarna"
+ },
+ {
+  "slug": "multikino",
+  "re": "multikino",
+  "name": "Multikino"
+ },
+ {
+  "slug": "canva",
+  "re": "\\bcanva\\b",
+  "name": "Canva"
+ },
+ {
+  "slug": "poczta",
+  "re": "poczta polska",
+  "name": "Poczta Polska"
+ },
+ {
+  "slug": "doz",
+  "re": "apteka doz|\\bdoz\\b",
+  "name": "DOZ"
+ },
+ {
+  "slug": "logitech",
+  "re": "logitech",
+  "name": "Logitech"
+ },
+ {
+  "slug": "xiaomi",
+  "re": "xiaomi",
+  "name": "Xiaomi"
+ },
+ {
+  "slug": "nanoleaf",
+  "re": "nanoleaf",
+  "name": "Nanoleaf"
+ },
+ {
+  "slug": "compensa",
+  "re": "compensa",
+  "name": "Compensa"
+ },
+ {
+  "slug": "ikea",
+  "re": "\\bikea",
+  "name": "IKEA"
+ },
+ {
+  "slug": "decathlon",
+  "re": "decathlon",
+  "name": "Decathlon"
+ },
+ {
+  "slug": "mediaexpert",
+  "re": "media ?expert",
+  "name": "Media Expert"
+ },
+ {
+  "slug": "allegro",
+  "re": "allegro",
+  "name": "Allegro"
+ },
+ {
+  "slug": "inpost",
+  "re": "inpost",
+  "name": "InPost"
+ },
+ {
+  "slug": "zalando",
+  "re": "zalando",
+  "name": "Zalando"
+ },
+ {
+  "slug": "modivo",
+  "re": "modivo",
+  "name": "Modivo"
+ },
+ {
+  "slug": "orange",
+  "re": "\\borange\\b",
+  "name": "Orange"
+ },
+ {
+  "slug": "zdrofit",
+  "re": "zdrofit",
+  "name": "Zdrofit"
+ },
+ {
+  "slug": "medicover",
+  "re": "medicover",
+  "name": "Medicover"
+ },
+ {
+  "slug": "luxmed",
+  "re": "lux ?med",
+  "name": "Lux Med"
+ },
+ {
+  "slug": "alab",
+  "re": "\\balab\\b",
+  "name": "ALAB"
+ },
+ {
+  "slug": "jakdojade",
+  "re": "jakdojade",
+  "name": "Jakdojade"
+ },
+ {
+  "slug": "ztm",
+  "re": "\\bztm\\b|warszawski transport",
+  "name": "ZTM Warszawa"
+ },
+ {
+  "slug": "pkp",
+  "re": "\\bpkp|intercity|koleje",
+  "name": "PKP Intercity"
+ },
+ {
+  "slug": "shell",
+  "re": "\\bshell\\b",
+  "name": "Shell"
+ },
+ {
+  "slug": "bp",
+  "re": "\\bbp\\b",
+  "name": "BP"
+ },
+ {
+  "slug": "millennium",
+  "re": "millennium",
+  "name": "Bank Millennium"
+ },
+ {
+  "slug": "revolut",
+  "re": "revolut",
+  "name": "Revolut"
+ },
+ {
+  "slug": "monobank",
+  "re": "monobank",
+  "name": "Monobank"
+ }
+]
