@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 18:12">
+<meta name="published" content="2026-10-22 22:03">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -446,6 +446,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .ldf:disabled{opacity:.5}.ldocs-l li.lf{margin:0}
 .lwp{margin:0 0 10px;padding:10px 12px 6px;border:1px solid var(--line);border-radius:var(--r-s)}.lwp .ldocs-l{margin-top:4px}
 .tsum .acts.ltop{margin:0 0 12px}.tsum .lprint{display:none}
+/* «Деньги» (docs/specs/money.md): the month switch, the big sum, a bar per category (one accent colour, its share of the
+   month), the spends by day; the sheet's category chips, «Всегда для этого продавца» and the steps for the iPhone. */
+.mhead{padding:6px 14px 14px}
+.mnav{display:flex;align-items:center;gap:4px;margin:0 -8px}
+.mnav button{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:var(--r-s);background:none;color:var(--fg);cursor:pointer}
+.mnav button:disabled{opacity:.3;cursor:default}.mnav .i{width:20px;height:20px}
+.mmon{flex:1;min-width:0;text-align:center;font:600 14px/1.3 var(--font)}
+.mtop{display:flex;align-items:flex-end;gap:12px;margin-top:2px}.mtx{flex:1;min-width:0}
+.msum{font:800 32px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+.mvs{margin-top:4px;color:var(--muted);font-size:13px;line-height:1.35}
+.row.mcat .tx{display:flex;flex-direction:column;gap:6px}.row.mcat.on{background:var(--accent-soft)}
+.mbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.mbar>i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+.row.mcat .pr .mu,.row.mcat .pr>.mu{display:block;margin-top:2px;font:400 12px/1.3 var(--font)}
+.row.mrow .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mday{padding:12px 14px 6px;border-top:1px solid var(--line);color:var(--muted);font:600 12px/1.3 var(--font)}.mday+.row{border-top:0}
+.ch>.pill.acc{height:28px;gap:4px;padding:0 10px;cursor:pointer}.ch>.pill.acc .i{width:14px;height:14px}
+.mchips{padding:0 0 10px}.mchips .pill{height:36px;padding:0 12px;font-size:13px;cursor:pointer}.mchips .pill .i{width:14px;height:14px;margin-right:6px}
+.mrem{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 4px;padding:0;border:0;background:none;color:var(--fg);font:14px var(--font);text-align:left;cursor:pointer}
+.mrem .mk{width:20px;height:20px;color:var(--muted)}.mrem .mk.on{color:var(--mark)}
+.msrc{margin:0 0 6px;font-size:12px;overflow-wrap:anywhere}.bar.mact{margin:12px 0 0}.bar.mact .btn{flex:1}
+.mhow{margin:0 0 8px;padding-left:20px;font-size:14px;line-height:1.5}.mhow li{margin:0 0 8px}
+.mhow code{padding:1px 4px;border-radius:4px;background:var(--surface-2);font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.mny .state .mu{font-size:13px}
 @media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
   body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
   body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh,body.printing .tsum .lwk{display:none}
@@ -564,6 +587,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-sticky-note" viewBox="0 0 24 24"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></symbol>
 <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/><path d="M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z"/><path d="M5 22h14"/></symbol>
 <symbol id="i-file-image" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="i-shopping-basket" viewBox="0 0 24 24"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></symbol>
+<symbol id="i-coffee" viewBox="0 0 24 24"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/></symbol>
+<symbol id="i-car-taxi-front" viewBox="0 0 24 24"><path d="M10 2h4"/><path d="m21 8-2 2-1.5-3.7A2 2 0 0 0 15.646 5H8.4a2 2 0 0 0-1.903 1.257L5 10 3 8"/><path d="M7 14h.01"/><path d="M17 14h.01"/><rect width="18" height="8" x="3" y="10" rx="2"/><path d="M5 18v2"/><path d="M19 18v2"/></symbol>
+<symbol id="i-tram-front" viewBox="0 0 24 24"><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h.01"/><path d="M16 15h.01"/></symbol>
+<symbol id="i-popcorn" viewBox="0 0 24 24"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></symbol>
+<symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
+<symbol id="i-shirt" viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></symbol>
+<symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2Z"/><path d="M12 12v6"/><path d="M8 22v-2c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2H8Z"/></symbol>
+<symbol id="i-circle-dashed" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol>
+<symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -996,7 +1034,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Сегодня'], ['shop', 'cart', 'Покупки'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['tasks', 'check-square', 'Задачи'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'shop', 'tasks', 'films'], MORE = [];
@@ -1019,7 +1057,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'tasks', 'legal', 'li', 'inbox', 'feed'];
+  var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The known keys of v, once each, in its order; anything else → [].
@@ -1319,10 +1357,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (g && g.kind === 'row') rowBack(g.row, g.swp);
       g = null;
     }
-    // A row that takes a sideways swipe: a task's line in «Задачи» (its ✓ button .tb), a line of «Список» (its ✕).
+    // A row that takes a sideways swipe: a task's line in «Задачи» (its ✓ button .tb), a line of «Список» (its ✕), a
+    // spend in «Деньги» (to the left only: its ✕ is the off-page button mx, the delete with «Вернуть»).
     function swipeRow(t) {
       var r = t.closest('.row');
       if (!r || !main.contains(r)) return null;
+      if (current === 'money') return r.mx ? r : null;
       if (current === 'tasks' && r.parentNode.classList.contains('fi') && r.querySelector('.tb')) return r;
       return shopIs('list') && r.querySelector(':scope>.x') ? r : null;
     }
@@ -1332,11 +1372,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return dx < 0 ? -o : o;
     }
     function rowPaint() {
-      var o = rowOff(g.x ? g.dx : Math.max(g.dx, 0)), dir = o < 0 ? 'l' : 'r', s = g.swp;
+      var o = rowOff(g.row.mx ? Math.min(g.dx, 0) : g.x ? g.dx : Math.max(g.dx, 0)), dir = o < 0 ? 'l' : 'r', s = g.swp;
       if (s.dir !== dir) {
         s.dir = dir;
         s.className = 'swp ' + dir;
-        add(clear(s), icon(dir === 'l' ? 'x' : g.row.classList.contains('done') ? 'undo-2' : 'check'));
+        add(clear(s), icon(dir === 'l' ? (g.row.mx ? 'trash' : 'x') : g.row.classList.contains('done') ? 'undo-2' : 'check'));
       }
       s.style.width = Math.abs(o).toFixed(1) + 'px';
       g.row.style.transform = 'translateX(' + o.toFixed(1) + 'px)';
@@ -1420,7 +1460,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       // «Фильмы» keep their switch to a tap (22.10.2026, his word): the poster grid is too easy to brush sideways —
       // there, and on a tab without a switch, a sideways swipe goes to the neighbouring tab of the bar.
       else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr')) kind = current !== 'films' && topSeg() ? 'seg' : 'tab';
-      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && row.querySelector(':scope>.x') };
+      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && (row.mx || row.querySelector(':scope>.x')) };
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
       if (!g) return;
@@ -1430,7 +1470,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (Math.abs(g.dx) < 8 && Math.abs(g.dy) < 8) return;
         var side = Math.abs(g.dx) > Math.abs(g.dy);
         // A task has nothing to its left (it is dropped from its opened card).
-        if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0) || (g.kind === 'row' && g.dx < 0 && !g.x))) { g = null; return; }
+        if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0) || (g.kind === 'row' && g.dx < 0 && !g.x) || (g.kind === 'row' && g.dx > 0 && g.row.mx))) { g = null; return; }
         g.on = true;
         touchOwner = g.kind === 'sheet' ? 'sheet' : 'x';
         if (g.kind === 'sheet') { clearTimeout(springT); sheet.style.transition = 'none'; }
@@ -1466,7 +1506,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (!row.isConnected) { quiet = Date.now() + 200; return; }
         // The row's own handlers do the work: the task's ✓ (a list row's tap: its .tb may be the product's photo), the
         // list's ✕ — pressed twice, as the swipe is its «Точно?»; the «Вернуть» toasts come from them as on a tap.
-        if (dx >= 72) (x ? row : row.querySelector('.tb')).click();
+        if (dx >= 72 && !row.mx) (x ? row : row.querySelector('.tb')).click();
         else if (dx <= -72 && x) {
           haptic();
           x.click();
@@ -6229,6 +6269,301 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     load();
   }
 
+  // --- money ---
+  // «Деньги» (docs/specs/money.md): a month of spends (miniapp money_month) — the Apple Pay taps the iPhone's
+  // Shortcuts automation posts to the money function, and the cash and BLIK ones added here (money_add). A tap on a
+  // spend opens its sheet (money_edit, money_delete); a swipe to the left deletes it with «Вернуть». The categories
+  // are CATEGORIES of _shared/money.ts: the same keys, labels and icons — edit both together.
+  var MONEY_CATS = [['food', 'Продукты', 'shopping-basket'], ['cafe', 'Кафе и еда навынос', 'coffee'], ['taxi', 'Такси', 'car-taxi-front'],
+    ['transport', 'Транспорт', 'tram-front'], ['subs', 'Подписки', 'repeat'], ['fun', 'Кино и развлечения', 'popcorn'],
+    ['health', 'Здоровье и аптека', 'pill'], ['clothes', 'Одежда', 'shirt'], ['home', 'Дом', 'lamp'], ['sport', 'Спорт', 'dumbbell'],
+    ['gifts', 'Подарки', 'gift'], ['tech', 'Техника', 'laptop'], ['care', 'Уход', 'scissors'], ['loan', 'Кредиты', 'landmark'],
+    ['other', 'Другое', 'circle-dashed']];
+  var MONEY_CAT = {};
+  MONEY_CATS.forEach(function (c) { MONEY_CAT[c[0]] = c; });
+  function moneyCat(k) { return MONEY_CAT[k] || MONEY_CAT.other; }
+  // The month he looks at (YYYY-MM; the first open shows the current one) and the category the spends are filtered by;
+  // one copy for the phone and the desktop view. The history reaches back to MONEY_FROM.
+  var MONEY = { month: null, filter: null }, MONEY_FROM = '2026-02';
+  var MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  // 1234.5 → «1 234,50»; moneyFmt adds the currency: «1 234,50 zł», «4,50 EUR».
+  function moneyNum(v) { var s = Math.abs(Number(v) || 0).toFixed(2).split('.'); return grouped(s[0]) + ',' + s[1]; }
+  function moneyFmt(v, cur) { return moneyNum(v) + ' ' + (!cur || cur === 'PLN' ? 'zł' : cur); }
+  function monthNow() { var p = wp(Date.now()); return p.year + '-' + p.month; }
+  function monthStep(m, n) {
+    var k = Number(m.slice(5, 7)) - 1 + n, y = Number(m.slice(0, 4)) + Math.floor(k / 12);
+    k = ((k % 12) + 12) % 12;
+    return y + '-' + ('0' + (k + 1)).slice(-2);
+  }
+  function monthLabel(m) { return MONTHS_RU[Number(m.slice(5, 7)) - 1] + ' ' + m.slice(0, 4); }
+  // «пт, 23 октября» in Warsaw; the time «08:15»; the day's key YYYY-MM-DD.
+  function moneyDay(ts) {
+    try {
+      return new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })
+        .format(new Date(ts)).toLowerCase();
+    } catch (e) { return dmt(ts); }
+  }
+  // A category's share of the month: «79 %», «<1 %» for a sliver.
+  function moneyShare(s) { return s > 0 && s < 0.005 ? '<1 %' : Math.round(s * 100) + ' %'; }
+  function moneyTime(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
+  function moneyKey(ts) { var p = wp(ts); return p.year + '-' + p.month + '-' + p.day; }
+  // «в прошлом месяце 980,00 zł · на 254,50 zł больше».
+  function moneyVs(total, prev) {
+    var d = Math.round((total - prev) * 100) / 100;
+    return 'в прошлом месяце ' + moneyFmt(prev) + (prev || total ? ' · ' + (!d ? 'столько же' : 'на ' + moneyFmt(Math.abs(d)) +
+      (d > 0 ? ' больше' : ' меньше')) : '');
+  }
+  // A typed amount («12,99», «1 234.5») as a number above zero, else null.
+  function moneyIn(s) {
+    var n = Number(String(s || '').replace(/[\s ]/g, '').replace(',', '.'));
+    return isFinite(n) && n > 0 && n < 1e6 ? Math.round(n * 100) / 100 : null;
+  }
+  // The spend deleted, then «Удалено · Вернуть» for 10 s: the return adds it again by hand (the card stays behind).
+  function moneyDelete(r, after) {
+    haptic();
+    return api('miniapp', { action: 'money_delete' }, undefined, false, { id: r.id }).then(function () {
+      cacheDrop('money');
+      after();
+      backToast('Удалено', function () {
+        api('miniapp', { action: 'money_add' }, undefined, false, { amount: Number(r.amount), currency: r.currency, merchant: r.merchant,
+          category: r.category, note: r.note, at: r.at }).then(function () { cacheDrop('money'); after(); }, noop);
+      });
+    }, function (e) { if (e.code === 'not found') after(); });
+  }
+  // The sheet of a spend (r) or of a new one (r null): amount, merchant, category, note, «Всегда для этого продавца»,
+  // «Удалить» on two taps. done() reloads the view after a confirmed write.
+  function moneySheet(r, done, from) {
+    var isNew = !r, cat = r ? r.category : null, keep = false, close = noop;
+    function inp(ph, v, max) {
+      var i = el('input');
+      i.placeholder = ph;
+      i.setAttribute('aria-label', ph);
+      if (max) i.maxLength = max;
+      i.value = v || '';
+      return i;
+    }
+    var amt = inp('Сумма', r ? moneyNum(r.amount).replace(/\s/g, '') : '');
+    amt.inputMode = 'decimal';
+    var where = inp(isNew ? 'Где: магазин, кафе, BLIK' : 'Продавец', r && r.merchant, 200);
+    var note = inp('Заметка', r && r.note, 500);
+    var day = null;
+    if (isNew) {
+      var p = wp(Date.now());
+      day = el('input');
+      day.type = 'date';
+      day.max = day.value = p.year + '-' + p.month + '-' + p.day;
+      day.min = MONEY_FROM + '-01';
+      day.setAttribute('aria-label', 'Дата');
+    }
+    var chips = el('div', 'chips mchips');
+    chips.setAttribute('role', 'group');
+    chips.setAttribute('aria-label', 'Категория');
+    function drawChips() {
+      clear(chips);
+      MONEY_CATS.forEach(function (c) {
+        var b = chip(c[1], cat === c[0], null, function () { cat = cat === c[0] && isNew ? null : c[0]; haptic(); drawChips(); });
+        b.insertBefore(icon(c[2]), b.firstChild);
+        chips.appendChild(b);
+      });
+    }
+    drawChips();
+    var rem = null;
+    if (r && r.merchant) {
+      rem = el('button', 'mrem');
+      rem.type = 'button';
+      var drawRem = function () {
+        add(clear(rem), icon(keep ? 'check-square' : 'square', 'mk' + (keep ? ' on' : '')), el('span', '', 'Всегда для этого продавца'));
+        rem.setAttribute('aria-pressed', String(keep));
+      };
+      rem.onclick = function () { keep = !keep; haptic(); drawRem(); };
+      drawRem();
+    }
+    var meta = r ? el('div', 'mu msrc', [r.source === 'manual' ? 'добавлено вручную' : r.source === 'import' ? 'импорт' : 'Apple Pay',
+      r.card, whenW(r.at)].filter(Boolean).join(' · ')) : null;
+    var src = r && r.src ? el('div', 'mu msrc', 'Категория в импорте: ' + r.src) : null;
+    var save = label(el('button', 'btn'), 'check', isNew ? 'Добавить' : 'Сохранить');
+    save.type = 'button';
+    save.onclick = function () {
+      var a = moneyIn(amt.value);
+      if (!a) return toast('Сумма — число больше нуля');
+      var body;
+      if (isNew) {
+        body = { amount: a, merchant: where.value.trim() || null, note: note.value.trim() || null, at: day.value || undefined };
+        if (cat) body.category = cat;
+      } else {
+        body = { id: r.id };
+        if (Math.abs(a - Number(r.amount)) > 0.001) body.amount = a;
+        if (where.value.trim() !== (r.merchant || '')) body.merchant = where.value.trim() || null;
+        if (cat !== r.category) body.category = cat;
+        if (note.value.trim() !== (r.note || '')) body.note = note.value.trim() || null;
+        if (keep) body.remember = true;
+        if (Object.keys(body).length === 1) return close();
+      }
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: isNew ? 'money_add' : 'money_edit' }, undefined, false, body).then(function (j) {
+        cacheDrop('money');
+        close();
+        toast(isNew ? 'Добавлено: ' + moneyFmt(j.row.amount, j.row.currency) : j.remembered
+          ? 'Сохранено · ' + moneyCat(j.row.category)[1] + ' для этого продавца' + (j.recolored ? ', ещё ' + j.recolored : '')
+          : 'Сохранено', 'check');
+        done();
+      }, function (e) {
+        save.disabled = false;
+        if (e.code === 'not found') { close(); done(); }
+      });
+    };
+    var del = null, armT = null;
+    if (r) {
+      del = label(el('button', 'btn ghost'), 'trash', 'Удалить');
+      del.type = 'button';
+      del.onclick = function () {
+        if (!armT) {
+          label(del, null, 'Точно?');
+          del.className = 'btn warn';
+          armT = setTimeout(function () { armT = null; label(del, 'trash', 'Удалить'); del.className = 'btn ghost'; }, 3000);
+          return;
+        }
+        clearTimeout(armT);
+        close();
+        moneyDelete(r, done);
+      };
+    }
+    close = legalSheet(isNew ? 'Новая трата' : 'Трата', [
+      add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, el('span', 'mu', r && r.currency !== 'PLN' ? r.currency : 'zł'))),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), where)),
+      day ? add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'дата'), day)) : null,
+      el('div', 'tsh', 'Категория'), chips,
+      add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)),
+      rem, meta, src,
+      add(el('div', 'bar mact'), save, del)], from);
+    // An existing spend opens to look at, not to type: the focus waits on «Сохранить» (inside the sheet, so Escape
+    // still closes it), no keyboard until a field is tapped.
+    if (r) try { save.focus({ preventScroll: true }); } catch (e) {}
+    if (isNew) try { amt.focus(); } catch (e) {}
+  }
+  // How to connect the iPhone (the spec's «Источник»): the steps only; the key stays in his Shortcuts setting.
+  function moneyHow(from) {
+    var ol = el('ol', 'mhow');
+    [['Открой «Быстрые команды» → «Автоматизация» → «+» → «Транзакция».'],
+      ['Отметь все свои карты, выбери «Запускать сразу» и выключи «Уведомлять при запуске».'],
+      ['Добавь действие «Получить содержимое URL». Адрес: ', BASE + 'money?action=add', ', метод POST.'],
+      ['Заголовок ', 'x-money-key', ' — ключ из своей настройки (здесь он не показывается).'],
+      ['Тело запроса JSON: ', 'amount', ' — «Сумма», ', 'merchant', ' — «Продавец», ', 'card', ' — «Карта или пропуск», ', 'name', ' — «Название».'],
+      ['Ловит только оплату через Apple Pay. Переводы, BLIK и наличные добавляй здесь кнопкой «Трата».']].forEach(function (s) {
+      var li = el('li');
+      s.forEach(function (x, k) { li.appendChild(k % 2 ? el('code', '', x) : document.createTextNode(x)); });
+      ol.appendChild(li);
+    });
+    legalSheet('Как подключить iPhone', [ol], from);
+  }
+  // The month switch: ‹ Октябрь 2026 ›, no further back than MONEY_FROM and no later than the current month.
+  function moneyNav(go) {
+    var m = MONEY.month, nav = el('div', 'mnav');
+    [[-1, 'chevron-left', 'Предыдущий месяц'], [0], [1, 'chevron-right', 'Следующий месяц']].forEach(function (x) {
+      if (!x[0]) return nav.appendChild(el('div', 'mmon', monthLabel(m)));
+      var b = add(el('button'), icon(x[1]));
+      b.type = 'button';
+      b.setAttribute('aria-label', x[2]);
+      b.disabled = x[0] < 0 ? m <= MONEY_FROM : m >= monthNow();
+      b.onclick = function () { go(x[0]); };
+      nav.appendChild(b);
+    });
+    return nav;
+  }
+  function moneyGo(n, load) {
+    var m = monthStep(MONEY.month, n);
+    if (m < MONEY_FROM || m > monthNow()) return;
+    MONEY.month = m;
+    MONEY.filter = null;
+    haptic();
+    load();
+  }
+  function moneyLoad(box, render, retry) {
+    if (!MONEY.month) MONEY.month = monthNow();
+    var m = MONEY.month;
+    swr({ key: 'money:' + m, box: box, n: 2, live: function () { return current === 'money' && MONEY.month === m; },
+      fetch: function () { return api('miniapp', { action: 'money_month' }, undefined, true, { month: m }); },
+      render: render, retry: retry });
+  }
+  function moneyEmpty() {
+    var how = label(el('button', 'btn ghost'), 'smartphone', 'Как подключить iPhone');
+    how.type = 'button';
+    how.onclick = function () { moneyHow(how); };
+    return add(el('div', 'state'), icon('wallet'), el('p', '', 'Трат пока нет'),
+      el('p', 'mu', 'Оплаты Apple Pay приходят сами, когда на iPhone включена автоматизация «Транзакция». Наличные и BLIK — кнопкой «Трата».'), how);
+  }
+  function moneyView() {
+    var body = add(main, el('div', 'mny')).lastChild, data = null;
+    function load() { moneyLoad(body, render, load); }
+    function row(r) {
+      var c = moneyCat(r.category), tile = add(el('span', 'ptile'), icon(c[2]));
+      tile.setAttribute('aria-hidden', 'true');
+      var x = add(el('div', 'row mrow'), tile, add(el('span', 'tx'), el('div', 't', r.merchant || 'Без названия'),
+        el('div', 'mu num', [moneyTime(r.at), r.note].filter(Boolean).join(' · '))), el('span', 'pr', moneyFmt(r.amount, r.currency)));
+      tap(x, function () { moneySheet(r, load, x); });
+      x.setAttribute('aria-label', (r.merchant || 'Без названия') + ', ' + moneyFmt(r.amount, r.currency) + ', ' + c[1]);
+      // The swipe's ✕ (gestures): a button off the page, so the swipe deletes at once and «Вернуть» brings it back.
+      var del = el('button', 'x');
+      del.onclick = function () { moneyDelete(r, load); };
+      x.mx = del;
+      return x;
+    }
+    function render(j) {
+      if (current !== 'money') return;
+      data = j;
+      clear(body);
+      var add1 = label(el('button', 'btn'), 'plus', 'Трата');
+      add1.type = 'button';
+      add1.onclick = function () { moneySheet(null, load, add1); };
+      var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
+      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }),
+        add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
+          other ? el('div', 'mvs', other) : null), add1)));
+      var rows = j.rows || [];
+      if (!rows.length) return body.appendChild(add(el('div', 'card'), moneyEmpty()));
+      var cats = mkCard('layers', 'По категориям'), total = j.total || 0;
+      (j.by_category || []).forEach(function (b) {
+        var c = moneyCat(b.category), on = MONEY.filter === b.category, share = total ? b.sum / total : 0;
+        var tile = add(el('span', 'ptile'), icon(c[2]));
+        tile.setAttribute('aria-hidden', 'true');
+        var bar = add(el('div', 'mbar'), el('i'));
+        bar.firstChild.style.width = Math.max(share * 100, 1).toFixed(1) + '%';
+        var r = add(el('div', 'row mcat' + (on ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), bar),
+          add(el('span', 'pr'), document.createTextNode(moneyFmt(b.sum)),
+            el('span', 'mu', b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))));
+        r.setAttribute('aria-pressed', String(on));
+        tap(r, function () { MONEY.filter = on ? null : b.category; haptic(); render(data); });
+        cats.appendChild(r);
+      });
+      var list = mkCard('wallet', 'Траты');
+      if (MONEY.filter) {
+        var f = chip(moneyCat(MONEY.filter)[1], true, 'Снять фильтр', function () { MONEY.filter = null; render(data); });
+        f.appendChild(icon('x'));
+        list.firstChild.appendChild(f);
+      }
+      var shownRows = rows.filter(function (r) { return !MONEY.filter || r.category === MONEY.filter; }), day = null, head = null, sum = 0;
+      function close() { if (head) text(head, head.dataset.d + (sum ? ' · ' + moneyFmt(sum / 100) : '')); }
+      shownRows.forEach(function (r) {
+        var k = moneyKey(r.at);
+        if (k !== day) {
+          close();
+          day = k;
+          sum = 0;
+          head = list.appendChild(el('div', 'mday'));
+          head.dataset.d = moneyDay(r.at);
+        }
+        if (r.currency === 'PLN') sum += Math.round(Number(r.amount) * 100);
+        list.appendChild(row(r));
+      });
+      close();
+      if (!shownRows.length) list.appendChild(el('div', 'mday', 'В этой категории трат нет'));
+      if (j.more) list.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' трат месяца'));
+      add(body, cats, list);
+    }
+    load();
+  }
+
   // --- inbox ---
   // What he dropped to the bot, oldest first (?action=inbox). Each button is an
   // inbox_mark: its answer as a toast, then a reload. «Следить» only for a row
@@ -6925,7 +7260,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // them as tabs, it turns their keys into shop first.
   var VIEWS = {
     home: homeView, shop: shopView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
     genshin: genshinView, notif: notifView
   };
   // --- desktop (≥ 900 px) ---
@@ -6946,7 +7281,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     pickAll: pickAll, dealsAll: dealsAll, shopIs: shopIs, shopSegs: shopSegs, names: NAMES, get tabs() { return visibleTabs(); }, main: main, hdr: hdr, rail: rail,
     hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
-    DELA_DONE: DELA_DONE, delaHint: delaHint, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
+    DELA_DONE: DELA_DONE, delaHint: delaHint, swr: swr, chip: chip, MONEY: MONEY, MONEY_CATS: MONEY_CATS, moneyCat: moneyCat,
+    moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
+    moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };

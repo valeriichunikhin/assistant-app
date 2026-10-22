@@ -1,5 +1,5 @@
 // The desktop layer, lane 3 (docs/specs/miniapp-desktop.md): the wide views of «Список», «Акции», «Вишлист»,
-// «Дела», «Инбокс» and «Новости». Each reads and writes through the same APP.api calls as its phone view in
+// «Дела», «Деньги», «Инбокс» and «Новости». Each reads and writes through the same APP.api calls as its phone view in
 // index.html (listView, picksView, wishView, delaView, inboxView, feedView) and checks APP.current before touching
 // the DOM after an answer. Nodes are built with el()/add(), never from HTML strings.
 (function () {
@@ -546,6 +546,64 @@
       api('telegram-webhook', { action: 'dela' }, undefined, true).then(function (j) { render(j.items || []); }, function (e) {
         if (!e.login && on('dela')) A.failed(body, load);
       });
+    }
+    load();
+  });
+
+  // --- money: the month switch and «Трата» on top, the sums, the spends table on the left, the categories on the
+  // right (docs/specs/money.md). The month, the filter, the sheets and the formats are index.html's (APP.MONEY…), so
+  // the phone and the Mac show the same month. ---
+  view('money', function (main) {
+    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null;
+    add(main, tool, body);
+    function load() { A.moneyLoad(body, render, load); }
+    function render(j) {
+      if (!on('money') || !body.isConnected) return;
+      data = j;
+      var go = label(el('button', 'btn'), 'plus', 'Трата');
+      go.type = 'button';
+      go.onclick = function () { A.moneySheet(null, load, go); };
+      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }), go);
+      clear(body);
+      var rows = j.rows || [], M = A.MONEY, d = Math.round(((j.total || 0) - (j.prev_total || 0)) * 100) / 100;
+      var tiles = [{ k: 'За месяц', v: A.moneyFmt(j.total) }, { k: 'Прошлый месяц', v: A.moneyFmt(j.prev_total || 0) },
+        { k: 'Разница', v: (d > 0 ? '+' : d < 0 ? '−' : '') + A.moneyFmt(Math.abs(d)) }, { k: 'Покупок', v: String(rows.length) }];
+      (j.other || []).forEach(function (o) { tiles.push({ k: 'Не в злотых', v: A.moneyFmt(o.sum, o.currency) }); });
+      body.appendChild(D.tiles(tiles));
+      if (!rows.length) return body.appendChild(add(el('div', 'card'), A.moneyEmpty()));
+      var cats = A.mkCard('layers', 'По категориям'), total = j.total || 0;
+      (j.by_category || []).forEach(function (b) {
+        var c = A.moneyCat(b.category), sel = M.filter === b.category, share = total ? b.sum / total : 0;
+        var tile = add(el('span', 'ptile'), icon(c[2]));
+        tile.setAttribute('aria-hidden', 'true');
+        var bar = add(el('div', 'mbar'), el('i'));
+        bar.firstChild.style.width = Math.max(share * 100, 1).toFixed(1) + '%';
+        var r = add(el('div', 'row mcat' + (sel ? ' on' : '')), tile, add(el('span', 'tx'), el('div', 't', c[1]), bar),
+          add(el('span', 'pr'), document.createTextNode(A.moneyFmt(b.sum)),
+            el('span', 'mu', b.count + ' ' + A.plural(b.count, ['покупка', 'покупки', 'покупок']) + ' · ' + A.moneyShare(share))));
+        r.setAttribute('aria-pressed', String(sel));
+        A.tap(r, function () { M.filter = sel ? null : b.category; render(data); });
+        cats.appendChild(r);
+      });
+      var list = rows.filter(function (r) { return !M.filter || r.category === M.filter; });
+      var t = D.table([{ h: '', w: '52px' }, { h: 'Где' }, { h: 'Категория', w: '190px' }, { h: 'Когда', w: '210px' },
+        { h: 'Сумма', r: true, w: '130px' }, { h: '', w: '120px' }], list.map(function (r) {
+        var c = A.moneyCat(r.category), tile = add(el('span', 'ptile'), icon(c[2]));
+        tile.setAttribute('aria-hidden', 'true');
+        return [tile, add(el('div', 'tx'), el('div', 't', r.merchant || 'Без названия'), r.note ? el('div', 'mu', r.note) : null),
+          el('span', 'mu', c[1]), el('span', 'num nowrap', A.moneyDay(r.at) + ' · ' + A.moneyTime(r.at)), num(A.moneyFmt(r.amount, r.currency)),
+          hovActs(confirmed('trash', 'Удалить', function () { A.moneyDelete(r, load); }))];
+      }), { onRow: function (k) { A.moneySheet(list[k], load, t.tBodies[0].rows[k]); } });
+      var card = cardWith('wallet', 'Траты', null, t);
+      if (M.filter) {
+        var f = A.chip(A.moneyCat(M.filter)[1], true, 'Снять фильтр', function () { M.filter = null; render(data); });
+        f.appendChild(icon('x'));
+        card.firstChild.appendChild(f);
+      }
+      if (j.more) card.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' трат месяца'));
+      var p = D.panes(card, cats);
+      p.classList.add('dmoney');
+      body.appendChild(p);
     }
     load();
   });

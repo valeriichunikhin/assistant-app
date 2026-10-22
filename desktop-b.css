@@ -81,3 +81,6 @@
 .dlane-b .panes.solo{grid-template-columns:1fr}
 .dfl{position:sticky;top:76px;align-self:start}
 .dlane-b .panes.solo .dfl{display:none}
+/* «Деньги»: the spends table wide on the left, the categories beside it; the month switch keeps to its size. */
+.dlane-b .panes.dmoney{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.dtool .mnav{flex:0 0 auto;width:240px;margin:0}.dlane-b .nowrap{white-space:nowrap}
