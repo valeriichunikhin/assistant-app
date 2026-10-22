@@ -36,7 +36,7 @@
  },
  {
   "slug": "tkmaxx",
-  "re": "tk ?maxx",
+  "re": "t\\.? ?k\\.? ?maxx",
   "name": "TK Maxx"
  },
  {
@@ -111,7 +111,7 @@
  },
  {
   "slug": "apple",
-  "re": "icloud|\\bapple\\b",
+  "re": "icloud|\\bapple\\b|airpods",
   "name": "Apple"
  },
  {
@@ -150,6 +150,11 @@
   "name": "Klarna"
  },
  {
+  "slug": "cinemacity",
+  "re": "cinema ?city",
+  "name": "Cinema City"
+ },
+ {
   "slug": "multikino",
   "re": "multikino",
   "name": "Multikino"
@@ -163,6 +168,11 @@
   "slug": "poczta",
   "re": "poczta polska",
   "name": "Poczta Polska"
+ },
+ {
+  "slug": "ziko",
+  "re": "\\bziko",
+  "name": "Ziko Apteka"
  },
  {
   "slug": "doz",
@@ -183,6 +193,76 @@
   "slug": "nanoleaf",
   "re": "nanoleaf",
   "name": "Nanoleaf"
+ },
+ {
+  "slug": "withings",
+  "re": "withings",
+  "name": "Withings"
+ },
+ {
+  "slug": "pnh",
+  "re": "volleyball|pi[lł]ka ?na ?hali",
+  "name": "Piłka na Hali"
+ },
+ {
+  "slug": "bevel",
+  "re": "\\bbevel\\b",
+  "name": "Bevel"
+ },
+ {
+  "slug": "kryptonite",
+  "re": "kryptonite",
+  "name": "Kryptonite"
+ },
+ {
+  "slug": "karllagerfeld",
+  "re": "karl lagerfeld",
+  "name": "Karl Lagerfeld"
+ },
+ {
+  "slug": "flixbus",
+  "re": "flixbus",
+  "name": "FlixBus"
+ },
+ {
+  "slug": "duolingo",
+  "re": "duolingo",
+  "name": "Duolingo"
+ },
+ {
+  "slug": "delonghi",
+  "re": "de'?longhi|lattecrema",
+  "name": "De'Longhi"
+ },
+ {
+  "slug": "diadora",
+  "re": "diadora",
+  "name": "Diadora"
+ },
+ {
+  "slug": "gravastar",
+  "re": "gravastar",
+  "name": "Gravastar"
+ },
+ {
+  "slug": "cocacola",
+  "re": "coca[- ]?cola",
+  "name": "Coca-Cola"
+ },
+ {
+  "slug": "putka",
+  "re": "\\bputka\\b",
+  "name": "Putka"
+ },
+ {
+  "slug": "speedqueen",
+  "re": "speed queen",
+  "name": "Speed Queen"
+ },
+ {
+  "slug": "microsoft",
+  "re": "windows|microsoft",
+  "name": "Microsoft"
  },
  {
   "slug": "compensa",
@@ -263,6 +343,11 @@
   "slug": "pkp",
   "re": "\\bpkp|intercity|koleje",
   "name": "PKP Intercity"
+ },
+ {
+  "slug": "orlen",
+  "re": "orlen",
+  "name": "Orlen"
  },
  {
   "slug": "shell",
