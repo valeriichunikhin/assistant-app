@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 09:29">
+<meta name="published" content="2026-10-22 10:09">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -94,14 +94,21 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .out{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:none;color:var(--muted);font-size:13px;transition:background .12s}
 .out .i{width:16px;height:16px}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
-.main.in{animation:fade .12s ease-out}
+.main.in{animation:fade .22s cubic-bezier(.2,.8,.2,1)}
 @keyframes fade{from{opacity:0;transform:translateY(3px)}}
 /* gestures (docs/specs/gestures.md): a tab to the right comes in from the right, to the left from the left; a sideways
    swipe nudges the page before its segment switches */
-.main.in-r{animation:in-r .18s ease-out}.main.in-l{animation:in-l .18s ease-out}
+.main.in-r{animation:in-r .26s cubic-bezier(.2,.8,.2,1)}.main.in-l{animation:in-l .26s cubic-bezier(.2,.8,.2,1)}
 @keyframes in-r{from{transform:translateX(24px);opacity:0}}
 @keyframes in-l{from{transform:translateX(-24px);opacity:0}}
-.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .12s,opacity .12s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
+.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .16s cubic-bezier(.2,.8,.2,1),opacity .16s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
+/* A row's swipe (docs/specs/gestures-2.md): the row slides, the strip fills the gap it leaves, its mark at the near edge. */
+.swh{position:relative;overflow:hidden}.row.swr{position:relative;z-index:1;will-change:transform}
+.swp{position:absolute;overflow:hidden;color:var(--bg0);pointer-events:none}.swp.r{left:0;background:var(--good)}.swp.l{right:0;background:var(--bad)}
+.swp .i{position:absolute;top:50%;margin-top:-10px}.swp.r .i{left:24px}.swp.l .i{right:24px}
+.row.swb{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.swp.swb{transition:width .3s cubic-bezier(.2,.8,.2,1)}
+/* The bar steps away on a scroll down and comes back on the way up (gestures-2.md, 8). */
+.tabbar{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.tabbar.hid{transform:translateY(calc(100% + env(safe-area-inset-bottom)))}
 .rail{display:none}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;height:calc(var(--bar) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:500 11px/1.1 var(--font)}
@@ -188,7 +195,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .field input{flex:1;min-width:0;height:42px;padding:0;border:0;background:none;outline:none;-webkit-appearance:none;appearance:none}
 .field input::placeholder{color:var(--muted-2)}
 .seg{display:flex;gap:2px;margin:0 0 16px;padding:2px;border:1px solid var(--line);border-radius:var(--r-b)}
-.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;transition:color .12s}
+.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;transition:color .2s,background .2s,box-shadow .2s}
 .seg.fit{overflow-x:auto;scrollbar-width:none}
 .seg.fit button{flex:1 0 auto}
 .seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -1136,6 +1143,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   function openSheet() {
     vSwipes(false);
+    tabbar.classList.remove('hid');
     shell.classList.add('more');
     sheet.setAttribute('aria-hidden', 'false');
     var b = sheet.querySelector('[aria-current]') || sheet.querySelector('button');
@@ -1291,9 +1299,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // only: Telegram has its own Back), the «Ещё» sheet follows a pull down and closes past 80 px, «Показать ещё» presses
   // itself when it comes on screen. The direction is decided once per touch, past 8 px, and the first gesture to decide
   // it owns the touch (touchOwner); touchmove is blocked only once the gesture is ours. Two fingers drop it.
+  // Batch two (docs/specs/gestures-2.md): a row of «Задачи» or «Список» swiped sideways does what its ✓ or ✕ does,
+  // and the bottom bar steps away on a scroll down.
   function gestures() {
     if (wide()) return;
-    var g = null, springT = 0, still = matchMedia('(prefers-reduced-motion: reduce)');
+    var g = null, springT = 0, still = matchMedia('(prefers-reduced-motion: reduce)'), quiet = 0;
     // A start a sideways gesture leaves alone: a chart, or anything that scrolls sideways itself.
     function sideways(t) {
       if (t.closest('.chart,svg:not(.i),.hs,.seg.fit,.week7')) return true;
@@ -1305,8 +1315,50 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function release() {
       if (touchOwner === 'x' || touchOwner === 'sheet') touchOwner = null;
+      if (g && g.kind === 'row') rowBack(g.row, g.swp);
       g = null;
     }
+    // A row that takes a sideways swipe: a task's line in «Задачи» (its ✓ button .tb), a line of «Список» (its ✕).
+    function swipeRow(t) {
+      var r = t.closest('.row');
+      if (!r || !main.contains(r)) return null;
+      if (current === 'tasks' && r.parentNode.classList.contains('fi') && r.querySelector('.tb')) return r;
+      return shopIs('list') && r.querySelector(':scope>.x') ? r : null;
+    }
+    // The finger's way to the row's: as is up to 72 px, slower past it, 96 px at most.
+    function rowOff(dx) {
+      var a = Math.abs(dx), o = a <= 72 ? a : Math.min(96, 72 + (a - 72) * 0.35);
+      return dx < 0 ? -o : o;
+    }
+    function rowPaint() {
+      var o = rowOff(g.x ? g.dx : Math.max(g.dx, 0)), dir = o < 0 ? 'l' : 'r', s = g.swp;
+      if (s.dir !== dir) {
+        s.dir = dir;
+        s.className = 'swp ' + dir;
+        add(clear(s), icon(dir === 'l' ? 'x' : g.row.classList.contains('done') ? 'undo-2' : 'check'));
+      }
+      s.style.width = Math.abs(o).toFixed(1) + 'px';
+      g.row.style.transform = 'translateX(' + o.toFixed(1) + 'px)';
+    }
+    // The row springs back to its place and the strip goes with it.
+    function rowBack(r, s) {
+      if (!s || s.back) return;
+      s.back = true;
+      r.classList.add('swb');
+      s.classList.add('swb');
+      r.style.transform = '';
+      s.style.width = '0px';
+      setTimeout(function () {
+        var h = s.parentNode;
+        r.classList.remove('swr', 'swb');
+        s.remove();
+        if (h && !h.querySelector('.swp')) h.classList.remove('swh');
+      }, 300);
+    }
+    // A tap right after a row's swipe does not open the row.
+    document.addEventListener('click', function (e) {
+      if (Date.now() < quiet) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
     // Below the threshold the sheet springs back as the page does after a short pull.
     function springBack() {
       sheet.style.transition = 'transform .35s cubic-bezier(.2,.8,.2,1)';
@@ -1336,13 +1388,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           void main.offsetWidth;
           main.classList.add('in');
         }
-      }, 120);
+      }, 160);
     }
     document.addEventListener('touchstart', function (e) {
       if (g && g.on && g.kind === 'sheet') springBack();
       release();
       if (e.touches.length !== 1 || !shell.parentNode) return;
-      var t = e.target, p = e.touches[0], kind = null;
+      var t = e.target, p = e.touches[0], kind = null, row = null;
       if (!t.closest || t.closest('input,textarea,select,[contenteditable]')) return;
       if (t.closest('.sheet')) {
         if (!shell.classList.contains('more')) return;
@@ -1352,8 +1404,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         kind = 'sheet';
       } else if (sideways(t)) return;
       else if (backHandler) kind = browser && p.clientX <= 24 ? 'edge' : null;
-      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr') && topSeg()) kind = 'seg';
-      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false };
+      // The row is asked before the segment: a swipe that starts on a row is the row's.
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && (row = swipeRow(t))) kind = 'row';
+      // «Фильмы» keep their switch to a tap (22.10.2026, his word): the poster grid is too easy to brush sideways.
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr') && current !== 'films' && topSeg()) kind = 'seg';
+      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && row.querySelector(':scope>.x') };
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
       if (!g) return;
@@ -1362,17 +1417,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!g.on) {
         if (Math.abs(g.dx) < 8 && Math.abs(g.dy) < 8) return;
         var side = Math.abs(g.dx) > Math.abs(g.dy);
-        if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0))) { g = null; return; }
+        // A task has nothing to its left (it is dropped from its opened card).
+        if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0) || (g.kind === 'row' && g.dx < 0 && !g.x))) { g = null; return; }
         g.on = true;
         touchOwner = g.kind === 'sheet' ? 'sheet' : 'x';
         if (g.kind === 'sheet') { clearTimeout(springT); sheet.style.transition = 'none'; }
+        if (g.kind === 'row' && !still.matches) {
+          var h = g.row.parentNode;
+          h.classList.add('swh');
+          g.swp = h.appendChild(el('span', 'swp'));
+          g.swp.style.top = g.row.offsetTop + 'px';
+          g.swp.style.height = g.row.offsetHeight + 'px';
+          g.row.classList.add('swr');
+        }
       }
       if (e.cancelable) e.preventDefault();
       if (g.kind === 'sheet' && !still.matches) sheet.style.transform = 'translateY(' + Math.max(g.dy, 0).toFixed(1) + 'px)';
+      if (g.kind === 'row' && g.swp) rowPaint();
     }, { passive: false });
     document.addEventListener('touchend', function (e) {
       if (!g || e.touches.length) return;
-      var k = g.on && g.kind, dx = g.dx, dy = g.dy;
+      var k = g.on && g.kind, dx = g.dx, dy = g.dy, row = g.row, x = g.x;
       release();
       if (k === 'sheet') {
         if (dy < 80) return springBack();
@@ -1381,11 +1446,47 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       } else if (k === 'edge') {
         if (dx >= 80 && Math.abs(dy) < 60 && backHandler) backHandler();
       } else if (k === 'seg' && Math.abs(dx) >= 60 && Math.abs(dy) < 40) swipeSeg(dx < 0 ? 1 : -1);
+      else if (k === 'row') {
+        // A redraw during the swipe took the row off the screen: its handlers hold the old data, so nothing is done.
+        if (!row.isConnected) { quiet = Date.now() + 200; return; }
+        // The row's own handlers do the work: the task's ✓ (a list row's tap: its .tb may be the product's photo), the
+        // list's ✕ — pressed twice, as the swipe is its «Точно?»; the «Вернуть» toasts come from them as on a tap.
+        if (dx >= 72) (x ? row : row.querySelector('.tb')).click();
+        else if (dx <= -72 && x) {
+          haptic();
+          x.click();
+          if (x.isConnected && x.classList.contains('warn')) x.click();
+        }
+        quiet = Date.now() + 200;
+      }
     });
     document.addEventListener('touchcancel', function () {
       if (g && g.on && g.kind === 'sheet') springBack();
       release();
     });
+    // 8. The bottom bar: away on a scroll down of more than 24 px in a row past 120 px; back on 12 px up, near the top,
+    // 1.5 s after the scroll stops, on the sheet and on a tab switch (openSheet, show). The sheet's and the summary's own
+    // scroll do not count.
+    var lastY = document.scrollingElement.scrollTop, down = 0, up = 0, idleT = 0;
+    function barBack() {
+      down = up = 0;
+      tabbar.classList.remove('hid');
+    }
+    window.addEventListener('scroll', function () {
+      var y = document.scrollingElement.scrollTop, d = y - lastY;
+      lastY = y;
+      clearTimeout(idleT);
+      if (shell.classList.contains('more') || document.querySelector('.tsum')) return;
+      if (y < 120) return barBack();
+      if (d > 0) {
+        up = 0;
+        if ((down += d) > 24) tabbar.classList.add('hid');
+      } else if (d < 0) {
+        down = 0;
+        if ((up -= d) >= 12) barBack();
+      }
+      if (tabbar.classList.contains('hid')) idleT = setTimeout(barBack, 1500);
+    }, { passive: true });
     // «Показать ещё» at the foot of a screen presses itself on screen, once in 800 ms at most and never while it is
     // disabled (its request in flight); the button stays as the way back. The targets follow main's children.
     if (window.IntersectionObserver && window.MutationObserver) {
@@ -1486,6 +1587,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     main.classList.toggle('narrow', !desk && NARROW.indexOf(tab === 'shop' ? shopSeg : tab) >= 0);
     main.classList.toggle('desk', !!desk);
     hideBack();
+    tabbar.classList.remove('hid');
     clear(main);
     main.classList.remove('in', 'in-r', 'in-l', 'swipe-l', 'swipe-r');
     void main.offsetWidth;
@@ -4824,6 +4926,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     clr.setAttribute('aria-label', 'Очистить');
     var res = el('div'), home = el('div');
     var pickCard = mkCard('clapperboard', 'Подборка'), seg = el('div', 'seg fit'), segs = {}, genres = el('div', 'hs'), pbox = el('div');
+    // «Для тебя»: its note («по твоим оценкам · обновлено …») on a line of its own under the chips, not in their row
+    // (22.10.2026: inside the scroller it pushed the chips off and sat beside them).
+    var recsNote = el('div', 'sub');
     var watchCard = el('div'), wantCard = el('div'), seenCard = el('div'), dropCard = el('div'), skipCard = el('div');
     var statsBox = el('div'), statsOpen = store('filmStatsOpen') === '1';
     var types = el('div', 'hs fty'), listType = store('filmListType');
@@ -4843,7 +4948,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // Wide screen: the picks across the width, the lists and «Статистика» under them in the card packing.
     var lbox = wide() ? el('div', 'cols flists') : home;
     add(main, add(bar, add(el('label', 'field'), icon('search'), input, clr)), res,
-      add(home, add(pickCard, seg, genres, pbox), types, lbox === home ? null : lbox), el('p', 'mu', 'Данные TMDB'));
+      add(home, add(pickCard, seg, genres, recsNote, pbox), types, lbox === home ? null : lbox), el('p', 'mu', 'Данные TMDB'));
     add(lbox, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox);
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
@@ -5104,6 +5209,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var t = pick.type, a = t.indexOf('anime') === 0, k;
       for (k in segs) segs[k].className = k === (a ? 'anime' : t) ? 'on' : '';
       clear(genres);
+      clear(recsNote);
       // «Для тебя»: no genres, one muted line with the time of the last recount (films_recs computed_at).
       if (t === 'recs') {
         RECS_ONLY.forEach(function (o) {
@@ -5115,9 +5221,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             loadPicks(false);
           }));
         });
-        var note = el('div', 'mu', 'по твоим оценкам' + (recsAt ? ' · обновлено ' + stamp(recsAt) : ''));
-        note.style.whiteSpace = 'nowrap';
-        return genres.appendChild(note);
+        text(recsNote, 'по твоим оценкам' + (recsAt ? ' · обновлено ' + stamp(recsAt) : ''));
+        return;
       }
       PICK_GENRES[a ? 'anime' : t].forEach(function (g) {
         genres.appendChild(chip(g[1], t !== 'anime_movie' && g[0] === pick.genre, null, function () { choose(a ? 'anime' : t, g[0]); }));
