@@ -530,13 +530,13 @@
         { h: 'Вид', w: '120px' }, { h: '', w: '230px' }], items.map(function (i) {
         var tile = add(el('span', 'ptile'), icon(A.DELA_ICON[i.kind] || 'tack'));
         tile.setAttribute('aria-hidden', 'true');
-        var acts = hovActs(i.can_done ? confirmed('check', 'Сделано', function () {
+        var acts = hovActs(i.can_done ? confirmed('check', A.DELA_DONE[i.kind] || 'Сделано', function () {
           act({ action: 'dela_done', kind: i.kind, id: i.id }, function () { return A.DELA_DONE[i.kind]; });
-        }) : null, i.can_snooze ? pg('clock', 'Отложить', function () {
+        }) : null, i.can_snooze ? pg('clock', '+3 дня', function () {
           act({ action: 'dela_snooze', kind: i.kind, id: i.id }, function (j) { return 'Отложено до ' + dm(j.snoozed_until); });
         }) : null);
         return [tile, add(el('div', 'tx'), add(el('div', 't', i.title), i.snoozed_until ? pill(A.ict('clock', 'до ' + dm(i.snoozed_until))) : null),
-          i.sub ? el('div', 'mu', i.sub) : null),
+          A.delaHint(i) ? el('div', 'hint', A.delaHint(i)) : i.sub ? el('div', 'mu', i.sub) : null),
         num((i.approx ? '≈' : '') + dm(i.due)), pill(left(i.days), i.days <= 3 ? 'bad' : ''),
         el('span', 'mu', A.DELA_KIND[i.kind] || ''), acts];
       }), { cls: function (k) { return items[k].days < 0 ? 'over' : ''; } });

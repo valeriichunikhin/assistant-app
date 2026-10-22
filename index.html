@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-22 10:29">
+<meta name="published" content="2026-10-22 18:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -245,6 +245,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.film .pg{min-height:44px}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
+.row.dela .hint,.tx>.hint{font-size:13px;line-height:1.35;color:var(--muted);margin-top:4px}
 .row.ib .t{overflow-wrap:anywhere}.card.tap{cursor:pointer}
 .pg.warn{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
 .lnk{color:var(--link);font-weight:500;text-decoration:none}
@@ -6093,6 +6094,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var DELA_ICON = { dl: 'calendar-clock', pay: 'landmark', pk: 'package', rt: 'undo-2', doc: 'id-card', sub: 'credit-card' };
   var DELA_KIND = { dl: 'свой срок', pay: 'платёж', pk: 'посылка', rt: 'возврат', doc: 'документ', sub: 'списание' };
   var DELA_DONE = { dl: 'Сделано', pay: 'Оплачено', pk: 'Забрал', rt: 'Оставляю' };
+  // One plain line under each row: what this is and which button closes it (his word 22.10.2026).
+  function delaHint(i) {
+    var d = dm(i.due), t = String(i.title || '');
+    if (i.kind === 'pay') {
+      var what = /^PIT/.test(t) ? 'аванс налога PIT' : /^ZUS/.test(t) ? 'взносы ZUS' : t;
+      return 'Бухгалтер прислал сумму: ' + what + ' за ' + t.replace(/^\S+\s*/, '') + ', оплатить до ' + d +
+        '. Заплатил — «Оплачено».';
+    }
+    if (i.kind === 'dl') {
+      return (i.sub ? 'Письмо от ' + i.sub + ': открой и сделай, что просят, до ' + d : 'Свой срок — ' + d) +
+        '. Готово — «Сделано».';
+    }
+    if (i.kind === 'pk') return 'Посылка ждёт' + (i.sub ? ' в ' + i.sub : '') + ', забрать до ' + d + '. Забрал — «Забрал».';
+    if (i.kind === 'rt') return 'Покупку можно вернуть до ' + d + '. Решил оставить — «Оставляю».';
+    if (i.kind === 'doc') return 'Документ истекает ' + d + ' — пора продлевать.';
+    if (i.kind === 'sub') return 'Спишут оплату ' + (i.approx ? 'примерно ' : '') + d + '.';
+    return '';
+  }
   var delaText = '', delaDue = '';
   function delaView() {
     var form = el('form'), bar1 = el('div', 'bar'), bar2 = el('div', 'bar');
@@ -6132,7 +6151,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function disarm() {
       clearTimeout(armTimer);
       armTimer = null;
-      if (armed) { label(armed, 'check', 'Сделано'); armed.className = 'pg'; }
+      if (armed) { label(armed, 'check', armed.dataset.s); armed.className = 'pg'; }
       armed = null;
     }
     function act(params, done) {
@@ -6153,7 +6172,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tile.setAttribute('aria-hidden', 'true');
       var acts = el('div', 'acts');
       if (i.can_done) {
-        var done = btn('check', 'Сделано', function () {
+        var done = btn('check', DELA_DONE[i.kind] || 'Сделано', function () {
           if (armed !== done) {
             disarm();
             armed = done;
@@ -6165,17 +6184,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           disarm();
           act({ action: 'dela_done', kind: i.kind, id: i.id }, function () { return DELA_DONE[i.kind]; });
         });
+        done.dataset.s = DELA_DONE[i.kind] || 'Сделано';
         acts.appendChild(done);
       }
       if (i.can_snooze) {
-        acts.appendChild(btn('clock', 'Отложить', function () {
+        acts.appendChild(btn('clock', '+3 дня', function () {
           act({ action: 'dela_snooze', kind: i.kind, id: i.id }, function (j) { return 'Отложено до ' + dm(j.snoozed_until); });
         }));
       }
       return add(el('div', 'row dela'), tile, add(el('span', 'tx'),
         el('div', 't', i.title),
         add(el('div', 'mu num', (i.sub || DELA_KIND[i.kind]) + ' · ' + (i.approx ? '≈' : '') + dm(i.due)),
-          i.snoozed_until ? pill(ict('clock', 'до ' + dm(i.snoozed_until))) : null)),
+          i.snoozed_until ? pill(ict('clock', 'до ' + dm(i.snoozed_until))) : null),
+        delaHint(i) ? el('div', 'hint', delaHint(i)) : null),
         add(el('span', 'pr'), pill(left(i.days), i.days <= 3 ? 'bad' : '')), acts.firstChild ? acts : null);
     }
     function render(items) {
@@ -6925,7 +6946,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     pickAll: pickAll, dealsAll: dealsAll, shopIs: shopIs, shopSegs: shopSegs, names: NAMES, get tabs() { return visibleTabs(); }, main: main, hdr: hdr, rail: rail,
     hTitle: hTitle, wide: wide, browser: browser, tg: tg, BASE: BASE, WEEK: WEEK, SRC: SRC, SRC_CLASS: SRC_CLASS,
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
-    DELA_DONE: DELA_DONE, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
+    DELA_DONE: DELA_DONE, delaHint: delaHint, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };
