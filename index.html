@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-21 22:05">
+<meta name="published" content="2026-10-22 09:04">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -77,9 +77,14 @@ button{cursor:pointer}
 @keyframes busy{to{transform:translateX(233.333%)}}
 /* pull to refresh (docs/specs/pull-to-refresh.md): a 36 px circle that slides out from under the header with the
    touch; it exists only in a browser on a touch screen under 900 px. Inline transform and opacity while dragged. */
-#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;transition:transform .2s,opacity .2s,background .12s,color .12s}
-#ptr.drag{transition:background .12s,color .12s}
-#ptr .i{transition:transform .15s}
+#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;will-change:transform,opacity;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s ease,background .15s,color .15s,box-shadow .2s}
+#ptr.drag{transition:background .15s,color .15s,box-shadow .2s}
+#ptr .i{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#ptr.drag .i{transition:none}
+#ptr.ready{box-shadow:var(--shadow),0 0 0 4px var(--accent-soft)}
+/* the page follows the finger a little and springs back (22.10.2026, «плавнее») */
+.main.pull{transition:none;will-change:transform}
+.main.pull-back{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 #ptr.ready,#ptr.spin{opacity:1;transform:translateY(24px);background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 #ptr.ready .i{transform:rotate(180deg)}
 #ptr.spin .i{animation:rotate .8s linear infinite}
@@ -1191,11 +1196,30 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     ptr.setAttribute('aria-hidden', 'true');
     document.body.appendChild(ptr);
     if (navigator.standalone || matchMedia('(display-mode: standalone)').matches) root.classList.add('pwa');
+    var ico = ptr.querySelector('.i'), raf = 0;
+    // One style write per frame: the circle slides out with an ease, its arrow turns with the pull, the page follows
+    // a little; on release the page springs back (.pull-back) and the circle eases to its place or away.
+    function paint() {
+      raf = 0;
+      var d = Math.min(Math.max(dy, 0), 120), p = d / 120;
+      ptr.style.transform = 'translateY(' + (-48 + 72 * (1 - (1 - p) * (1 - p))).toFixed(1) + 'px)';
+      ptr.style.opacity = Math.min(d / 72, 1).toFixed(2);
+      ico.style.transform = 'rotate(' + (d * 1.5).toFixed(0) + 'deg)';
+      main.style.transform = 'translateY(' + (d * 0.35).toFixed(1) + 'px)';
+      ptr.classList.toggle('ready', dy >= 72);
+    }
     function back() {
       y0 = null;
       on = buzzed = false;
-      ptr.style.transform = ptr.style.opacity = '';
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      ptr.style.transform = ptr.style.opacity = ico.style.transform = '';
       ptr.className = '';
+      if (main.classList.contains('pull')) {
+        main.classList.remove('pull');
+        main.classList.add('pull-back');
+        main.style.transform = '';
+        setTimeout(function () { main.classList.remove('pull-back'); }, 450);
+      }
     }
     document.addEventListener('touchstart', function (e) {
       y0 = null;
@@ -1214,12 +1238,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (Math.abs(dx) >= Math.abs(dy) || dy < 0) { y0 = null; return; }
         on = true;
         ptr.className = 'drag';
+        main.classList.remove('pull-back');
+        main.classList.add('pull');
       }
       if (e.cancelable) e.preventDefault();
-      var p = Math.min(Math.max(dy, 0), 120) / 120;
-      ptr.style.transform = 'translateY(' + (-48 + 72 * (1 - (1 - p) * (1 - p))).toFixed(1) + 'px)';
-      ptr.style.opacity = Math.min(Math.max(dy, 0) / 72, 1).toFixed(2);
-      ptr.classList.toggle('ready', dy >= 72);
+      if (!raf) raf = requestAnimationFrame(paint);
       if (dy >= 72 && !buzzed) { buzzed = true; haptic(); }
     }, { passive: false });
     function end(e) {
