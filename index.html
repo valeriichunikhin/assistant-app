@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 00:19">
+<meta name="published" content="2026-10-23 00:49">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -498,6 +498,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chart .fc{fill:none;stroke:var(--mark);stroke-width:1.5;stroke-dasharray:3 3}
 .chart .ref{stroke:var(--muted);stroke-width:1}.chart .bud{stroke:var(--fg);stroke-opacity:.55;stroke-width:1;stroke-dasharray:5 4}
 .chart .gl{stroke:var(--line)}.chart .xh{stroke:var(--muted);stroke-width:1}
+/* The fifth batch (docs/specs/money-5.md): «+» and «⋯» by the month's sum, the incomes line under it; an income and
+   what is owed to him in --good, a debt and a credit card in minus in --bad; an account's balance large, its month small;
+   the search over the spends; a split's mark and the receipt's clip in a row; a person's and a goal's sheet. */
+.pos{color:var(--good)}.neg{color:var(--bad)}.minc b.pos{color:var(--good)}.minc b.neg{color:var(--bad)}
+.macts{flex:none;display:flex;gap:6px}.btn.mplus{width:44px;min-width:44px;padding:0;justify-content:center}.btn.mplus .i{margin:0}
+.minc{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.4}
+.minc b{color:var(--fg);font:600 13px/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row.mcat .pr.mbal{font:600 15px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row.mcat .pr.mbal.neg{color:var(--bad)}.row.macc .tx .mu{font-size:12px}
+.row.mrow .pr.mu{color:var(--muted)}.i.mclip{width:12px;height:12px;margin-left:4px;vertical-align:-1px}
+.msearch{margin:0 14px 8px}.msearch .btn.x{min-width:32px;height:32px;margin-right:-8px;padding:0;background:none;box-shadow:none;color:var(--muted)}
+.msearch input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+.row.mdebt .pr{font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.mpsum{margin:0 0 2px}.mpsum.pos{color:var(--good)}.mpsum.neg{color:var(--bad)}
+.mops{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}.mops .btn{width:100%;justify-content:center}
+.mhist .row{padding-left:0;padding-right:0}.mhist .row.old{opacity:.6}
+.row.mgoal .tx{gap:5px}.row.mgoal .tx .mu{font-size:12px}.mbar>i.done{background:var(--good)}
+.row.mcat .btn.x.mgplus{color:var(--link)}
+.mlink.mwish{color:var(--fg)}.mlink.mwish .i{color:var(--muted)}
+.bar.mrcpt{gap:8px;align-items:center;flex-wrap:wrap}.bar.mrcpt .mu{font-size:13px}
+.mchips .pill:empty{padding:0 10px}.mchips .pill:empty .i{margin:0}
 .chart .tk.sel{fill:var(--fg);font-weight:600}
 .chart .tk.halo{paint-order:stroke;stroke:var(--solid);stroke-width:4px;stroke-linejoin:round}
 .chart .ln.cur{stroke:var(--mark);stroke-width:2.5;stroke-linecap:round}.chart .ln.prev{stroke:var(--muted-2);stroke-width:1.5;stroke-opacity:.8}
@@ -648,6 +669,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
 <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></symbol>
 <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
+<symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+<symbol id="i-heart-handshake" viewBox="0 0 24 24"><path d="M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762"/></symbol>
+<symbol id="i-arrow-left-right" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+<symbol id="i-hand-coins" viewBox="0 0 24 24"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></symbol>
+<symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-graduation-cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+<symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -6329,13 +6359,34 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var MONEY_CAT = {};
   MONEY_CATS.forEach(function (c) { MONEY_CAT[c[0]] = c; });
   function moneyCat(k) { return MONEY_CAT[k] || MONEY_CAT.other; }
+  // The fifth batch (docs/specs/money-5.md): an income's categories — INCOME_CATEGORIES of _shared/money.ts, edit both
+  // together — and what each kind of row is called.
+  var MONEY_INCOME = [['salary', 'Зарплата', 'briefcase'], ['bonus', 'Премии и бонусы', 'sparkles'], ['sales', 'Продажи', 'tag'],
+    ['family', 'Семья и близкие', 'heart-handshake'], ['refund', 'Возвраты', 'undo-2'], ['other_in', 'Другое', 'circle-dashed']];
+  function moneyInc(k) { for (var i = 0; i < MONEY_INCOME.length; i++) if (MONEY_INCOME[i][0] === k) return MONEY_INCOME[i]; return MONEY_INCOME[5]; }
+  var MONEY_KIND = { expense: 'Трата', income: 'Доход', transfer: 'Перевод', lent: 'Дал в долг', borrowed: 'Взял в долг',
+    repaid_in: 'Вернули', repaid_out: 'Вернул' };
+  // A goal's icons (GOAL_ICONS of _shared/money.ts; Lucide's piggy-bank is the sprite's «piggy»).
+  var GOAL_ICONS = ['target', 'plane', 'car', 'house', 'laptop', 'gift', 'graduation-cap', 'piggy-bank'];
+  function goalIcon(k) { return k === 'piggy-bank' ? 'piggy' : GOAL_ICONS.indexOf(k) >= 0 ? k : 'target'; }
   // The month he looks at (YYYY-MM; the first open shows the current one) and the category the spends are filtered by;
   // one copy for the phone and the desktop view. The history reaches back to MONEY_FROM.
-  var MONEY = { month: null, filter: null, acct: null, accounts: [] }, MONEY_FROM = '2026-02';
+  var MONEY = { month: null, filter: null, acct: null, accounts: [], people: [], state: null, q: '', found: null }, MONEY_FROM = '2026-02';
+  // A person by id ({id, name, archived}, from the month's answer or money_state), null for none.
+  function moneyPerson(id) {
+    for (var i = 0; i < MONEY.people.length; i++) if (MONEY.people[i].id === id) return MONEY.people[i];
+    return null;
+  }
+  // A split's share as a mark: «½», «⅓», else «40 %».
+  function moneyShareMark(v) { v = Number(v); return v === 0.5 ? '½' : v === 0.3333 ? '⅓' : v === 0.25 ? '¼' : Math.round(v * 100) + ' %'; }
+  // A row's own part (a split spend's share), in grosze.
+  function moneyOwn(r) { return Math.round(Number(r.amount) * 100 * (r.share ? Number(r.share) : 1)); }
   var MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   // 1234.5 → «1 234,50»; moneyFmt adds the currency: «1 234,50 zł», «4,50 EUR».
   function moneyNum(v) { var s = Math.abs(Number(v) || 0).toFixed(2).split('.'); return grouped(s[0]) + ',' + s[1]; }
   function moneyFmt(v, cur) { return moneyNum(v) + ' ' + (!cur || cur === 'PLN' ? 'zł' : cur); }
+  // The same that never breaks across lines, for a sum inside a line of text: «3 536,08 zł».
+  function moneyNb(v, cur) { return moneyFmt(v, cur).replace(/ /g, '\u00a0'); }
   function monthNow() { var p = wp(Date.now()); return p.year + '-' + p.month; }
   function monthStep(m, n) {
     var k = Number(m.slice(5, 7)) - 1 + n, y = Number(m.slice(0, 4)) + Math.floor(k / 12);
@@ -6365,26 +6416,38 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var n = Number(String(s || '').replace(/[\s ]/g, '').replace(',', '.'));
     return isFinite(n) && n > 0 && n < 1e6 ? Math.round(n * 100) / 100 : null;
   }
-  // The spend deleted, then «Удалено · Вернуть» for 10 s: the return adds it again by hand (the card stays behind).
+  // The row deleted, then «Удалено · Вернуть» for 10 s: the return adds it again by hand (the card and the receipt's
+  // photo stay behind).
   function moneyDelete(r, after) {
     haptic();
     return api('miniapp', { action: 'money_delete' }, undefined, false, { id: r.id }).then(function () {
       cacheDrop('money');
       after();
       backToast('Удалено', function () {
-        api('miniapp', { action: 'money_add' }, undefined, false, { amount: Number(r.amount), currency: r.currency, merchant: r.merchant,
-          category: r.category, account: r.account, note: r.note, at: r.at }).then(function () { cacheDrop('money'); after(); }, noop);
+        var back = { amount: Number(r.amount), currency: r.currency, merchant: r.merchant, category: r.category, account: r.account,
+          note: r.note, at: r.at, kind: r.kind || 'expense' };
+        ['to_account', 'to_amount', 'person_id', 'share', 'share_person_id'].forEach(function (k) { if (r[k] != null) back[k] = r[k]; });
+        if (back.kind !== 'expense' && back.kind !== 'income') delete back.category;
+        api('miniapp', { action: 'money_add' }, undefined, false, back).then(function () { cacheDrop('money'); after(); }, noop);
       });
     }, function (e) { if (e.code === 'not found') after(); });
   }
-  // The sheet of a spend (r) or of a new one (r null): amount, merchant, category, note, «Всегда для этого продавца»,
-  // «Удалить» on two taps. done() reloads the view after a confirmed write.
-  function moneySheet(r, done, from) {
-    var isNew = !r, cat = r ? r.category : null, keep = false, close = noop;
-    // The account (docs/specs/money-3.md): an edit starts on the spend's own, a new spend on the last one used here.
-    var accts = MONEY.accounts.filter(function (a) { return !a.hidden || (r && a.key === r.account); });
-    var acct = r ? r.account || null : store('moneyAcct');
+  // The sheet of a row (r) or of a new one (r null): a spend's amount, merchant, category, account, note, «Пополам»
+  // (docs/specs/money-5.md §3), the receipt (§6), «Всегда для этого продавца», «Удалить» on two taps; an income's
+  // amount, from whom, category and account; a transfer's two accounts and, between currencies, what arrives; a debt's
+  // amount, account and note. A new one starts on kind0 (Трата · Доход · Перевод on top switch it in place; a debt
+  // comes from the person's sheet with person). done() reloads the view after a confirmed write.
+  function moneySheet(r, done, from, kind0, person) {
+    var isNew = !r, kind = r ? r.kind || 'expense' : kind0 || 'expense', close = noop, keep = false;
+    var cat = r && kind === 'expense' ? r.category : null, icat = r && kind === 'income' ? r.category : null;
+    // The account (docs/specs/money-3.md): an edit starts on the row's own, a new one on the last one used here.
+    var accts = MONEY.accounts.filter(function (a) { return !a.hidden || (r && (a.key === r.account || a.key === r.to_account)); });
+    var acct = r ? r.account || null : store('moneyAcct'), toAcct = r ? r.to_account || null : store('moneyToAcct');
     if (isNew && !moneyAcct(acct)) acct = moneyAcct('cash') ? 'cash' : accts.length ? accts[0].key : null;
+    var people = MONEY.people.filter(function (p) { return !p.archived || (r && p.id === r.share_person_id); });
+    var share = r && r.share ? Number(r.share) : null, sharePerson = r ? r.share_person_id || null : null;
+    var shareOn = !!share, receipt = null, newName = null;
+    if (!sharePerson) { sharePerson = Number(store('moneySplitWith')) || null; if (!moneyPerson(sharePerson)) sharePerson = people.length ? people[0].id : null; }
     function inp(ph, v, max) {
       var i = el('input');
       i.placeholder = ph;
@@ -6393,10 +6456,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       i.value = v || '';
       return i;
     }
+    function field(ic, input, tail) { return add(el('div', 'bar'), add(el('label', 'field'), icon(ic), input, tail || null)); }
     var amt = inp('Сумма', r ? moneyNum(r.amount).replace(/\s/g, '') : '');
     amt.inputMode = 'decimal';
-    var where = inp(isNew ? 'Где: магазин, кафе, BLIK' : 'Продавец', r && r.merchant, 200);
+    var toAmt = inp('Сколько пришло', r && r.to_amount ? moneyNum(r.to_amount).replace(/\s/g, '') : '');
+    toAmt.inputMode = 'decimal';
+    var where = inp('', r && r.merchant, 200);
     var note = inp('Заметка', r && r.note, 500);
+    var pct = inp('Моя доля, %', share && [0.5, 0.3333].indexOf(share) < 0 ? String(Math.round(share * 100)) : '', 3);
+    pct.inputMode = 'numeric';
     var day = null;
     if (isNew) {
       var p = wp(Date.now());
@@ -6406,35 +6474,130 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       day.min = MONEY_FROM + '-01';
       day.setAttribute('aria-label', 'Дата');
     }
-    var chips = el('div', 'chips mchips');
-    chips.setAttribute('role', 'group');
-    chips.setAttribute('aria-label', 'Категория');
-    function drawChips() {
-      clear(chips);
-      MONEY_CATS.forEach(function (c) {
-        var b = chip(c[1], cat === c[0], null, function () { cat = cat === c[0] && isNew ? null : c[0]; haptic(); drawChips(); });
-        b.insertBefore(icon(c[2]), b.firstChild);
-        chips.appendChild(b);
+    var unit = el('span', 'mu'), toUnit = el('span', 'mu');
+    // The currency of what is typed: a row's own, a new one's account's (Monobank's UAH).
+    function units() {
+      var a = moneyAcct(acct), t = moneyAcct(toAcct);
+      text(unit, r ? (r.currency !== 'PLN' ? r.currency : 'zł') : a && a.currency !== 'PLN' ? a.currency : 'zł');
+      text(toUnit, t && t.currency !== 'PLN' ? t.currency : 'zł');
+    }
+    function chipRow(label, list, isOn, pick, tile) {
+      var box = el('div', 'chips mchips');
+      box.setAttribute('role', 'group');
+      box.setAttribute('aria-label', label);
+      list.forEach(function (x) {
+        var b = chip(x.name, isOn(x), null, function () { pick(x); haptic(); paint(); });
+        b.insertBefore(tile(x), b.firstChild);
+        box.appendChild(b);
+      });
+      return box;
+    }
+    function acctChips(label, cur, set, skip) {
+      return chipRow(label, accts.filter(function (a) { return a.key !== skip; }), function (a) { return a.key === cur; }, function (a) { set(a.key); },
+        function (a) { return moneyAcctTile(a.key, 'am'); });
+    }
+    var form = el('div'), seg = null, segs = {};
+    if (isNew && !person) {
+      seg = el('div', 'seg');
+      seg.setAttribute('role', 'group');
+      seg.setAttribute('aria-label', 'Что добавить');
+      [['expense', 'Трата'], ['income', 'Доход'], ['transfer', 'Перевод']].forEach(function (k) {
+        var b = segs[k[0]] = el('button', '', k[1]);
+        b.type = 'button';
+        b.onclick = function () { if (kind !== k[0]) { kind = k[0]; haptic(); paint(); } };
+        seg.appendChild(b);
       });
     }
-    drawChips();
-    var achips = el('div', 'chips mchips');
-    achips.setAttribute('role', 'group');
-    achips.setAttribute('aria-label', 'Счёт');
-    var unit = el('span', 'mu', r && r.currency !== 'PLN' ? r.currency : 'zł');
-    function drawAccts() {
-      clear(achips);
-      accts.forEach(function (a) {
-        var b = chip(a.name, acct === a.key, null, function () { acct = a.key; haptic(); drawAccts(); });
-        b.insertBefore(moneyAcctTile(a.key, 'am'), b.firstChild);
-        achips.appendChild(b);
-      });
-      // A new spend is in its account's currency (Monobank's UAH).
-      if (isNew) { var a = moneyAcct(acct); text(unit, a && a.currency !== 'PLN' ? a.currency : 'zł'); }
+    // «Пополам»: the toggle, then whom with (the last one by default; «+ Новый» types a name) and his share.
+    function splitBlock() {
+      var tg1 = el('button', 'mrem');
+      tg1.type = 'button';
+      add(tg1, icon(shareOn ? 'check-square' : 'square', 'mk' + (shareOn ? ' on' : '')), el('span', '', 'Пополам'));
+      tg1.setAttribute('aria-pressed', String(shareOn));
+      tg1.onclick = function () { shareOn = !shareOn; if (shareOn && !share) share = 0.5; haptic(); paint(); };
+      if (!shareOn) return [tg1];
+      var who = chipRow('С кем', people.concat([{ id: 'new', name: 'Новый' }]), function (x) { return x.id === 'new' ? newName !== null : newName === null && x.id === sharePerson; },
+        function (x) { if (x.id === 'new') newName = newName || ''; else { newName = null; sharePerson = x.id; } },
+        function (x) { return icon(x.id === 'new' ? 'plus' : 'users'); });
+      var name = null;
+      if (newName !== null) {
+        name = inp('Имя', newName, 100);
+        name.oninput = function () { newName = name.value; };
+      }
+      var parts = chipRow('Моя доля', [{ v: 0.5, name: '½' }, { v: 0.3333, name: '⅓' }, { v: 'own', name: 'Своя' }],
+        function (x) { return x.v === 'own' ? [0.5, 0.3333].indexOf(share) < 0 : share === x.v; },
+        function (x) { share = x.v === 'own' ? (Number(pct.value) / 100 || 0.25) : x.v; if (x.v === 'own' && !pct.value) pct.value = '25'; },
+        function () { return el('span'); });
+      pct.oninput = function () { var n = Number(pct.value); if (n > 0 && n < 100) share = Math.round(n * 100) / 10000; };
+      return [tg1, el('div', 'tsh', 'С кем'), who, name ? field('users', name) : null, el('div', 'tsh', 'Моя доля'), parts,
+        [0.5, 0.3333].indexOf(share) < 0 ? field('scale', pct, el('span', 'mu', '%')) : null];
     }
-    drawAccts();
+    // The receipt: a photo shrunk here (≤ 1600 px, JPEG 0.8). A saved spend takes it at once; a new one after «Добавить».
+    var file = el('input');
+    file.type = 'file';
+    file.accept = 'image/*';
+    file.hidden = true;
+    file.onchange = function () {
+      var f = file.files && file.files[0];
+      file.value = '';
+      if (!f) return;
+      moneyShrink(f).then(function (data) {
+        if (isNew) { receipt = data; paint(); return; }
+        api('miniapp', { action: 'money_receipt_upload' }, 30000, false, { id: r.id, data: data }).then(function (j) {
+          cacheDrop('money');
+          r.receipt_path = j.row.receipt_path;
+          toast('Чек прикреплён', 'check');
+          paint();
+          done();
+        }, noop);
+      }, function () { toast('Не получилось прочитать фото'); });
+    };
+    function receiptBlock() {
+      var pick = label(el('button', 'btn ghost'), 'paperclip', (r && r.receipt_path) || receipt ? 'Заменить чек' : 'Прикрепить чек');
+      pick.type = 'button';
+      pick.onclick = function () { file.click(); };
+      var look = null;
+      if (r && r.receipt_path) {
+        look = label(el('button', 'btn ghost'), 'file-image', 'Чек');
+        look.type = 'button';
+        look.onclick = function () { moneyReceiptOpen(r, look); };
+      }
+      return add(el('div', 'bar mrcpt'), look, pick, receipt ? el('span', 'mu', 'фото готово') : null, file);
+    }
+    function paint() {
+      clear(form);
+      for (var k in segs) segs[k].className = k === kind ? 'on' : '';
+      units();
+      where.placeholder = kind === 'income' ? 'От кого: FBA, клиент' : isNew ? 'Где: магазин, кафе, BLIK' : 'Продавец';
+      where.setAttribute('aria-label', where.placeholder);
+      var nodes = [field('wallet', amt, unit)];
+      if (kind === 'transfer') {
+        nodes.push(el('div', 'tsh', 'Откуда'), acctChips('Откуда', acct, function (k) { acct = k; if (toAcct === k) toAcct = null; }),
+          el('div', 'tsh', 'Куда'), acctChips('Куда', toAcct, function (k) { toAcct = k; }, acct));
+        var a = moneyAcct(acct), t = moneyAcct(toAcct);
+        if (a && t && a.currency !== t.currency) nodes.push(field('arrow-left-right', toAmt, toUnit));
+      } else if (kind === 'expense' || kind === 'income') nodes.push(field('pin', where));
+      if (day) nodes.push(add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'дата'), day)));
+      if (kind === 'expense') {
+        nodes.push(el('div', 'tsh', 'Категория'), chipRow('Категория', MONEY_CATS.map(function (c) { return { k: c[0], name: c[1], ic: c[2] }; }),
+          function (c) { return cat === c.k; }, function (c) { cat = cat === c.k && isNew ? null : c.k; }, function (c) { return icon(c.ic); }));
+      }
+      if (kind === 'income') {
+        nodes.push(el('div', 'tsh', 'Категория'), chipRow('Категория дохода', MONEY_INCOME.map(function (c) { return { k: c[0], name: c[1], ic: c[2] }; }),
+          function (c) { return icat === c.k; }, function (c) { icat = c.k; }, function (c) { return icon(c.ic); }));
+      }
+      if (kind !== 'transfer' && accts.length) {
+        nodes.push(el('div', 'tsh', kind === 'income' || kind === 'borrowed' || kind === 'repaid_in' ? 'Куда пришло' : 'Счёт'),
+          acctChips('Счёт', acct, function (k) { acct = k; }));
+      }
+      if (kind === 'expense') nodes = nodes.concat(splitBlock());
+      nodes.push(field('sticky-note', note));
+      if (kind === 'expense') nodes.push(receiptBlock());
+      if (rem) nodes.push(rem);
+      add.apply(null, [form].concat(nodes, [meta, src]));
+    }
     var rem = null;
-    if (r && r.merchant) {
+    if (r && r.merchant && kind === 'expense') {
       rem = el('button', 'mrem');
       rem.type = 'button';
       var drawRem = function () {
@@ -6449,42 +6612,77 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var src = r && r.src ? el('div', 'mu msrc', 'Категория в импорте: ' + r.src) : null;
     var save = label(el('button', 'btn'), 'check', isNew ? 'Добавить' : 'Сохранить');
     save.type = 'button';
+    // The split's person: an existing one, or the new name made first (money_person_add answers the one of that name).
+    function withPerson() {
+      if (kind !== 'expense' || !shareOn) return Promise.resolve(null);
+      if (newName === null) return Promise.resolve(sharePerson);
+      var n = newName.trim();
+      if (!n) return Promise.reject(toast('Имя — с кем пополам'));
+      return api('miniapp', { action: 'money_person_add' }, undefined, false, { name: n }).then(function (j) {
+        MONEY.people.push({ id: j.person.id, name: j.person.name, archived: false });
+        newName = null;
+        return (sharePerson = j.person.id);
+      });
+    }
     save.onclick = function () {
       var a = moneyIn(amt.value);
       if (!a) return toast('Сумма — число больше нуля');
-      var body;
-      if (isNew) {
-        body = { amount: a, merchant: where.value.trim() || null, note: note.value.trim() || null, at: day.value || undefined };
-        if (cat) body.category = cat;
-        if (acct) {
-          body.account = acct;
-          var ac = moneyAcct(acct);
-          if (ac && ac.currency !== 'PLN') body.currency = ac.currency;
-          store('moneyAcct', acct);
-        }
-      } else {
-        body = { id: r.id };
-        if (Math.abs(a - Number(r.amount)) > 0.001) body.amount = a;
-        if (where.value.trim() !== (r.merchant || '')) body.merchant = where.value.trim() || null;
-        if (cat !== r.category) body.category = cat;
-        if (acct && acct !== r.account) body.account = acct;
-        if (note.value.trim() !== (r.note || '')) body.note = note.value.trim() || null;
-        if (keep) body.remember = true;
-        if (Object.keys(body).length === 1) return close();
-      }
+      if (kind === 'transfer' && (!acct || !toAcct)) return toast('Откуда и куда');
+      if (shareOn && kind === 'expense' && !(share > 0 && share < 1)) return toast('Доля — от 1 до 99 %');
+      var ta = moneyIn(toAmt.value), fa = moneyAcct(acct), tt = moneyAcct(toAcct), cross = kind === 'transfer' && fa && tt && fa.currency !== tt.currency;
+      if (cross && !ta) return toast('Сколько пришло на ' + tt.name);
       save.disabled = true;
-      haptic();
-      api('miniapp', { action: isNew ? 'money_add' : 'money_edit' }, undefined, false, body).then(function (j) {
-        cacheDrop('money');
-        close();
-        toast(isNew ? 'Добавлено: ' + moneyFmt(j.row.amount, j.row.currency) : j.remembered
-          ? 'Сохранено · ' + moneyCat(j.row.category)[1] + ' для этого продавца' + (j.recolored ? ', ещё ' + j.recolored : '')
-          : 'Сохранено', 'check');
-        done();
-      }, function (e) {
-        save.disabled = false;
-        if (e.code === 'not found') { close(); done(); }
-      });
+      withPerson().then(function (pid) {
+        var body;
+        if (isNew) {
+          body = { kind: kind, amount: a, note: note.value.trim() || null, at: day.value || undefined };
+          if (kind === 'expense' || kind === 'income') body.merchant = where.value.trim() || null;
+          if (kind === 'expense' && cat) body.category = cat;
+          if (kind === 'income' && icat) body.category = icat;
+          if (person) body.person_id = person.id;
+          if (acct) {
+            body.account = acct;
+            if (fa && fa.currency !== 'PLN') body.currency = fa.currency;
+            store('moneyAcct', acct);
+          }
+          if (kind === 'transfer') { body.to_account = toAcct; store('moneyToAcct', toAcct); if (cross) body.to_amount = ta; }
+          if (pid) { body.share = share; body.share_person_id = pid; store('moneySplitWith', String(pid)); }
+        } else {
+          body = { id: r.id };
+          if (Math.abs(a - Number(r.amount)) > 0.001) body.amount = a;
+          if ((kind === 'expense' || kind === 'income') && where.value.trim() !== (r.merchant || '')) body.merchant = where.value.trim() || null;
+          if (kind === 'expense' && cat !== r.category) body.category = cat;
+          if (kind === 'income' && icat && icat !== r.category) body.category = icat;
+          if (acct && acct !== r.account) body.account = acct;
+          if (kind === 'transfer' && toAcct && toAcct !== r.to_account) body.to_account = toAcct;
+          if (kind === 'transfer' && (cross ? ta : null) !== (r.to_amount || null)) body.to_amount = cross ? ta : null;
+          if (kind === 'expense' && (pid || null) !== (r.share_person_id || null) || (pid && share !== Number(r.share))) {
+            body.share = pid ? share : null;
+            body.share_person_id = pid || null;
+          }
+          if (note.value.trim() !== (r.note || '')) body.note = note.value.trim() || null;
+          if (keep) body.remember = true;
+          if (Object.keys(body).length === 1) return close();
+        }
+        haptic();
+        return api('miniapp', { action: isNew ? 'money_add' : 'money_edit' }, undefined, false, body).then(function (j) {
+          cacheDrop('money');
+          close();
+          toast(isNew ? 'Добавлено: ' + moneyFmt(j.row.amount, j.row.currency) : j.remembered
+            ? 'Сохранено · ' + moneyCat(j.row.category)[1] + ' для этого продавца' + (j.recolored ? ', ещё ' + j.recolored : '')
+            : 'Сохранено', 'check');
+          if (isNew && receipt) {
+            return api('miniapp', { action: 'money_receipt_upload' }, 30000, false, { id: j.row.id, data: receipt }).then(function () {
+              cacheDrop('money');
+              done();
+            }, function () { toast('Трата добавлена, чек не загрузился'); done(); });
+          }
+          done();
+        }, function (e) {
+          save.disabled = false;
+          if (e.code === 'not found') { close(); done(); }
+        });
+      }).catch(function () { save.disabled = false; });
     };
     var del = null, armT = null;
     if (r) {
@@ -6502,16 +6700,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         moneyDelete(r, done);
       };
     }
-    close = legalSheet(isNew ? 'Новая трата' : 'Трата', [
-      add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, unit)),
-      add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), where)),
-      day ? add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'дата'), day)) : null,
-      el('div', 'tsh', 'Категория'), chips,
-      accts.length ? el('div', 'tsh', 'Счёт') : null, accts.length ? achips : null,
-      add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)),
-      rem, meta, src,
-      add(el('div', 'bar mact'), save, del)], from);
-    // An existing spend opens to look at, not to type: the focus waits on «Сохранить» (inside the sheet, so Escape
+    paint();
+    var title = isNew ? (person ? MONEY_KIND[kind] + ' · ' + person.name : 'Новая запись') : kind === 'expense' ? 'Трата'
+      : MONEY_KIND[kind] + (r.person_id && moneyPerson(r.person_id) ? ' · ' + moneyPerson(r.person_id).name : '');
+    close = legalSheet(title, [seg, form, add(el('div', 'bar mact'), save, del)], from);
+    // An existing row opens to look at, not to type: the focus waits on «Сохранить» (inside the sheet, so Escape
     // still closes it), no keyboard until a field is tapped.
     if (r) try { save.focus({ preventScroll: true }); } catch (e) {}
     if (isNew) try { amt.focus(); } catch (e) {}
@@ -6524,7 +6717,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       ['Добавь действие «Получить содержимое URL». Адрес: ', BASE + 'money?action=add', ', метод POST.'],
       ['Заголовок ', 'x-money-key', ' — ключ из своей настройки (здесь он не показывается).'],
       ['Тело запроса JSON: ', 'amount', ' — «Сумма», ', 'merchant', ' — «Продавец», ', 'card', ' — «Карта или пропуск», ', 'name', ' — «Название».'],
-      ['Ловит только оплату через Apple Pay. Переводы, BLIK и наличные добавляй здесь кнопкой «Трата».']].forEach(function (s) {
+      ['Ловит только оплату через Apple Pay. Переводы, BLIK и наличные добавляй здесь кнопкой «+».']].forEach(function (s) {
       var li = el('li');
       s.forEach(function (x, k) { li.appendChild(k % 2 ? el('code', '', x) : document.createTextNode(x)); });
       ol.appendChild(li);
@@ -6615,12 +6808,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return null;
   }
   function moneyAcctName(key) { var a = moneyAcct(key); return a ? a.name : ''; }
+  // «Доходы 9 200 zł · Траты 4 300 zł · Отложено 4 900 zł» (money-5.md §1): PLN only, only a month with incomes.
+  function moneyIncomeLine(j) {
+    if (!(j.income > 0)) return null;
+    var d = Math.round((j.income - (j.total || 0)) * 100) / 100;
+    return add(el('div', 'minc'), el('span', '', 'Доходы '), el('b', 'pos', moneyInt(j.income) + ' zł'), el('span', '', ' · Траты '),
+      el('b', '', moneyInt(j.total) + ' zł'), el('span', '', ' · Отложено '), el('b', d < 0 ? 'neg' : '', (d < 0 ? '−' : '') + moneyInt(d) + ' zł'));
+  }
   function moneyEmpty() {
     var how = label(el('button', 'btn ghost'), 'smartphone', 'Как подключить iPhone');
     how.type = 'button';
     how.onclick = function () { moneyHow(how); };
     return add(el('div', 'state'), icon('wallet'), el('p', '', 'Трат пока нет'),
-      el('p', 'mu', 'Оплаты Apple Pay приходят сами, когда на iPhone включена автоматизация «Транзакция». Наличные и BLIK — кнопкой «Трата».'), how);
+      el('p', 'mu', 'Оплаты Apple Pay приходят сами, когда на iPhone включена автоматизация «Транзакция». Наличные и BLIK — кнопкой «+».'), how);
   }
   // Budgets (docs/specs/money-2.md §1): «1 240» in whole złoty for the budget lines; a bar's class from its share of
   // the budget — amber from 80 %, red from 100 %.
@@ -6690,6 +6890,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       set.onclick = function () { moneyBudgetSheet('total', j, done, set); };
       cats.appendChild(set);
     }
+    cats.appendChild(moneyWish(j));
     var list = (j.by_category || []).slice();
     Object.keys(budgets).forEach(function (k) {
       if (k !== 'total' && !list.some(function (b) { return b.category === k; })) list.push({ category: k, sum: 0, count: 0 });
@@ -6718,28 +6919,104 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     });
     return cats;
   }
-  // «По счетам» (docs/specs/money-3.md §1): a row per account with spends this month — its logo, name, the month's sum in
-  // its own currency (Monobank's in UAH, out of the złoty total), the count, other currencies after it. No balance:
-  // there are no incomes or transfers. A tap is onFilter(account), a second tap takes it away; it adds to the
-  // category's filter. Nothing when the answer has no by_account (before the server knows accounts).
-  function moneyAccts(j, onFilter) {
-    var list = j.by_account || [];
-    if (!list.length) return null;
+  // «По счетам» (docs/specs/money-3.md §1, money-5.md §1): a row per account — its logo, name, the balance large
+  // (money_state: opening + what came and went since; a credit card in minus is «долг 1 398,25 zł» in red), the
+  // month's spends small; an account without a balance yet shows the month's sum. «⋯» is the account's sheet; a tap
+  // is onFilter(account), a second tap takes it away; it adds to the category's filter. Drawn into a box that money_state
+  // draws again when it comes (moneyAcctsDraw), so the month and the balances can come in either order.
+  function moneyAccts(j, onFilter, done) {
+    var box = el('div');
+    box.mj = j;
+    box.onFilter = onFilter;
+    box.done = done;
+    MONEY.acctBox = box;
+    moneyAcctsDraw(box);
+    return box;
+  }
+  function moneyAcctsDraw(box) {
+    if (!box || !box.mj) return;
+    var j = box.mj, st = MONEY.state, spent = {};
+    (j.by_account || []).forEach(function (b) { spent[b.account] = b; });
+    var list = st ? st.accounts.filter(function (a) { return !a.hidden && (a.balance !== null || spent[a.key]) || spent[a.key]; })
+      : (j.by_account || []).map(function (b) { return { key: b.account, name: moneyAcctName(b.account) || b.account, currency: b.currency, balance: null }; });
+    clear(box);
+    if (!list.length) return;
     var card = mkCard('landmark', 'По счетам');
-    list.forEach(function (b) {
-      var on = MONEY.acct === b.account, name = moneyAcctName(b.account) || b.account;
-      var more = (b.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); });
-      var r = add(el('div', 'row mcat macc' + (on ? ' on' : '')), moneyAcctTile(b.account), add(el('span', 'tx'), el('div', 't', name)),
-        add(el('span', 'pr'), document.createTextNode(moneyFmt(b.sum, b.currency)),
-          el('span', 'mu', [b.count + ' ' + plural(b.count, ['покупка', 'покупки', 'покупок'])].concat(more).join(' · '))));
+    list.forEach(function (a) {
+      var b = spent[a.key], on = MONEY.acct === a.key, cur = a.currency;
+      var sub = b ? ['траты ' + (moneyInt(b.sum) + ' ' + (b.currency === 'PLN' ? 'zł' : b.currency)).replace(/ /g, '\u00a0'), b.count + '\u00a0' + plural(b.count, ['покупка', 'покупки', 'покупок'])]
+        .concat((b.other || []).map(function (o) { return '+ ' + moneyNb(o.sum, o.currency); })) : ['трат в этом месяце нет'];
+      var big, cls = '';
+      if (a.balance === null || a.balance === undefined) { big = b ? moneyFmt(b.sum, b.currency) : '—'; sub.unshift('баланс не задан'); }
+      else if (a.balance < 0) { big = (a.credit ? 'долг ' : '−') + moneyFmt(-a.balance, cur); cls = ' neg'; }
+      else big = moneyFmt(a.balance, cur);
+      var more = null;
+      if (st) {
+        more = add(el('button', 'btn ghost x mmore'), icon('more'));
+        more.type = 'button';
+        more.setAttribute('aria-label', 'Счёт: ' + a.name);
+        more.onclick = function (ev) { ev.stopPropagation(); moneyAcctSheet(a, box.done || noop, more); };
+      }
+      var r = add(el('div', 'row mcat macc' + (on ? ' on' : '')), moneyAcctTile(a.key), add(el('span', 'tx'), el('div', 't', a.name),
+        el('div', 'mu', sub.join(' · '))), el('span', 'pr mbal' + cls, big), more);
       r.setAttribute('aria-pressed', String(on));
-      tap(r, function () { onFilter(on ? null : b.account); });
+      tap(r, function () { box.onFilter(on ? null : a.key); });
       card.appendChild(r);
     });
-    return card;
+    box.appendChild(card);
   }
-  // The spends the filters leave: the category's and the account's.
-  function moneyShown(r) { return (!MONEY.filter || r.category === MONEY.filter) && (!MONEY.acct || r.account === MONEY.acct); }
+  // An account's sheet: «Поправить баланс» (what is really there now: opening = it, from now on), «Кредитка»,
+  // «Скрыть». done() reloads the view.
+  function moneyAcctSheet(a, done, from) {
+    var close = noop, credit = !!a.credit;
+    var amt = el('input');
+    amt.placeholder = 'Сколько сейчас на счёте';
+    amt.setAttribute('aria-label', amt.placeholder);
+    amt.inputMode = 'text';
+    amt.value = a.balance === null || a.balance === undefined ? '' : (a.balance < 0 ? '−' : '') + moneyNum(a.balance).replace(/\s/g, '');
+    function send(body, btn, msg) {
+      if (btn) btn.disabled = true;
+      haptic();
+      return api('miniapp', { action: 'money_account_set' }, undefined, false, Object.assign({ key: a.key }, body)).then(function () {
+        cacheDrop('money');
+        toast(msg, 'check');
+        done();
+      }, function () { if (btn) btn.disabled = false; });
+    }
+    var save = label(el('button', 'btn'), 'check', 'Сохранить баланс');
+    save.type = 'button';
+    save.onclick = function () {
+      var v = moneySigned(amt.value);
+      if (v === null) return toast('Баланс — число, минус для долга');
+      send({ balance: v }, save, 'Баланс сохранён').then(close);
+    };
+    var cr = el('button', 'mrem');
+    cr.type = 'button';
+    function drawCr() {
+      add(clear(cr), icon(credit ? 'check-square' : 'square', 'mk' + (credit ? ' on' : '')), el('span', '', 'Кредитка: минус — долг банку'));
+      cr.setAttribute('aria-pressed', String(credit));
+    }
+    cr.onclick = function () { credit = !credit; drawCr(); send({ credit: credit }, null, credit ? 'Это кредитка' : 'Это не кредитка'); };
+    drawCr();
+    var hide = label(el('button', 'btn ghost'), 'x', 'Скрыть счёт');
+    hide.type = 'button';
+    hide.onclick = function () { send({ hidden: true }, hide, 'Счёт скрыт').then(close); };
+    close = legalSheet(a.name, [
+      add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, el('span', 'mu', a.currency !== 'PLN' ? a.currency : 'zł'))),
+      el('div', 'mu msrc', a.opening_at ? 'Баланс считается с ' + whenW(a.opening_at) + ': тогда было ' + (a.opening < 0 ? '−' : '') +
+        moneyFmt(Math.abs(a.opening), a.currency) + '.' : 'Баланс ещё не задан: введи, сколько сейчас на счёте.'),
+      cr, add(el('div', 'bar mact'), save, hide)], from);
+  }
+  // A typed signed amount: «−1 398,25» → -1398.25; null for anything else.
+  function moneySigned(s) {
+    var v = String(s || '').replace(/[\s ]/g, '').replace(/^[−–]/, '-').replace(',', '.');
+    return /^-?\d+(\.\d{1,2})?$/.test(v) ? Number(v) : null;
+  }
+  // The rows the filters leave: a category's spends, an account's rows (a transfer counts on both of its accounts).
+  function moneyShown(r) {
+    return (!MONEY.filter || ((r.kind || 'expense') === 'expense' && r.category === MONEY.filter)) &&
+      (!MONEY.acct || r.account === MONEY.acct || r.to_account === MONEY.acct);
+  }
   // The filters on, as chips in a card's header; a tap on one takes it away, then redraw().
   function moneyFilterChips(head, redraw) {
     [[MONEY.filter && moneyCat(MONEY.filter)[1], 'filter'], [MONEY.acct && (moneyAcctName(MONEY.acct) || MONEY.acct), 'acct']].forEach(function (f) {
@@ -6748,6 +7025,386 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       c.appendChild(icon('x'));
       head.appendChild(c);
     });
+  }
+  // money_state (docs/specs/money-5.md): the balances, the people, the goals and the wishlist's sum, read with the
+  // month and kept in MONEY.state whenever it comes; it draws «Долги» into debts and «Цели» into goals, and again the
+  // accounts and the wishlist line already on screen. The month's render draws them too (moneyStatePaint), so the two
+  // answers can come in either order.
+  function moneyState(debts, goals, live, done) {
+    swr({ key: 'money:state', box: debts, n: 0, live: live,
+      fetch: function () { return api('miniapp', { action: 'money_state' }, undefined, true).then(function (s) { MONEY.state = s; return s; }); },
+      render: function (s) { MONEY.state = s; moneyStatePaint(debts, goals, done); } });
+  }
+  function moneyStatePaint(debts, goals, done) {
+    var s = MONEY.state;
+    if (!s) return;
+    (s.people || []).forEach(function (p) { if (!moneyPerson(p.id)) MONEY.people.push({ id: p.id, name: p.name, archived: p.archived }); });
+    moneyDebtsDraw(debts, done);
+    moneyGoalsDraw(goals, done);
+    if (MONEY.acctBox && MONEY.acctBox.isConnected) moneyAcctsDraw(MONEY.acctBox);
+    if (MONEY.wishEl && MONEY.wishEl.isConnected) moneyWishFill(MONEY.wishEl);
+  }
+  // «Долги» (§2): «Мне должны N zł · Я должен M zł», the people with a balance (green — they owe him, red — he owes),
+  // «вернуть до 12.11», the settled ones under «ещё N»; a tap opens the person; «+ Человек».
+  function moneyDebtsDraw(box, done) {
+    clear(box);
+    var st = MONEY.state;
+    if (!st) return;
+    var ppl = (st.people || []).filter(function (p) { return !p.archived; }), owe = 0, owed = 0;
+    ppl.forEach(function (p) { if (p.balance > 0) owed += p.balance; else owe -= p.balance; });
+    var open = ppl.filter(function (p) { return p.balance; }).sort(function (a, b) { return Math.abs(b.balance) - Math.abs(a.balance); });
+    var zero = ppl.filter(function (p) { return !p.balance; });
+    var card = mkCard('hand-coins', 'Долги', open.length ? 'Мне должны ' + moneyInt(owed) + ' zł · Я должен ' + moneyInt(owe) + ' zł' : 'Все в расчёте');
+    var rows = el('div');
+    function row(p) {
+      var due = p.remind_on ? ' · вернуть до ' + p.remind_on.slice(8, 10) + '.' + p.remind_on.slice(5, 7) : '';
+      var x = add(el('div', 'row mdebt'), add(el('span', 'ptile'), icon('users')), add(el('span', 'tx'), el('div', 't', p.name),
+        el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due)),
+        el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : ''), p.balance ? moneyFmt(Math.abs(p.balance)) : '0'));
+      tap(x, function () { moneyPersonSheet(p, done, x); });
+      return x;
+    }
+    function paint() {
+      clear(rows);
+      open.forEach(function (p) { rows.appendChild(row(p)); });
+      if (MONEY.zeroAll) zero.forEach(function (p) { rows.appendChild(row(p)); });
+      if (zero.length) {
+        var more = el('button', 'mmorebtn', MONEY.zeroAll ? 'Свернуть' : 'ещё ' + zero.length + ' в расчёте');
+        more.type = 'button';
+        more.setAttribute('aria-expanded', String(!!MONEY.zeroAll));
+        more.onclick = function () { MONEY.zeroAll = !MONEY.zeroAll; paint(); };
+        rows.appendChild(more);
+      }
+      var addP = add(el('button', 'mlink'), icon('plus'), document.createTextNode('Человек'));
+      addP.type = 'button';
+      addP.onclick = function () { moneyPersonNew(done, addP); };
+      rows.appendChild(addP);
+    }
+    paint();
+    add(box, add(card, rows));
+  }
+  function moneyPersonNew(done, from) {
+    var close = noop, name = el('input'), note = el('input');
+    name.placeholder = 'Имя или компания';
+    name.maxLength = 100;
+    note.placeholder = 'Заметка';
+    note.maxLength = 500;
+    [name, note].forEach(function (i) { i.setAttribute('aria-label', i.placeholder); });
+    var save = label(el('button', 'btn'), 'check', 'Добавить');
+    save.type = 'button';
+    save.onclick = function () {
+      if (!name.value.trim()) return toast('Имя — кто это');
+      save.disabled = true;
+      api('miniapp', { action: 'money_person_add' }, undefined, false, { name: name.value.trim(), note: note.value.trim() || null }).then(function () {
+        cacheDrop('money');
+        close();
+        done();
+      }, function () { save.disabled = false; });
+    };
+    close = legalSheet('Новый человек', [add(el('div', 'bar'), add(el('label', 'field'), icon('users'), name)),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)), add(el('div', 'bar mact'), save)], from);
+  }
+  // A person's sheet: the balance, «Напомнить…» (a day: the bot says it then, no amount), «Дал в долг», «Взял в долг»,
+  // «Вернули», «Вернул» (each a row of that kind, moneySheet), and the history (money_person).
+  function moneyPersonSheet(p, done, from) {
+    var close = noop, hist = add(el('div', 'mhist'), el('div', 'mu msrc', 'Загрузка…')), bal = el('div', 'msum mpsum');
+    function balance(v) {
+      text(bal, v ? moneyFmt(Math.abs(v)) : '0,00 zł');
+      bal.className = 'msum mpsum' + (v > 0 ? ' pos' : v < 0 ? ' neg' : '');
+      return el('div', 'mvs', v > 0 ? 'мне должны' : v < 0 ? 'я должен' : 'в расчёте');
+    }
+    var who = balance(p.balance);
+    var ops = add(el('div', 'mops'));
+    [['lent', 'Дал в долг'], ['borrowed', 'Взял в долг'], ['repaid_in', 'Вернули'], ['repaid_out', 'Вернул']].forEach(function (k) {
+      var b = label(el('button', 'btn ghost'), k[0] === 'lent' || k[0] === 'repaid_out' ? 'forward' : 'undo-2', k[1]);
+      b.type = 'button';
+      b.onclick = function () { close(); moneySheet(null, done, from, k[0], p); };
+      ops.appendChild(b);
+    });
+    var day = el('input');
+    day.type = 'date';
+    day.value = p.remind_on || '';
+    day.setAttribute('aria-label', 'Напомнить');
+    function remind(v, btn) {
+      btn.disabled = true;
+      api('miniapp', { action: 'money_person_set' }, undefined, false, { id: p.id, remind_on: v }).then(function () {
+        cacheDrop('money');
+        toast(v ? 'Напомню ' + v.slice(8, 10) + '.' + v.slice(5, 7) + ' утром' : 'Напоминание убрано', 'check');
+        btn.disabled = false;
+        done();
+      }, function () { btn.disabled = false; });
+    }
+    var setR = label(el('button', 'btn'), 'bell', 'Напомнить');
+    setR.type = 'button';
+    setR.onclick = function () { if (!day.value) return toast('День — когда напомнить'); remind(day.value, setR); };
+    var offR = p.remind_on ? label(el('button', 'btn ghost'), 'x', 'Не напоминать') : null;
+    if (offR) { offR.type = 'button'; offR.onclick = function () { remind(null, offR); }; }
+    close = legalSheet(p.name, [bal, who, ops,
+      el('div', 'tsh', 'Напомнить вернуть'), add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), day)),
+      add(el('div', 'bar mact'), setR, offR),
+      el('div', 'mu msrc', 'Утром в этот день придёт строка в Telegram, без суммы.'), el('div', 'tsh', 'История'), hist], from);
+    api('miniapp', { action: 'money_person' }, 15000, true, { id: p.id }).then(function (j) {
+      balance(j.person.balance);
+      clear(hist);
+      var rows = j.rows || [];
+      if (!rows.length) return hist.appendChild(el('div', 'mu msrc', 'Записей пока нет'));
+      rows.forEach(function (r) {
+        var split = r.kind === 'expense', amount = split ? (Number(r.amount) * 100 - moneyOwn(r)) / 100 : Number(r.amount);
+        var what = split ? moneyShareMark(1 - Number(r.share)) + ' траты' + (r.merchant ? ' · ' + r.merchant : '') : MONEY_KIND[r.kind] || r.kind;
+        var x = add(el('div', 'row mrow'), add(el('span', 'tx'), el('div', 't', what), el('div', 'mu num', [dmt(r.at), r.note].filter(Boolean).join(' · '))),
+          el('span', 'pr', moneyFmt(amount, r.currency)));
+        if (r.at < (p.opening_at || '')) x.classList.add('old');
+        hist.appendChild(x);
+      });
+      if (p.opening_at) hist.appendChild(el('div', 'mu msrc', 'Записи до ' + dmt(p.opening_at) + ' — история из FinEye: уже внутри баланса.'));
+    }, function () { clear(hist); hist.appendChild(el('div', 'mu msrc', 'Историю не загрузить')); });
+  }
+  // «Цели» (§4): a bar of saved / target, «осталось N zł · M мес. · ≈ K zł в месяц», «+ Отложил»; a tap opens the goal.
+  function moneyGoalsDraw(box, done) {
+    clear(box);
+    var st = MONEY.state;
+    if (!st) return;
+    var goals = st.goals || [], card = mkCard('target', 'Цели');
+    goals.forEach(function (g) {
+      var p = g.target ? g.saved / g.target : 0;
+      var zl = function (v) { return moneyInt(v).replace(/ /g, '\u00a0') + '\u00a0zł'; };
+      var plan = g.left ? ['осталось ' + zl(g.left)] : ['собрано'];
+      if (g.months && g.left) plan.push(g.months + '\u00a0мес.', '≈\u00a0' + zl(g.per_month) + ' в\u00a0месяц');
+      else if (g.months === 0 && g.left) plan.push('срок прошёл');
+      var plus = add(el('button', 'btn ghost x mmore mgplus'), icon('plus'));
+      plus.type = 'button';
+      plus.setAttribute('aria-label', 'Отложил: ' + g.name);
+      plus.onclick = function (ev) { ev.stopPropagation(); moneyGoalSave(g, done, plus); };
+      var r = add(el('div', 'row mcat mgoal'), add(el('span', 'ptile'), icon(goalIcon(g.icon))),
+        add(el('span', 'tx'), el('div', 't', g.name), moneyBar(p, p >= 1 ? 'done' : ''), el('div', 'mu', plan.join(' · '))),
+        add(el('span', 'pr'), document.createTextNode(zl(g.saved)), el('span', 'mu', 'из ' + zl(g.target))), plus);
+      tap(r, function () { moneyGoalSheet(g, done, r); });
+      card.appendChild(r);
+    });
+    var addG = add(el('button', 'mlink'), icon('plus'), document.createTextNode(goals.length ? 'Новая цель' : 'Поставить цель'));
+    addG.type = 'button';
+    addG.onclick = function () { moneyGoalSheet(null, done, addG); };
+    card.appendChild(addG);
+    box.appendChild(card);
+  }
+  function moneyGoalSave(g, done, from) {
+    var close = noop, amt = el('input');
+    amt.placeholder = 'Сколько отложил';
+    amt.setAttribute('aria-label', amt.placeholder);
+    amt.inputMode = 'decimal';
+    var save = label(el('button', 'btn'), 'check', 'Отложить');
+    save.type = 'button';
+    save.onclick = function () {
+      var a = moneyIn(amt.value);
+      if (!a) return toast('Сумма — число больше нуля');
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: 'money_goal_save' }, undefined, false, { id: g.id, amount: a }).then(function (j) {
+        cacheDrop('money');
+        close();
+        toast(j.goal.left ? 'Отложено · осталось ' + moneyInt(j.goal.left) + ' zł' : 'Цель собрана', 'check');
+        done();
+      }, function () { save.disabled = false; });
+    };
+    close = legalSheet(g.name, [add(el('div', 'bar'), add(el('label', 'field'), icon('piggy'), amt, el('span', 'mu', 'zł'))),
+      el('div', 'mu msrc', 'Собрано ' + moneyInt(g.saved) + ' из ' + moneyInt(g.target) + ' zł.'), add(el('div', 'bar mact'), save)], from);
+    try { amt.focus(); } catch (e) {}
+  }
+  // A goal's sheet: name, target, due date, an icon; «В архив» for an existing one.
+  function moneyGoalSheet(g, done, from) {
+    var close = noop, ic = g ? g.icon || 'target' : 'target';
+    function inp(ph, v, max) { var i = el('input'); i.placeholder = ph; i.setAttribute('aria-label', ph); if (max) i.maxLength = max; i.value = v || ''; return i; }
+    var name = inp('Название: отпуск, ноутбук', g && g.name, 100), target = inp('Сколько нужно', g ? moneyNum(g.target).replace(/\s/g, '').replace(/,00$/, '') : '');
+    target.inputMode = 'decimal';
+    var due = el('input');
+    due.type = 'date';
+    due.value = (g && g.due) || '';
+    due.setAttribute('aria-label', 'К какому дню');
+    var icons = el('div', 'chips mchips');
+    function drawIcons() {
+      clear(icons);
+      GOAL_ICONS.forEach(function (k) {
+        var b = chip('', ic === k, k, function () { ic = k; haptic(); drawIcons(); });
+        b.appendChild(icon(goalIcon(k)));
+        icons.appendChild(b);
+      });
+    }
+    drawIcons();
+    function send(action, body, btn, msg) {
+      btn.disabled = true;
+      haptic();
+      api('miniapp', { action: action }, undefined, false, body).then(function () {
+        cacheDrop('money');
+        close();
+        toast(msg, 'check');
+        done();
+      }, function () { btn.disabled = false; });
+    }
+    var save = label(el('button', 'btn'), 'check', g ? 'Сохранить' : 'Поставить');
+    save.type = 'button';
+    save.onclick = function () {
+      var t = moneyIn(target.value);
+      if (!name.value.trim()) return toast('Название — на что копишь');
+      if (!t) return toast('Сумма — число больше нуля');
+      var body = { name: name.value.trim(), target: t, due: due.value || null, icon: ic };
+      if (g) body.id = g.id;
+      send(g ? 'money_goal_set' : 'money_goal_add', body, save, g ? 'Сохранено' : 'Цель поставлена');
+    };
+    var arch = null;
+    if (g) {
+      arch = label(el('button', 'btn ghost'), 'x', 'В архив');
+      arch.type = 'button';
+      arch.onclick = function () { send('money_goal_set', { id: g.id, archived: true }, arch, 'Цель в архиве'); };
+    }
+    close = legalSheet(g ? g.name : 'Новая цель', [add(el('div', 'bar'), add(el('label', 'field'), icon('target'), name)),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), target, el('span', 'mu', 'zł'))),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'к дню'), due)),
+      el('div', 'tsh', 'Значок'), icons, add(el('div', 'bar mact'), save, arch)], from);
+  }
+  // «Вишлист: N вещей · K zł · влезает в бюджет» under the month's budget (§7): the current month only; filled when
+  // money_state comes. A tap opens «Вишлист».
+  function moneyWish(j) {
+    var b = el('button', 'mlink mwish');
+    b.type = 'button';
+    b.mj = j;
+    b.onclick = function () { show('wish'); };
+    MONEY.wishEl = b;
+    moneyWishFill(b);
+    return b;
+  }
+  function moneyWishFill(b) {
+    var w = MONEY.state && MONEY.state.wishlist, j = b.mj;
+    clear(b);
+    b.hidden = !w || !w.count || j.month !== monthNow();
+    if (b.hidden) return;
+    var tb = (j.budgets || {}).total, s = 'Вишлист: ' + w.count + ' ' + plural(w.count, ['вещь', 'вещи', 'вещей']) + ' · ' + moneyInt(w.sum) + ' zł';
+    if (tb) { var left = tb - (j.total || 0) - w.sum; s += left >= 0 ? ' · влезает в бюджет' : ' · не влезает на ' + moneyInt(-left) + ' zł'; }
+    add(b, icon('gift'), document.createTextNode(s));
+  }
+  // The receipt's photo shrunk to 1600 px at most, JPEG 0.8 (0.6 when that is still over 2 MB), as base64.
+  function moneyShrink(f) {
+    return new Promise(function (ok, no) {
+      var url = URL.createObjectURL(f), img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.naturalWidth * k));
+        c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        var d = c.toDataURL('image/jpeg', 0.8).split(',')[1];
+        if (d.length > 2796000) d = c.toDataURL('image/jpeg', 0.6).split(',')[1];
+        return d.length > 2796000 ? no(new Error('too large')) : ok(d);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); no(new Error('no image')); };
+      img.src = url;
+    });
+  }
+  // The receipt opened: signed for 10 minutes. In a browser the tab opens on the tap itself (Safari blocks a window
+  // opened after a request), as the legal documents do; in Telegram openLink.
+  function moneyReceiptOpen(r, b) {
+    var w = browser ? window.open('', '_blank') : null;
+    if (w) try { w.opener = null; } catch (e) {}
+    b.disabled = true;
+    api('miniapp', { action: 'money_receipt_url' }, 15000, false, { id: r.id }).then(function (j) {
+      b.disabled = false;
+      if (w) w.location.href = j.url; else openLink(j.url);
+    }, function () { b.disabled = false; if (w) w.close(); });
+  }
+  // A row as both views draw it: its tile, title, the line under it, the amount and its class. A spend: the merchant's
+  // logo, «½ · Тетяна» for a split, a clip for a receipt; an income «+8 000,00 zł» in green; a transfer «Revolut →
+  // Millennium»; a debt the person and what happened.
+  function moneyRowInfo(r) {
+    var k = r.kind || 'expense', marks = [], t, tile, amount = moneyFmt(r.amount, r.currency), cls = '';
+    if (k === 'expense') {
+      var c = moneyCat(r.category);
+      tile = moneyTile(r.merchant, c[2]);
+      t = r.merchant || 'Без названия';
+      if (r.share) marks.push(moneyShareMark(r.share) + (moneyPerson(r.share_person_id) ? ' · ' + moneyPerson(r.share_person_id).name : ''));
+    } else if (k === 'income') {
+      var ic = moneyInc(r.category);
+      tile = add(el('span', 'ptile'), icon(ic[2]));
+      t = r.merchant || ic[1];
+      amount = '+' + amount;
+      cls = ' pos';
+    } else if (k === 'transfer') {
+      tile = add(el('span', 'ptile'), icon('arrow-left-right'));
+      t = (moneyAcctName(r.account) || r.account) + ' → ' + (moneyAcctName(r.to_account) || r.to_account);
+      if (r.to_amount) marks.push('пришло ' + moneyFmt(r.to_amount, (moneyAcct(r.to_account) || {}).currency));
+      cls = ' mu';
+    } else {
+      tile = add(el('span', 'ptile'), icon('hand-coins'));
+      t = (moneyPerson(r.person_id) || {}).name || 'Долг';
+      marks.push(MONEY_KIND[k]);
+      cls = k === 'borrowed' || k === 'repaid_in' ? ' pos' : '';
+      if (cls) amount = '+' + amount;
+    }
+    tile.setAttribute('aria-hidden', 'true');
+    return { kind: k, tile: tile, title: t, marks: marks, amount: amount, cls: cls, clip: !!r.receipt_path,
+      label: k === 'expense' ? moneyCat(r.category)[1] : k === 'income' ? moneyInc(r.category)[1] : MONEY_KIND[k] };
+  }
+  // The month as CSV (§5): UTF-8 with a BOM, «;», a Polish comma; the columns of csvRow in _shared/money.ts, which
+  // builds the same line (edit both together). In a browser the file downloads; Telegram's view cannot save one.
+  function moneyCsvRow(r) {
+    var p = wp(r.at), k = r.kind || 'expense', names = function (x) { return x ? moneyAcctName(x) || x : ''; };
+    var lab = k === 'expense' ? moneyCat(r.category)[1] : k === 'income' ? moneyInc(r.category)[1] : '';
+    var who = moneyPerson(r.person_id || r.share_person_id);
+    var KIND = { expense: 'Трата', income: 'Доход', transfer: 'Перевод', lent: 'Дал в долг', borrowed: 'Взял в долг', repaid_in: 'Мне вернули', repaid_out: 'Я вернул' };
+    return [p.day + '.' + p.month + '.' + p.year, p.hour + ':' + p.minute, KIND[k] || k,
+      k === 'transfer' ? names(r.account) + ' → ' + names(r.to_account) : names(r.account), r.merchant || '', lab,
+      Number(r.amount).toFixed(2).replace('.', ','), r.currency, r.share == null ? '' : String(Number(r.share)).replace('.', ','),
+      who ? who.name : '', r.note || ''].map(function (v) { v = String(v); return /[;"\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';');
+  }
+  function moneyCsv(j) {
+    var head = 'Дата;Время;Тип;Счёт;Продавец;Категория;Сумма;Валюта;Доля;Человек;Заметка';
+    var body = (j.rows || []).slice().reverse().map(moneyCsvRow);
+    if (!browser) return toast('Выгрузка работает в Safari: открой приложение с экрана «Домой»');
+    var blob = new Blob(['﻿' + [head].concat(body).join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' });
+    var a = el('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'dengi-' + j.month + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    toast('Выгружено: ' + body.length + ' ' + plural(body.length, ['строка', 'строки', 'строк']) + (j.more ? ' (последние)' : ''), 'check');
+  }
+  // «⋯» of the month: «Выгрузить месяц».
+  function moneyMonthMenu(j, from) {
+    var close = noop, csv = label(el('button', 'btn'), 'download', 'Выгрузить ' + monthLabel(j.month).toLowerCase() + ' (CSV)');
+    csv.type = 'button';
+    csv.onclick = function () { close(); moneyCsv(j); };
+    close = legalSheet('Месяц', [el('div', 'mu msrc', 'Файл для Excel: дата, время, тип, счёт, продавец, категория, сумма, валюта, доля, человек, заметка.'),
+      add(el('div', 'bar mact'), csv)], from);
+  }
+  // Search over every month (§5): merchant, note, the import's category, an amount («49,99»). The field keeps what he
+  // typed while the view redraws; money_search answers up to 200 rows, the newest first. onFound(rows | null).
+  function moneySearchBar(onFound) {
+    var q = el('input'), bar = add(el('div', 'bar msearch'), add(el('label', 'field'), icon('search'), q)), t = null, x = null;
+    q.type = 'search';
+    q.placeholder = 'Поиск: продавец, заметка, сумма';
+    q.setAttribute('aria-label', 'Поиск по всем месяцам');
+    q.value = MONEY.q || '';
+    x = add(el('button', 'btn ghost x'), icon('x'));
+    x.type = 'button';
+    x.setAttribute('aria-label', 'Очистить поиск');
+    x.hidden = !q.value;
+    x.onclick = function () { q.value = ''; MONEY.q = ''; MONEY.found = null; x.hidden = true; onFound(null); };
+    bar.firstChild.appendChild(x);
+    q.oninput = function () {
+      clearTimeout(t);
+      var s = q.value.trim();
+      x.hidden = !q.value;
+      t = setTimeout(function () {
+        MONEY.q = s;
+        if (s.length < 2 && !/^\d$/.test(s)) { MONEY.found = null; return onFound(null); }
+        api('miniapp', { action: 'money_search' }, 15000, true, { q: s }).then(function (j) {
+          if (MONEY.q !== s) return;
+          MONEY.found = j;
+          onFound(j);
+        }, noop);
+      }, 350);
+    };
+    q.onkeydown = function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); q.blur(); } };
+    return bar;
   }
   // «Подписки» (docs/specs/money-2.md §3): what the server finds in a year of spends (money_subs), drawn into box —
   // nothing when it finds none. Five rows, then «ещё N»; a row's sum is its monthly one, they add up to the header.
@@ -7149,11 +7806,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       (budget ? ' · бюджет ' + mtZl(budget) : '')));
     var by = {}, list = [];
     (j.rows || []).forEach(function (r) {
-      if (r.category !== key || r.currency !== 'PLN') return;
+      if (r.category !== key || r.currency !== 'PLN' || (r.kind || 'expense') !== 'expense') return;
       var m = String(r.merchant || 'Без названия').replace(/\s+/g, ' ').trim(), name = m.replace(/(?:[\s*#]+\S*\d\S*)+$/, '').trim() || m;
       var k = name.toLowerCase(), e = by[k] || (by[k] = { name: name, sum: 0, count: 0 });
       if (!e.count) list.push(e);
-      e.sum += Math.round(Number(r.amount) * 100);
+      e.sum += moneyOwn(r);
       e.count++;
     });
     list.sort(function (a, b) { return b.sum - a.sum; });
@@ -7174,61 +7831,86 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     chartBox.appendChild(mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: null }, W, wide() ? 240 : 200));
   }
   function moneyView() {
-    var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div'), charts = el('div');
+    var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div'), charts = el('div'), debts = el('div'), goals = el('div');
+    function live() { return current === 'money'; }
     function load() {
+      moneyState(debts, goals, live, load);
       moneyLoad(body, render, load);
-      moneyTrends(charts, function () { return current === 'money'; }, false, load);
-      moneySubs(subs, function () { return current === 'money'; });
+      moneyTrends(charts, live, false, load);
+      moneySubs(subs, live);
     }
     function row(r) {
-      var c = moneyCat(r.category), tile = moneyTile(r.merchant, c[2]);
-      var x = add(el('div', 'row mrow'), tile, add(el('span', 'tx'), el('div', 't', r.merchant || 'Без названия'),
-        el('div', 'mu num', [moneyTime(r.at), moneyAcctName(r.account), r.note].filter(Boolean).join(' · '))), el('span', 'pr', moneyFmt(r.amount, r.currency)));
+      var f = moneyRowInfo(r), sub = [moneyTime(r.at), f.kind === 'transfer' ? '' : moneyAcctName(r.account)].concat(f.marks, [r.note]);
+      var x = add(el('div', 'row mrow k-' + f.kind), f.tile, add(el('span', 'tx'), el('div', 't', f.title),
+        add(el('div', 'mu num'), document.createTextNode(sub.filter(Boolean).join(' · ')), f.clip ? icon('paperclip', 'mclip') : null)),
+      el('span', 'pr' + f.cls, f.amount));
       tap(x, function () { moneySheet(r, load, x); });
-      x.setAttribute('aria-label', (r.merchant || 'Без названия') + ', ' + moneyFmt(r.amount, r.currency) + ', ' + c[1]);
+      x.setAttribute('aria-label', f.title + ', ' + f.amount + ', ' + f.label);
       // The swipe's ✕ (gestures): a button off the page, so the swipe deletes at once and «Вернуть» brings it back.
       var del = el('button', 'x');
       del.onclick = function () { moneyDelete(r, load); };
       x.mx = del;
       return x;
     }
-    function render(j) {
-      if (current !== 'money') return;
-      data = j;
-      clear(body);
-      var add1 = label(el('button', 'btn'), 'plus', 'Трата');
-      add1.type = 'button';
-      add1.onclick = function () { moneySheet(null, load, add1); };
-      var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
-      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }),
-        add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
-          other ? el('div', 'mvs', other) : null), add1)));
-      var rows = j.rows || [];
-      if (!rows.length) return body.appendChild(add(el('div', 'card'), moneyEmpty()));
-      var cats = moneyCats(j, function (k) { MONEY.filter = k; haptic(); render(data); }, load);
-      var accts = moneyAccts(j, function (k) { MONEY.acct = k; haptic(); render(data); });
-      body.appendChild(charts);
-      moneyTrendsDraw(charts);
-      var list = mkCard('wallet', 'Траты');
-      moneyFilterChips(list.firstChild, function () { render(data); });
-      var shownRows = rows.filter(moneyShown), day = null, head = null, sum = 0;
+    // The rows by day: «пт, 23 октября · 84,50 zł» (the day's spends, a split one by its share); search results carry
+    // the year when it is not this one.
+    function days(box, rows, empty) {
+      var day = null, head = null, sum = 0;
       function close() { if (head) text(head, head.dataset.d + (sum ? ' · ' + moneyFmt(sum / 100) : '')); }
-      shownRows.forEach(function (r) {
+      rows.forEach(function (r) {
         var k = moneyKey(r.at);
         if (k !== day) {
           close();
           day = k;
           sum = 0;
-          head = list.appendChild(el('div', 'mday'));
-          head.dataset.d = moneyDay(r.at);
+          head = box.appendChild(el('div', 'mday'));
+          head.dataset.d = moneyDay(r.at) + (k.slice(0, 4) !== monthNow().slice(0, 4) ? ' ' + k.slice(0, 4) : '');
         }
-        if (r.currency === 'PLN') sum += Math.round(Number(r.amount) * 100);
-        list.appendChild(row(r));
+        if (r.currency === 'PLN' && (r.kind || 'expense') === 'expense') sum += moneyOwn(r);
+        box.appendChild(row(r));
       });
       close();
-      if (!shownRows.length) list.appendChild(el('div', 'mday', MONEY.acct ? 'Таких трат нет' : 'В этой категории трат нет'));
-      if (j.more) list.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' трат месяца'));
-      add(body, cats, accts, subs, list);
+      if (!rows.length) box.appendChild(el('div', 'mday', empty));
+    }
+    function render(j) {
+      if (current !== 'money') return;
+      data = j;
+      MONEY.people = (j.people || []).slice();
+      clear(body);
+      var add1 = add(el('button', 'btn mplus'), icon('plus'));
+      add1.type = 'button';
+      add1.setAttribute('aria-label', 'Добавить: трата, доход, перевод');
+      add1.onclick = function () { moneySheet(null, load, add1); };
+      var menu = add(el('button', 'btn ghost mplus'), icon('more'));
+      menu.type = 'button';
+      menu.setAttribute('aria-label', 'Месяц: выгрузить');
+      menu.onclick = function () { moneyMonthMenu(j, menu); };
+      var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
+      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }),
+        add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
+          other ? el('div', 'mvs', other) : null), add(el('div', 'macts'), menu, add1)), moneyIncomeLine(j)));
+      var rows = j.rows || [];
+      if (!rows.length) { add(body, add(el('div', 'card'), moneyEmpty()), debts, goals); return moneyStatePaint(debts, goals, load); }
+      var cats = moneyCats(j, function (k) { MONEY.filter = k; haptic(); render(data); }, load);
+      var accts = moneyAccts(j, function (k) { MONEY.acct = k; haptic(); render(data); }, load);
+      body.appendChild(charts);
+      moneyTrendsDraw(charts);
+      var list = mkCard('wallet', 'Траты'), rowsBox = el('div');
+      moneyFilterChips(list.firstChild, function () { render(data); });
+      function fill() {
+        clear(rowsBox);
+        if (MONEY.found) {
+          days(rowsBox, MONEY.found.rows || [], 'Ничего не нашлось');
+          if (MONEY.found.more) rowsBox.appendChild(el('div', 'mday', 'Показаны последние 200 совпадений'));
+          return;
+        }
+        days(rowsBox, rows.filter(moneyShown), MONEY.acct ? 'Таких записей нет' : 'В этой категории трат нет');
+        if (j.more) rowsBox.appendChild(el('div', 'mday', 'Показаны последние ' + rows.length + ' записей месяца'));
+      }
+      add(list, moneySearchBar(fill), rowsBox);
+      fill();
+      add(body, cats, accts, debts, goals, subs, list);
+      moneyStatePaint(debts, goals, load);
     }
     load();
   }
@@ -7953,6 +8635,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     DELA_DONE: DELA_DONE, delaHint: delaHint, swr: swr, chip: chip, MONEY: MONEY, MONEY_CATS: MONEY_CATS, moneyCat: moneyCat,
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
+    moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
