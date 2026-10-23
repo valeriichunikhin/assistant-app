@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 11:10">
+<meta name="published" content="2026-10-23 11:49">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -245,6 +245,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.film .pg{min-height:44px}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
+.row.mdebt .mnote{font-size:13px;line-height:1.35;margin-top:2px}
 .row.dela .hint,.tx>.hint{font-size:13px;line-height:1.35;color:var(--muted);margin-top:4px}
 .row.ib .t{overflow-wrap:anywhere}.card.tap{cursor:pointer}
 .pg.warn{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
@@ -706,6 +707,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-popcorn" viewBox="0 0 24 24"><path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/></symbol>
 <symbol id="i-pill" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
 <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+<symbol id="i-droplets" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></symbol>
+<symbol id="i-key-round" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
 <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2Z"/><path d="M12 12v6"/><path d="M8 22v-2c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2H8Z"/></symbol>
 <symbol id="i-circle-dashed" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol>
 <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
@@ -6899,7 +6903,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return add(tile, img);
   }
   // A spend's tile: its merchant's logo, else its category's icon.
-  function moneyTile(merchant, ic) { return moneyLogo(brandOf(merchant), ic); }
+  // A merchant without a logo still gets an icon that says what it is (his word 23.10.2026: «иконки везде
+  // соответствующие»): rent a key, utilities drops, electricity a bolt…; else the category's own icon.
+  var MERCHANT_IC = [[/аренд|оренд|czynsz|wynajem/i, 'key-round'], [/коммунал|media|spółdziel|woda|вод[аы]/i, 'droplets'],
+    [/электр|prąd|prad|energ/i, 'zap'], [/такси|taxi|bolt|uber(?! ?eats)/i, 'car-taxi-front'], [/продукт|закуп/i, 'shopping-basket'],
+    [/ресторан|кафе|завтрак|круассан|кофе|coffee|cafe/i, 'coffee'], [/доставка ед/i, 'package'], [/волейбол|теннис|спортзал|gym/i, 'dumbbell'],
+    [/авиа|самол|lot\b|ryanair|wizz/i, 'plane'], [/самокат/i, 'bike'], [/кино|cinema/i, 'popcorn'], [/подар|цвет/i, 'gift'],
+    [/одежд/i, 'shirt'], [/мебел|ремонт/i, 'lamp'], [/барбер|haircut/i, 'scissors'], [/здоров|аптек|apteka/i, 'pill'],
+    [/кредит/i, 'landmark'], [/подписк/i, 'repeat']];
+  function merchantIc(name, ic) {
+    var n = String(name || '');
+    for (var k = 0; k < MERCHANT_IC.length; k++) if (MERCHANT_IC[k][0].test(n)) return MERCHANT_IC[k][1];
+    return ic;
+  }
+  function moneyTile(merchant, ic) { return moneyLogo(brandOf(merchant), merchantIc(merchant, ic)); }
   // Accounts (docs/specs/money-3.md §1): the bank's logo (Impresja is his second Millennium account), cash a banknote,
   // any other account a landmark. moneyAcct(key) is its row from the month's accounts ({key, name, currency}).
   var ACCT_LOGO = { millennium: 'millennium', impresja: 'millennium', revolut: 'revolut', monobank: 'monobank', klarna: 'klarna' };
@@ -7010,7 +7027,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(box, head('repeat', 'Обязательное до ' + dm(d.payday) + (d.obligations_sum ? ' · ' + mtZl(d.obligations_sum) : '')));
       if (!d.obligations.length) box.appendChild(el('div', 'mu msrc', 'До зарплаты ничего не списывается'));
       d.obligations.forEach(function (o) {
-        box.appendChild(mrRow(o.kind === 'debt' ? mrTile('users') : moneyLogo(brandOf(o.label), 'repeat'), o.label,
+        box.appendChild(mrRow(o.kind === 'debt' ? mrTile('users') : moneyLogo(brandOf(o.label), merchantIc(o.label, 'repeat')), o.label,
           dm(o.on) + (o.kind === 'debt' ? ' · вернуть долг' : ''), el('span', 'pr neg', '−' + moneyNb(o.amount))));
       });
       add(box, head('calendar', 'Зарплата ' + dm(d.payday) + (d.payday_label ? ' · ' + d.payday_label : '')),
@@ -7343,7 +7360,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function row(p) {
       var due = p.remind_on ? ' · вернуть до ' + p.remind_on.slice(8, 10) + '.' + p.remind_on.slice(5, 7) : '';
       var x = add(el('div', 'row mdebt'), add(el('span', 'ptile'), icon('users')), add(el('span', 'tx'), el('div', 't', p.name),
-        el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due)),
+        el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due),
+        p.note && p.balance ? el('div', 'mu mnote', p.note) : null),
         el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : ''), p.balance ? moneyFmt(Math.abs(p.balance)) : '0'));
       tap(x, function () { moneyPersonSheet(p, done, x); });
       return x;
@@ -7749,7 +7767,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         var pr = add(el('span', 'pr'), document.createTextNode(moneyNb(s.amount, s.currency)),
           s.period === 'year' ? el('span', 'mu', '≈\u00a0' + moneyInt(s.monthly) + '\u00a0' + moneyCur(s.currency) + ' в\u00a0месяц') : null);
         var soon = moneySubSoon(s);
-        var x = add(el('div', 'row mcat msub' + (s.active ? '' : ' off')), moneyLogo(brandOf(s.name) || brandOf(s.pattern), c[2]),
+        var x = add(el('div', 'row mcat msub' + (s.active ? '' : ' off')), moneyLogo(brandOf(s.name) || brandOf(s.pattern), merchantIc(s.name, c[2])),
           add(el('span', 'tx'), el('div', 't', s.name), add(el('div', 'mu num'), soon ? pill(soon, 'warn') : null, document.createTextNode(when))), pr);
         if (soon) when = soon + ' · ' + when;
         x.setAttribute('aria-label', s.name + ', ' + moneyFmt(s.amount, s.currency) + ', ' + when);
@@ -7769,7 +7787,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
             reload();
           }, function () { go.disabled = false; });
         };
-        return add(el('div', 'row msub msug'), moneyLogo(brandOf(h.name), moneyCat(h.category)[2]), add(el('span', 'tx'), el('div', 't', h.name),
+        return add(el('div', 'row msub msug'), moneyLogo(brandOf(h.name), merchantIc(h.name, moneyCat(h.category)[2])), add(el('span', 'tx'), el('div', 't', h.name),
           el('div', 'mu num', (h.fixed ? 'Похоже на постоянный платёж' : 'Похоже на подписку') + ' · ≈\u00a0' + moneyNb(h.amount, h.currency) + ' в\u00a0месяц')), go);
       }
       function paint() {
@@ -7983,11 +8001,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if ((j.stale || []).length || (j.suggest || []).length) {
         add(box, head('repeat', 'Проверь подписки'));
         (j.stale || []).forEach(function (x) {
-          box.appendChild(mrRow(moneyLogo(brandOf(x.name), 'repeat'), x.name,
+          box.appendChild(mrRow(moneyLogo(brandOf(x.name), merchantIc(x.name, 'repeat')), x.name,
             x.last_at ? 'последнее списание ' + dm(moneyKey(x.last_at)) + ' — два месяца тихо' : 'в тратах не нашлась — проверь, с какой карты', null));
         });
         (j.suggest || []).forEach(function (x) {
-          box.appendChild(mrRow(moneyLogo(brandOf(x.name), moneyCat(x.category)[2]), x.name,
+          box.appendChild(mrRow(moneyLogo(brandOf(x.name), merchantIc(x.name, moneyCat(x.category)[2])), x.name,
             'похоже на ' + (x.fixed ? 'постоянный платёж' : 'подписку') + ' · ' + x.months + ' мес. подряд', el('span', 'pr', '≈ ' + moneyNb(x.amount, x.currency))));
         });
       }
@@ -9370,7 +9388,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
-    moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
+    moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
