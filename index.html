@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 00:55">
+<meta name="published" content="2026-10-24 01:15">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -380,6 +380,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 @media (min-width:900px){.fsr .hs .pill,.fsr select{height:32px}.fsr select{font-size:13px}}
 .hs{position:relative;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
 .hs .pill{flex:none;height:44px;padding:0 14px;font-size:13px}.ch+.hs{padding-top:0}
+/* The rating strip: equal circles, red at 1 through amber at 3 to green at 5 (--rc set per chip). */
+.hs.rate .pill{width:44px;height:44px;padding:0;justify-content:center;border-color:color-mix(in srgb,var(--rc) 45%,transparent);color:var(--rc);font-weight:600}
+.hs.rate .pill.acc{border-color:var(--rc);background:color-mix(in srgb,var(--rc) 22%,transparent);color:var(--rc);font-weight:800}
 .fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;padding:4px 14px 14px}
 @media (min-width:900px){.fgrid{grid-template-columns:repeat(5,minmax(0,1fr))}.hs .pill{height:32px}}
 .ft{display:flex;flex-direction:column;gap:4px;min-width:0;padding:0;border:0;background:none;color:var(--fg);text-align:left;font-size:13px;line-height:1.3}
@@ -4911,12 +4914,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // «Видел» with a rating, one strip in both film tabs: FILM_RATES as chips, the current one pressed and scrolled
   // to the middle of the strip; onPick(rating).
   function rateStrip(current, onPick) {
-    var rates = el('div', 'hs');
+    var rates = el('div', 'hs rate');
     rates.setAttribute('role', 'group');
     rates.setAttribute('aria-label', 'Видел — оценка');
     FILM_RATES.forEach(function (v) {
-      rates.appendChild(chip(rateText(v), current != null && Number(current) === v, 'Видел, оценка ' + rateText(v),
+      var c = rates.appendChild(chip(rateText(v), current != null && Number(current) === v, 'Видел, оценка ' + rateText(v),
         function () { onPick(v); }));
+      c.style.setProperty('--rc', v <= 3 ? 'color-mix(in srgb,var(--warn) ' + (v - 1) * 50 + '%,var(--bad))'
+        : 'color-mix(in srgb,var(--good) ' + (v - 3) * 50 + '%,var(--warn))');
     });
     requestAnimationFrame(function () {
       var on = rates.querySelector('.acc');

@@ -55,6 +55,7 @@
 .da-eye .i{width:16px;height:16px}
 .da-rates{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;overflow:visible;padding:0}
 .da-rates .pill{min-height:26px;padding:2px 9px;font-size:12px}
+.da-rates.rate .pill{width:30px;height:30px;min-height:0;padding:0}
 .da-fine{padding-top:10px;font-size:12px;color:var(--muted-2)}
 /* Volleyball: the filter toolbar, the week strips, the game cards. */
 .da-filter{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px;padding:12px 14px}
@@ -81,4 +82,4 @@
 .da-g .pill{margin-top:5px;height:18px;font-size:11px}
 /* «Фильмы» picks (the phone view's .fgrid): as many columns as fit; desktop-a.js trims the tail to whole rows. */
 .fgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-.pgrid .da-rates{gap:3px}.pgrid .da-rates .pill{min-height:24px;padding:2px 5px;font-size:11px}
+.pgrid .da-rates{gap:3px}.pgrid .da-rates .pill{min-height:24px;padding:2px 5px;font-size:11px}.pgrid .da-rates.rate .pill{width:26px;height:26px;padding:0}
