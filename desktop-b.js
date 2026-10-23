@@ -611,9 +611,11 @@
           var amt = num(f.amount);
           if (f.cls) amt.className += f.cls;
           return [f.tile, add(el('div', 'tx'), el('div', 't', f.title), A.moneySubLine(r, f, '', 'mu')),
-            el('span', 'mu', f.label), el('span', 'num nowrap', A.moneyDay(r.at) + (M.found ? ' ' + r.at.slice(0, 4) : '') + ' · ' + A.moneyTime(r.at)), amt,
+            el('span', 'mu', f.label), el('span', 'num nowrap' + (A.moneyDayWord(r.at) === 'сегодня' ? ' mnext accent' : ''),
+              (A.moneyDayWord(r.at) || A.moneyDay(r.at) + (M.found ? ' ' + r.at.slice(0, 4) : '')) + ' · ' + A.moneyTime(r.at)), amt,
             hovActs(confirmed('trash', 'Удалить', function () { A.moneyDelete(r, load); }))];
         }), { onRow: function (k) { A.moneySheet(list[k], load, t.tBodies[0].rows[k]); } });
+        list.forEach(function (r, k) { if (A.moneyDayWord(r.at) === 'сегодня') t.tBodies[0].rows[k].className += ' mtd'; });
         add(clear(box), M.found ? A.moneyFoundChip(function () { render(data); }) : null, t,
           list.length ? null : el('div', 'mday', M.found ? 'Ничего не нашлось' : 'Таких записей нет'),
           !M.found && j.more ? el('div', 'mday', 'Показаны последние ' + rows.length + ' записей месяца') : null,

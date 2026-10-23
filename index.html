@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 22:56">
+<meta name="published" content="2026-10-23 23:14">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -169,6 +169,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .num{font-family:var(--font-num);font-variant-numeric:tabular-nums}
 .pill{display:inline-flex;align-items:center;height:20px;padding:0 7px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font:500 12px/1 var(--font);white-space:nowrap;vertical-align:1px}
 .pill.good{color:var(--good)}.pill.warn{color:var(--warn)}.pill.bad{color:var(--bad)}
+.mnext.accent{color:var(--link)}.mnext.warn{color:var(--warn)}
 .pill.good,.pill.warn,.pill.bad{border-color:color-mix(in srgb,currentColor 45%,transparent);background:color-mix(in srgb,currentColor 8%,transparent)}
 .pill.acc{border-color:transparent;background:var(--accent-soft);color:var(--link)}
 .t .pill,.mu .pill{margin-left:6px}
@@ -465,7 +466,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.mbar>i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .row.mcat .pr .mu,.row.mcat .pr>.mu{display:block;margin-top:2px;font:400 12px/1.3 var(--font)}
 .row.mrow .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mday{padding:12px 14px 6px;border-top:1px solid var(--line);color:var(--muted);font:600 12px/1.3 var(--font)}.mday+.row{border-top:0}
+.mday{padding:12px 14px 6px;border-top:1px solid var(--line);color:var(--muted);font:600 12px/1.3 var(--font)}.mday+.row{border-top:0}.mday.mnow{color:var(--link)}.tbl tr.mtd>td{background:var(--accent-soft)}
 .ch>.pill.acc{height:28px;gap:4px;padding:0 10px;cursor:pointer}.ch>.pill.acc .i{width:14px;height:14px}
 .mchips{padding:0 0 10px}.mchips .pill{height:36px;padding:0 12px;font-size:13px;cursor:pointer}.mchips .pill .i{width:14px;height:14px;margin-right:6px}
 .mrem{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 4px;padding:0;border:0;background:none;color:var(--fg);font:14px var(--font);text-align:left;cursor:pointer}
@@ -6707,6 +6708,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         .format(new Date(ts)).toLowerCase();
     } catch (e) { return dmt(ts); }
   }
+  // «сегодня» / «вчера» for a day of Warsaw's today and yesterday, else null (the money lists mark them).
+  function moneyDayWord(ts) {
+    var k = moneyKey(ts), now = moneyKey(Date.now());
+    return k === now ? 'сегодня' : k === addDays(now, -1) ? 'вчера' : null;
+  }
   // A category's share of the month: «79 %», «<1 %» for a sliver.
   function moneyShare(s) { return s > 0 && s < 0.005 ? '<1 %' : Math.round(s * 100) + ' %'; }
   function moneyTime(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
@@ -7615,6 +7621,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     clear(box);
     if (!list.length) return;
     var card = mkCard('landmark', 'По счетам');
+    if (st && list.length > 1) {
+      var ord = label(el('button', 'mtoday'), 'arrow-up-down', 'Порядок');
+      ord.type = 'button';
+      ord.onclick = function () { moneyAcctOrderSheet(ord); };
+      card.firstChild.appendChild(ord);
+    }
     list.forEach(function (a) {
       // One short line under the name (his word 23.10.2026: «много текста, ничего не понимаю»): a credit card shows how
       // much of its limit is used as a bar (the limit itself is in its sheet) and «свободно N»; another account how many spends. The
@@ -7644,6 +7656,43 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       card.appendChild(r);
     });
     box.appendChild(card);
+  }
+  // «Порядок счетов»: the visible accounts with ▲ ▼ like «Порядок карточек»; a move is drawn at once (the state's list and
+  // the card behind), saved by money_accounts_order, and put back with a toast when the answer is no.
+  function moneyAcctOrderSheet(from) {
+    var rows = el('div');
+    function shown() { return MONEY.state.accounts.filter(function (a) { return !a.hidden; }); }
+    function paint(focus) {
+      var list = shown();
+      clear(rows);
+      list.forEach(function (a, i) {
+        function move(d) {
+          var was = MONEY.state.accounts, o = list.slice();
+          o.splice(i, 1);
+          o.splice(i + d, 0, a);
+          MONEY.state.accounts = o.concat(was.filter(function (x) { return x.hidden; }));
+          paint(['acct', a.key, d < 0 ? 'up' : 'down']);
+          moneyAcctsDraw(MONEY.acctBox);
+          haptic();
+          api('miniapp', { action: 'money_accounts_order' }, undefined, false, { keys: o.map(function (x) { return x.key; }) }).then(function () {
+            cacheDrop('money');
+          }, function () {
+            MONEY.state.accounts = was;
+            paint();
+            moneyAcctsDraw(MONEY.acctBox);
+            toast('Порядок не сохранился');
+          });
+        }
+        var row = add(el('div', 'row'), moneyAcctTile(a.key), el('span', 'tx t', a.name),
+          rowBtn('chevron-up', { label: a.name + ': выше' }, 'up', i === 0, function () { move(-1); }),
+          rowBtn('chevron-down', { label: a.name + ': ниже' }, 'down', i === list.length - 1, function () { move(1); }));
+        row.k = a.key;
+        rows.appendChild(row);
+      });
+      refocus(rows, focus, 'acct');
+    }
+    paint();
+    legalSheet('Порядок счетов', [rows], from);
   }
   // An account's sheet: «Поправить баланс» (what is really there now: opening = it, from now on), «Кредитка»,
   // «Все операции» (docs/specs/money-11.md §6), «Скрыть». done() reloads the view.
@@ -8268,8 +8317,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var pr = add(el('span', 'pr'), document.createTextNode(moneyNb(s.amount, s.currency)),
       s.period === 'year' ? el('span', 'mu', '≈\u00a0' + moneyInt(s.monthly) + '\u00a0' + moneyCur(s.currency) + ' в\u00a0месяц') : null);
     var soon = moneySubSoon(s);
+    // «след. 28.10»: the date in the accent when it is this month, in warn within 3 days — monthly rows say the word in its
+    // place; a yearly row already has the badge with it, so only its date turns warn.
+    var line = [soon ? pill(soon, 'warn') : null], key = moneyKey(Date.now());
+    if (s.active && s.next_on) {
+      var n = days(key, s.next_on), near = n >= 0 && n <= 3, mark = near ? 'warn' : s.next_on.slice(0, 7) === key.slice(0, 7) ? 'accent' : '';
+      var word = near && !soon ? ['сегодня', 'завтра', 'послезавтра', 'через 3 дня'][n] : moneySubNext(s);
+      line.push(document.createTextNode((s.period === 'year' ? 'раз в год' : 'каждый месяц') + ' · след.\u00a0'),
+        mark ? el('span', 'mnext ' + mark, word) : document.createTextNode(word));
+      if (near && !soon) when = (s.period === 'year' ? 'раз в год' : 'каждый месяц') + ' · след.\u00a0' + word;
+    } else line.push(document.createTextNode(when));
     var x = add(el('div', 'row mcat msub' + (s.active ? '' : ' off')), moneyLogo(brandOf(s.name) || brandOf(s.pattern), merchantIc(s.name, c[2])),
-      add(el('span', 'tx'), el('div', 't', s.name), add(el('div', 'mu num'), soon ? pill(soon, 'warn') : null, document.createTextNode(when))), pr);
+      add(el('span', 'tx'), el('div', 't', s.name), add.apply(null, [el('div', 'mu num')].concat(line))), pr);
     if (soon) when = soon + ' · ' + when;
     x.setAttribute('aria-label', s.name + ', ' + moneyFmt(s.amount, s.currency) + ', ' + when);
     tap(x, function () { open(x); });
@@ -9338,7 +9397,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           day = k;
           sum = 0;
           head = box.appendChild(el('div', 'mday'));
-          head.dataset.d = moneyDay(r.at) + (k.slice(0, 4) !== monthNow().slice(0, 4) ? ' ' + k.slice(0, 4) : '');
+          var dw = moneyDayWord(r.at);
+          head.dataset.d = (dw ? dw.charAt(0).toUpperCase() + dw.slice(1) : moneyDay(r.at)) + (k.slice(0, 4) !== monthNow().slice(0, 4) ? ' ' + k.slice(0, 4) : '');
+          if (dw === 'сегодня') head.className += ' mnow';
         }
         if (r.currency === 'PLN' && (r.kind || 'expense') === 'expense') sum += moneyOwn(r);
         box.appendChild(row(r));
@@ -10183,7 +10244,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
-    moneyCardsInto: moneyCardsInto, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
+    moneyCardsInto: moneyCardsInto, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
