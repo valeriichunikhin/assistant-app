@@ -83,7 +83,7 @@
 .dlane-b .panes.solo .dfl{display:none}
 /* «Деньги»: the spends table wide on the left, the categories beside it; the month switch keeps to its size. */
 .dlane-b .panes.dmoney{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
-.dtool .mnav{flex:0 0 auto;width:240px;margin:0}.dlane-b .nowrap{white-space:nowrap}
+.dtool .mnav{flex:0 0 auto;min-width:240px;margin:0}.dlane-b .nowrap{white-space:nowrap}
 /* «Деньги»'s right column holds the categories and «Подписки» (docs/specs/money-2.md): it scrolls on its own when taller. */
 .dlane-b .panes.dmoney>.side{max-height:calc(100vh - 92px);overflow-y:auto;scrollbar-width:thin}
 .dlane-b .panes.dmoney>.side>.card+.card,.dlane-b .panes.dmoney>.side>.card+div>.card{margin-top:16px}
