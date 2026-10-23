@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 03:16">
+<meta name="published" content="2026-10-23 08:34">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -3138,8 +3138,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     h.add('zoomed');
     add(document.body, add(z, box));
     haptic();
-    var f = box.querySelector('input, textarea, button');
+    // On a phone a focused field opens the keyboard over the sheet before he sees it (his screenshot 23.10.2026):
+    // there the sheet itself takes focus and the keyboard waits for a tap on a field.
+    var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+    var f = touch ? null : box.querySelector('input, textarea, button');
     if (f) f.focus();
+    else { box.tabIndex = -1; box.focus({ preventScroll: true }); }
     return close;
   }
   function legalView() {
