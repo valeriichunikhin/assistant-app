@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 19:08">
+<meta name="published" content="2026-10-23 21:42">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -243,6 +243,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font-size:12px;transition:border-color .12s,color .12s}
 .pg .i{width:14px;height:14px}
 .row.film .pg{min-height:44px}
+.acts{display:flex;flex-direction:column;align-items:stretch;gap:4px}.acts .pg{justify-content:center}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
 .row.mdebt .mnote{font-size:13px;line-height:1.35;margin-top:2px}
@@ -6040,8 +6041,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (!list.length) return;
       card('ticket', 'Коды', list.slice(0, 8).map(function (c) {
         var sub = [c.rewards || '', c.published > 0 ? ddmm(c.published * 1000) : ''].filter(Boolean).join(' · ');
-        var b = label(el('button', 'pg'), 'copy', 'Скопировать'), r = hrow(c.code, sub || null, b);
+        var b = label(el('button', 'pg'), 'copy', 'Скопировать'), d = label(el('button', 'pg'), 'check', 'Активировал'),
+          r = hrow(c.code, sub || null, add(el('span', 'acts'), b, d));
         b.type = 'button';
+        d.type = 'button';
+        // «Активировал»: the server stops offering the code; «Вернуть» deletes the mark.
+        d.onclick = function () {
+          api('miniapp', { action: 'genshin_redeemed' }, 15000, true, { code: c.code }).then(function () {
+            r.remove();
+            backToast('Отмечен — больше не покажу', function () {
+              api('miniapp', { action: 'genshin_redeemed' }, 15000, true, { code: c.code, undo: true })
+                .then(function () { toast('Вернул'); }, function () { toast(); });
+            });
+          }, function () { toast(); });
+        };
         b.onclick = function () {
           function done() {
             label(b, 'check', 'скопировано');
