@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 21:42">
+<meta name="published" content="2026-10-23 21:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -108,7 +108,9 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .swp .i{position:absolute;top:50%;margin-top:-10px}.swp.r .i{left:24px}.swp.l .i{right:24px}
 .row.swb{transition:transform .55s cubic-bezier(.4,0,.2,1)}.swp.swb{transition:width .55s cubic-bezier(.4,0,.2,1)}
 /* The bar steps away on a scroll down and comes back on the way up (gestures-2.md, 8). */
-.tabbar{transition:transform .55s cubic-bezier(.4,0,.2,1)}.tabbar.hid{transform:translateY(calc(100% + env(safe-area-inset-bottom)))}
+.tabbar{transition:transform .55s cubic-bezier(.4,0,.2,1)}.tabbar.hid{transform:translateY(calc(var(--vvy,0px) + 100% + env(safe-area-inset-bottom)))}
+/* --vvy: the visual viewport's drift from the layout one, set only while iOS leaves one behind (gestures(), 10) */
+.tabbar:not(.hid){transform:translateY(var(--vvy,0px))}body::before{transform:translateY(var(--vvy,0px))}
 .rail{display:none}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:4;display:flex;height:calc(var(--bar) + env(safe-area-inset-bottom));padding:0 4px env(safe-area-inset-bottom);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:500 11px/1.1 var(--font)}
@@ -1708,8 +1710,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     window.addEventListener('scroll', function () {
       var y = document.scrollingElement.scrollTop, d = y - lastY;
       lastY = y;
-      clearTimeout(idleT);
+      // A sheet's scroll leaves the timer running: a bar hidden before the sheet still comes back after it.
       if (shell.classList.contains('more') || document.querySelector('.tsum')) return;
+      clearTimeout(idleT);
       if (y < 120) return barBack();
       if (d > 0) {
         up = 0;
@@ -1720,6 +1723,51 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       if (tabbar.classList.contains('hid')) idleT = setTimeout(barBack, 1500);
     }, { passive: true });
+    // 10. iOS can leave the visual viewport off the layout one with no keyboard open (23.10.2026, the Home Screen app,
+    // «Деньги» mid-page: the bar, half away, and the gradient stood ~320 px up the screen, the sticky header gone above).
+    // Every fixed layer hangs on the layout viewport, so they all moved together. Once the scroll settles and nothing
+    // takes typing, a drift is answered with a 1 px programmatic scroll, which makes WebKit place the layout viewport
+    // again; if the drift is still there the frame after, the bar and the gradient follow the visual viewport by
+    // --vvy (cleared as soon as the drift is gone), and the bar comes back.
+    var vv = window.visualViewport, vvT = 0, vvTried = false;
+    function typing() {
+      var a = document.activeElement;
+      return !!(a && a.matches && a.matches('input,textarea,select,[contenteditable]'));
+    }
+    function drift() {
+      return typing() || Math.abs(vv.scale - 1) > 0.01 ? 0 : Math.abs(vv.offsetTop) > 1 ? vv.offsetTop : 0;
+    }
+    function vvCheck() {
+      vvT = 0;
+      if (!drift()) {
+        vvTried = false;
+        return root.style.removeProperty('--vvy');
+      }
+      barBack();
+      if (!vvTried) {
+        vvTried = true;
+        var y = window.scrollY;
+        window.scrollTo(0, y > 0 ? y - 1 : y + 1);
+        window.scrollTo(0, y);
+      }
+      requestAnimationFrame(function () {
+        var d = drift();
+        if (d) root.style.setProperty('--vvy', d.toFixed(1) + 'px');
+        else root.style.removeProperty('--vvy');
+      });
+    }
+    function vvSoon() {
+      clearTimeout(vvT);
+      vvT = setTimeout(vvCheck, 150);
+    }
+    if (vv) {
+      vv.addEventListener('resize', vvSoon);
+      vv.addEventListener('scroll', vvSoon);
+      window.addEventListener('scroll', vvSoon, { passive: true });
+      document.addEventListener('touchend', vvSoon, { passive: true });
+      document.addEventListener('focusout', vvSoon);
+      document.addEventListener('visibilitychange', vvSoon);
+    }
     // «Показать ещё» at the foot of a screen presses itself on screen, once in 800 ms at most and never while it is
     // disabled (its request in flight); the button stays as the way back. The targets follow main's children.
     if (window.IntersectionObserver && window.MutationObserver) {
