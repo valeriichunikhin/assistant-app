@@ -596,7 +596,7 @@
       body.appendChild(charts);
       charts.mtFor = j.month;
       A.moneyTrendsDraw(charts);
-      var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load);
+      var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load, function () { render(data); });
       var accts = A.moneyAccts(j, function (k) { M.acct = k; render(data); }, load);
       var card = cardWith('wallet', 'Траты', null, el('div')), box = card.lastChild;
       A.moneyFilterChips(card.firstChild, function () { render(data); });
