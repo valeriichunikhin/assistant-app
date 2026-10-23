@@ -73,7 +73,8 @@
   };
 
   // Key/value tiles: items = [{ k: 'Траты', v: '1 234 zł', small: 'за месяц' }].
-  // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, tab?: what a tap opens}.
+  // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, tab?: what a tap opens, go?(cell): or what a
+  // tap does}.
   D.tiles = function (items) {
     var box = el('div', 'kv');
     items.forEach(function (t) {
@@ -85,6 +86,7 @@
         cell.appendChild(bar);
       }
       if (t.tab) A.tap(cell, function () { A.show(t.tab); });
+      else if (t.go) A.tap(cell, function () { t.go(cell); });
       box.appendChild(cell);
     });
     return box;
@@ -216,6 +218,12 @@
         small: mm.budget ? 'из ' + A.grouped(Math.round(mm.budget)) + ' · ' + (mm.left >= 0 ? 'осталось ' : 'больше на ') +
           A.grouped(Math.round(Math.abs(mm.left))) : d === null || d === undefined ? '' : (d > 0 ? '+' : d < 0 ? '−' : '±') +
           Math.abs(d) + ' % к прошлому месяцу', bar: mt.p === null ? undefined : mt.p, cls: mt.cls, tab: 'money' });
+    }
+    // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: a tap opens the month's review.
+    if (A.moneyReviewOn && A.moneyReviewOn(j) && hid.indexOf('money_review') < 0) {
+      var rv = j.money_review, rt = A.moneyReviewHomeText(rv);
+      items.push({ k: rt.title, v: A.grouped(Math.round(rv.total)) + ' zł', small: rt.sub,
+        go: function (cell) { A.moneyReviewSheet(rv.month, cell); } });
     }
     if (!items.length) return;
     var t = D.tiles(items);

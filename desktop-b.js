@@ -573,9 +573,9 @@
       var go = label(el('button', 'btn'), 'plus', 'Добавить');
       go.type = 'button';
       go.onclick = function () { A.moneySheet(null, load, go); };
-      var menu = label(el('button', 'btn ghost'), 'download', 'Выгрузить');
+      var menu = label(el('button', 'btn ghost'), 'more', 'Разбор · год · CSV');
       menu.type = 'button';
-      menu.onclick = function () { A.moneyMonthMenu(j, menu); };
+      menu.onclick = function () { A.moneyMonthMenu(j, menu, load); };
       add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), menu, go);
       clear(body);
       var rows = j.rows || [], M = A.MONEY, d = Math.round(((j.total || 0) - (j.prev_total || 0)) * 100) / 100;
