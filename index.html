@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 08:34">
+<meta name="published" content="2026-10-23 08:37">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -6987,6 +6987,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (a.balance === null || a.balance === undefined) { big = b ? moneyFmt(b.sum, b.currency) : '—'; sub.unshift('баланс не задан'); }
       else if (a.balance < 0) { big = (a.credit ? 'долг ' : '−') + moneyFmt(-a.balance, cur); cls = ' neg'; }
       else big = moneyFmt(a.balance, cur);
+      if (a.credit && a.credit_limit && a.balance !== null && a.balance !== undefined) {
+        sub.unshift('доступно ' + moneyFmt(Math.max(0, a.credit_limit + Math.min(0, a.balance)), cur) + ' из ' + moneyFmt(a.credit_limit, cur));
+      }
       var more = null;
       if (st) {
         more = add(el('button', 'btn ghost x mmore'), icon('more'));
@@ -7027,6 +7030,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (v === null) return toast('Баланс — число, минус для долга');
       send({ balance: v }, save, 'Баланс сохранён').then(close);
     };
+    var lim = el('input');
+    lim.placeholder = 'Кредитный лимит';
+    lim.setAttribute('aria-label', lim.placeholder);
+    lim.inputMode = 'decimal';
+    lim.value = a.credit_limit ? moneyNum(a.credit_limit).replace(/\s/g, '') : '';
+    lim.onchange = function () {
+      var t = lim.value.trim(), v = t ? moneySigned(t) : null;
+      if (t && (v === null || v <= 0)) return toast('Лимит — число больше нуля');
+      send({ credit_limit: v }, null, v ? 'Лимит сохранён' : 'Лимит убран');
+    };
     var cr = el('button', 'mrem');
     cr.type = 'button';
     function drawCr() {
@@ -7042,7 +7055,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, el('span', 'mu', a.currency !== 'PLN' ? a.currency : 'zł'))),
       el('div', 'mu msrc', a.opening_at ? 'Баланс считается с ' + whenW(a.opening_at) + ': тогда было ' + (a.opening < 0 ? '−' : '') +
         moneyFmt(Math.abs(a.opening), a.currency) + '.' : 'Баланс ещё не задан: введи, сколько сейчас на счёте.'),
-      cr, add(el('div', 'bar mact'), save, hide)], from);
+      cr, credit ? add(el('div', 'bar'), add(el('label', 'field'), icon('landmark'), lim, el('span', 'mu', a.currency !== 'PLN' ? a.currency : 'zł'))) : null,
+      add(el('div', 'bar mact'), save, hide)], from);
   }
   // A typed signed amount: «−1 398,25» → -1398.25; null for anything else.
   function moneySigned(s) {
