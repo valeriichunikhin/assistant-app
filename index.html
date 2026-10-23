@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 23:14">
+<meta name="published" content="2026-10-23 23:26">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -6566,14 +6566,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // Shortcuts automation posts to the money function, and the cash and BLIK ones added here (money_add). A tap on a
   // spend opens its sheet (money_edit, money_delete); a swipe to the left deletes it with «Вернуть». The categories
   // are CATEGORIES of _shared/money.ts: the same keys, labels and icons — edit both together.
-  var MONEY_CATS = [['food', 'Продукты', 'shopping-basket'], ['cafe', 'Кафе и еда навынос', 'coffee'], ['taxi', 'Такси', 'car-taxi-front'],
+  var MONEY_CATS = [['food', 'Продукты', 'shopping-basket'], ['cafe', 'Кафе и еда навынос', 'coffee'],
     ['transport', 'Транспорт', 'tram-front'], ['subs', 'Подписки', 'repeat'], ['fun', 'Кино и развлечения', 'popcorn'],
     ['health', 'Здоровье и аптека', 'pill'], ['clothes', 'Одежда', 'shirt'], ['home', 'Дом', 'sofa'], ['sport', 'Спорт', 'dumbbell'],
     ['gifts', 'Подарки', 'gift'], ['tech', 'Техника', 'laptop'], ['care', 'Уход', 'scissors'], ['loan', 'Кредиты', 'landmark'],
     ['other', 'Другое', 'circle-dashed']];
   var MONEY_CAT = {};
   MONEY_CATS.forEach(function (c) { MONEY_CAT[c[0]] = c; });
-  function moneyCat(k) { return MONEY_CAT[k] || MONEY_CAT.other; }
+  // «Такси» was a category until 23.10.2026 and is «Транспорт · Такси» since (LEGACY_CATEGORIES of _shared/money.ts,
+  // docs/specs/money-10.md): a key from an old cached answer reads as that, and is never offered.
+  var MONEY_LEGACY = { taxi: ['transport', 'taxi'] };
+  function moneyCatKey(k) { return MONEY_LEGACY.hasOwnProperty(k) ? MONEY_LEGACY[k][0] : k; }
+  function moneyCat(k) { return MONEY_CAT[moneyCatKey(k)] || MONEY_CAT.other; }
   // Subcategories (docs/specs/money-10.md): SUBCATEGORIES of _shared/money.ts — the same keys, labels and icons, here
   // under the sprite's ids (volleyball is «ball», gamepad-2 «game», stethoscope «steth»): edit both together.
   var MONEY_SUBS = {
@@ -6581,8 +6585,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       ['internet', 'Интернет и связь', 'wifi'], ['furniture', 'Мебель и ремонт', 'sofa'], ['household', 'Для дома', 'spray-can']],
     food: [['groceries', 'Супермаркет', 'shopping-basket'], ['smallshop', 'У дома, Żabka', 'store']],
     cafe: [['restaurant', 'Рестораны', 'utensils'], ['coffee', 'Кафе и кофе', 'coffee'], ['delivery', 'Доставка', 'package']],
-    transport: [['public', 'Общественный', 'tram-front'], ['scooter', 'Самокат', 'bike'], ['flights', 'Авиа', 'plane'],
-      ['train', 'Поезда', 'train-front'], ['fuel', 'Топливо и парковка', 'fuel']],
+    transport: [['taxi', 'Такси', 'car-taxi-front'], ['public', 'Общественный', 'tram-front'], ['scooter', 'Самокат', 'bike'],
+      ['flights', 'Авиа', 'plane'], ['train', 'Поезда', 'train-front'], ['fuel', 'Топливо и парковка', 'fuel']],
     subs: [['streaming', 'Кино и музыка', 'tv'], ['cloud', 'Облако и софт', 'cloud'], ['phone', 'Связь', 'smartphone'], ['games', 'Игры', 'game']],
     fun: [['cinema', 'Кино', 'popcorn'], ['games', 'Игры', 'game'], ['going_out', 'Выходы и события', 'drama']],
     sport: [['volleyball', 'Волейбол', 'ball'], ['tennis', 'Теннис', 'circle-dot'], ['gym', 'Спортзал', 'dumbbell']],
@@ -6592,6 +6596,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   };
   // A subcategory of a category ([key, label, icon]), null for none.
   function moneySub(cat, key) {
+    if (MONEY_LEGACY.hasOwnProperty(cat)) { key = key || MONEY_LEGACY[cat][1]; cat = MONEY_LEGACY[cat][0]; }
     var l = MONEY_SUBS[cat] || [];
     for (var i = 0; i < l.length; i++) if (l[i][0] === key) return l[i];
     return null;
@@ -6608,7 +6613,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     ['#65850c', '#6d8f05', 'оливковый'], ['#87324c', '#ba5f78', 'бордовый'], ['#334c8c', '#5e7bbf', 'индиго'],
     ['#7c3b1c', '#b46745', 'коричневый'], ['#7021a8', '#a15ae0', 'пурпурный'], ['#256332', '#3e8a4d', 'тёмно-зелёный'],
     ['#693b70', '#9f69a7', 'сливовый']];
-  var MONEY_COLOR_DEF = { food: '#318b16', cafe: '#ca550c', taxi: '#a46f0b', transport: '#0d83a5', subs: '#8067db',
+  var MONEY_COLOR_DEF = { food: '#318b16', cafe: '#ca550c', transport: '#0d83a5', subs: '#8067db',
     fun: '#c64c8e', health: '#d54644', clothes: '#068972', home: '#2279dc', sport: '#65850c', gifts: '#7021a8',
     tech: '#334c8c', care: '#693b70', loan: '#7c3b1c', other: '#87324c' };
   function moneyColorPair(v) {
@@ -6643,7 +6648,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var moneyColorsAt = { of: undefined, on: null };
   function moneyColor(cat) {
     if (!moneyColorsAt.on || moneyColorsAt.of !== MONEY.colors) moneyColorsAt = { of: MONEY.colors, on: moneyColors(MONEY.colors) };
-    var v = moneyColorsAt.on[cat];
+    var v = moneyColorsAt.on[moneyCatKey(cat)];
     return v && v !== 'none' ? moneyColorPair(v) : null;
   }
   // Paints a node in the category's color (.mc: --c is the theme's step), nothing for a category without one.
@@ -6753,9 +6758,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // comes from the person's sheet with person). done() reloads the view after a confirmed write.
   function moneySheet(r, done, from, kind0, person) {
     var isNew = !r, kind = r ? r.kind || 'expense' : kind0 || 'expense', close = noop, keep = false;
-    var cat = r && kind === 'expense' ? r.category : null, icat = r && kind === 'income' ? r.category : null;
+    var cat = r && kind === 'expense' ? moneyCatKey(r.category) : null, icat = r && kind === 'income' ? r.category : null;
     // The subcategory (docs/specs/money-10.md): undefined — not said (the server finds it), null — «Без подкатегории».
-    var sub = r && kind === 'expense' && moneySub(r.category, r.subcategory) ? r.subcategory : r && kind === 'expense' ? null : undefined;
+    var sub0 = r && kind === 'expense' && moneySub(r.category, r.subcategory);
+    var sub = sub0 ? sub0[0] : r && kind === 'expense' ? null : undefined;
     // The account (docs/specs/money-3.md): an edit starts on the row's own, a new one on the last one used here.
     var accts = MONEY.accounts.filter(function (a) { return !a.hidden || (r && (a.key === r.account || a.key === r.to_account)); });
     var acct = r ? r.account || null : store('moneyAcct'), toAcct = r ? r.to_account || null : store('moneyToAcct');
@@ -7192,7 +7198,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // A merchant without a logo still gets an icon that says what it is (his word 23.10.2026: «иконки везде
   // соответствующие»): rent a key, utilities drops, electricity a bolt…; else the category's own icon.
   var MERCHANT_IC = [[/аренд|оренд|czynsz|wynajem/i, 'key-round'], [/коммунал|media|spółdziel|woda|вод[аы]/i, 'droplets'],
-    [/электр|prąd|prad|energ/i, 'zap'], [/такси|taxi|bolt|uber(?! ?eats)/i, 'car-taxi-front'], [/продукт|закуп/i, 'shopping-basket'],
+    [/электр|prąd|prad|energ/i, 'zap'], [/такси|таксі|taxi|bolt|uber(?! ?eats)|free ?now/i, 'car-taxi-front'], [/продукт|закуп/i, 'shopping-basket'],
     [/ресторан|кафе|завтрак|круассан|кофе|coffee|cafe/i, 'coffee'], [/доставка ед/i, 'package'], [/волейбол|volley/i, 'ball'],
     [/теннис|теніс|tennis/i, 'circle-dot'], [/спортзал|gym/i, 'dumbbell'],
     [/авиа|самол|lot\b|ryanair|wizz/i, 'plane'], [/самокат/i, 'bike'], [/кино|cinema/i, 'popcorn'], [/подар|цвет/i, 'gift'],
