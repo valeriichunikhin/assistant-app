@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 08:37">
+<meta name="published" content="2026-10-23 08:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1006,8 +1006,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // lastLoad is what the return to the app reruns; busyN counts the current tab's requests (busyGen: which tab).
   var shown = {}, shownBox = {}, lastLoad = null, busyN = 0, busyGen = 0, cacheEpoch = 0;
   // What the key's box shows now: shown[key] counts only for the box it was drawn into (a rebuilt view starts empty).
-  function onScreen(o) { return shownBox[o.key] === o.box ? shown[o.key] : undefined; }
-  function setShown(o, s) { shown[o.key] = s; shownBox[o.key] = o.box; }
+  // One box can take turns showing several keys (a month of «Деньги», then another): what a key showed counts only
+  // while the box still shows that key — else going back to October drew nothing over September (23.10.2026).
+  function onScreen(o) { return shownBox[o.key] === o.box && o.box.swrKey === o.key ? shown[o.key] : undefined; }
+  function setShown(o, s) { shown[o.key] = s; shownBox[o.key] = o.box; o.box.swrKey = o.key; }
   function cacheGet(key) {
     var o = null;
     try { o = JSON.parse(store('cache:' + key) || 'null'); } catch (e) {}
