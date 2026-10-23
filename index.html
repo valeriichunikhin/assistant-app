@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 11:49">
+<meta name="published" content="2026-10-23 11:52">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -710,6 +710,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
 <symbol id="i-droplets" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></symbol>
 <symbol id="i-key-round" viewBox="0 0 24 24"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+<symbol id="i-sofa" viewBox="0 0 24 24"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M4 18v2"/><path d="M20 18v2"/><path d="M12 4v9"/></symbol>
 <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M8 2h8l4 10H4L8 2Z"/><path d="M12 12v6"/><path d="M8 22v-2c0-1.1.9-2 2-2h4a2 2 0 0 1 2 2v2H8Z"/></symbol>
 <symbol id="i-circle-dashed" viewBox="0 0 24 24"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></symbol>
 <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
@@ -6445,7 +6446,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // are CATEGORIES of _shared/money.ts: the same keys, labels and icons — edit both together.
   var MONEY_CATS = [['food', 'Продукты', 'shopping-basket'], ['cafe', 'Кафе и еда навынос', 'coffee'], ['taxi', 'Такси', 'car-taxi-front'],
     ['transport', 'Транспорт', 'tram-front'], ['subs', 'Подписки', 'repeat'], ['fun', 'Кино и развлечения', 'popcorn'],
-    ['health', 'Здоровье и аптека', 'pill'], ['clothes', 'Одежда', 'shirt'], ['home', 'Дом', 'lamp'], ['sport', 'Спорт', 'dumbbell'],
+    ['health', 'Здоровье и аптека', 'pill'], ['clothes', 'Одежда', 'shirt'], ['home', 'Дом', 'sofa'], ['sport', 'Спорт', 'dumbbell'],
     ['gifts', 'Подарки', 'gift'], ['tech', 'Техника', 'laptop'], ['care', 'Уход', 'scissors'], ['loan', 'Кредиты', 'landmark'],
     ['other', 'Другое', 'circle-dashed']];
   var MONEY_CAT = {};
@@ -6909,7 +6910,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     [/электр|prąd|prad|energ/i, 'zap'], [/такси|taxi|bolt|uber(?! ?eats)/i, 'car-taxi-front'], [/продукт|закуп/i, 'shopping-basket'],
     [/ресторан|кафе|завтрак|круассан|кофе|coffee|cafe/i, 'coffee'], [/доставка ед/i, 'package'], [/волейбол|теннис|спортзал|gym/i, 'dumbbell'],
     [/авиа|самол|lot\b|ryanair|wizz/i, 'plane'], [/самокат/i, 'bike'], [/кино|cinema/i, 'popcorn'], [/подар|цвет/i, 'gift'],
-    [/одежд/i, 'shirt'], [/мебел|ремонт/i, 'lamp'], [/барбер|haircut/i, 'scissors'], [/здоров|аптек|apteka/i, 'pill'],
+    [/одежд/i, 'shirt'], [/мебел|ремонт/i, 'sofa'], [/барбер|haircut/i, 'scissors'], [/здоров|аптек|apteka/i, 'pill'],
     [/кредит/i, 'landmark'], [/подписк/i, 'repeat']];
   function merchantIc(name, ic) {
     var n = String(name || '');
