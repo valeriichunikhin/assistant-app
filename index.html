@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 10:12">
+<meta name="published" content="2026-10-23 10:23">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -7551,8 +7551,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // makes it a monthly one) and «+ Подписка». His list is short and its own: every active one is shown (they add up to
   // the header), the switched-off ones behind «отключённые: N».
   function moneySubs(box, live) {
-    function reload() { cacheDrop('money:subs'); moneySubs(box, live); }
-    swr({ key: 'money:subs', box: box, n: 0, live: live,
+    function reload() { cacheDrop('money:subs2'); moneySubs(box, live); }
+    swr({ key: 'money:subs2', box: box, n: 0, live: live,
       fetch: function () { return api('miniapp', { action: 'money_subs' }, undefined, true); },
       render: function (j) { box.reload = reload; moneySubsDraw(box, j); } });
   }
@@ -7610,7 +7610,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
       function paint() {
         clear(rows);
-        var on = list.filter(function (s) { return s.active; }), offs = list.length - on.length;
+        var on = list.filter(function (s) { return s.active !== false; }), offs = list.length - on.length;
         (MONEY[all] ? list : on).forEach(function (s) { rows.appendChild(row(s)); });
         if (offs) {
           var more = el('button', 'mmorebtn', MONEY[all] ? 'Свернуть' : 'отключённые: ' + offs);
