@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 18:04">
+<meta name="published" content="2026-10-23 19:08">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -557,7 +557,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    step; a tile wears it as the icon on a 16 % wash of it over --solid, so a highlighted row under it changes nothing
    (≥ 3.3:1 in both themes), a bar and the category's chart bars
    in full. Logos are never painted. The picker («Цвет» in the category's «⋯») is a row of 32 px circles; «без цвета» is
-   an outline with a slash. */
+   an outline with a slash; a circle another category wears (.worn) carries its 14 px icon. */
 .mc{--c:var(--cd)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .mc{--c:var(--cl)}}
 :root[data-theme="light"] .mc{--c:var(--cl)}
@@ -577,7 +577,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 @media (prefers-reduced-motion:reduce){.mbounce-l,.mbounce-r{animation:none}}
 .mcolors{display:flex;flex-wrap:wrap;gap:10px;padding:2px 0 12px}
 .mcol{position:relative;display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:var(--c);color:#fff;cursor:pointer}
-.mcol .i{width:16px;height:16px}
+.mcol .i{width:16px;height:16px}.mcol.worn .i{width:14px;height:14px;opacity:.9}
 .mcol.on{box-shadow:0 0 0 2px var(--solid),0 0 0 4px var(--c)}
 .mcol.none{background:none;border:1.5px solid var(--line-2);color:var(--fg)}
 .mcol.none::after{content:"";position:absolute;width:22px;height:1.5px;background:var(--muted);transform:rotate(-45deg)}
@@ -6536,21 +6536,53 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // A category's color (docs/specs/money-10.md): MONEY_COLORS of _shared/money.ts, each a light-theme and a dark-theme
   // step of one hue, validated with the dataviz skill's validator on the app's cards (the icon ≥ 3.3:1 against its 16 %
-  // tile in both themes); the light step is the key stored in prefs 'money' colors (money_colors_set). Each category
-  // has its calm default (MONEY_COLOR_DEF, an index; «Кредиты» and «Другое» none); his own choice wins, «none» is no
-  // color. MONEY.colors is the last answer's, kept in localStorage so the first paint has it.
+  // tile in both themes); the light step is the key stored in prefs 'money' colors (money_colors_set). Sixteen of them,
+  // so no two categories wear one («Без повторов»): each has its own default (MONEY_COLOR_DEF = COLOR_DEFAULTS), his
+  // own choice wins, «none» is no color. MONEY.colors is the last answer's, kept in localStorage so the first paint has
+  // it.
   var MONEY_COLORS = [['#2279dc', '#3287ea', 'синий'], ['#ca550c', '#d85f18', 'оранжевый'], ['#068972', '#11957c', 'бирюзовый'],
     ['#a46f0b', '#b37903', 'янтарный'], ['#c64c8e', '#d55a9b', 'розовый'], ['#318b16', '#3e9727', 'зелёный'],
     ['#8067db', '#8c75ea', 'фиолетовый'], ['#d54644', '#e35350', 'красный'], ['#0d83a5', '#0299c1', 'голубой'],
-    ['#65850c', '#6d8f05', 'оливковый']];
-  var MONEY_COLOR_DEF = { food: 5, cafe: 1, taxi: 3, transport: 8, subs: 6, fun: 4, health: 7, clothes: 2, home: 0, sport: 9,
-    gifts: 4, tech: 6, care: 2 };
-  function moneyColor(cat) {
-    var v = (MONEY.colors || {})[cat];
-    if (v === 'none') return null;
-    if (!v) return MONEY_COLORS[MONEY_COLOR_DEF[cat]] || null;
+    ['#65850c', '#6d8f05', 'оливковый'], ['#87324c', '#ba5f78', 'бордовый'], ['#334c8c', '#5e7bbf', 'индиго'],
+    ['#7c3b1c', '#b46745', 'коричневый'], ['#7021a8', '#a15ae0', 'пурпурный'], ['#256332', '#3e8a4d', 'тёмно-зелёный'],
+    ['#693b70', '#9f69a7', 'сливовый']];
+  var MONEY_COLOR_DEF = { food: '#318b16', cafe: '#ca550c', taxi: '#a46f0b', transport: '#0d83a5', subs: '#8067db',
+    fun: '#c64c8e', health: '#d54644', clothes: '#068972', home: '#2279dc', sport: '#65850c', gifts: '#7021a8',
+    tech: '#334c8c', care: '#693b70', loan: '#7c3b1c', other: '#87324c' };
+  function moneyColorPair(v) {
     for (var i = 0; i < MONEY_COLORS.length; i++) if (MONEY_COLORS[i][0] === v) return MONEY_COLORS[i];
     return null;
+  }
+  // Every category's color on screen, one each — colorsResolve of _shared/money.ts, edit both together: his stored
+  // choice over the default; where two want one color, the one whose wish is not its own default keeps it (both: the
+  // first in MONEY_CATS), the other falls back to its default, or the first free color when that is taken too.
+  function moneyColors(stored) {
+    stored = stored || {};
+    function want(k) { var v = stored[k]; return v === 'none' || moneyColorPair(v) ? v : MONEY_COLOR_DEF[k]; }
+    var keeper = {}, out = {};
+    MONEY_CATS.forEach(function (c) {
+      var k = c[0], v = want(k), held = keeper[v];
+      if (v === 'none') return;
+      if (!held || (want(held) === MONEY_COLOR_DEF[held] && v !== MONEY_COLOR_DEF[k])) keeper[v] = k;
+    });
+    var taken = {};
+    Object.keys(keeper).forEach(function (v) { taken[v] = 1; });
+    MONEY_CATS.forEach(function (c) {
+      var k = c[0], v = want(k);
+      if (v === 'none' || keeper[v] === k) { out[k] = v; return; }
+      var f = MONEY_COLOR_DEF[k];
+      if (taken[f]) f = MONEY_COLORS.filter(function (x) { return !taken[x[0]]; })[0][0];
+      taken[f] = 1;
+      out[k] = f;
+    });
+    return out;
+  }
+  // MONEY.colors is replaced, never changed in place, so the last resolve holds until it is.
+  var moneyColorsAt = { of: undefined, on: null };
+  function moneyColor(cat) {
+    if (!moneyColorsAt.on || moneyColorsAt.of !== MONEY.colors) moneyColorsAt = { of: MONEY.colors, on: moneyColors(MONEY.colors) };
+    var v = moneyColorsAt.on[cat];
+    return v && v !== 'none' ? moneyColorPair(v) : null;
   }
   // Paints a node in the category's color (.mc: --c is the theme's step), nothing for a category without one.
   function moneyTint(node, cat) {
@@ -7372,33 +7404,53 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       el('div', 'mu msrc', 'При 80 % и 100 % придёт строка в Telegram, без сумм.'),
       add(el('div', 'bar mact'), save, del)], from);
   }
-  // «Цвет» of a category (docs/specs/money-10.md): a circle per color of MONEY_COLORS and «без цвета»; a tap applies at
-  // once (MONEY.colors and its localStorage copy, then repaint()), money_colors_set follows; a failure puts the old one
-  // back. Picking the default writes it too, so it stays his.
+  // A pick of a color another category wears is a swap — colorsSwap of _shared/money.ts, edit both together: this
+  // category takes it, the other this one's previous (this one had none: the other's default if free, else the first
+  // free color). {patch, with}: with is the other category, null for a free color or «none».
+  function moneyColorSwap(cat, v) {
+    var on = moneyColors(MONEY.colors), other = null, patch = {};
+    patch[cat] = v;
+    if (v !== 'none') MONEY_CATS.forEach(function (c) { if (!other && c[0] !== cat && on[c[0]] === v) other = c[0]; });
+    if (!other) return { patch: patch, with: null };
+    var back = on[cat];
+    if (back === 'none') {
+      var used = {};
+      Object.keys(on).forEach(function (k) { used[on[k]] = 1; });
+      used[v] = 1;
+      back = used[MONEY_COLOR_DEF[other]] ? (MONEY_COLORS.filter(function (x) { return !used[x[0]]; })[0] || ['none'])[0] : MONEY_COLOR_DEF[other];
+    }
+    patch[other] = back;
+    return { patch: patch, with: other };
+  }
+  // «Цвет» of a category (docs/specs/money-10.md): a circle per color of MONEY_COLORS and «без цвета»; a color another
+  // category wears carries that category's small icon, and picking it swaps the two (moneyColorSwap, «Цвет поменялся
+  // местами с «Уход»»). A tap applies at once (MONEY.colors and its localStorage copy, then repaint()), one
+  // money_colors_set {colors} with both follows; a failure puts the old ones back. Picking the default writes it too,
+  // so it stays his.
   function moneyColorRow(cat, repaint) {
     var box = el('div', 'mcolors');
     box.setAttribute('role', 'radiogroup');
     box.setAttribute('aria-label', 'Цвет: ' + moneyCat(cat)[1]);
     function cur() { var c = moneyColor(cat); return c ? c[0] : 'none'; }
     function pick(v) {
-      var before = MONEY.colors[cat], was = cur();
-      if (v === was) return;
+      if (v === cur()) return;
+      var sw = moneyColorSwap(cat, v), before = {};
       MONEY.colors = Object.assign({}, MONEY.colors);
-      MONEY.colors[cat] = v;
+      Object.keys(sw.patch).forEach(function (k) { before[k] = MONEY.colors[k]; MONEY.colors[k] = sw.patch[k]; });
       store('moneyColors', JSON.stringify(MONEY.colors));
       MONEY.colorsBusy = (MONEY.colorsBusy || 0) + 1;
       haptic();
       paint();
       repaint();
-      api('miniapp', { action: 'money_colors_set' }, undefined, false, { category: cat, color: v }).then(function (r) {
+      api('miniapp', { action: 'money_colors_set' }, undefined, false, { colors: sw.patch }).then(function (r) {
         MONEY.colorsBusy--;
         cacheDrop('money:2'); // the months' cached answers (money:YYYY-MM) carry the old colors
         if (r && r.colors && !MONEY.colorsBusy) moneyColorsFrom(r);
-        if (!MONEY.colorsBusy) toast('Цвет сохранён', 'check');
+        if (!MONEY.colorsBusy) toast(sw.with ? 'Цвет поменялся местами с «' + moneyCat(sw.with)[1] + '»' : 'Цвет сохранён', 'check');
       }, function () {
         MONEY.colorsBusy--;
         MONEY.colors = Object.assign({}, MONEY.colors);
-        if (before === undefined) delete MONEY.colors[cat]; else MONEY.colors[cat] = before;
+        Object.keys(before).forEach(function (k) { if (before[k] === undefined) delete MONEY.colors[k]; else MONEY.colors[k] = before[k]; });
         store('moneyColors', JSON.stringify(MONEY.colors));
         paint();
         repaint();
@@ -7406,16 +7458,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function paint() {
       clear(box);
-      var on = cur();
+      var on = cur(), worn = {}, all = moneyColors(MONEY.colors);
+      Object.keys(all).forEach(function (k) { if (k !== cat && all[k] !== 'none') worn[all[k]] = k; });
       MONEY_COLORS.concat([['none', null, 'без цвета']]).forEach(function (c) {
-        var b = el('button', 'mcol' + (c[0] === 'none' ? ' none' : '') + (on === c[0] ? ' on' : ''));
+        var b = el('button', 'mcol' + (c[0] === 'none' ? ' none' : '') + (on === c[0] ? ' on' : '')), by = worn[c[0]];
         b.type = 'button';
         b.setAttribute('role', 'radio');
         b.setAttribute('aria-checked', String(on === c[0]));
-        b.setAttribute('aria-label', c[2]);
-        b.title = c[2];
+        b.setAttribute('aria-label', by ? c[2] + ', у «' + moneyCat(by)[1] + '» — поменяться' : c[2]);
+        b.title = by ? c[2] + ' · ' + moneyCat(by)[1] : c[2];
         if (c[1]) { b.classList.add('mc'); b.style.setProperty('--cl', c[0]); b.style.setProperty('--cd', c[1]); }
         if (on === c[0]) b.appendChild(icon('check'));
+        else if (by) { b.classList.add('worn'); b.appendChild(icon(moneyCat(by)[2])); }
         b.onclick = function () { pick(c[0]); };
         box.appendChild(b);
       });
