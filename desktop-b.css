@@ -20,6 +20,7 @@
 .tbl .t{font-weight:500;overflow-wrap:anywhere}
 .tbl .t .pill{margin-left:6px}
 .tbl .ptile{width:30px;height:30px;font-size:16px}
+.tbl .ptile.ai{width:14px;height:14px;font-size:0}
 .tbl .tb{width:34px;height:34px;margin:-2px;border-radius:var(--r-s)}
 .tbl .mk{display:block;width:20px;height:20px;color:var(--muted)}
 .tbl .mk.on{color:var(--mark)}

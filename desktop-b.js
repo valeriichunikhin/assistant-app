@@ -556,7 +556,7 @@
   // the phone and the Mac show the same month. «Графики» (money-4.md) spans the width over the table: the three charts
   // side by side. ---
   view('money', function (main) {
-    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null, subs = el('div'), charts = el('div');
+    var tool = el('div', 'dtool'), body = add(el('div'), A.skeleton(2)), data = null, subs = el('div'), fixed = el('div'), charts = el('div');
     var debts = el('div'), goals = el('div');
     add(main, tool, body);
     function live() { return on('money'); }
@@ -564,8 +564,9 @@
       A.moneyState(debts, goals, live, load);
       A.moneyLoad(body, render, load);
       A.moneyTrends(charts, live, true, load);
-      A.moneySubs(subs, live);
+      A.moneySubs(subs, live, fixed);
     }
+    A.moneyPrefsHook(function () { if (data) render(data); });
     function render(j) {
       if (!on('money') || !body.isConnected) return;
       data = j;
@@ -576,7 +577,11 @@
       var menu = label(el('button', 'btn ghost'), 'more', 'Разбор · год · CSV');
       menu.type = 'button';
       menu.onclick = function () { A.moneyMonthMenu(j, menu, load); };
-      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), menu, go);
+      // «Регулярное» next to it (docs/specs/money-11.md §3).
+      var reg = label(el('button', 'btn ghost'), 'repeat', 'Регулярное');
+      reg.type = 'button';
+      reg.onclick = function () { A.moneyRegularSheet(reg); };
+      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), reg, menu, go);
       clear(body);
       var rows = j.rows || [], M = A.MONEY, d = Math.round(((j.total || 0) - (j.prev_total || 0)) * 100) / 100;
       var spends = rows.filter(function (r) { return (r.kind || 'expense') === 'expense'; }).length;
@@ -593,11 +598,8 @@
       daily.parentNode.hidden = daily.hidden;
       daily.onfill = function () { daily.parentNode.hidden = daily.hidden; };
       if (!rows.length) { add(body, add(el('div', 'card'), A.moneyEmpty()), debts, goals); return A.moneyStatePaint(debts, goals, load); }
-      body.appendChild(charts);
-      charts.mtFor = j.month;
-      A.moneyTrendsDraw(charts);
       var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load, function () { render(data); });
-      var accts = A.moneyAccts(j, function (k) { M.acct = k; render(data); }, load);
+      var accts = A.moneyAccts(j, function (k) { M.acct = k; if (k) M.toList = true; render(data); }, load);
       var card = cardWith('wallet', 'Траты', null, el('div')), box = card.lastChild;
       A.moneyFilterChips(card.firstChild, function () { render(data); });
       function fill() {
@@ -605,23 +607,32 @@
         var t = D.table([{ h: '', w: '52px' }, { h: 'Где' }, { h: 'Категория', w: '190px' }, { h: 'Когда', w: '230px' },
           { h: 'Сумма', r: true, w: '150px' }, { h: '', w: '120px' }], list.map(function (r) {
           // Under the title, as on the phone: the account, the split's mark, the note; the clip of a receipt.
-          var f = A.moneyRowInfo(r), sub = [f.kind === 'transfer' ? '' : A.moneyAcctName(r.account)].concat(f.marks, [r.note]).filter(Boolean).join(' · ');
+          var f = A.moneyRowInfo(r);
           var amt = num(f.amount);
           if (f.cls) amt.className += f.cls;
-          return [f.tile, add(el('div', 'tx'), el('div', 't', f.title), sub || f.clip ? add(el('div', 'mu'), document.createTextNode(sub), f.clip ? icon('paperclip', 'mclip') : null) : null),
+          return [f.tile, add(el('div', 'tx'), el('div', 't', f.title), A.moneySubLine(r, f, '', 'mu')),
             el('span', 'mu', f.label), el('span', 'num nowrap', A.moneyDay(r.at) + (M.found ? ' ' + r.at.slice(0, 4) : '') + ' · ' + A.moneyTime(r.at)), amt,
             hovActs(confirmed('trash', 'Удалить', function () { A.moneyDelete(r, load); }))];
         }), { onRow: function (k) { A.moneySheet(list[k], load, t.tBodies[0].rows[k]); } });
-        add(clear(box), t, list.length ? null : el('div', 'mday', M.found ? 'Ничего не нашлось' : 'Таких записей нет'),
+        add(clear(box), M.found ? A.moneyFoundChip(function () { render(data); }) : null, t,
+          list.length ? null : el('div', 'mday', M.found ? 'Ничего не нашлось' : 'Таких записей нет'),
           !M.found && j.more ? el('div', 'mday', 'Показаны последние ' + rows.length + ' записей месяца') : null,
           M.found && M.found.more ? el('div', 'mday', 'Показаны последние 200 совпадений') : null);
       }
       card.insertBefore(A.moneySearchBar(fill), box);
       fill();
-      var p = D.panes(card, add(el('div'), cats, accts, debts, goals, subs));
+      // His order of the cards (docs/specs/money-11.md §8): «Графики» over the panes when it is on, the list on the
+      // left when it is on, the others down the right column in his order.
+      var right = el('div');
+      A.moneyCardsInto(right, { cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs });
+      if (A.moneyCardOn('charts')) body.appendChild(charts);
+      charts.mtFor = j.month;
+      A.moneyTrendsDraw(charts);
+      var p = A.moneyCardOn('list') ? D.panes(card, right) : right;
       p.classList.add('dmoney');
       body.appendChild(p);
       A.moneyStatePaint(debts, goals, load);
+      A.moneyListShown(card);
     }
     load();
   });
