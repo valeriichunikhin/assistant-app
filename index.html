@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 23:26">
+<meta name="published" content="2026-10-24 00:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -8671,8 +8671,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         add(box, head('receipt', 'Разовые'));
         j.large.forEach(function (x) {
           var k = moneyCat(x.category);
-          box.appendChild(mrRow(moneyTile(x.merchant, k[2], x.category), x.merchant || 'Без названия',
+          var row = box.appendChild(mrRow(moneyTile(x.merchant, k[2], x.category), x.merchant || 'Без названия',
             moneyDay(x.at) + ' · в ' + String(x.times).replace('.', ',') + ' раза больше обычной', el('span', 'pr', moneyNb(x.amount))));
+          if (x.row) tap(row, function () { moneySheet(x.row, function () { after(); load(); }, row); });
         });
       }
       if ((j.stale || []).length || (j.suggest || []).length) {
