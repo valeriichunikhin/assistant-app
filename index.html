@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 21:55">
+<meta name="published" content="2026-10-23 22:05">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -498,7 +498,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    transparent ground), rounded, nothing stretched; «По счетам» rows reuse the categories' row; a chip's mark is small. */
 .ptile.logo{overflow:hidden;padding:3px;background:#fff;border-color:color-mix(in srgb,var(--line) 60%,#fff)}
 .ptile.logo img{display:block;width:100%;height:100%;border-radius:5px;object-fit:contain}
-.row.macc .tx{justify-content:center}
+.row.macc .tx{justify-content:center;gap:4px}.row.macc .tx .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row.macc .mbar{height:4px}.row.macc .tx .mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mchips .pill .ptile.am{width:20px;height:20px;margin:0 6px 0 -4px;padding:1px;border-radius:5px}.mchips .pill .ptile.am .i{width:13px;height:13px;margin:0}
 .mchips .pill .ptile.am img{border-radius:3px}
 /* Charts (docs/specs/money-4.md): the drawing fills its wrapper (no side padding, the width is measured), the readout
@@ -7616,16 +7616,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (!list.length) return;
     var card = mkCard('landmark', 'По счетам');
     list.forEach(function (a) {
-      var b = spent[a.key], on = MONEY.acct === a.key, cur = a.currency;
-      var sub = b ? ['траты ' + (moneyInt(b.sum) + ' ' + (b.currency === 'PLN' ? 'zł' : b.currency)).replace(/ /g, '\u00a0'), b.count + '\u00a0' + plural(b.count, ['покупка', 'покупки', 'покупок'])]
-        .concat((b.other || []).map(function (o) { return '+ ' + moneyNb(o.sum, o.currency); })) : ['трат в этом месяце нет'];
-      var big, cls = '';
-      if (a.balance === null || a.balance === undefined) { big = b ? moneyFmt(b.sum, b.currency) : '—'; sub.unshift('баланс не задан'); }
-      else if (a.balance < 0) { big = (a.credit ? 'долг ' : '−') + moneyFmt(-a.balance, cur); cls = ' neg'; }
+      // One short line under the name (his word 23.10.2026: «много текста, ничего не понимаю»): a credit card shows how
+      // much of its limit is used as a bar (the limit itself is in its sheet) and «свободно N»; another account how many spends. The
+      // month's spend sum lives in «По категориям» and in the account's own list (a tap), not here.
+      var b = spent[a.key], on = MONEY.acct === a.key, cur = a.currency, sub = '', bar = null;
+      var big, cls = '', set = a.balance !== null && a.balance !== undefined;
+      if (!set) { big = b ? moneyFmt(b.sum, b.currency) : '—'; sub = 'баланс не задан'; }
+      else if (a.balance < 0) { big = '−' + moneyFmt(-a.balance, cur); cls = ' neg'; }
       else big = moneyFmt(a.balance, cur);
-      if (a.credit && a.credit_limit && a.balance !== null && a.balance !== undefined) {
-        sub.unshift('доступно ' + moneyFmt(Math.max(0, a.credit_limit + Math.min(0, a.balance)), cur) + ' из ' + moneyFmt(a.credit_limit, cur));
-      }
+      if (a.credit && a.credit_limit && set) {
+        var used = Math.min(1, Math.max(0, -a.balance) / a.credit_limit);
+        sub = 'свободно ' + moneyInt(Math.max(0, a.credit_limit + Math.min(0, a.balance))) + '\u00a0' + (cur === 'PLN' ? 'zł' : cur === 'UAH' ? '₴' : cur);
+        bar = add(el('div', 'mbar'), el('i', used >= 1 ? 'over' : used >= 0.8 ? 'warn' : ''));
+        bar.firstChild.style.width = (used * 100).toFixed(1) + '%';
+      } else if (set && b) sub = b.count + '\u00a0' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' за месяц';
       var more = null;
       if (st) {
         more = add(el('button', 'btn ghost x mmore'), icon('more'));
@@ -7634,7 +7638,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         more.onclick = function (ev) { ev.stopPropagation(); moneyAcctSheet(a, box.done || noop, more); };
       }
       var r = add(el('div', 'row mcat macc' + (on ? ' on' : '')), moneyAcctTile(a.key), add(el('span', 'tx'), el('div', 't', a.name),
-        el('div', 'mu', sub.join(' · '))), el('span', 'pr mbal' + cls, big), more);
+        bar, sub ? el('div', 'mu', sub) : null), el('span', 'pr mbal' + cls, big), more);
       r.setAttribute('aria-pressed', String(on));
       tap(r, function () { box.onFilter(on ? null : a.key); });
       card.appendChild(r);
