@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 00:49">
+<meta name="published" content="2026-10-23 03:16">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -477,6 +477,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mbud .mbl{display:flex;align-items:baseline;gap:8px;margin:0 0 7px;font-size:14px;line-height:1.3}
 .mbud .mbl .tx{flex:1;min-width:0}.mbud .mbl .num{flex:none;font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
 .mbud .mbl .num.warn{color:var(--warn)}.mbud .mbl .num.over{color:var(--bad)}
+.mbud.mhome{border-top:0;padding-top:0}.mbud.mhome .mu{margin-top:6px}
 .mlink{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
 .mlink .i{width:16px;height:16px}
 .row.msub .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -623,6 +624,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
 <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
 <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+<symbol id="i-calendar-sync" viewBox="0 0 24 24"><path d="M11 10v4h4"/><path d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"/><path d="M16 2v4"/><path d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"/><path d="M21 22v-4h-4"/><path d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"/><path d="M3 10h4"/><path d="M8 2v4"/></symbol>
 <symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
 <symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
 <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
@@ -1135,7 +1137,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
   var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
-  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
+  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The known keys of v, once each, in its order; anything else → [].
   function keysIn(v, keys) {
@@ -2038,6 +2040,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         c.appendChild(paint());
       });
     }
+    // The month's spends: against the budget with its bar, else against the previous month to this day; a tap opens
+    // «Деньги».
+    function moneyCard(m) {
+      var t = moneyHomeText(m), c = card('wallet', 'Деньги'), box = el('div', 'mbud mhome');
+      add(box, add(el('div', 'mbl'), el('span', 'tx', t.line), t.pct ? el('span', 'num ' + t.cls, t.pct) : null));
+      if (t.p !== null) box.appendChild(moneyBar(t.p, t.cls));
+      if (t.sub) box.appendChild(el('div', 'mu', t.sub));
+      tap(c.firstChild, function () { show('money'); });
+      c.appendChild(tap(box, function () { show('money'); }));
+    }
     // Today's post: its idea, the language and how far it got; a tap opens the tab.
     function liCard(p) {
       var c = card('linkedin', 'LinkedIn', 'сегодня пост');
@@ -2065,6 +2077,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       slot = 'linkedin';
       if (j.linkedin === null) down('linkedin', 'LinkedIn');
       else if (j.linkedin && j.linkedin.today) liCard(j.linkedin.today);
+      // «Деньги» (docs/specs/money-6.md §2): the month against its budget or the previous month; gone while the module is off.
+      slot = 'money';
+      if (j.money === null && moneyHomeOn(j)) down('wallet', 'Деньги');
+      else if (moneyHomeOn(j)) moneyCard(j.money);
       slot = 'week';
       if (j.weekly) weekly(j.weekly);
       else down('calendar', 'Неделя');
@@ -5882,12 +5898,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       card('layers', 'План фарма', rows);
       if (now.length) rows[0].onclick();
     }
-    // The working codes, up to 8: the code in monospace, its date and a copy
+    // The working codes, up to 8: the code in monospace, its rewards and date and a copy
     // button that reads «скопировано» for 1.5 s.
     function codes(list) {
       if (!list.length) return;
       card('ticket', 'Коды', list.slice(0, 8).map(function (c) {
-        var b = label(el('button', 'pg'), 'copy', 'Скопировать'), r = hrow(c.code, (c.published > 0 ? ddmm(c.published * 1000) : '') || null, b);
+        var sub = [c.rewards || '', c.published > 0 ? ddmm(c.published * 1000) : ''].filter(Boolean).join(' · ');
+        var b = label(el('button', 'pg'), 'copy', 'Скопировать'), r = hrow(c.code, sub || null, b);
         b.type = 'button';
         b.onclick = function () {
           function done() {
@@ -6826,6 +6843,22 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // the budget — amber from 80 %, red from 100 %.
   function moneyInt(v) { return grouped(String(Math.round(Math.abs(Number(v) || 0)))); }
   function moneyBudgetCls(p) { return p >= 1 ? 'over' : p >= 0.8 ? 'warn' : ''; }
+  // The «Деньги» card of «Сегодня» (docs/specs/money-6.md §2), phone and desktop alike, from home's money: shown when
+  // the answer carries it (the server leaves it out while the module is off) and the module is not off here.
+  function moneyHomeOn(j) { return j && j.money !== undefined && prefs.muted.indexOf('money') < 0 && (!j.money || !!(j.money.spent || j.money.budget || j.money.prev_to_day)); }
+  // {line: «Октябрь: 13 997 zł из 16 000», sub: «осталось 2 003 zł», pct «87 %», p: the bar's share or null, cls}.
+  function moneyHomeText(m) {
+    var mon = MONTHS_RU[Number(m.month.slice(5, 7)) - 1], line = mon + ': ' + mtZl(m.spent);
+    if (m.budget) {
+      var p = m.spent / m.budget;
+      return { line: line + ' из ' + mtInt(m.budget), sub: (m.left >= 0 ? 'осталось ' : 'больше бюджета на ') + mtZl(m.left),
+        pct: Math.round(p * 100) + ' %', p: p, cls: moneyBudgetCls(p) };
+    }
+    var d = m.diff_pct;
+    return { line: line, pct: '', p: null, cls: '',
+      sub: d === null || d === undefined ? '' : d === 0 ? 'как в прошлом месяце к этому дню'
+        : 'на ' + Math.abs(d) + ' % ' + (d > 0 ? 'больше' : 'меньше') + ' прошлого месяца к этому дню' };
+  }
   function moneyBar(p, cls) {
     var bar = add(el('div', 'mbar'), el('i', cls || ''));
     bar.firstChild.style.width = Math.max(Math.min(p, 1) * 100, 1).toFixed(1) + '%';
@@ -7406,8 +7439,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     q.onkeydown = function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); q.blur(); } };
     return bar;
   }
-  // «Подписки» (docs/specs/money-2.md §3): what the server finds in a year of spends (money_subs), drawn into box —
-  // nothing when it finds none. Five rows, then «ещё N»; a row's sum is its monthly one, they add up to the header.
+  // «Постоянные платежи» and «Подписки» (docs/specs/money-2.md §3, money-6.md §1): what the server finds in a year of
+  // spends (money_subs: rent, a loan and the bills in fixed, the rest in subs), drawn into box as two cards — none for
+  // an empty group. Five rows each, then «ещё N»; a row's sum is its monthly one, they add up to the header.
   function moneySubs(box, live) {
     swr({ key: 'money:subs', box: box, n: 0, live: live,
       fetch: function () { return api('miniapp', { action: 'money_subs' }, undefined, true); },
@@ -7415,27 +7449,30 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   function moneySubsDraw(box, j) {
     clear(box);
-    var list = (j && j.subs) || [];
-    if (!list.length) return;
-    var card = mkCard('repeat', 'Подписки', '≈ ' + moneyInt(j.total_monthly) + ' zł в месяц'), rows = el('div');
-    function paint() {
-      clear(rows);
-      list.slice(0, MONEY.subsAll ? list.length : 5).forEach(function (s) {
-        var c = moneyCat(s.category), tile = moneyTile(s.name, c[2]), p = wp(s.next_at);
-        rows.appendChild(add(el('div', 'row msub'), tile, add(el('span', 'tx'), el('div', 't', s.name),
-          el('div', 'mu num', 'след. ≈ ' + p.day + '.' + p.month + (s.months > 1 ? ' · ' + s.months + ' мес. подряд' : ''))), el('span', 'pr', moneyFmt(s.monthly, s.currency))));
-      });
-      if (list.length > 5) {
-        var more = el('button', 'mmorebtn', MONEY.subsAll ? 'Свернуть' : 'ещё ' + (list.length - 5));
-        more.type = 'button';
-        more.setAttribute('aria-expanded', String(!!MONEY.subsAll));
-        more.onclick = function () { MONEY.subsAll = !MONEY.subsAll; paint(); };
-        rows.appendChild(more);
+    [['fixed', 'calendar-sync', 'Постоянные платежи', 'fixed_monthly', 'fixedAll'],
+      ['subs', 'repeat', 'Подписки', 'total_monthly', 'subsAll']].forEach(function (g) {
+      var list = (j && j[g[0]]) || [], all = g[4];
+      if (!list.length) return;
+      var card = mkCard(g[1], g[2], '≈ ' + moneyInt(j[g[3]]) + ' zł в месяц'), rows = el('div');
+      function paint() {
+        clear(rows);
+        list.slice(0, MONEY[all] ? list.length : 5).forEach(function (s) {
+          var c = moneyCat(s.category), tile = moneyTile(s.name, c[2]), p = wp(s.next_at);
+          rows.appendChild(add(el('div', 'row msub'), tile, add(el('span', 'tx'), el('div', 't', s.name),
+            el('div', 'mu num', 'след. ≈ ' + p.day + '.' + p.month + (s.months > 1 ? ' · ' + s.months + ' мес. подряд' : ''))), el('span', 'pr', moneyFmt(s.monthly, s.currency))));
+        });
+        if (list.length > 5) {
+          var more = el('button', 'mmorebtn', MONEY[all] ? 'Свернуть' : 'ещё ' + (list.length - 5));
+          more.type = 'button';
+          more.setAttribute('aria-expanded', String(!!MONEY[all]));
+          more.onclick = function () { MONEY[all] = !MONEY[all]; paint(); };
+          rows.appendChild(more);
+        }
       }
-    }
-    paint();
-    add(box, add(card, rows));
-    if (!BRANDS) moneyBrands(function () { if (box.isConnected) moneySubsDraw(box, j); });
+      paint();
+      add(box, add(card, rows));
+    });
+    if (box.firstChild && !BRANDS) moneyBrands(function () { if (box.isConnected) moneySubsDraw(box, j); });
   }
   // Charts (docs/specs/money-4.md; the dataviz skill's marks, as «Статистика» of «Фильмы» draws them): one series in
   // --mark, the rest in muted ink; thin bars with a 4 px rounded free end (barPath) on a hairline baseline; selective
@@ -8201,7 +8238,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var HOME_NAMES = {
     plan: 'План недели', calendar: 'Календарь', due: 'Сроки и посылки', docs: 'Документы', courts: 'Корты сегодня',
     games: 'Мои игры', shows: 'Мои сеансы', vb: 'Волейбол', genshin: 'Genshin', yesterday: 'Вчера', inbox: 'Инбокс',
-    week: 'Неделя', system: 'Система', tasks: 'Задачи', linkedin: 'LinkedIn'
+    week: 'Неделя', system: 'Система', tasks: 'Задачи', linkedin: 'LinkedIn', money: 'Деньги'
   };
   // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
   function homeOrder() {
@@ -8636,7 +8673,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
-    moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
+    moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };

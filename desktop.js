@@ -73,12 +73,19 @@
   };
 
   // Key/value tiles: items = [{ k: 'Траты', v: '1 234 zł', small: 'за месяц' }].
+  // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, tab?: what a tap opens}.
   D.tiles = function (items) {
     var box = el('div', 'kv');
     items.forEach(function (t) {
-      var v = el('div', 'v', t.v);
+      var v = el('div', 'v', t.v), cell = add(el('div'), el('div', 'k', t.k), v);
       if (t.small) v.appendChild(add(el('small'), document.createTextNode(' ' + t.small)));
-      box.appendChild(add(el('div'), el('div', 'k', t.k), v));
+      if (typeof t.bar === 'number') {
+        var bar = add(el('div', 'mbar dbar'), el('i', t.cls || ''));
+        bar.firstChild.style.width = Math.max(Math.min(t.bar, 1) * 100, 1).toFixed(1) + '%';
+        cell.appendChild(bar);
+      }
+      if (t.tab) A.tap(cell, function () { A.show(t.tab); });
+      box.appendChild(cell);
     });
     return box;
   };
@@ -201,6 +208,15 @@
         small: st.totals.receipts + ' ' + A.plural(st.totals.receipts, ['чек', 'чека', 'чеков']) });
     }
     if (j.inbox_new) items.push({ k: 'Инбокс', v: String(j.inbox_new), small: 'новых' });
+    // «Деньги» (docs/specs/money-6.md §2): the phone's «Сегодня» card as a tile, hidden with that card.
+    var hid = (j.prefs && j.prefs.home && j.prefs.home.hidden) || [];
+    if (j.money && A.moneyHomeOn && A.moneyHomeOn(j) && hid.indexOf('money') < 0) {
+      var mm = j.money, mt = A.moneyHomeText(mm), d = mm.diff_pct;
+      items.push({ k: 'Деньги · ' + A.monthLabel(mm.month).split(' ')[0].toLowerCase(), v: A.grouped(Math.round(mm.spent)) + ' zł',
+        small: mm.budget ? 'из ' + A.grouped(Math.round(mm.budget)) + ' · ' + (mm.left >= 0 ? 'осталось ' : 'больше на ') +
+          A.grouped(Math.round(Math.abs(mm.left))) : d === null || d === undefined ? '' : (d > 0 ? '+' : d < 0 ? '−' : '±') +
+          Math.abs(d) + ' % к прошлому месяцу', bar: mt.p === null ? undefined : mt.p, cls: mt.cls, tab: 'money' });
+    }
     if (!items.length) return;
     var t = D.tiles(items);
     box.appendChild(t);

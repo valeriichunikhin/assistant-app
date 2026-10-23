@@ -122,3 +122,4 @@ kbd.k{display:inline-block;min-width:18px;padding:1px 5px;border:1px solid var(-
 .wb .row{position:relative}
 .wb .row .acts.hov{position:absolute;right:10px;top:50%;transform:translateY(-50%);margin:0;}
 .wb .row .acts.hov .pg{background:var(--solid)}
+.dtiles .kv .dbar{height:4px;margin-top:6px}
