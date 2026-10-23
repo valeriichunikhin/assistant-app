@@ -576,7 +576,7 @@
       var menu = label(el('button', 'btn ghost'), 'download', 'Выгрузить');
       menu.type = 'button';
       menu.onclick = function () { A.moneyMonthMenu(j, menu); };
-      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }), menu, go);
+      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), menu, go);
       clear(body);
       var rows = j.rows || [], M = A.MONEY, d = Math.round(((j.total || 0) - (j.prev_total || 0)) * 100) / 100;
       var spends = rows.filter(function (r) { return (r.kind || 'expense') === 'expense'; }).length;
@@ -590,6 +590,7 @@
       body.appendChild(D.tiles(tiles));
       if (!rows.length) { add(body, add(el('div', 'card'), A.moneyEmpty()), debts, goals); return A.moneyStatePaint(debts, goals, load); }
       body.appendChild(charts);
+      charts.mtFor = j.month;
       A.moneyTrendsDraw(charts);
       var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load);
       var accts = A.moneyAccts(j, function (k) { M.acct = k; render(data); }, load);

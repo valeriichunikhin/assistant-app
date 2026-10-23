@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 09:05">
+<meta name="published" content="2026-10-23 09:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -3179,8 +3179,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       b.onclick = fn;
       return b;
     }
-    // legal_case_set with patch; the answer replaces the case, a new citizenship task is announced.
+    // legal_case_set with patch; the answer replaces the case, a new citizenship task is announced. x may be the case a
+    // sheet opened on before a fresh answer redrew the screen: the one on screen now (same id) takes the answer.
     function setCase(x, patch, b) {
+      var cur = data && (data.cases || []).filter(function (y) { return y && y.case && y.case.id === x.case.id; })[0];
+      if (cur) x = cur;
       if (b) b.disabled = true;
       haptic();
       patch.id = x.case.id;
@@ -3337,7 +3340,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         add(el('div', 'bar'), add(el('label', 'field'), ni)), add(el('div', 'acts'), save, cancel)], from);
       cancel.onclick = close;
       save.onclick = function () {
-        setCase(x, { status: st, decision_on: di.value || null, status_note: ni.value }, save).then(close);
+        // The note goes only when he changed it: one the server got meanwhile is not overwritten by the sheet's copy.
+        var patch = { status: st, decision_on: di.value || null };
+        if (ni.value !== (c.status_note || '')) patch.status_note = ni.value;
+        setCase(x, patch, save).then(close);
       };
     }
     function caseCard(x, today) {
@@ -3953,11 +3959,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     add(main, seg, add(bar, add(el('label', 'field'), icon('search'), input)), body);
     var redraw = pickAll() ? dealsAll(body, function () { return pickQuery; }) : null;
     if (redraw) return;
-    var batches = null, cmp = null;
+    // The comparison has a box of its own over the batches: picks:cmp and picks:batches each know what their box shows,
+    // so an equal answer of one does not redraw the other's cards (shared, every answer counted as new — 23.10.2026).
+    var batches = null, cmp = null, cmpBox = el('div');
+    main.insertBefore(cmpBox, body);
 
-    // The week's Aldi vs Biedronka pairs (?action=compare); hidden while searching.
+    // The week's Aldi vs Biedronka pairs (?action=compare) into cmpBox; hidden while searching.
     function compareCard() {
       var ps = cmp && cmp.pairs || [];
+      clear(cmpBox);
       if (!ps.length || pickQuery.trim()) return;
       var card = mkCard('scale', 'Aldi vs Biedronka', 'Неделя ' + dm(cmp.week_start) + '–' + dm(addDays(cmp.week_start, 6)));
       var save = 0, n = 0;
@@ -3975,7 +3985,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       });
       if (n) card.appendChild(el('div', 'row small mu', 'Если брать там, где дешевле: ≈ ' + zl(save) + ' zł на ' + n + ' ' +
         plural(n, ['товаре', 'товарах', 'товарах'])));
-      body.appendChild(card);
+      cmpBox.appendChild(card);
     }
     function drop(b) {
       batches = batches.filter(function (x) { return x !== b; });
@@ -3991,12 +4001,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return t && maxTo && t < maxTo ? 'до ' + w(t) : '';
     }
     function render() {
-      if (!shopIs('picks') || !batches) return;
+      if (!shopIs('picks')) return;
+      compareCard();
+      if (!batches) return;
       clear(body);
       var wnow = wp(Date.now()), today = wnow.year + '-' + wnow.month + '-' + wnow.day;
       var q = pickQuery.trim().toLowerCase();
       var shown = 0;
-      compareCard();
       batches.forEach(function (b) {
         var cs = b.candidates || [];
         var hits = cs.filter(function (c) {
@@ -4053,9 +4064,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function load() {
       var live = function () { return shopIs('picks') && !pickAll(); };
-      swr({ key: 'picks:cmp', box: body, n: 2, live: live,
+      swr({ key: 'picks:cmp', box: cmpBox, n: 0, live: live,
         fetch: function () { return api('telegram-webhook', { action: 'compare' }, undefined, true); },
-        render: function (j) { cmp = j; render(); } });
+        render: function (j) { cmp = j; if (shopIs('picks')) compareCard(); } });
       swr({ key: 'picks:batches', box: body, n: 2, live: live,
         fetch: function () { return api('telegram-webhook', { action: 'picks' }, undefined, true); },
         render: function (j) {
@@ -6753,9 +6764,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     });
     legalSheet('Как подключить iPhone', [ol], from);
   }
-  // The month switch: ‹ Октябрь 2026 ›, no further back than MONEY_FROM and no later than the current month.
-  function moneyNav(go) {
-    var m = MONEY.month, nav = el('div', 'mnav');
+  // The month switch: ‹ Октябрь 2026 ›, no further back than MONEY_FROM and no later than the current month. month is
+  // the one drawn under it (j.month): a redraw while another month loads keeps the label on the data it shows.
+  function moneyNav(go, month) {
+    var m = month || MONEY.month, nav = el('div', 'mnav');
     [[-1, 'chevron-left', 'Предыдущий месяц'], [0], [1, 'chevron-right', 'Следующий месяц']].forEach(function (x) {
       if (!x[0]) return nav.appendChild(el('div', 'mmon', monthLabel(m)));
       var b = add(el('button'), icon(x[1]));
@@ -7436,8 +7448,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(el('div', 'bar mact'), csv)], from);
   }
   // Search over every month (§5): merchant, note, the import's category, an amount («49,99»). The field keeps what he
-  // typed while the view redraws; money_search answers up to 200 rows, the newest first. onFound(rows | null).
+  // typed while the view redraws; money_search answers up to 200 rows, the newest first. onFound(rows | null); the
+  // latest bar's onFound is kept in MONEY.onFound, so an answer that lands after a redraw fills the list on screen.
   function moneySearchBar(onFound) {
+    MONEY.onFound = onFound;
     var q = el('input'), bar = add(el('div', 'bar msearch'), add(el('label', 'field'), icon('search'), q)), t = null, x = null;
     q.type = 'search';
     q.placeholder = 'Поиск: продавец, заметка, сумма';
@@ -7455,11 +7469,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       x.hidden = !q.value;
       t = setTimeout(function () {
         MONEY.q = s;
-        if (s.length < 2 && !/^\d$/.test(s)) { MONEY.found = null; return onFound(null); }
+        if (s.length < 2 && !/^\d$/.test(s)) { MONEY.found = null; return MONEY.onFound(null); }
         api('miniapp', { action: 'money_search' }, 15000, true, { q: s }).then(function (j) {
           if (MONEY.q !== s) return;
           MONEY.found = j;
-          onFound(j);
+          MONEY.onFound(j);
         }, noop);
       }, 350);
     };
@@ -7966,11 +7980,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       render: function (t) { moneyTrendsDraw(box, t); } });
   }
   // The card «Графики»: drawn to the box's width, so a box not on the page yet keeps the answer (mtPend) for the view
-  // to draw once it places the box (moneyTrendsDraw(box) with no answer).
+  // to draw once it places the box (moneyTrendsDraw(box) with no answer). box.mtFor is the month the view draws (its
+  // render sets it): another month's charts wait there too, so they never run ahead of the header and the totals.
   function moneyTrendsDraw(box, t) {
     t = t || box.mtPend;
     if (!t) return;
-    if (!box.isConnected || !box.clientWidth) { box.mtPend = t; return; }
+    if (!box.isConnected || !box.clientWidth || t.month !== box.mtFor) { box.mtPend = t; return; }
     box.mtPend = null;
     box.mtMonth = t.month;
     if (t.month === MONEY.month) MONEY.trends = t;
@@ -8092,7 +8107,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       menu.setAttribute('aria-label', 'Месяц: выгрузить');
       menu.onclick = function () { moneyMonthMenu(j, menu); };
       var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
-      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }),
+      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }, j.month),
         add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
           other ? el('div', 'mvs', other) : null), add(el('div', 'macts'), menu, add1)), moneyIncomeLine(j)));
       var rows = j.rows || [];
@@ -8100,6 +8115,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var cats = moneyCats(j, function (k) { MONEY.filter = k; haptic(); render(data); }, load);
       var accts = moneyAccts(j, function (k) { MONEY.acct = k; haptic(); render(data); }, load);
       body.appendChild(charts);
+      charts.mtFor = j.month;
       moneyTrendsDraw(charts);
       var list = mkCard('wallet', 'Траты'), rowsBox = el('div');
       moneyFilterChips(list.firstChild, function () { render(data); });

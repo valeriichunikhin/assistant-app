@@ -135,6 +135,16 @@
   "name": "Play"
  },
  {
+  "slug": "telegram",
+  "re": "telegram",
+  "name": "Telegram"
+ },
+ {
+  "slug": "google",
+  "re": "\\bgoogle\\b",
+  "name": "Google"
+ },
+ {
   "slug": "netia",
   "re": "\\bnetia",
   "name": "Netia"
