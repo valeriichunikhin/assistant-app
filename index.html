@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 08:55">
+<meta name="published" content="2026-10-23 09:05">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -481,6 +481,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mlink{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
 .mlink .i{width:16px;height:16px}
 .row.msub .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* His own subscriptions (docs/specs/money-7.md): a switched-off one muted; a yearly one's month part under its sum; the
+   detector's hint ends in a small «Добавить»; the header's other currency on its own line. */
+.row.msub.off .t,.row.msub.off .pr{color:var(--muted)}.row.msub.off .ptile{opacity:.5}
+.row.msub.mcat .tx{gap:2px}
+.row.msug .btn.msugadd{flex:none;min-height:36px;padding:0 10px;font-size:13px}
+.msubsum .num{font-variant-numeric:tabular-nums}
 .mmorebtn{display:block;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
 /* Accounts and logos (docs/specs/money-3.md): a logo fills its tile on white in both themes (many are dark marks on a
    transparent ground), rounded, nothing stretched; «По счетам» rows reuse the categories' row; a chip's mark is small. */
@@ -7373,6 +7379,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tile = moneyTile(r.merchant, c[2]);
       t = r.merchant || 'Без названия';
       if (r.share) marks.push(moneyShareMark(r.share) + (moneyPerson(r.share_person_id) ? ' · ' + moneyPerson(r.share_person_id).name : ''));
+      if (r.sub) marks.push('подписка');
     } else if (k === 'income') {
       var ic = moneyInc(r.category);
       tile = add(el('span', 'ptile'), icon(ic[2]));
@@ -7459,40 +7466,182 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     q.onkeydown = function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); q.blur(); } };
     return bar;
   }
-  // «Постоянные платежи» and «Подписки» (docs/specs/money-2.md §3, money-6.md §1): what the server finds in a year of
-  // spends (money_subs: rent, a loan and the bills in fixed, the rest in subs), drawn into box as two cards — none for
-  // an empty group. Five rows each, then «ещё N»; a row's sum is its monthly one, they add up to the header.
+  // «Постоянные платежи» and «Подписки» (docs/specs/money-7.md): his own list (money_subs: money_subscriptions, next_on
+  // already moved on by the server), two cards, the fixed payments first — an empty «Постоянные платежи» is not drawn.
+  // A row: the logo or the category's icon, the name, «каждый месяц · след. 28.10» / «раз в год · след. 12.04.2027», the
+  // sum for its period and, for a yearly one, «≈ N в месяц» under it; a switched-off one is muted, «отключена», in no
+  // total. A tap opens its sheet (moneySubSheet). The header: «≈ N zł в месяц», another currency on a line of its own
+  // («+ 399 UAH в месяц»). Under «Подписки» the detector's hints («Похоже на подписку · ≈ N zł в месяц», «Добавить»
+  // makes it a monthly one) and «+ Подписка». His list is short and its own: every active one is shown (they add up to
+  // the header), the switched-off ones behind «отключённые: N».
   function moneySubs(box, live) {
+    function reload() { cacheDrop('money:subs'); moneySubs(box, live); }
     swr({ key: 'money:subs', box: box, n: 0, live: live,
       fetch: function () { return api('miniapp', { action: 'money_subs' }, undefined, true); },
-      render: function (j) { moneySubsDraw(box, j); } });
+      render: function (j) { box.reload = reload; moneySubsDraw(box, j); } });
   }
+  function moneyCur(cur) { return !cur || cur === 'PLN' ? 'zł' : cur; }
+  // A subscription's next charge: «28.10» for a monthly one, «12.04.2027» for a yearly one.
+  function moneySubNext(s) { return s.next_on ? s.next_on.slice(8, 10) + '.' + s.next_on.slice(5, 7) + (s.period === 'year' ? '.' + s.next_on.slice(0, 4) : '') : ''; }
   function moneySubsDraw(box, j) {
     clear(box);
-    [['fixed', 'calendar-sync', 'Постоянные платежи', 'fixed_monthly', 'fixedAll'],
-      ['subs', 'repeat', 'Подписки', 'total_monthly', 'subsAll']].forEach(function (g) {
-      var list = (j && j[g[0]]) || [], all = g[4];
-      if (!list.length) return;
-      var card = mkCard(g[1], g[2], '≈ ' + moneyInt(j[g[3]]) + ' zł в месяц'), rows = el('div');
+    var reload = box.reload || noop;
+    [['fixed', 'calendar-sync', 'Постоянные платежи', 'fixedAll'], ['subs', 'repeat', 'Подписки', 'subsAll']].forEach(function (g) {
+      var list = (j && j[g[0]]) || [], all = g[3], hints = g[0] === 'subs' ? (j && j.suggestions) || [] : [];
+      if (!list.length && g[0] === 'fixed') return;
+      var sums = (j && j.totals && j.totals[g[0]]) || {}, curs = Object.keys(sums).sort(function (a, b) { return (b === 'PLN') - (a === 'PLN') || (a < b ? -1 : 1); });
+      var card = mkCard(g[1], g[2]), rows = el('div');
+      if (curs.length) {
+        card.appendChild(add.apply(null, [el('div', 'sub msubsum')].concat(curs.map(function (c, i) {
+          return el('div', 'num', (i ? '+ ' : '≈ ') + moneyInt(sums[c]) + ' ' + moneyCur(c) + ' в месяц');
+        }))));
+      } else if (!list.length) card.appendChild(el('div', 'sub', 'Пока пусто: добавь подписку или подсказку ниже'));
+      function row(s) {
+        var c = moneyCat(s.category), when = !s.active ? 'отключена' : (s.period === 'year' ? 'раз в год' : 'каждый месяц') +
+          (s.next_on ? ' · след. ' + moneySubNext(s) : '');
+        var pr = add(el('span', 'pr'), document.createTextNode(moneyNb(s.amount, s.currency)),
+          s.period === 'year' ? el('span', 'mu', '≈\u00a0' + moneyInt(s.monthly) + '\u00a0' + moneyCur(s.currency) + ' в\u00a0месяц') : null);
+        var x = add(el('div', 'row mcat msub' + (s.active ? '' : ' off')), moneyLogo(brandOf(s.name) || brandOf(s.pattern), c[2]),
+          add(el('span', 'tx'), el('div', 't', s.name), el('div', 'mu num', when)), pr);
+        x.setAttribute('aria-label', s.name + ', ' + moneyFmt(s.amount, s.currency) + ', ' + when);
+        tap(x, function () { moneySubSheet(s, reload, x); });
+        return x;
+      }
+      function hint(h) {
+        var go = label(el('button', 'btn ghost msugadd'), 'plus', 'Добавить');
+        go.type = 'button';
+        go.setAttribute('aria-label', 'Добавить подписку: ' + h.name);
+        go.onclick = function () {
+          go.disabled = true;
+          haptic();
+          api('miniapp', { action: 'money_sub_add' }, undefined, false, { name: h.name, amount: h.amount, currency: h.currency, period: 'month',
+            category: h.category, fixed: h.fixed, pattern: h.pattern }).then(function () {
+            toast('Добавлено: ' + h.name, 'check');
+            reload();
+          }, function () { go.disabled = false; });
+        };
+        return add(el('div', 'row msub msug'), moneyLogo(brandOf(h.name), moneyCat(h.category)[2]), add(el('span', 'tx'), el('div', 't', h.name),
+          el('div', 'mu num', (h.fixed ? 'Похоже на постоянный платёж' : 'Похоже на подписку') + ' · ≈\u00a0' + moneyNb(h.amount, h.currency) + ' в\u00a0месяц')), go);
+      }
       function paint() {
         clear(rows);
-        list.slice(0, MONEY[all] ? list.length : 5).forEach(function (s) {
-          var c = moneyCat(s.category), tile = moneyTile(s.name, c[2]), p = wp(s.next_at);
-          rows.appendChild(add(el('div', 'row msub'), tile, add(el('span', 'tx'), el('div', 't', s.name),
-            el('div', 'mu num', 'след. ≈ ' + p.day + '.' + p.month + (s.months > 1 ? ' · ' + s.months + ' мес. подряд' : ''))), el('span', 'pr', moneyFmt(s.monthly, s.currency))));
-        });
-        if (list.length > 5) {
-          var more = el('button', 'mmorebtn', MONEY[all] ? 'Свернуть' : 'ещё ' + (list.length - 5));
+        var on = list.filter(function (s) { return s.active; }), offs = list.length - on.length;
+        (MONEY[all] ? list : on).forEach(function (s) { rows.appendChild(row(s)); });
+        if (offs) {
+          var more = el('button', 'mmorebtn', MONEY[all] ? 'Свернуть' : 'отключённые: ' + offs);
           more.type = 'button';
           more.setAttribute('aria-expanded', String(!!MONEY[all]));
           more.onclick = function () { MONEY[all] = !MONEY[all]; paint(); };
           rows.appendChild(more);
+        }
+        hints.forEach(function (h) { rows.appendChild(hint(h)); });
+        if (g[0] === 'subs') {
+          var addS = add(el('button', 'mlink'), icon('plus'), document.createTextNode('Подписка'));
+          addS.type = 'button';
+          addS.onclick = function () { moneySubSheet(null, reload, addS); };
+          rows.appendChild(addS);
         }
       }
       paint();
       add(box, add(card, rows));
     });
     if (box.firstChild && !BRANDS) moneyBrands(function () { if (box.isConnected) moneySubsDraw(box, j); });
+  }
+  // A subscription's sheet (s), or a new one's (s null): name, amount, currency, «Каждый месяц · Раз в год», the next
+  // charge, «Постоянный платёж», the account, a note; «Отключить» (active false: stays in the list, counted in no
+  // total) or «Включить», «Удалить» on two taps. done() reloads the cards.
+  function moneySubSheet(s, done, from) {
+    var close = noop, period = s ? s.period : 'month', cur = s ? s.currency : 'PLN', fixed = s ? !!s.fixed : false;
+    var acct = s ? s.account || null : null;
+    function inp(ph, v, max) { var i = el('input'); i.placeholder = ph; i.setAttribute('aria-label', ph); if (max) i.maxLength = max; i.value = v || ''; return i; }
+    function field(ic, input, tail) { return add(el('div', 'bar'), add(el('label', 'field'), icon(ic), input, tail || null)); }
+    var name = inp('Название: Netflix, аренда', s && s.name, 100), amt = inp('Сумма за период', s ? moneyNum(s.amount).replace(/\s/g, '') : '');
+    amt.inputMode = 'decimal';
+    var note = inp('Заметка', s && s.note, 500), unit = el('span', 'mu'), next = el('input');
+    next.type = 'date';
+    next.value = (s && s.next_on) || '';
+    next.setAttribute('aria-label', 'Следующее списание');
+    var seg = el('div', 'seg'), segs = {};
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Как часто');
+    [['month', 'Каждый месяц'], ['year', 'Раз в год']].forEach(function (k) {
+      var b = segs[k[0]] = el('button', '', k[1]);
+      b.type = 'button';
+      b.onclick = function () { if (period !== k[0]) { period = k[0]; haptic(); paint(); } };
+      seg.appendChild(b);
+    });
+    var form = el('div');
+    function paint() {
+      for (var k in segs) { segs[k].className = k === period ? 'on' : ''; segs[k].setAttribute('aria-pressed', String(k === period)); }
+      text(unit, moneyCur(cur));
+      var curs = el('div', 'chips mchips');
+      curs.setAttribute('role', 'group');
+      curs.setAttribute('aria-label', 'Валюта');
+      ['PLN', 'UAH', 'EUR', 'USD', 'GBP'].forEach(function (c) { curs.appendChild(chip(c, c === cur, null, function () { cur = c; haptic(); paint(); })); });
+      var fx = el('button', 'mrem');
+      fx.type = 'button';
+      add(fx, icon(fixed ? 'check-square' : 'square', 'mk' + (fixed ? ' on' : '')), el('span', '', 'Постоянный платёж: аренда, кредит, интернет'));
+      fx.setAttribute('aria-pressed', String(fixed));
+      fx.onclick = function () { fixed = !fixed; haptic(); paint(); };
+      var accts = el('div', 'chips mchips');
+      accts.setAttribute('role', 'group');
+      accts.setAttribute('aria-label', 'Счёт');
+      MONEY.accounts.filter(function (a) { return !a.hidden || a.key === acct; }).forEach(function (a) {
+        var b = chip(a.name, a.key === acct, null, function () { acct = acct === a.key ? null : a.key; haptic(); paint(); });
+        b.insertBefore(moneyAcctTile(a.key, 'am'), b.firstChild);
+        accts.appendChild(b);
+      });
+      add(clear(form), field('pen-line', name), field('wallet', amt, unit), curs,
+        add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'след. списание'), next)), fx,
+        accts.firstChild ? el('div', 'tsh', 'Счёт') : null, accts.firstChild ? accts : null, field('sticky-note', note));
+    }
+    function send(action, body, btn, msg) {
+      btn.disabled = true;
+      haptic();
+      return api('miniapp', { action: action }, undefined, false, body).then(function () {
+        close();
+        toast(msg, 'check');
+        done();
+      }, function (e) {
+        btn.disabled = false;
+        if (e && e.code === 'not found') { close(); done(); }
+      });
+    }
+    var save = label(el('button', 'btn'), 'check', s ? 'Сохранить' : 'Добавить');
+    save.type = 'button';
+    save.onclick = function () {
+      var a = moneyIn(amt.value);
+      if (!name.value.trim()) return toast('Название — что это за подписка');
+      if (!a) return toast('Сумма — число больше нуля');
+      var body = { name: name.value.trim(), amount: a, currency: cur, period: period, next_on: next.value || null, fixed: fixed,
+        account: acct, note: note.value.trim() || null };
+      if (fixed && (!s || s.category === 'subs')) body.category = 'home';
+      if (!fixed && s && s.fixed && s.category === 'home') body.category = 'subs';
+      if (s) body.id = s.id;
+      send(s ? 'money_sub_set' : 'money_sub_add', body, save, s ? 'Сохранено' : 'Подписка добавлена');
+    };
+    var off = null, del = null, armT = null;
+    if (s) {
+      off = label(el('button', 'btn ghost'), s.active ? 'x' : 'check', s.active ? 'Отключить' : 'Включить');
+      off.type = 'button';
+      off.onclick = function () { send('money_sub_set', { id: s.id, active: !s.active }, off, s.active ? 'Отключена' : 'Включена'); };
+      del = label(el('button', 'btn ghost'), 'trash', 'Удалить');
+      del.type = 'button';
+      del.onclick = function () {
+        if (!armT) {
+          label(del, null, 'Точно?');
+          del.className = 'btn warn';
+          armT = setTimeout(function () { armT = null; label(del, 'trash', 'Удалить'); del.className = 'btn ghost'; }, 3000);
+          return;
+        }
+        clearTimeout(armT);
+        send('money_sub_delete', { id: s.id }, del, 'Удалено');
+      };
+    }
+    paint();
+    close = legalSheet(s ? s.name : 'Новая подписка', [seg, form, add(el('div', 'bar mact'), save, off, del)], from);
+    // An existing one opens to look at: the focus waits on «Сохранить», no keyboard until a field is tapped.
+    if (s) try { save.focus({ preventScroll: true }); } catch (e) {}
   }
   // Charts (docs/specs/money-4.md; the dataviz skill's marks, as «Статистика» of «Фильмы» draws them): one series in
   // --mark, the rest in muted ink; thin bars with a 4 px rounded free end (barPath) on a hairline baseline; selective
