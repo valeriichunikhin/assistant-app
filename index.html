@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 10:23">
+<meta name="published" content="2026-10-23 11:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -525,6 +525,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .row.mgoal .tx{gap:5px}.row.mgoal .tx .mu{font-size:12px}.mbar>i.done{background:var(--good)}
 .row.mcat .btn.x.mgplus{color:var(--link)}
 .mlink.mwish{color:var(--fg)}.mlink.mwish .i{color:var(--muted)}
+.mdl{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.mdl>.i{flex:none;width:20px;height:20px;color:var(--accent)}.mdl>.i:last-child{width:16px;height:16px;color:var(--muted)}
+.mdl .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mdl .mu{font-size:13px;line-height:1.35}
+.mdbig{font:600 17px/1.3 var(--font);font-variant-numeric:tabular-nums}.mdbig.neg{color:var(--bad)}
+.mbud.mhome .mdl{margin:0 0 10px}.mhead .mdl{margin:4px 0 2px}.mdbox[hidden]{display:none}
+.mdaily>.mdbig{font-size:20px;margin:2px 0 4px}.mdaily .mdcalc{margin-top:10px;font-variant-numeric:tabular-nums}
+.mdrow{gap:6px;margin-bottom:8px}.mdrow .field{padding:0 8px}.mdrow .field.mdday{flex:0 0 46px}.mdrow .field.mdday input{text-align:center}.mdrow .field.mdamt{flex:0 0 78px}
+.card.dmdaily{padding:0 16px}.card.dmdaily[hidden]{display:none}.card.dmdaily .mdl{border-bottom:0}
+.mdrow .btn.x{flex:none;min-width:40px;padding:0;justify-content:center}.mdrow .btn.x .i{margin:0}.mdrow .btn.x.on{color:var(--accent);border-color:var(--accent)}
 .bar.mrcpt{gap:8px;align-items:center;flex-wrap:wrap}.bar.mrcpt .mu{font-size:13px}
 .mchips .pill:empty{padding:0 10px}.mchips .pill:empty .i{margin:0}
 .chart .tk.sel{fill:var(--fg);font-weight:600}
@@ -657,6 +666,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-calendar-range" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M16 2v3"/><path d="M3 9h18"/><path d="M8 2v3"/><path d="M17 13h-6"/><path d="M13 17H7"/><path d="M7 13h.01"/><path d="M17 17h.01"/></symbol>
 <symbol id="i-tags" viewBox="0 0 24 24"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></symbol>
 <symbol id="i-calendar-sync" viewBox="0 0 24 24"><path d="M11 10v4h4"/><path d="m11 14 1.535-1.605a5 5 0 0 1 8 1.5"/><path d="M16 2v4"/><path d="m21 18-1.535 1.605a5 5 0 0 1-8-1.5"/><path d="M21 22v-4h-4"/><path d="M21 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4.3"/><path d="M3 10h4"/><path d="M8 2v4"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
 <symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
 <symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
 <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
@@ -2078,6 +2088,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // «Деньги».
     function moneyCard(m) {
       var t = moneyHomeText(m), c = card('wallet', 'Деньги'), box = el('div', 'mbud mhome');
+      if (m.daily) box.appendChild(moneyDailyLine(m.daily, function () { load(); }));
       add(box, add(el('div', 'mbl'), el('span', 'tx', t.line), t.pct ? el('span', 'num ' + t.cls, t.pct) : null));
       if (t.p !== null) box.appendChild(moneyBar(t.p, t.cls));
       if (t.sub) box.appendChild(el('div', 'mu', t.sub));
@@ -6918,7 +6929,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function moneyBudgetCls(p) { return p >= 1 ? 'over' : p >= 0.8 ? 'warn' : ''; }
   // The «Деньги» card of «Сегодня» (docs/specs/money-6.md §2), phone and desktop alike, from home's money: shown when
   // the answer carries it (the server leaves it out while the module is off) and the module is not off here.
-  function moneyHomeOn(j) { return j && j.money !== undefined && prefs.muted.indexOf('money') < 0 && (!j.money || !!(j.money.spent || j.money.budget || j.money.prev_to_day)); }
+  function moneyHomeOn(j) { return j && j.money !== undefined && prefs.muted.indexOf('money') < 0 && (!j.money || !!(j.money.spent || j.money.budget || j.money.prev_to_day || j.money.daily)); }
   // {line: «Октябрь: 13 997 zł из 16 000», sub: «осталось 2 003 zł», pct «87 %», p: the bar's share or null, cls}.
   function moneyHomeText(m) {
     var mon = MONTHS_RU[Number(m.month.slice(5, 7)) - 1], line = mon + ': ' + mtZl(m.spent);
@@ -6936,6 +6947,158 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var bar = add(el('div', 'mbar'), el('i', cls || ''));
     bar.firstChild.style.width = Math.max(Math.min(p, 1) * 100, 1).toFixed(1) + '%';
     return bar;
+  }
+  // «Сегодня можно ещё N zł» (docs/specs/money-9.md) from money's daily: {big, sub, own, cls}; over the day it is
+  // «Перерасход N zł» in red; own — «по деньгам выходит N» under his own limit.
+  function moneySgn(v) { return (v < 0 ? '−' : '') + mtInt(v); }
+  function moneyDailyText(d) {
+    var over = d.left < 0;
+    return { big: over ? 'Перерасход ' + mtZl(-d.left) : 'Сегодня можно ещё ' + mtZl(d.left), cls: over ? 'neg' : '',
+      sub: moneySgn(d.per_day) + ' в день до зарплаты ' + dm(d.payday) + (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
+      own: d.own_limit != null ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '' };
+  }
+  // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день»; done() after a save.
+  function moneyDailyLine(d, done) {
+    var t = moneyDailyText(d), b = el('button', 'mdl');
+    b.type = 'button';
+    add(b, icon('gauge'), add(el('span', 'tx'), el('span', 'mdbig ' + t.cls, t.big), el('span', 'mu', t.sub), t.own ? el('span', 'mu', t.own) : null),
+      icon('chevron-right'));
+    b.onclick = function (ev) { ev.stopPropagation(); moneyDailySheet(d, b, done); };
+    return b;
+  }
+  // The month's head on «Деньги» (phone and desktop): the line for the current month, filled when money_state comes
+  // (MONEY.state.daily); nothing for another month or without the answer.
+  function moneyDailyBox(j, done) {
+    var b = el('div', 'mdbox');
+    b.mj = j;
+    b.done = done;
+    MONEY.dailyEl = b;
+    moneyDailyFill(b);
+    return b;
+  }
+  function moneyDailyFill(b) {
+    var d = MONEY.state && MONEY.state.daily;
+    clear(b);
+    b.hidden = !d || b.mj.month !== monthNow();
+    if (!b.hidden) b.appendChild(moneyDailyLine(d, b.done));
+    if (b.onfill) b.onfill();
+  }
+  // «Бюджет на день»: what the figure is made of — the money by account now, the incomes before payday, what has to be
+  // paid before it with dates, the days, the incomes after it (muted, not counted), the sum itself — and the settings:
+  // his own limit a day (empty — counted) and the expected incomes (day, sum, label, cash); the largest one's day is
+  // payday. «Сохранить» writes money_daily_set and redraws the sheet; done() redraws what is under it.
+  function moneyDailySheet(d, from, done) {
+    done = done || noop;
+    var box = el('div', 'mrev mdaily'), close = noop;
+    function head(ic, s) { return add(el('div', 'fst mrh'), icon(ic), document.createTextNode(s)); }
+    function paint(d) {
+      clear(box);
+      var t = moneyDailyText(d);
+      add(box, el('div', 'mdbig ' + t.cls, t.big), el('div', 'mu msrc', t.sub), t.own ? el('div', 'mu msrc', t.own) : null);
+      add(box, head('wallet', 'Деньги сейчас · ' + mtZl(d.money)));
+      d.accounts.filter(function (a) { return a.amount > 0; }).forEach(function (a) {
+        box.appendChild(mrRow(moneyAcctTile(a.key), a.name, a.credit ? 'кредитка · доступно' : '', el('span', 'pr', moneyNb(a.amount))));
+      });
+      if (d.spent_back > 0) box.appendChild(el('div', 'mu msrc', 'Сегодняшние траты (' + mtZl(d.spent_back) + ') считаются от начала дня: они снимаются только со «можно ещё».'));
+      if (d.incomes.length) {
+        add(box, head('briefcase', 'Придёт до зарплаты · +' + mtZl(d.incomes_sum)));
+        d.incomes.forEach(function (x) {
+          box.appendChild(mrRow(mrTile(x.cash ? 'banknote' : 'briefcase'), x.label, '≈ ' + dm(x.on) + (x.cash ? ' · наличными' : ''),
+            el('span', 'pr pos', '+' + moneyNb(x.amount))));
+        });
+      }
+      add(box, head('repeat', 'Обязательное до ' + dm(d.payday) + (d.obligations_sum ? ' · ' + mtZl(d.obligations_sum) : '')));
+      if (!d.obligations.length) box.appendChild(el('div', 'mu msrc', 'До зарплаты ничего не списывается'));
+      d.obligations.forEach(function (o) {
+        box.appendChild(mrRow(o.kind === 'debt' ? mrTile('users') : moneyLogo(brandOf(o.label), 'repeat'), o.label,
+          dm(o.on) + (o.kind === 'debt' ? ' · вернуть долг' : ''), el('span', 'pr neg', '−' + moneyNb(o.amount))));
+      });
+      add(box, head('calendar', 'Зарплата ' + dm(d.payday) + (d.payday_label ? ' · ' + d.payday_label : '')),
+        el('div', 'mu msrc', d.days + ' ' + plural(d.days, ['день', 'дня', 'дней']) + ' до неё, считая сегодня'));
+      d.following.forEach(function (x) {
+        box.appendChild(el('div', 'mu msrc', 'следом: +' + mtZl(x.amount) + ' ' + x.label + ' ≈ ' + dm(x.on)));
+      });
+      var start = Math.round((d.money + d.spent_back) * 100) / 100;
+      add(box, el('div', 'mu msrc mdcalc', '(' + mtInt(start) + (d.incomes_sum ? ' + ' + mtInt(d.incomes_sum) : '') +
+        (d.obligations_sum ? ' − ' + mtInt(d.obligations_sum) : '') + ') / ' + d.days + ' = ' + moneySgn(d.per_day_calc) + ' zł в день' +
+        (d.spent_today ? ' · сегодня потрачено ' + mtZl(d.spent_today) : '')));
+      settings(d);
+    }
+    function settings(d) {
+      add(box, head('pen-line', 'Настройки'));
+      var lim = el('input');
+      lim.inputMode = 'decimal';
+      lim.placeholder = 'по расчёту';
+      lim.setAttribute('aria-label', 'Свой лимит в день');
+      lim.value = d.own_limit != null ? String(d.own_limit).replace('.', ',') : '';
+      add(box, add(el('div', 'bar'), add(el('label', 'field'), icon('gauge'), el('span', 'mu', 'свой лимит'), lim, el('span', 'mu', 'zł в день'))));
+      add(box, el('div', 'mu msrc', 'Доходы каждый месяц: день, сумма, от кого. Самый большой — зарплата, до него и считается день.'));
+      var list = el('div', 'mdinc'), rows = [];
+      function incRow(x) {
+        var r = { cash: !!x.cash }, line = el('div', 'bar mdrow');
+        r.day = el('input');
+        r.day.inputMode = 'numeric';
+        r.day.value = x.day ? String(x.day) : '';
+        r.day.placeholder = 'день';
+        r.day.setAttribute('aria-label', 'День месяца');
+        r.amt = el('input');
+        r.amt.inputMode = 'decimal';
+        r.amt.value = x.amount ? String(x.amount).replace('.', ',') : '';
+        r.amt.placeholder = 'сумма';
+        r.amt.setAttribute('aria-label', 'Сумма');
+        r.label = el('input');
+        r.label.value = x.label || '';
+        r.label.placeholder = 'от кого';
+        r.label.maxLength = 40;
+        r.label.setAttribute('aria-label', 'От кого');
+        var cash = add(el('button', 'btn ghost x' + (r.cash ? ' on' : '')), icon('banknote'));
+        cash.type = 'button';
+        cash.setAttribute('aria-label', 'Наличными');
+        cash.setAttribute('aria-pressed', String(r.cash));
+        cash.onclick = function () { r.cash = !r.cash; cash.classList.toggle('on', r.cash); cash.setAttribute('aria-pressed', String(r.cash)); };
+        var del = add(el('button', 'btn ghost x'), icon('x'));
+        del.type = 'button';
+        del.setAttribute('aria-label', 'Убрать доход');
+        del.onclick = function () { line.remove(); rows.splice(rows.indexOf(r), 1); };
+        add(line, add(el('label', 'field mdday'), r.day), add(el('label', 'field mdamt'), r.amt), add(el('label', 'field'), r.label), cash, del);
+        rows.push(r);
+        list.appendChild(line);
+      }
+      d.config.incomes.forEach(incRow);
+      var more = label(el('button', 'btn ghost'), 'plus', 'Доход');
+      more.type = 'button';
+      more.onclick = function () { incRow({}); };
+      var save = label(el('button', 'btn'), 'check', 'Сохранить');
+      save.type = 'button';
+      save.onclick = function () {
+        var daily = lim.value.trim() ? moneyIn(lim.value) : null;
+        if (lim.value.trim() && !daily) return toast('Лимит — число больше нуля');
+        var incomes = [];
+        for (var k = 0; k < rows.length; k++) {
+          var r = rows[k], day = Number(r.day.value), amt = moneyIn(r.amt.value), lb = r.label.value.trim();
+          if (!r.day.value && !r.amt.value && !lb) continue;
+          if (!(day >= 1 && day <= 31 && day === Math.floor(day))) return toast('День — число от 1 до 31');
+          if (!amt) return toast('Сумма — число больше нуля');
+          if (!lb) return toast('Напиши, от кого доход');
+          incomes.push(r.cash ? { day: day, amount: amt, label: lb, cash: true } : { day: day, amount: amt, label: lb });
+        }
+        save.disabled = true;
+        haptic();
+        api('miniapp', { action: 'money_daily_set' }, undefined, false, { daily: daily, incomes: incomes }).then(function (j) {
+          if (MONEY.state) MONEY.state.daily = j.daily;
+          cacheDrop('money');
+          cacheDrop('home');
+          toast('Сохранено', 'check');
+          if (box.isConnected) paint(j.daily);
+          if (MONEY.dailyEl && MONEY.dailyEl.isConnected) moneyDailyFill(MONEY.dailyEl);
+          done();
+        }, function () { save.disabled = false; });
+      };
+      add(box, list, add(el('div', 'bar'), more), add(el('div', 'bar mact'), save));
+    }
+    paint(d);
+    close = legalSheet('Бюджет на день', [box], from);
+    return close;
   }
   // The sheet «Бюджет: Кафе» (key a category or 'total') for the month on screen (j): the amount a month, «Сохранить»,
   // «Убрать» when one is set. done() reloads the view after a confirmed write.
@@ -7163,6 +7326,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyGoalsDraw(goals, done);
     if (MONEY.acctBox && MONEY.acctBox.isConnected) moneyAcctsDraw(MONEY.acctBox);
     if (MONEY.wishEl && MONEY.wishEl.isConnected) moneyWishFill(MONEY.wishEl);
+    if (MONEY.dailyEl && MONEY.dailyEl.isConnected) moneyDailyFill(MONEY.dailyEl);
   }
   // «Долги» (§2): «Мне должны N zł · Я должен M zł», the people with a balance (green — they owe him, red — he owes),
   // «вернуть до 12.11», the settled ones under «ещё N»; a tap opens the person; «+ Человек».
@@ -8455,7 +8619,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       menu.setAttribute('aria-label', 'Месяц: разбор, год, выгрузка');
       menu.onclick = function () { moneyMonthMenu(j, menu, load); };
       var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
-      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }, j.month),
+      body.appendChild(add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }, j.month), moneyDailyBox(j, load),
         add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
           other ? el('div', 'mvs', other) : null), add(el('div', 'macts'), menu, add1)), moneyIncomeLine(j)));
       var rows = j.rows || [];
@@ -9207,6 +9371,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, moneyAcctName: moneyAcctName, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
+    moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };

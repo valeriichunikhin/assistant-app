@@ -587,7 +587,11 @@
         tiles.push({ k: 'Доходы', v: A.moneyFmt(j.income) }, { k: 'Отложено', v: (left < 0 ? '−' : '') + A.moneyFmt(Math.abs(left)) });
       }
       (j.other || []).forEach(function (o) { tiles.push({ k: 'Не в злотых', v: A.moneyFmt(o.sum, o.currency) }); });
-      body.appendChild(D.tiles(tiles));
+      // «Сегодня можно ещё N zł» (docs/specs/money-9.md) over the tiles, the current month only.
+      var daily = A.moneyDailyBox(j, load);
+      add(body, add(el('div', 'card dmdaily'), daily), D.tiles(tiles));
+      daily.parentNode.hidden = daily.hidden;
+      daily.onfill = function () { daily.parentNode.hidden = daily.hidden; };
       if (!rows.length) { add(body, add(el('div', 'card'), A.moneyEmpty()), debts, goals); return A.moneyStatePaint(debts, goals, load); }
       body.appendChild(charts);
       charts.mtFor = j.month;

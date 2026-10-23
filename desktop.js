@@ -219,6 +219,12 @@
           A.grouped(Math.round(Math.abs(mm.left))) : d === null || d === undefined ? '' : (d > 0 ? '+' : d < 0 ? '−' : '±') +
           Math.abs(d) + ' % к прошлому месяцу', bar: mt.p === null ? undefined : mt.p, cls: mt.cls, tab: 'money' });
     }
+    // «Сегодня можно ещё N zł» (docs/specs/money-9.md), with the «Деньги» tile: a tap opens «Бюджет на день».
+    if (j.money && j.money.daily && A.moneyHomeOn(j) && hid.indexOf('money') < 0) {
+      var dd = j.money.daily, dt = A.moneyDailyText(dd);
+      items.push({ k: dd.left < 0 ? 'Перерасход сегодня' : 'Сегодня можно ещё', v: A.grouped(Math.round(Math.abs(dd.left))) + ' zł',
+        small: dt.sub, go: function (cell) { A.moneyDailySheet(dd, cell); } });
+    }
     // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: a tap opens the month's review.
     if (A.moneyReviewOn && A.moneyReviewOn(j) && hid.indexOf('money_review') < 0) {
       var rv = j.money_review, rt = A.moneyReviewHomeText(rv);
