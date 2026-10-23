@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-23 22:05">
+<meta name="published" content="2026-10-23 22:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -8340,7 +8340,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function moneyRegularSheet(from) {
     // One at a time: a fresh one (after a write, a «Вернуть») takes the place of the one open.
     if (MONEY.regClose) MONEY.regClose();
-    var box = el('div', 'mreg'), close = noop, offOpen = false, data = MONEY.subsData || null;
+    var box = el('div', 'mreg'), close = noop, offOpen = false, failed = false, data = MONEY.subsData || null;
     function again() {
       cacheDrop('money:subs2');
       if (MONEY.subsBox && MONEY.subsBox.isConnected && MONEY.subsBox.reload) MONEY.subsBox.reload();
@@ -8350,6 +8350,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     function open(s, fixed) { return function (node) { moneySubSheet(s, function () { close(); again(); }, node && node.nodeType ? node : from, fixed); }; }
     function paint() {
       clear(box);
+      if (!data && failed) {
+        var retry = add(el('button', 'mlink'), icon('refresh'), document.createTextNode('Повторить'));
+        retry.type = 'button';
+        retry.onclick = function () { failed = false; repaint(); load(); };
+        return add(box, el('div', 'mu msrc', 'Не загрузилось'), retry);
+      }
       if (!data) return box.appendChild(el('div', 'mu msrc', 'Загружаю…'));
       var t = data.totals || {}, f = t.fixed || {}, sb = t.subs || {}, curs = {};
       Object.keys(f).concat(Object.keys(sb)).forEach(function (c) { curs[c] = (f[c] || 0) + (sb[c] || 0); });
@@ -8397,10 +8403,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       paint();
       if (had && box.parentNode) { box.parentNode.tabIndex = -1; box.parentNode.focus({ preventScroll: true }); }
     }
-    api('miniapp', { action: 'money_subs' }, undefined, true).then(function (j) {
-      MONEY.subsData = data = j;
-      repaint();
-    }, noop);
+    // A failed answer says so with «Повторить», never an endless «Загружаю…» (23.10.2026).
+    function load() {
+      api('miniapp', { action: 'money_subs' }, undefined, true).then(function (j) {
+        MONEY.subsData = data = j;
+        repaint();
+      }, function () { failed = true; repaint(); });
+    }
+    load();
     if (!BRANDS) moneyBrands(repaint);
   }
   // A subscription's sheet (s), or a new one's (s null): name, amount, currency, «Каждый месяц · Раз в год», the next
