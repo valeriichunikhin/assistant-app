@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 14:12">
+<meta name="published" content="2026-10-24 18:01">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -250,6 +250,8 @@ body.zoomed{overflow:hidden}
 button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
 .chips.dchain{padding:0 0 12px}
+/* A goal's icons: four equal cells a row, so eight make two even rows (his word 24.10.2026: «не симметрично»). */
+.chips.micons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.chips.micons .pill{width:100%;justify-content:center;padding:0}.chips.micons .pill .i{width:22px;height:22px}
 .chips .pill,.chips select{height:44px;padding:0 12px;font-size:13px}
 .chips select{font-size:16px}
 .chips select{border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font-family:var(--font)}
@@ -473,9 +475,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mnav button:disabled{opacity:.3;cursor:default}.mnav .i{width:20px;height:20px}
 .mnav .mtoday{width:auto;height:36px;padding:0 12px;gap:6px;display:inline-flex;align-items:center;margin-left:4px;border:1px solid var(--line);border-radius:999px;font:inherit;font-size:14px;color:var(--accent)}.mnav .mtoday .i{width:16px;height:16px}
 .mmon{flex:1;min-width:0;text-align:center;font:600 14px/1.3 var(--font)}
-.mtop{display:flex;align-items:flex-end;gap:12px;margin-top:2px}.mtx{flex:1;min-width:0}
-.msum{font:800 32px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
-.mvs{margin-top:4px;color:var(--muted);font-size:13px;line-height:1.35}
+.mtop{margin-top:2px}
+.msum{font:800 36px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+@media (max-width:380px){.msum{font-size:32px}}
+.mvs{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.35}
+.mvs .pill.mvd{height:22px;gap:3px;margin-right:6px;padding:0 7px;font:600 12px/1 var(--font-num);font-variant-numeric:tabular-nums}.mvs .pill.mvd .i{width:12px;height:12px}
 .row.mcat .tx{display:flex;flex-direction:column;gap:6px}.row.mcat.on{background:var(--accent-soft)}
 .mbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}.mbar>i{display:block;height:100%;border-radius:3px;background:var(--accent)}
 .row.mcat .pr .mu,.row.mcat .pr>.mu{display:block;margin-top:2px;font:400 12px/1.3 var(--font)}
@@ -526,11 +530,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chart .fc{fill:none;stroke:var(--mark);stroke-width:1.5;stroke-dasharray:3 3}
 .chart .ref{stroke:var(--muted);stroke-width:1}.chart .bud{stroke:var(--fg);stroke-opacity:.55;stroke-width:1;stroke-dasharray:5 4}
 .chart .gl{stroke:var(--line)}.chart .xh{stroke:var(--muted);stroke-width:1}
-/* The fifth batch (docs/specs/money-5.md): «+» and «⋯» by the month's sum, the incomes line under it; an income and
+/* The fifth batch (docs/specs/money-5.md): «Перевод», «⋯» and «+ Трата» in a row under the month's sum, the incomes line under it; an income and
    what is owed to him in --good, a debt and a credit card in minus in --bad; an account's balance large, its month small;
    the search over the spends; a split's mark and the receipt's clip in a row; a person's and a goal's sheet. */
 .pos{color:var(--good)}.neg{color:var(--bad)}.minc b.pos{color:var(--good)}.minc b.neg{color:var(--bad)}
-.macts{flex:none;display:flex;gap:6px}.btn.mplus{width:44px;min-width:44px;padding:0;justify-content:center}.btn.mplus .i{margin:0}
+.macts{display:flex;gap:8px;margin-top:12px}.macts .btn{flex:1 1 0;min-width:0;height:44px;padding:0 12px}.macts .btn:last-child{flex-grow:1.4}.btn.mplus{flex:0 0 56px;padding:0}.btn.mplus .i{margin:0}
 .minc{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.4}
 .minc b{color:var(--fg);font:600 13px/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
 .row.mcat .pr.mbal{font:600 15px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -6834,11 +6838,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // «23.10» in Warsaw, for a row's line where the whole day name would wrap.
   function moneyDm(ts) { var p = wp(ts); return p.day + '.' + p.month; }
   function moneyKey(ts) { var p = wp(ts); return p.year + '-' + p.month + '-' + p.day; }
-  // «в прошлом месяце 980,00 zł · на 254,50 zł больше».
-  function moneyVs(total, prev) {
-    var d = Math.round((total - prev) * 100) / 100;
-    return 'в прошлом месяце ' + moneyNb(prev) + (prev || total ? ' · ' + (!d ? 'столько же' : 'на ' + moneyNb(Math.abs(d)) +
-      (d > 0 ? ' больше' : ' меньше')) : '');
+  // The line under the month's sum (variant A, 24.10.2026): «↑ 747» in a pill, «больше, чем в сентябре», then
+  // « · + 783,74 ₴» for the other currencies; «столько же, сколько в сентябре» without a pill; only the currencies when
+  // the month before has nothing, and no line at all without either.
+  function moneyVs(j) {
+    var prev = j.prev_total || 0, d = Math.round((j.total || 0) - prev), was = MONTHS_P[Number(monthStep(j.month, -1).slice(5, 7)) - 1];
+    var other = (j.other || []).map(function (o) { return '+\u00a0' + moneyNum(o.sum) + '\u00a0' + moneySym(o.currency); }).join(' · ');
+    if (!(prev > 0) && !other) return null;
+    return add(el('div', 'mvs'), prev > 0 && d ? add(el('span', 'pill mvd ' + (d > 0 ? 'bad' : 'good')), icon(d > 0 ? 'arrow-up' : 'arrow-down'),
+      document.createTextNode(mtInt(d))) : null,
+      document.createTextNode((prev > 0 ? (d ? (d > 0 ? 'больше' : 'меньше') + ', чем в ' + was : 'столько же, сколько в ' + was) : '') +
+        (prev > 0 && other ? ' · ' : '') + other));
   }
   // A typed amount («12,99», «1 234.5») as a number above zero, else null.
   function moneyIn(s) {
@@ -7398,14 +7408,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       : 'Сегодня можно ещё ' + mtZl(d.left), cls: tight ? 'warn' : over ? 'neg' : '', tight: tight,
       sub: (tight ? 'своих денег до зарплаты ' + dm(d.payday) + ' не хватает' : moneySgn(d.per_day) + ' в день до зарплаты ' + dm(d.payday)) +
         (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
-      own: d.own_limit != null && !tight ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '' };
+      own: d.own_limit != null && !tight ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '',
+      // One line under the headline (the month's head, variant A 24.10.2026): «90 в день до 10.11 · обязательное 156».
+      short: (tight ? 'своих не хватает' : moneySgn(d.per_day) + ' в день до ' + dm(d.payday)) +
+        (d.obligations_sum ? ' · обязательное ' + mtInt(d.obligations_sum) : '') };
   }
-  // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день»; done() after a save.
+  // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день», where the full sub-line
+  // and «свой лимит · по деньгам выходит …» stay; done() after a save.
   function moneyDailyLine(d, done) {
     var t = moneyDailyText(d), b = el('button', 'mdl');
     b.type = 'button';
-    add(b, icon('gauge'), add(el('span', 'tx'), el('span', 'mdbig ' + t.cls, t.big), el('span', 'mu', t.sub), t.own ? el('span', 'mu', t.own) : null),
-      icon('chevron-right'));
+    add(b, icon('gauge'), add(el('span', 'tx'), el('span', 'mdbig ' + t.cls, t.big), el('span', 'mu', t.short)), icon('chevron-right'));
     b.onclick = function (ev) { ev.stopPropagation(); moneyDailySheet(d, b, done); };
     return b;
   }
@@ -8278,7 +8291,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     due.type = 'date';
     due.value = (g && g.due) || '';
     due.setAttribute('aria-label', 'К какому дню');
-    var icons = el('div', 'chips mchips');
+    var icons = el('div', 'chips mchips micons');
     function drawIcons() {
       clear(icons);
       GOAL_ICONS.forEach(function (k) {
@@ -8449,8 +8462,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     toast('Выгружено: ' + body.length + ' ' + plural(body.length, ['строка', 'строки', 'строк']) + (j.more ? ' (последние)' : ''), 'check');
   }
   // «⋯» of the month: «Разбор месяца» (the month on screen once it is over, else the one before), «Год 2026» and
-  // «Выгрузить месяц». done() reloads the view after the review wrote budgets or rules.
-  function moneyMonthMenu(j, from, done) {
+  // «Выгрузить месяц»; reg — «Регулярное» first (the phone, where it has no button of its own). done() reloads the view
+  // after the review wrote budgets or rules.
+  function moneyMonthMenu(j, from, done, reg) {
     var close = noop, csv = label(el('button', 'btn'), 'download', 'Выгрузить ' + monthLabel(j.month).toLowerCase() + ' (CSV)');
     csv.type = 'button';
     csv.onclick = function () { close(); moneyCsv(j); };
@@ -8463,6 +8477,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return b;
     }
     close = legalSheet('Месяц', [add(el('div', 'mmenus'),
+      reg ? item('repeat', 'Регулярное', 'подписки и обязательные платежи', function () { moneyRegularSheet(from); }) : null,
       rm >= MONEY_FROM ? item('calendar-check', 'Разбор месяца', monthLabel(rm) + ' · бюджет на ' + MONTHS_RU[Number(monthStep(rm, 1).slice(5, 7)) - 1].toLowerCase(),
         function () { moneyReviewSheet(rm, from, done); }) : null,
       item('calendar-range', 'Год ' + yr, 'итог, месяцы, категории, продавцы', function () { moneyYearSheet(yr, from); }),
@@ -9640,23 +9655,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       data = j;
       MONEY.people = (j.people || []).slice();
       clear(body);
-      var add1 = add(el('button', 'btn mplus'), icon('plus'));
+      // The row under the sum (variant A, 24.10.2026): «Перевод», «⋯», «+ Трата»; «Регулярное» lives in «⋯» now.
+      var add1 = label(el('button', 'btn'), 'plus', 'Трата');
       add1.type = 'button';
       add1.setAttribute('aria-label', 'Добавить: трата, доход, перевод');
       add1.onclick = function () { moneySheet(null, load, add1); };
       var menu = add(el('button', 'btn ghost mplus'), icon('more'));
       menu.type = 'button';
       menu.setAttribute('aria-label', 'Месяц: разбор, год, выгрузка, порядок карточек');
-      menu.onclick = function () { moneyMonthMenu(j, menu, load); };
-      // «Регулярное» (docs/specs/money-11.md §3): the subscriptions and the fixed payments in one sheet.
-      var reg = add(el('button', 'btn ghost mplus'), icon('repeat'));
-      reg.type = 'button';
-      reg.setAttribute('aria-label', 'Регулярное: подписки и обязательные платежи');
-      reg.onclick = function () { moneyRegularSheet(reg); };
-      var other = (j.other || []).map(function (o) { return '+ ' + moneyFmt(o.sum, o.currency); }).join(' · ');
+      menu.onclick = function () { moneyMonthMenu(j, menu, load, true); };
+      var tr = label(el('button', 'btn ghost'), 'arrow-left-right', 'Перевод');
+      tr.type = 'button';
+      tr.onclick = function () { moneySheet(null, load, tr, 'transfer'); };
       var head = add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }, j.month), moneyDailyBox(j, load),
-        add(el('div', 'mtop'), add(el('div', 'mtx'), el('div', 'msum', moneyFmt(j.total)), el('div', 'mvs', moneyVs(j.total, j.prev_total || 0)),
-          other ? el('div', 'mvs', other) : null), add(el('div', 'macts'), reg, menu, add1)), moneyIncomeLine(j));
+        add(el('div', 'mtop'), el('div', 'msum', moneyFmt(j.total)), moneyVs(j), add(el('div', 'macts'), tr, menu, add1)), moneyIncomeLine(j));
       body.appendChild(head);
       moneySwipe(head, function (n) { moneyGo(n, load); });
       moneySwipe(charts, function (n) { moneyGo(n, load); });
