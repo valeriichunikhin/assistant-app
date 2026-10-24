@@ -23,6 +23,8 @@ self.addEventListener('notificationclick', function (e) {
   // The push's url is #notif/<nid>?to=… already; an older sender's url without it still lands on the entry.
   if (d.nid && url.indexOf('#notif/') < 0) url = './#notif/' + d.nid;
   var target = new URL(url, self.registration.scope).href;
+  // A push only ever opens the app itself: a url outside its scope opens the app's start.
+  if (target.indexOf(self.registration.scope) !== 0) target = self.registration.scope;
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
     for (var i = 0; i < list.length; i++) {
       var c = list[i];

@@ -56,7 +56,7 @@
   // A poster cell for a poster grid: the image (or a film glyph), the name, a muted line, actions on hover.
   D.posterCell = function (f, line, actions) {
     var cell = el('div', 'pcell'), box = el('div', 'pbox');
-    if (/^https?:\/\//i.test(String(f.poster || ''))) {
+    if (A.imgOk(String(f.poster || ''))) {
       var img = el('img');
       img.alt = ''; img.loading = 'lazy'; img.referrerPolicy = 'no-referrer'; img.src = f.poster;
       img.onerror = function () { img.replaceWith(add(el('div', 'ph'), A.icon('film'))); };

@@ -10,10 +10,21 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 01:15">
+<meta name="published" content="2026-10-24 08:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+// telegram-web-app.js only inside Telegram: its launch params in the address (tgWebAppData…), the copy the SDK keeps
+// for a reload, or the client's webview bridge. Written in place, so it still runs before the app's code reads it;
+// a browser tab or the Home Screen app never loads it.
+(function () {
+  var kept = '';
+  try { kept = sessionStorage.getItem('__telegram__initParams') || ''; } catch (e) {}
+  if (/tgWebApp/.test(location.hash + location.search + kept) || window.TelegramWebviewProxy) {
+    document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>');
+  }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap">
@@ -889,7 +900,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return fetch(BASE + fn + '?' + new URLSearchParams(params), opts)
       .then(function (r) {
         return r.json().catch(function () { return null; }).then(function (j) {
-          if (!r.ok || (j && j.ok === false)) {
+          // A 2xx without a JSON body is a failure too.
+          if (!r.ok || !j || j.ok === false) {
             var err = new Error((j && j.error) || String(r.status));
             err.code = j && j.error;
             err.answer = j && j.answer;
@@ -984,10 +996,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       sub ? el('div', 'sub', sub) : null);
   }
   function pill(s, kind) { return el('span', 'pill' + (kind ? ' ' + kind : ''), s); }
-  // The only <img> sources: TMDB posters, HoYoLAB icons and Enka's profile pictures (https, a host under hoyoverse.com or hoyolab.com);
-  // besides them only the app's own files (brands/*.png of «Деньги», set by moneyLogo).
+  // The only <img> sources: TMDB posters, Cinema City's posters, the shops' product photos (Aldi's on scene7 and
+  // an-pcm, Biedronka's image host), HoYoLAB icons and Enka's profile pictures (https, a host under hoyoverse.com or
+  // hoyolab.com); besides them only the app's own files (brands/*.png of «Деньги», set by moneyLogo) and a picked
+  // file's blob: in the receipt reader.
   function imgOk(u) {
     return /^https:\/\/image\.tmdb\.org\//.test(u) || /^https:\/\/enka\.network\/ui\//.test(u)
+      || /^https:\/\/www\.cinema-city\.pl\/xmedia/.test(u)
+      || /^https:\/\/(s7g10\.scene7\.com|prd\.an-pcm\.com|images\.biedronka\.cloud)\//.test(u)
       || /^https:\/\/([a-z0-9-]+\.)+(hoyoverse|hoyolab)\.com\//i.test(u);
   }
   // A small icon in front of a row.
@@ -1061,11 +1077,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     b.setAttribute('aria-label', photo ? 'Фото товара' : 'Страница газетки');
     b.onclick = function (ev) { ev.stopPropagation(); openLink(url); };
     if (!photo) return add(b, add(tile, add(el('span', 'bd'), icon('file-image'))));
+    // Some Aldi photos come as http: the page asks for them over https, as the browser would; a host imgOk does not know is the tile.
+    var src = url.replace(/^http:/i, 'https:');
+    if (!imgOk(src)) return tile;
     var img = el('img', cls + ' photo');
     img.alt = '';
     img.loading = 'lazy';
     img.referrerPolicy = 'no-referrer';
-    img.src = url;
+    img.src = src;
     img.onerror = function () { b.replaceWith(tile); };
     return add(b, img);
   }
@@ -1119,12 +1138,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
     } catch (e) {}
   }
-  // Forgets the cached screens whose key starts with prefix (a confirmed write made them stale).
-  function cacheDrop(prefix) {
+  // Forgets the cached screen `key` and those under it, `key:…` (a confirmed write made them stale);
+  // «li» leaves «list» alone.
+  function cacheDrop(key) {
     try {
       for (var i = localStorage.length - 1; i >= 0; i--) {
         var k = localStorage.key(i);
-        if (k && k.indexOf('cache:' + prefix) === 0) localStorage.removeItem(k);
+        if (k && (k === 'cache:' + key || k.indexOf('cache:' + key + ':') === 0)) localStorage.removeItem(k);
       }
     } catch (e) {}
   }
@@ -1186,7 +1206,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       // Equal data: not one node is replaced, so open rows, the scroll and the focus stay.
       if (s !== onScreen(o) || !o.box.firstChild) {
         setShown(o, s);
-        o.render(j);
+        try {
+          o.render(j);
+        } catch (e) {
+          // A fresh answer this view cannot draw: not kept for the next open, and the retry state instead.
+          cacheDrop(o.key);
+          delete shown[o.key];
+          if (o.retry) failed(o.box, o.retry);
+        }
       }
     }, function (e) {
       done();
@@ -1396,7 +1423,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   if (browser) {
     var out = label(el('button', 'out'), 'logout', 'выйти');
     out.type = 'button';
-    out.onclick = function () { loginCard(); };
+    out.onclick = function () { logout(); };
     hdr.appendChild(out);
   }
   // From 900 px the date and «выйти» sit at the foot of the rail, not in the header.
@@ -1796,6 +1823,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         });
       }).observe(main, { childList: true, subtree: true });
     }
+  }
+  // «выйти»: the phone's push subscription goes first (the server's row, then the browser's), then the login card;
+  // a failure on the way never keeps him logged in.
+  function logout() {
+    var sw = navigator.serviceWorker;
+    (sw ? sw.getRegistration() : Promise.resolve(null)).then(function (r) {
+      return r && r.pushManager ? r.pushManager.getSubscription() : null;
+    }).then(function (sub) {
+      if (!sub) return;
+      return api('push', { action: 'unsubscribe' }, 5000, true, { endpoint: sub.endpoint }).catch(noop)
+        .then(function () { return sub.unsubscribe(); });
+    }).catch(noop).then(function () { loginCard(); });
   }
   // The login card: the widget's script is created here, after load, so it
   // mounts its button in place of itself.
@@ -2304,7 +2343,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         // The cached answers of the screen are older than this save: the next open draws a fresh one.
         // The settings write their own cache entry (sendPrefs).
         if (key.indexOf('task:') === 0) { cacheDrop('tasks'); cacheDrop('home'); }
-        else if (key !== 'prefs') cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks:' : 'films:');
+        else if (key !== 'prefs') cacheDrop(key.indexOf('item:') === 0 ? 'list' : key.indexOf('pick:') === 0 ? 'picks' : 'films');
         if (v !== m.want && !m.t) { m.want = v; m.show(v); }
       }, function (e) {
         clearTimeout(m.t);
@@ -3372,7 +3411,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       haptic();
       api('miniapp', { action: 'legal_doc_url' }, 15000, false, { id: d.id }).then(function (j) {
         b.disabled = false;
-        if (w) w.location.href = j.url; else openLink(j.url);
+        // The tab follows only an https link; anything else closes it with the failure toast.
+        if (!w) openLink(j.url);
+        else if (/^https:\/\//i.test(String(j && j.url))) w.location.href = j.url;
+        else { w.close(); toast(); }
       }, function () {
         b.disabled = false;
         if (w) w.close();
@@ -4155,7 +4197,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     function drop(b) {
       batches = batches.filter(function (x) { return x !== b; });
-      cacheDrop('picks:');
+      cacheDrop('picks');
       render();
     }
     // The contract's validity word: «с чт 22.10» / «только сб 24.10» / «до ср 21.10», from Warsaw's today.
@@ -4753,7 +4795,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function openLink(url) {
     if (!/^https?:\/\//i.test(String(url))) return;
     if (browser) return window.open(url, '_blank', 'noopener');
-    try { tg.openLink(url); } catch (e) { window.open(url, '_blank'); }
+    try { tg.openLink(url); } catch (e) { window.open(url, '_blank', 'noopener'); }
   }
   function wishView() {
     var person = store('wishPerson') === 'tetyana' ? 'tetyana' : 'me', forHer = person === 'tetyana';
@@ -4953,7 +4995,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // it fails, so the rows of a card line up.
     function poster(url, title) {
       var ph = add(el('span', 'poster ph'), icon('film'));
-      if (!/^https?:\/\//i.test(String(url || ''))) return ph;
+      if (!imgOk(String(url || ''))) return ph;
       var e = el('img', 'poster');
       e.alt = '';
       e.loading = 'lazy';
@@ -7522,7 +7564,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       repaint();
       api('miniapp', { action: 'money_colors_set' }, undefined, false, { colors: sw.patch }).then(function (r) {
         MONEY.colorsBusy--;
-        cacheDrop('money:2'); // the months' cached answers (money:YYYY-MM) carry the old colors
+        cacheDrop('money'); // the months' cached answers (money:YYYY-MM) carry the old colors
         if (r && r.colors && !MONEY.colorsBusy) moneyColorsFrom(r);
         if (!MONEY.colorsBusy) toast(sw.with ? 'Цвет поменялся местами с «' + moneyCat(sw.with)[1] + '»' : 'Цвет сохранён', 'check');
       }, function () {
@@ -8169,7 +8211,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     b.disabled = true;
     api('miniapp', { action: 'money_receipt_url' }, 15000, false, { id: r.id }).then(function (j) {
       b.disabled = false;
-      if (w) w.location.href = j.url; else openLink(j.url);
+      // The tab follows only an https link; anything else closes it with the failure toast.
+      if (!w) openLink(j.url);
+      else if (/^https:\/\//i.test(String(j && j.url))) w.location.href = j.url;
+      else { w.close(); toast(); }
     }, function () { b.disabled = false; if (w) w.close(); });
   }
   // A row as both views draw it: its tile, title, the line under it, the amount and its class. A spend: the merchant's
@@ -8223,7 +8268,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return [p.day + '.' + p.month + '.' + p.year, p.hour + ':' + p.minute, KIND[k] || k,
       k === 'transfer' ? names(r.account) + ' → ' + names(r.to_account) : names(r.account), r.merchant || '', lab,
       Number(r.amount).toFixed(2).replace('.', ','), r.currency, r.share == null ? '' : String(Number(r.share)).replace('.', ','),
-      who ? who.name : '', r.note || ''].map(function (v) { v = String(v); return /[;"\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(';');
+      who ? who.name : '', r.note || ''].map(function (v) {
+      v = String(v);
+      // A text a spreadsheet would run as a formula (= + - @, a tab, a CR) gets an apostrophe; a plain number stays one.
+      if (/^[=+\-@\t\r]/.test(v) && !/^-?\d+(,\d+)?$/.test(v)) v = "'" + v;
+      return /[;"\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    }).join(';');
   }
   function moneyCsv(j) {
     var head = 'Дата;Время;Тип;Счёт;Продавец;Категория;Сумма;Валюта;Доля;Человек;Заметка';
@@ -10245,7 +10295,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, dealParts: dealParts, whenW: whenW, wd: wd, wp: wp, days: days,
     addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,
     drawProduct: drawProduct, weekChart: weekChart, rateText: rateText, rateStrip: rateStrip, hrow: hrow, capped: capped,
-    myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, categoryOf: categoryOf,
+    myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, imgOk: imgOk, categoryOf: categoryOf,
     todayLabel: todayLabel, show: show, views: VIEWS, markItem: markItem, keepItems: keepItems, dropMark: dropMark,
     itemKey: itemKey, markPick: markPick, keepPicks: keepPicks, flushBatch: flushBatch, pickSeg: pickSeg,
     pickAll: pickAll, dealsAll: dealsAll, shopIs: shopIs, shopSegs: shopSegs, names: NAMES, get tabs() { return visibleTabs(); }, main: main, hdr: hdr, rail: rail,
