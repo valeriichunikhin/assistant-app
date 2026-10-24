@@ -72,13 +72,13 @@
     return cell;
   };
 
-  // Key/value tiles: items = [{ k: 'Траты', v: '1 234 zł', small: 'за месяц' }].
+  // Key/value tiles: items = [{ k: 'Траты', v: '1 234 zł', small: 'за месяц' }]; vcls colors the value (warn).
   // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, tab?: what a tap opens, go?(cell): or what a
   // tap does}.
   D.tiles = function (items) {
     var box = el('div', 'kv');
     items.forEach(function (t) {
-      var v = el('div', 'v', t.v), cell = add(el('div'), el('div', 'k', t.k), v);
+      var v = el('div', 'v' + (t.vcls ? ' ' + t.vcls : ''), t.v), cell = add(el('div'), el('div', 'k', t.k), v);
       if (t.small) v.appendChild(add(el('small'), document.createTextNode(' ' + t.small)));
       if (typeof t.bar === 'number') {
         var bar = add(el('div', 'mbar dbar'), el('i', t.cls || ''));
@@ -222,8 +222,17 @@
     // «Сегодня можно ещё N zł» (docs/specs/money-9.md), with the «Деньги» tile: a tap opens «Бюджет на день».
     if (j.money && j.money.daily && A.moneyHomeOn(j) && hid.indexOf('money') < 0) {
       var dd = j.money.daily, dt = A.moneyDailyText(dd);
-      items.push({ k: dd.left < 0 ? 'Перерасход сегодня' : 'Сегодня можно ещё', v: A.grouped(Math.round(Math.abs(dd.left))) + ' zł',
-        small: dt.sub, go: function (cell) { A.moneyDailySheet(dd, cell); } });
+      // Nothing of his own left before payday (docs/specs/money-12.md §1): «До 10-го — только необходимое» in amber.
+      items.push(dt.tight ? { k: 'Сегодня', v: 'только необходимое', vcls: 'warn', small: 'до ' + Number(dd.payday.slice(8, 10)) + '-го',
+        go: function (cell) { A.moneyDailySheet(dd, cell); } }
+        : { k: dd.left < 0 ? 'Перерасход сегодня' : 'Сегодня можно ещё', v: A.grouped(Math.round(Math.abs(dd.left))) + ' zł',
+          small: dt.sub, go: function (cell) { A.moneyDailySheet(dd, cell); } });
+    }
+    // «Долг по картам» (docs/specs/money-12.md §2): the debt, the month's change and the bar to zero; a tap opens its sheet.
+    if (A.moneyDebtOn && A.moneyDebtOn(j.card_debt) && hid.indexOf('card_debt') < 0) {
+      var cd = j.card_debt;
+      items.push({ k: 'Долг по картам', v: A.grouped(Math.round(cd.total)) + ' zł', small: A.moneyDebtDiffText(cd).s,
+        bar: cd.progress === null ? undefined : cd.progress, cls: 'done', go: function (cell) { A.moneyDebtSheet(cd, cell); } });
     }
     // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: a tap opens the month's review.
     if (A.moneyReviewOn && A.moneyReviewOn(j) && hid.indexOf('money_review') < 0) {

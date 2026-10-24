@@ -597,7 +597,12 @@
       add(body, add(el('div', 'card dmdaily'), daily), D.tiles(tiles));
       daily.parentNode.hidden = daily.hidden;
       daily.onfill = function () { daily.parentNode.hidden = daily.hidden; };
-      if (!rows.length) { add(body, add(el('div', 'card'), A.moneyEmpty()), debts, goals); return A.moneyStatePaint(debts, goals, load); }
+      // «Долг по картам» (docs/specs/money-12.md §2): first in the right column (his order), whichever month is on screen.
+      var debt = A.moneyDebtOn(j.card_debt) ? A.moneyDebtCard(j.card_debt) : null;
+      if (!rows.length) {
+        add(body, A.moneyCardOn('card_debt') ? debt : null, add(el('div', 'card'), A.moneyEmpty()), debts, goals);
+        return A.moneyStatePaint(debts, goals, load);
+      }
       var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load, function () { render(data); });
       var accts = A.moneyAccts(j, function (k) { M.acct = k; if (k) M.toList = true; render(data); }, load);
       var card = cardWith('wallet', 'Траты', null, el('div')), box = card.lastChild;
@@ -626,7 +631,7 @@
       // His order of the cards (docs/specs/money-11.md §8): «Графики» over the panes when it is on, the list on the
       // left when it is on, the others down the right column in his order.
       var right = el('div');
-      A.moneyCardsInto(right, { cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs });
+      A.moneyCardsInto(right, { card_debt: debt, cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs });
       if (A.moneyCardOn('charts')) body.appendChild(charts);
       charts.mtFor = j.month;
       A.moneyTrendsDraw(charts);

@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 08:51">
+<meta name="published" content="2026-10-24 11:32">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -548,7 +548,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mdl{display:flex;align-items:center;gap:10px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
 .mdl>.i{flex:none;width:20px;height:20px;color:var(--accent)}.mdl>.i:last-child{width:16px;height:16px;color:var(--muted)}
 .mdl .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mdl .mu{font-size:13px;line-height:1.35}
-.mdbig{font:600 17px/1.3 var(--font);font-variant-numeric:tabular-nums}.mdbig.neg{color:var(--bad)}
+.mdbig{font:600 17px/1.3 var(--font);font-variant-numeric:tabular-nums}.mdbig.neg{color:var(--bad)}.mdbig.warn{color:var(--warn)}
+/* «Долг по картам» (docs/specs/money-12.md §2): the month's change with its arrow (down --good, up --bad), the card being
+   paid off as a row like «По счетам», the others small under it, a closed one struck through with ✓. */
+.mdd{white-space:nowrap}.mdd .i{width:13px;height:13px;margin-right:2px;vertical-align:-2px}
+.mbud.mdebt{border-top:0;padding-top:2px;cursor:pointer}.mbud.mdebt .mbig{font:700 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.mbud.mdebt .mbl{align-items:center}.mbud.mdebt>.mu{margin-top:6px;font-size:13px}
+.mdqb{cursor:pointer}.mdqb>.row:first-child{border-top:1px solid var(--line)}.mdql{padding:0 14px 12px}.mdqb>.mdql:first-child{padding-top:8px;border-top:1px solid var(--line)}
+.mdq{display:flex;align-items:center;gap:8px;padding:4px 0 0;font-size:13px;color:var(--muted)}.mdq .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mdq .num{flex:none;font-variant-numeric:tabular-nums}.mdq.done .tx,.mdq.done .num{text-decoration:line-through}.mdq.done>.i{width:13px;height:13px;color:var(--good)}
+.mdebts .row .pr.neg{color:var(--bad)}.mdebts .mdhow{margin-top:4px;font-size:14px;line-height:1.45}
 .mbud.mhome .mdl{margin:0 0 10px}.mhead .mdl{margin:4px 0 2px}.mdbox[hidden]{display:none}
 .mdaily>.mdbig{font-size:20px;margin:2px 0 4px}.mdaily .mdcalc{margin-top:10px;font-variant-numeric:tabular-nums}
 .mdrow{gap:6px;margin-bottom:8px}.mdrow .field{padding:0 8px}.mdrow .field.mdday{flex:0 0 46px}.mdrow .field.mdday input{text-align:center}.mdrow .field.mdamt{flex:0 0 78px}
@@ -748,6 +757,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-sticky-note" viewBox="0 0 24 24"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/></symbol>
 <symbol id="i-stamp" viewBox="0 0 24 24"><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/><path d="M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z"/><path d="M5 22h14"/></symbol>
 <symbol id="i-file-image" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol>
+<symbol id="i-trending-down" viewBox="0 0 24 24"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></symbol>
+<symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+<symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
 <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
 <symbol id="i-shopping-basket" viewBox="0 0 24 24"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></symbol>
 <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/></symbol>
@@ -1262,11 +1274,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
   var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
-  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
+  var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
-  var MONEY_CARDS = [['charts', 'Графики', 'chart'], ['cats', 'По категориям', 'layers'], ['accts', 'По счетам', 'landmark'],
+  var MONEY_CARDS = [['card_debt', 'Долг по картам', 'trending-down'], ['charts', 'Графики', 'chart'], ['cats', 'По категориям', 'layers'], ['accts', 'По счетам', 'landmark'],
     ['debts', 'Долги', 'hand-coins'], ['goals', 'Цели', 'target'], ['fixed', 'Постоянные платежи', 'calendar-sync'],
     ['subs', 'Подписки', 'repeat'], ['list', 'Траты', 'wallet']];
   var MONEY_CARD_KEYS = MONEY_CARDS.map(function (c) { return c[0]; });
@@ -2241,6 +2253,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tap(c.firstChild, function () { show('money'); });
       c.appendChild(tap(box, function () { show('money'); }));
     }
+    // «Долг по картам» (docs/specs/money-12.md §2): one line — the debt and the month's change — and the bar to zero; a
+    // tap opens its sheet.
+    function debtCard(d) {
+      var c = card('trending-down', 'Долг по картам'), box = el('div', 'mbud mhome');
+      add(box, add(el('div', 'mbl'), el('span', 'tx', mtZl(d.total)), moneyDebtDiff(d, 'num')));
+      if (d.progress !== null && d.progress !== undefined) box.appendChild(moneyBar(d.progress, 'done'));
+      function open() { moneyDebtSheet(d, c); }
+      tap(c.firstChild, open);
+      c.appendChild(tap(box, open));
+    }
     // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: the month in one line; a tap opens its review.
     function reviewCard(r) {
       var t = moneyReviewHomeText(r), c = card('calendar-check', t.title), box = el('div', 'mbud mhome');
@@ -2280,6 +2302,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       slot = 'money';
       if (j.money === null && moneyHomeOn(j)) down('wallet', 'Деньги');
       else if (moneyHomeOn(j)) moneyCard(j.money);
+      slot = 'card_debt';
+      if (j.card_debt === null && prefs.muted.indexOf('money') < 0) down('trending-down', 'Долг по картам');
+      else if (moneyDebtOn(j.card_debt)) debtCard(j.card_debt);
       slot = 'money_review';
       if (j.money_review === null && prefs.muted.indexOf('money') < 0) down('calendar-check', 'Разбор месяца');
       else if (moneyReviewOn(j)) reviewCard(j.money_review);
@@ -7326,13 +7351,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return bar;
   }
   // «Сегодня можно ещё N zł» (docs/specs/money-9.md) from money's daily: {big, sub, own, cls}; over the day it is
-  // «Перерасход N zł» in red; own — «по деньгам выходит N» under his own limit.
+  // «Перерасход N zł» in red; own — «по деньгам выходит N» under his own limit. Nothing of his own left before payday
+  // (per_day ≤ 0, docs/specs/money-12.md §1): «До 10-го — только необходимое» in amber — an honest state, not an error.
   function moneySgn(v) { return (v < 0 ? '−' : '') + mtInt(v); }
   function moneyDailyText(d) {
-    var over = d.left < 0;
-    return { big: over ? 'Перерасход ' + mtZl(-d.left) : 'Сегодня можно ещё ' + mtZl(d.left), cls: over ? 'neg' : '',
-      sub: moneySgn(d.per_day) + ' в день до зарплаты ' + dm(d.payday) + (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
-      own: d.own_limit != null ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '' };
+    var over = d.left < 0, tight = d.per_day <= 0;
+    return { big: tight ? 'До ' + Number(d.payday.slice(8, 10)) + '-го — только необходимое' : over ? 'Перерасход ' + mtZl(-d.left)
+      : 'Сегодня можно ещё ' + mtZl(d.left), cls: tight ? 'warn' : over ? 'neg' : '', tight: tight,
+      sub: (tight ? 'своих денег до зарплаты ' + dm(d.payday) + ' не хватает' : moneySgn(d.per_day) + ' в день до зарплаты ' + dm(d.payday)) +
+        (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
+      own: d.own_limit != null && !tight ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '' };
   }
   // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день»; done() after a save.
   function moneyDailyLine(d, done) {
@@ -7476,6 +7504,78 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     paint(d);
     close = legalSheet('Бюджет на день', [box], from);
     return close;
+  }
+  // «Долг по картам» (docs/specs/money-12.md §2) from card_debt (miniapp cardDebt, in home and money_month): the cards
+  // in his order (Monobank → Millennium → Impresja, the smallest first); a card outside it (Klarna) only while in debt.
+  function moneyDebtCards(d) { return ((d && d.cards) || []).filter(function (c) { return c.queued || !c.closed; }); }
+  function moneyDebtOn(d) { return moneyDebtCards(d).length > 0 && prefs.muted.indexOf('money') < 0; }
+  // A debt in whole units of its currency: «1 697 ₴», «1 200 zł».
+  function moneyDebtSum(v, cur) { return mtInt(v) + '\u00a0' + moneySym(cur); }
+  // A card's debt: «1 697 ₴ ≈ 154 zł» in another currency, «… · без курса» with no transfer to give a rate.
+  function moneyDebtLeft(c) {
+    return moneyDebtSum(c.debt, c.currency) + (c.currency === 'PLN' ? '' : c.pln === null ? ' · без курса' : ' ≈ ' + mtZl(c.pln));
+  }
+  // The month's change: {s: «−312 за месяц» / «+40 за месяц» / «без изменений», cls: pos (down) / neg (up) / mu, ic}.
+  function moneyDebtDiffText(d) {
+    var v = Math.round(d.month_diff || 0);
+    return v < 0 ? { s: '−' + mtInt(-v) + ' за месяц', cls: 'pos', ic: 'arrow-down' }
+      : v > 0 ? { s: '+' + mtInt(v) + ' за месяц', cls: 'neg', ic: 'arrow-up' } : { s: 'без изменений', cls: 'mu', ic: null };
+  }
+  function moneyDebtDiff(d, cls) {
+    var t = moneyDebtDiffText(d);
+    return add(el('span', 'mdd ' + t.cls + (cls ? ' ' + cls : '')), t.ic ? icon(t.ic) : null, document.createTextNode(t.s));
+  }
+  // «Сейчас гасим: Monobank — осталось 1 697 ₴» as a row with the bank's logo, the rest of the queue small under it,
+  // a closed card struck through with ✓.
+  function moneyDebtQueue(d, box) {
+    var list = moneyDebtCards(d), cur = null;
+    list.forEach(function (c) { if (!cur && c.key === d.current) cur = c; });
+    if (cur) {
+      box.appendChild(add(el('div', 'row mcat macc'), moneyAcctTile(cur.key), add(el('span', 'tx'), el('div', 't', 'Сейчас гасим: ' + cur.name),
+        el('div', 'mu', 'осталось ' + moneyDebtLeft(cur))), el('span', 'pr mbal neg', moneyDebtSum(cur.debt, cur.currency))));
+    }
+    var rest = el('div', 'mdql');
+    list.forEach(function (c) {
+      if (c === cur) return;
+      rest.appendChild(add(el('div', 'mdq' + (c.closed ? ' done' : '')), c.closed ? icon('check') : moneyAcctTile(c.key, 'ai'),
+        el('span', 'tx', c.name), el('span', 'num', c.closed ? 'закрыта' : moneyDebtLeft(c))));
+    });
+    if (rest.firstChild) box.appendChild(rest);
+  }
+  // The card of «Деньги»: the debt now large, the month's change, the bar from debt_start to zero, the queue; a tap
+  // opens the sheet.
+  function moneyDebtCard(d) {
+    var c = mkCard('trending-down', 'Долг по картам'), box = el('div', 'mbud mdebt');
+    add(box, add(el('div', 'mbl'), el('span', 'tx mbig', mtZl(d.total)), moneyDebtDiff(d, 'num')));
+    if (d.progress !== null && d.progress !== undefined) {
+      add(box, moneyBar(d.progress, 'done'), el('div', 'mu', 'от ' + mtZl(d.start.amount) + ' · погашено ' + Math.round(d.progress * 100) + ' %'));
+    }
+    var q = el('div', 'mdqb');
+    moneyDebtQueue(d, q);
+    function open() { moneyDebtSheet(d, c); }
+    tap(c.firstChild, open);
+    return add(c, tap(box, open), q.firstChild ? tap(q, open) : null);
+  }
+  // «Долг по картам» in a sheet: the sum and the change, the bar, a row per card in the queue (its place, the rate of
+  // one in another currency, «закрыта»), and how it is paid off.
+  function moneyDebtSheet(d, from) {
+    var box = el('div', 'mrev mdebts');
+    function head(ic, s) { return add(el('div', 'fst mrh'), icon(ic), document.createTextNode(s)); }
+    add(box, el('div', 'mdbig', mtZl(d.total)), add(el('div', 'mu msrc'), moneyDebtDiff(d)));
+    if (d.progress !== null && d.progress !== undefined) {
+      add(box, moneyBar(d.progress, 'done'), el('div', 'mu msrc', 'от ' + mtZl(d.start.amount) + ' (' + dm(d.start.at.slice(0, 10)) + ') · погашено ' +
+        Math.round(d.progress * 100) + ' %'));
+    }
+    add(box, head('arrow-up-down', 'Очередь'));
+    var n = 0;
+    moneyDebtCards(d).forEach(function (c) {
+      var sub = c.closed ? '' : ++n === 1 ? 'сейчас гасим' : n + '-я в очереди',
+        rate = c.currency !== 'PLN' ? (c.rate ? '1 ' + moneySym(c.currency) + ' = ' + moneyRate(c.rate) + ' zł' : 'без курса') : '';
+      box.appendChild(mrRow(moneyAcctTile(c.key), c.name, [sub, rate].filter(Boolean).join(' · '),
+        c.closed ? pill('закрыта', 'good') : el('span', 'pr neg', moneyDebtLeft(c))));
+    });
+    add(box, head('calendar-sync', 'Как гасить'), el('div', 'mdhow', '10-го 1 000 на карту в очереди, в конце месяца — что осталось от бюджета. Новые траты — с Revolut.'));
+    return legalSheet('Долг по картам', [box], from);
   }
   // The sheet «Бюджет: Кафе» (key a category or 'total') for the month on screen (j): the amount a month, «Сохранить»,
   // «Убрать» when one is set. done() reloads the view after a confirmed write. A category's sheet is its name and holds
@@ -9495,7 +9595,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       moneySwipe(head, function (n) { moneyGo(n, load); });
       moneySwipe(charts, function (n) { moneyGo(n, load); });
       var rows = j.rows || [];
-      if (!rows.length) { add(body, add(el('div', 'card'), moneyEmpty()), debts, goals); return moneyStatePaint(debts, goals, load); }
+      // «Долг по картам» (docs/specs/money-12.md §2): the cards' debt now, whichever month is on screen.
+      var debt = moneyDebtOn(j.card_debt) ? moneyDebtCard(j.card_debt) : null;
+      if (!rows.length) {
+        add(body, moneyCardOn('card_debt') ? debt : null, add(el('div', 'card'), moneyEmpty()), debts, goals);
+        return moneyStatePaint(debts, goals, load);
+      }
       var cats = moneyCats(j, function (k) { MONEY.filter = k; if (k) MONEY.toList = true; haptic(); render(data); }, load, function () { render(data); });
       var accts = moneyAccts(j, function (k) { MONEY.acct = k; if (k) MONEY.toList = true; haptic(); render(data); }, load);
       var list = mkCard('wallet', 'Траты'), rowsBox = el('div');
@@ -9515,7 +9620,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       add(list, moneySearchBar(fill), rowsBox);
       fill();
       // The cards in his order (docs/specs/money-11.md §8) under the month's header.
-      moneyCardsInto(body, { charts: charts, cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs, list: list });
+      moneyCardsInto(body, { card_debt: debt, charts: charts, cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs, list: list });
       charts.mtFor = j.month;
       moneyTrendsDraw(charts);
       moneyStatePaint(debts, goals, load);
@@ -9810,7 +9915,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   var HOME_NAMES = {
     plan: 'План недели', calendar: 'Календарь', due: 'Сроки и посылки', docs: 'Документы', courts: 'Корты сегодня',
     games: 'Мои игры', shows: 'Мои сеансы', vb: 'Волейбол', genshin: 'Genshin', yesterday: 'Вчера', inbox: 'Инбокс',
-    week: 'Неделя', system: 'Система', tasks: 'Задачи', linkedin: 'LinkedIn', money: 'Деньги', money_review: 'Разбор месяца'
+    week: 'Неделя', system: 'Система', tasks: 'Задачи', linkedin: 'LinkedIn', money: 'Деньги', card_debt: 'Долг по картам',
+    money_review: 'Разбор месяца'
   };
   // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
   function homeOrder() {
@@ -10308,6 +10414,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
     moneyCardsInto: moneyCardsInto, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
+    moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };

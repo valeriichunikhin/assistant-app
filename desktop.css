@@ -52,7 +52,7 @@ tr:hover .hov,.row:hover .hov,.pcell:hover .hov,.hov:focus-within,tr:focus-withi
 .kv>div{padding:12px 14px;box-shadow:1px 0 0 var(--line),0 1px 0 var(--line)}
 .kv .k{color:var(--muted-2);font-size:12px}
 .kv .v{font:800 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.kv .v small{font-size:13px;color:var(--muted)}
+.kv .v small{font-size:13px;color:var(--muted)}.kv .v.warn{color:var(--warn)}
 /* A week strip: seven equal columns of a card, each day a column. */
 .week7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;border-top:1px solid var(--line)}
 .week7>div{min-height:120px;padding:10px 12px;box-shadow:1px 0 0 var(--line)}
