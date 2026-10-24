@@ -606,6 +606,7 @@
       var cats = A.moneyCats(j, function (k) { M.filter = k; render(data); }, load, function () { render(data); });
       var accts = A.moneyAccts(j, function (k) { M.acct = k; if (k) M.toList = true; render(data); }, load);
       var card = cardWith('wallet', 'Траты', null, el('div')), box = card.lastChild;
+      card.mfs = [A.moneySpendsLine(j)];
       A.moneyFilterChips(card.firstChild, function () { render(data); });
       function fill() {
         var list = M.found ? M.found.rows || [] : rows.filter(A.moneyShown);
@@ -629,10 +630,11 @@
       card.insertBefore(A.moneySearchBar(fill), box);
       fill();
       // His order of the cards (docs/specs/money-11.md §8): «Графики» over the panes when it is on, the list on the
-      // left when it is on, the others down the right column in his order.
+      // left when it is on, the others down the right column in his order; each folds as on the phone (money-13.md).
       var right = el('div');
       A.moneyCardsInto(right, { card_debt: debt, cats: cats, accts: accts, debts: debts, goals: goals, fixed: fixed, subs: subs });
-      if (A.moneyCardOn('charts')) body.appendChild(charts);
+      A.moneyFold(card, 'list');
+      if (A.moneyCardOn('charts')) body.appendChild(A.moneyFold(charts, 'charts'));
       charts.mtFor = j.month;
       A.moneyTrendsDraw(charts);
       var p = A.moneyCardOn('list') ? D.panes(card, right) : right;

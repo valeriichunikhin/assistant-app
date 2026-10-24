@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 11:33">
+<meta name="published" content="2026-10-24 13:58">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -611,6 +611,26 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mcol.none.on{box-shadow:0 0 0 2px var(--solid),0 0 0 4px var(--muted)}.mcol.none.on::after{display:none}
 .mhist .row.tap{cursor:pointer}
 .row.mcat .btn.x.mopen{margin-left:-8px}
+/* Folding (docs/specs/money-13.md): a card of «Деньги» folds to its header; the chevron points up while it is open, the
+   pin marks a pinned mode, the total sits under the title while folded. The card's own height animates (mfanim). */
+.mfh{cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.mfh h3{border-radius:var(--r-s)}.mfh h3:focus-visible{outline-offset:4px}
+.mfh .mfv,.mfh .mfp{flex:none;width:18px;height:18px;color:var(--muted)}.mfh .mfp{width:15px;height:15px;display:none}
+.mfh .mfv{transform:rotate(180deg);transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.mfh .btn.x.mfm{min-width:36px;min-height:36px;margin:-6px -8px -6px -4px;padding:0;background:none;box-shadow:none;color:var(--muted)}
+.mfh .mfs{display:none;order:9;flex-basis:100%;min-width:0;margin:-6px 0 0;padding-left:38px;color:var(--muted);font:13px/1.35 var(--font-num);
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mfh .mfs .mdd .i{width:12px;height:12px}
+.card.mfpin>.mfh .mfp{display:block}
+.card.mfx>.mfh{flex-wrap:wrap;row-gap:0;padding-bottom:10px}.card.mfx>.mfh .mfs{display:block}.card.mfx>.mfh .mfv{transform:none}
+.card.mfx>.mfh>:not(.ico):not(h3):not(.mfs):not(.mfp):not(.mfm):not(.mfv){display:none}
+.card.mfold>:not(.mfh){display:none}
+.card.mfanim{transition:height .22s cubic-bezier(.2,.8,.2,1)}
+.mfseg{display:inline-flex;gap:2px;margin:6px 0 0;padding:2px;border:1px solid var(--line);border-radius:var(--r-s)}
+.mfseg button{display:grid;place-items:center;width:40px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer}
+.mfseg button .i{width:16px;height:16px}.mfseg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
+.mfseg button:focus-visible{outline-offset:-2px}
+.mmenus .mlink.mmenu:disabled{opacity:.45;cursor:default}.mmenus .mlink.mmenu>.i.mfon{color:var(--accent)}
 /* The eighth batch (docs/specs/money-8.md): «⋯» of the month as a list; the review's sentence, its blocks under small
    headings, next month's budget with a field per row and the total under them; «Разложить» with its chips scrolling
    inside the sheet; a renewal's question over a subscription's sheet; the year wide on the desktop, two columns. */
@@ -799,6 +819,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></symbol>
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
 <symbol id="i-arrow-up-down" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></symbol>
+<symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+<symbol id="i-unfold-vertical" viewBox="0 0 24 24"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></symbol>
+<symbol id="i-fold-vertical" viewBox="0 0 24 24"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3-3-3 3"/><path d="m15 5-3 3-3-3"/></symbol>
+<symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1286,11 +1310,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function keysIn(v, keys) {
     return Array.isArray(v) ? v.filter(function (k, i) { return keys.indexOf(k) >= 0 && v.indexOf(k) === i; }) : [];
   }
+  // The «Деньги» cards pinned open or folded (docs/specs/money-13.md §2): {key: 'open' | 'closed'}, in MONEY_CARD_KEYS
+  // order as the server answers it; anything else → {}.
+  function foldIn(v) {
+    var o = {};
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      MONEY_CARD_KEYS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(v, k) && (v[k] === 'open' || v[k] === 'closed')) o[k] = v[k]; });
+    }
+    return o;
+  }
   function normPrefs(p) {
     var t = (p && p.tabs) || {}, h = (p && p.home) || {}, m = p && p.muted, mo = (p && p.money) || {};
     return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS) },
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
-      money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS) } };
+      money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold),
+        folded: keysIn(mo.folded, MONEY_CARD_KEYS) } };
   }
   // The switchable modules [{env, name}] as the server last listed them.
   function normModules(v) {
@@ -2345,16 +2379,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // A tap changes the mark on screen at once; the save goes 400 ms after the last tap on that item, with the final
   // state, and not at all when that is the last confirmed one. A failed save puts the confirmed state back.
   // Per key ('item:<id>', 'pick:<batch>:<id>'): ok (confirmed), want (on screen), send(state) → a promise of the
-  // server's state, show(state) to put a state on screen, fail(err) after a revert; n saves under way, t the timer.
+  // server's state, show(state) to put a state on screen, fail(err) after a revert; n saves under way, t the timer;
+  // ms, another wait than 400 ms.
   var marks = {}, SAVE_FAILED = 'Не сохранилось — проверь связь';
-  function mark(key, want, was, send, show, fail) {
+  function mark(key, want, was, send, show, fail, ms) {
     var m = marks[key] || (marks[key] = { ok: was, n: 0, busy: Promise.resolve() });
     m.want = want;
     m.send = send;
     m.show = show;
     m.fail = fail;
     clearTimeout(m.t);
-    m.t = setTimeout(function () { flushMark(key); }, 400);
+    m.t = setTimeout(function () { flushMark(key); }, ms || 400);
   }
   function flushMark(key) {
     var m = marks[key];
@@ -6753,7 +6788,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function goalIcon(k) { return k === 'piggy-bank' ? 'piggy' : GOAL_ICONS.indexOf(k) >= 0 ? k : 'target'; }
   // The month he looks at (YYYY-MM; the first open shows the current one) and the category the spends are filtered by;
   // one copy for the phone and the desktop view. The history reaches back to MONEY_FROM.
-  var MONEY = { month: null, filter: null, sub: null, acct: null, accounts: [], people: [], state: null, q: '', found: null, colors: {} },
+  // foldTmp: a pinned card folded or opened by a tap until he leaves the tab; foldNodes: each card's node (or box) on
+  // screen (docs/specs/money-13.md).
+  var MONEY = { month: null, filter: null, sub: null, acct: null, accounts: [], people: [], state: null, q: '', found: null, colors: {},
+    foldTmp: {}, foldNodes: {} },
     MONEY_FROM = '2026-02';
   try { MONEY.colors = JSON.parse(store('moneyColors') || '{}') || {}; } catch (e) {}
   // A person by id ({id, name, archived}, from the month's answer or money_state), null for none.
@@ -7553,7 +7591,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var q = el('div', 'mdqb');
     moneyDebtQueue(d, q);
     function open() { moneyDebtSheet(d, c); }
-    tap(c.firstChild, open);
+    // Folded (docs/specs/money-13.md §1): «4 854 zł · ↑ +372 за месяц»; the header folds, the body opens the sheet.
+    c.mfs = [mtZl(d.total), moneyDebtDiff(d, 'num')];
     return add(c, tap(box, open), q.firstChild ? tap(q, open) : null);
   }
   // «Долг по картам» in a sheet: the sum and the change, the bar, a row per card in the queue (its place, the rate of
@@ -7720,6 +7759,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     }
     cats.appendChild(moneyWish(j));
     var list = (j.by_category || []).slice();
+    // Folded (docs/specs/money-13.md §1): «5 категорий · больше всего: Дом».
+    var top = list.reduce(function (a, b) { return !a || b.sum > a.sum ? b : a; }, null);
+    cats.mfs = top ? [list.length + ' ' + plural(list.length, ['категория', 'категории', 'категорий']), 'больше всего: ' + moneyCat(top.category)[1]]
+      : ['трат нет'];
     Object.keys(budgets).forEach(function (k) {
       if (k !== 'total' && !list.some(function (b) { return b.category === k; })) list.push({ category: k, sum: 0, count: 0 });
     });
@@ -7773,7 +7816,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       : (j.by_account || []).map(function (b) { return { key: b.account, name: moneyAcctName(b.account) || b.account, currency: b.currency, balance: null }; });
     clear(box);
     if (!list.length) return;
-    var card = mkCard('landmark', 'По счетам');
+    var card = mkCard('landmark', 'По счетам'), own = 0;
+    // Folded (docs/specs/money-13.md §1): his own money — what the accounts in zł that are not credit cards hold.
+    list.forEach(function (a) { if (!a.credit && a.currency === 'PLN' && a.balance > 0) own += a.balance; });
+    card.mfs = st ? ['свои ' + mtZl(own), list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])]
+      : [list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])];
     if (st && list.length > 1) {
       var ord = label(el('button', 'mtoday'), 'arrow-up-down', 'Порядок');
       ord.type = 'button';
@@ -7989,6 +8036,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var open = ppl.filter(function (p) { return p.balance; }).sort(function (a, b) { return Math.abs(b.balance) - Math.abs(a.balance); });
     var zero = ppl.filter(function (p) { return !p.balance; });
     var card = mkCard('hand-coins', 'Долги', open.length ? 'Мне должны ' + moneyInt(owed) + ' zł · Я должен ' + moneyInt(owe) + ' zł' : 'Все в расчёте');
+    card.mfs = [card.lastChild.textContent];
     var rows = el('div');
     function row(p) {
       var due = p.remind_on ? ' · вернуть до ' + p.remind_on.slice(8, 10) + '.' + p.remind_on.slice(5, 7) : '';
@@ -8163,6 +8211,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var st = MONEY.state;
     if (!st) return;
     var goals = st.goals || [], card = mkCard('target', 'Цели');
+    card.mfs = [goals.length ? goals.length + ' ' + plural(goals.length, ['цель', 'цели', 'целей']) : 'целей пока нет'];
     goals.forEach(function (g) {
       var p = g.target ? g.saved / g.target : 0;
       var zl = function (v) { return moneyInt(v).replace(/ /g, '\u00a0') + '\u00a0zł'; };
@@ -8520,7 +8569,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var list = (j && j[g[0]]) || [], all = g[3], hints = g[0] === 'subs' ? (j && j.suggestions) || [] : [];
       if (!list.length && g[0] === 'fixed') return;
       var sums = (j && j.totals && j.totals[g[0]]) || {}, curs = Object.keys(sums).sort(function (a, b) { return (b === 'PLN') - (a === 'PLN') || (a < b ? -1 : 1); });
-      var card = mkCard(g[1], g[2]), rows = el('div');
+      var card = mkCard(g[1], g[2]), rows = el('div'), act = list.filter(function (s) { return s.active !== false; }).length;
+      // Folded (docs/specs/money-13.md §1): «3 подписки · ≈ 45 zł в месяц».
+      card.mfs = act || curs.length ? [act + ' ' + plural(act, g[0] === 'subs' ? ['подписка', 'подписки', 'подписок'] : ['платёж', 'платежа', 'платежей'])]
+        .concat(curs.map(function (c, i) { return (i ? '+ ' : '≈ ') + moneyInt(sums[c]) + ' ' + moneyCur(c) + ' в месяц'; })) : ['пока пусто'];
       if (curs.length) {
         card.appendChild(add.apply(null, [el('div', 'sub msubsum')].concat(curs.map(function (c, i) {
           return el('div', 'num', (i ? '+ ' : '≈ ') + moneyInt(sums[c]) + ' ' + moneyCur(c) + ' в месяц');
@@ -9354,7 +9406,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     box.mtPend = null;
     box.mtMonth = t.month;
     if (t.month === MONEY.month) MONEY.trends = t;
-    var card = mkCard('chart', 'Графики');
+    var card = mkCard('chart', 'Графики'), tm = (t.months || []).filter(function (x) { return x.month === t.month; })[0];
+    // Folded (docs/specs/money-13.md §1): the month's sum and, for the current one, where its pace leads.
+    card.mfs = [monthLabel(t.month).split(' ')[0] + ': ' + mtZl(tm ? tm.total : 0),
+      t.pace && t.pace.forecast != null ? 'прогноз ≈ ' + mtZl(t.pace.forecast) : null];
     // Away from the current month, «Сегодня» on the card too (docs/specs/money-11.md §9).
     if (box.mtGo && MONEY.month && MONEY.month !== monthNow()) {
       var back = label(el('button', 'mtoday'), 'calendar', 'Сегодня');
@@ -9604,6 +9659,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var cats = moneyCats(j, function (k) { MONEY.filter = k; if (k) MONEY.toList = true; haptic(); render(data); }, load, function () { render(data); });
       var accts = moneyAccts(j, function (k) { MONEY.acct = k; if (k) MONEY.toList = true; haptic(); render(data); }, load);
       var list = mkCard('wallet', 'Траты'), rowsBox = el('div');
+      list.mfs = [moneySpendsLine(j)];
       moneyFilterChips(list.firstChild, function () { render(data); });
       function fill() {
         clear(rowsBox);
@@ -9942,15 +9998,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (prefsHook && prefsHook.tab === current && prefsHook.modules) prefsHook.modules();
   }
   // next without muted keeps the modules as they are (the tab and card switches send the whole settings); without money,
-  // the «Деньги» cards (and the reverse: a money edit sends money only).
-  function editPrefs(next, focus) {
-    next = { tabs: next.tabs || prefs.tabs, home: next.home || prefs.home, muted: next.muted || prefs.muted, money: next.money || prefs.money };
+  // the «Деньги» cards (and the reverse: a money edit sends money only), whose fields left out stay as they are.
+  // quiet: the view on screen is already right (a card folded by a tap, docs/specs/money-13.md §2) — no redraw, and the
+  // save waits 600 ms, so a run of taps is one request.
+  function editPrefs(next, focus, quiet) {
+    next = { tabs: next.tabs || prefs.tabs, home: next.home || prefs.home, muted: next.muted || prefs.muted,
+      money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
-    setPrefs(normPrefs(next), focus);
+    setPrefs(normPrefs(next), focus, quiet);
     mark('prefs', JSON.stringify(prefs), was, sendPrefs, function (s) { setPrefs(JSON.parse(s)); },
-      function () { toast(SAVE_FAILED); });
+      function () { toast(SAVE_FAILED); }, quiet ? 600 : 0);
   }
   // The server's answer is the confirmed state; it is also the cached copy the next start draws from.
   function sendPrefs(s) {
@@ -10103,9 +10162,178 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     return o.concat(MONEY_CARD_KEYS.filter(function (k) { return o.indexOf(k) < 0; }));
   }
   function moneyCardOn(k) { return prefs.money.hidden.indexOf(k) < 0; }
-  // The cards of the tab in order into box, the switched-off ones left out (an absent card is skipped).
+  // The cards of the tab in order into box, the switched-off ones left out (an absent card is skipped), each foldable.
   function moneyCardsInto(box, cards) {
-    moneyCardOrder().forEach(function (k) { if (moneyCardOn(k) && cards[k]) box.appendChild(cards[k]); });
+    moneyCardOrder().forEach(function (k) { if (moneyCardOn(k) && cards[k]) box.appendChild(moneyFold(cards[k], k)); });
+  }
+  // «Траты» folded (docs/specs/money-13.md §1): «12 трат» this month («200+ трат» when the answer was cut).
+  function moneySpendsLine(j) {
+    var n = (j.rows || []).filter(function (r) { return (r.kind || 'expense') === 'expense'; }).length;
+    return n + (j.more ? '+' : '') + ' ' + plural(n, ['трата', 'траты', 'трат']);
+  }
+  // Folding (docs/specs/money-13.md): a tap on a card's header folds it to the header and one line of total (card.mfs:
+  // the strings or nodes its builder left), or unfolds it; the chevron turns and the card's own height animates. The
+  // mode is prefs.money.fold[key] — 'open' / 'closed' pinned (a tap only lasts until he leaves the tab: MONEY.foldTmp),
+  // none — as he left it, prefs.money.folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
+  function moneyFolded(k) {
+    if (Object.prototype.hasOwnProperty.call(MONEY.foldTmp, k)) return MONEY.foldTmp[k];
+    var f = prefs.money.fold[k];
+    return f ? f === 'closed' : prefs.money.folded.indexOf(k) >= 0;
+  }
+  // node is the card, or a box its painter draws the card into again (charts, accounts, debts, goals, subscriptions): a
+  // card that lands there later is dressed as it comes, before it is painted.
+  function moneyFold(node, key) {
+    MONEY.foldNodes[key] = node;
+    if (node.classList.contains('card')) moneyFoldDress(node, key);
+    else {
+      if (!node.mfObs && window.MutationObserver) {
+        node.mfObs = new MutationObserver(function () { moneyFoldDress(node.firstElementChild, key); });
+        node.mfObs.observe(node, { childList: true });
+      }
+      moneyFoldDress(node.firstElementChild, key);
+    }
+    return node;
+  }
+  // The click that ends a long press is the finger lifting, not a tap: swallowed once.
+  var foldSwallow = 0;
+  document.addEventListener('click', function (ev) {
+    if (Date.now() < foldSwallow) { foldSwallow = 0; ev.stopPropagation(); ev.preventDefault(); }
+  }, true);
+  function moneyFoldDress(card, key) {
+    var h = card && card.firstElementChild;
+    if (!h || !card.classList.contains('card') || !h.classList.contains('ch')) return;
+    if (card.mfKey === key) return moneyFoldShow(card, moneyFolded(key));
+    var h3 = h.querySelector('h3'), name = MONEY_CARDS[MONEY_CARD_KEYS.indexOf(key)][1], lt = 0, lx = 0, ly = 0;
+    var more = add(el('button', 'btn ghost x mfm'), icon('more'));
+    more.type = 'button';
+    more.setAttribute('aria-label', name + ': порядок и закрепление');
+    more.onclick = function () { moneyCardSheet(key, more); };
+    h.insertBefore(dotted(el('span', 'mfs'), card.mfs || []), h3.nextSibling);
+    add(h, icon('lock', 'mfp'), more, icon('chevron-down', 'mfv'));
+    h.classList.add('mfh');
+    card.classList.add('mf');
+    card.mfKey = key;
+    h3.tabIndex = 0;
+    h3.setAttribute('role', 'button');
+    function toggle() {
+      var c = !moneyFolded(key), f = prefs.money.folded;
+      if (prefs.money.fold[key]) { MONEY.foldTmp[key] = c; haptic(); }
+      else editPrefs({ money: { folded: c ? f.concat([key]) : f.filter(function (k) { return k !== key; }) } }, null, true);
+      moneyFoldShow(card, c, true);
+    }
+    // The header's own buttons (accounts' «Порядок», «Сегодня», a filter's chip, «⋯») keep their taps.
+    function own(t) { var b = t && t.closest ? t.closest('button, a, input, select') : null; return !!b && h.contains(b); }
+    h.onclick = function (ev) { if (!own(ev.target)) toggle(); };
+    h3.onkeydown = function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); } };
+    function stop() { clearTimeout(lt); lt = 0; }
+    h.addEventListener('pointerdown', function (ev) {
+      if (ev.button || own(ev.target)) return;
+      stop();
+      lx = ev.clientX;
+      ly = ev.clientY;
+      lt = setTimeout(function () {
+        lt = 0;
+        function lift(e) {
+          document.removeEventListener('pointerup', lift, true);
+          document.removeEventListener('pointercancel', lift, true);
+          if (e.type === 'pointerup') foldSwallow = Date.now() + 400;
+        }
+        document.addEventListener('pointerup', lift, true);
+        document.addEventListener('pointercancel', lift, true);
+        moneyCardSheet(key, h3);
+      }, 500);
+    });
+    h.addEventListener('pointermove', function (ev) { if (lt && Math.abs(ev.clientX - lx) + Math.abs(ev.clientY - ly) > 10) stop(); });
+    h.addEventListener('pointerup', stop);
+    h.addEventListener('pointercancel', stop);
+    h.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+    moneyFoldShow(card, moneyFolded(key));
+  }
+  // The card on screen folded (closed) or open; anim: from its height now to the new one, the content clipped by the
+  // card while it folds. mfx turns the chevron and shows the total, mfold hides the body, mfpin shows the pin.
+  function moneyFoldShow(card, closed, anim) {
+    var h3 = card.firstElementChild.querySelector('h3');
+    h3.setAttribute('aria-expanded', String(!closed));
+    card.classList.toggle('mfpin', !!prefs.money.fold[card.mfKey]);
+    if (card.classList.contains('mfx') === closed && !card.mfT) return;
+    var from = card.offsetHeight;
+    clearTimeout(card.mfT);
+    card.mfT = 0;
+    card.classList.remove('mfanim');
+    card.style.height = '';
+    card.classList.toggle('mfx', closed);
+    card.classList.toggle('mfold', closed);
+    if (!anim || !card.isConnected || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    var to = card.offsetHeight;
+    card.classList.remove('mfold');
+    card.style.height = from + 'px';
+    void card.offsetHeight;
+    card.classList.add('mfanim');
+    card.style.height = to + 'px';
+    card.mfT = setTimeout(function () {
+      card.mfT = 0;
+      card.classList.remove('mfanim');
+      card.style.height = '';
+      card.classList.toggle('mfold', closed);
+    }, 240);
+  }
+  // A card's mode: 'open', 'closed' or null — as he leaves it, starting from how it is now.
+  function moneyCardMode(key, mode) {
+    var fold = Object.assign({}, prefs.money.fold), now = moneyFolded(key);
+    var folded = prefs.money.folded.filter(function (k) { return k !== key; }).concat(!mode && now ? [key] : []);
+    if (mode) fold[key] = mode;
+    else delete fold[key];
+    delete MONEY.foldTmp[key];
+    editPrefs({ money: { fold: fold, folded: folded } }, ['money', key, 'm-' + (mode || 'auto')]);
+  }
+  // The cards he sees: on, and drawn now (a card without data, «Постоянные платежи» with none, is not passed over).
+  function moneyCardShown(k) {
+    var n = MONEY.foldNodes[k];
+    return moneyCardOn(k) && !!n && n.isConnected && (n.classList.contains('card') || !!n.querySelector(':scope>.card'));
+  }
+  // «Выше» / «Ниже»: past the next card he sees, in his whole order.
+  function moneyCardMove(key, d) {
+    var o = moneyCardOrder(), vis = o.filter(function (k) { return k === key || moneyCardShown(k); }), to = vis[vis.indexOf(key) + d];
+    if (!to) return;
+    o.splice(o.indexOf(key), 1);
+    o.splice(o.indexOf(to) + (d > 0 ? 1 : 0), 0, key);
+    editPrefs({ money: { order: o } }, ['money', key, d < 0 ? 'up' : 'down']);
+  }
+  var FOLD_MODES = [['open', 'unfold-vertical', 'Всегда открыта'], ['closed', 'fold-vertical', 'Всегда свёрнута'], [null, 'history', 'Помнить, как оставил']];
+  // The card's sheet (§3): «Выше» / «Ниже» move it at once and the sheet stays for another step; the three modes, the
+  // current one checked; «Скрыть»; «Все карточки…» — «Порядок карточек». Painted again on a settings change.
+  function moneyCardSheet(key, from) {
+    var c = MONEY_CARDS[MONEY_CARD_KEYS.indexOf(key)], close = noop, box = el('div', 'mmenus');
+    function item(ic, s, fn, on) {
+      var b = add(el('button', 'mlink mmenu'), icon(ic), add(el('span', 'tx'), el('span', 't', s)), on ? icon('check', 'mfon') : null);
+      b.type = 'button';
+      b.onclick = fn;
+      if (on !== undefined) b.setAttribute('aria-pressed', String(on));
+      return b;
+    }
+    function paint() {
+      if (!moneyCardOn(key)) return close();
+      var vis = moneyCardOrder().filter(function (k) { return k === key || moneyCardShown(k); }), i = vis.indexOf(key), mode = prefs.money.fold[key] || null;
+      var up = item('arrow-up', 'Выше', function () { moneyCardMove(key, -1); }), down = item('arrow-down', 'Ниже', function () { moneyCardMove(key, 1); });
+      up.disabled = i <= 0;
+      down.disabled = i < 0 || i >= vis.length - 1;
+      add(clear(box), up, down);
+      FOLD_MODES.forEach(function (m) { box.appendChild(item(m[1], m[2], function () { if (mode !== m[0]) moneyCardMode(key, m[0]); }, mode === m[0])); });
+      add(box, item('eye-off', 'Скрыть', function () {
+        close();
+        editPrefs({ money: { hidden: prefs.money.hidden.concat([key]) } }, ['money', key, 'tog']);
+        toast('Карточка скрыта — вернуть: ⋯ → Порядок карточек');
+      }), item('arrow-up-down', 'Все карточки…', function () { close(); moneyCardsSheet(from); }));
+      // The keyboard stays on the step he took, or the one beside it at the end of the order.
+      var f = box.querySelector('button:focus') ? null : MONEY.cardSheetFocus;
+      if (f) { var b = [].filter.call(box.children, function (x) { return x.textContent === f && !x.disabled; })[0]; if (b) b.focus(); }
+    }
+    box.paint = paint;
+    MONEY.cardSheetFocus = null;
+    box.addEventListener('click', function (ev) { var b = ev.target.closest('button'); MONEY.cardSheetFocus = b ? b.textContent : null; }, true);
+    MONEY.cardSheet = box;
+    paint();
+    close = legalSheet(c[1], [box], from);
   }
   // «Карточки «Денег»»: the same rows as «Карточки на «Сегодня»» — a toggle, the name, ▲ ▼ — and «Сбросить»; on «Что
   // нового» and in the month's «⋯» → «Порядок карточек». The month's header with «Сегодня можно ещё» stays first.
@@ -10113,9 +10341,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var card = mkCard('arrow-up-down', 'Карточки «Денег»'), rows = el('div'), foot = el('div', 'foot');
     var reset = el('button', 'btn ghost', 'Сбросить');
     reset.type = 'button';
-    reset.onclick = function () { editPrefs({ money: { hidden: [], order: [] } }, ['money', 'reset']); };
+    reset.onclick = function () { editPrefs({ money: { hidden: [], order: [], fold: {}, folded: [] } }, ['money', 'reset']); };
     foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Шапка месяца всегда первая; категории внутри карточки — по сумме'), rows);
+    add(card, el('div', 'sub', 'Шапка месяца всегда первая; категории внутри карточки — по сумме. Под названием — как карточка открывается'), rows);
     card.paint = function (focus) {
       var hid = prefs.money.hidden, keys = moneyCardOrder();
       clear(rows);
@@ -10127,27 +10355,44 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
           o.splice(i + d, 0, k);
           editPrefs({ money: { hidden: hid, order: o } }, ['money', k, d < 0 ? 'up' : 'down']);
         }
+        // The card's mode (docs/specs/money-13.md §3): as he leaves it, always open, always folded.
+        var seg = el('div', 'mfseg'), mode = prefs.money.fold[k] || null;
+        seg.setAttribute('role', 'group');
+        seg.setAttribute('aria-label', name + ': как открывается');
+        [FOLD_MODES[2], FOLD_MODES[0], FOLD_MODES[1]].forEach(function (m) {
+          var b = add(el('button', mode === m[0] ? 'on' : ''), icon(m[1]));
+          b.type = 'button';
+          b.title = m[2];
+          b.setAttribute('aria-label', name + ': ' + m[2].toLowerCase());
+          b.setAttribute('aria-pressed', String(mode === m[0]));
+          b.f = 'm-' + (m[0] || 'auto');
+          b.onclick = function () { if (mode !== m[0]) moneyCardMode(k, m[0]); };
+          seg.appendChild(b);
+        });
         add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' во вкладке «Деньги»', on: on }, 'tog', false, function () {
           editPrefs({ money: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }), order: prefs.money.order } },
             ['money', k, 'tog']);
-        }), el('span', 'tx t', name),
+        }), add(el('span', 'tx'), el('div', 't', name), seg),
           rowBtn('chevron-up', { label: name + ': выше' }, 'up', i === 0, function () { move(-1); }),
           rowBtn('chevron-down', { label: name + ': ниже' }, 'down', i === keys.length - 1, function () { move(1); }));
         row.k = k;
         rows.appendChild(row);
       });
-      if (hid.length || prefs.money.order.length) card.appendChild(foot);
+      if (hid.length || prefs.money.order.length || Object.keys(prefs.money.fold).length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       refocus(rows, focus, 'money');
     };
     card.paint();
     return card;
   }
-  // The money view's hook (phone or desktop): a settings change redraws the tab and the order sheet if it is open.
+  // The money view's hook (phone or desktop): a settings change redraws the tab and the order sheet or a card's sheet
+  // if one is open. A view opening is him coming to the tab: the pinned cards are back in their mode.
   function moneyPrefsHook(fn) {
+    MONEY.foldTmp = {};
     prefsHook = { tab: 'money', fn: function (focus) {
       if (MONEY.cardsCard && MONEY.cardsCard.isConnected) MONEY.cardsCard.paint(focus);
       fn();
+      if (MONEY.cardSheet && MONEY.cardSheet.isConnected) MONEY.cardSheet.paint();
     } };
   }
   function moneyCardsSheet(from) {
@@ -10412,7 +10657,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
-    moneyCardsInto: moneyCardsInto, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
+    moneyCardsInto: moneyCardsInto, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
