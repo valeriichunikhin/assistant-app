@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 13:58">
+<meta name="published" content="2026-10-24 14:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -7855,6 +7855,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       tap(r, function () { box.onFilter(on ? null : a.key); });
       card.appendChild(r);
     });
+    // «Перевод» right here (his word 24.10.2026: he could not find it under «+»): the transfer sheet, from the last account.
+    if (st && list.length > 1) {
+      var tr = add(el('button', 'mlink'), icon('arrow-left-right'), document.createTextNode('Перевод'));
+      tr.type = 'button';
+      tr.onclick = function () { moneySheet(null, box.done || noop, tr, 'transfer'); };
+      card.appendChild(tr);
+    }
     box.appendChild(card);
   }
   // «Порядок счетов»: the visible accounts with ▲ ▼ like «Порядок карточек»; a move is drawn at once (the state's list and
@@ -7943,12 +7950,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var all = label(el('button', 'btn ghost'), 'search', 'Все операции');
     all.type = 'button';
     all.onclick = function () { close(); moneyAcctAll(a); };
+    // A transfer from this account (24.10.2026).
+    var tr = label(el('button', 'btn ghost'), 'arrow-left-right', 'Перевод');
+    tr.type = 'button';
+    tr.onclick = function () { store('moneyAcct', a.key); moneySheet(null, done, tr, 'transfer'); };
     close = legalSheet(a.name, [
       add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), amt, el('span', 'mu', a.currency !== 'PLN' ? a.currency : 'zł'))),
       el('div', 'mu msrc', a.opening_at ? 'Баланс считается с ' + whenW(a.opening_at) + ': тогда было ' + (a.opening < 0 ? '−' : '') +
         moneyFmt(Math.abs(a.opening), a.currency) + '.' : 'Баланс ещё не задан: введи, сколько сейчас на счёте.'),
       cr, credit ? add(el('div', 'bar'), add(el('label', 'field'), icon('landmark'), lim, el('span', 'mu', a.currency !== 'PLN' ? a.currency : 'zł'))) : null,
-      add(el('div', 'bar mact'), save, hide), add(el('div', 'bar mact'), all)], from);
+      add(el('div', 'bar mact'), save, hide), add(el('div', 'bar mact'), tr, all)], from);
   }
   // A typed signed amount: «−1 398,25» → -1398.25; null for anything else.
   function moneySigned(s) {
