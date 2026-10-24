@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 22:00">
+<meta name="published" content="2026-10-24 23:19">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -9621,86 +9621,150 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       my.onclick = function () { moneyRegularSheet(my); };
       nodes.push(my);
     }
-    var entry = (j.by_category || []).filter(function (b) { return b.category === key; })[0];
-    if (MONEY_SUBS[key] && entry && entry.subs && entry.subs.length) {
-      var sb = add(el('div', 'msubs'), el('div', 'fst', 'По подкатегориям · ' + monthLabel(j.month).toLowerCase()));
-      entry.subs.forEach(function (x) {
-        var sc = x.key ? moneySub(key, x.key) : null, share = entry.sum ? x.sum / entry.sum : 0;
-        var bar = moneyBar(share);
-        moneyTint(bar.firstChild, key);
-        var row = add(el('div', 'row mcat'), moneyCatTile(key, sc ? sc[2] : c[2]),
-          add(el('span', 'tx'), el('div', 't', sc ? sc[1] : 'Без подкатегории'), bar),
-          add(el('span', 'pr'), document.createTextNode(moneyFmt(x.sum)),
-            el('span', 'mu', x.count + ' ' + plural(x.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))));
-        if (onSub) {
-          row.setAttribute('role', 'button');
-          row.setAttribute('aria-label', 'Показать траты: ' + (sc ? sc[1] : 'без подкатегории'));
-          tap(row, function () { close(); onSub(x.key || '-'); });
-        }
-        sb.appendChild(row);
-      });
-      nodes.push(sb);
-    }
-    nodes.push(chartBox);
+    // What is the month's own (subcategories over the chart; places and «Все траты» under it) is drawn by month(m), so a
+    // tap on another month's bar redraws it in the sheet (his word 24.10.2026: «только в этом окне»); the chart, its
+    // mean and budget are the same 12 months whichever month is picked.
+    var pre = el('div'), post = el('div'), sel = j.month;
+    nodes.push(pre, chartBox);
     var avg = full.length ? full.reduce(function (a, m) { return a + (m.by_category[key] || 0); }, 0) / full.length : 0;
     if (t) nodes.push(el('div', 'mcap', (full.length ? 'В среднем за месяц ' + mtZl(avg) : 'Полных месяцев ещё нет') +
       (budget ? ' · бюджет ' + mtZl(budget) : '')));
-    // «Где больше всего» by place (docs/specs/money-11.md §2): a chain's shops as one, any other merchant without its
-    // digit tail. Each row's icon as a spend's: the logo, else the subcategory most of its spends have, else what its
-    // name says, else the category's; a tap opens the place with its spends.
-    var by = {}, list = [], n = 0;
-    (j.rows || []).forEach(function (r) {
-      if (r.category !== key || (r.kind || 'expense') !== 'expense') return;
-      n++;
-      if (r.currency !== 'PLN') return;
-      var name = moneyPlace(r), k = name.toLowerCase(), e = by[k] || (by[k] = { name: name, sum: 0, count: 0, rows: [], subs: {} });
-      if (!e.count) list.push(e);
-      e.sum += moneyOwn(r);
-      e.count++;
-      e.rows.push(r);
-      if (moneySub(key, r.subcategory)) e.subs[r.subcategory] = (e.subs[r.subcategory] || 0) + 1;
-    });
-    list.sort(function (a, b) { return b.sum - a.sum; });
-    if (list.length) {
-      var top = el('div', 'mtop5');
-      add(top, el('div', 'fst', 'Где больше всего · ' + monthLabel(j.month).toLowerCase()));
-      list.slice(0, 5).forEach(function (e) {
-        var sk = Object.keys(e.subs).sort(function (a, b) { return e.subs[b] - e.subs[a]; })[0], sc = sk ? moneySub(key, sk) : null;
-        var row = add(el('div', 'row mplace'), moneyTile(e.rows[0].merchant || e.name, c[2], key, sc && sc[2]), add(el('span', 'tx'), el('div', 't', e.name),
-          el('div', 'mu', e.count + ' ' + plural(e.count, ['покупка', 'покупки', 'покупок']))), el('span', 'pr', moneyFmt(e.sum / 100)), icon('chevron-right', 'mgo'));
-        row.setAttribute('role', 'button');
-        row.setAttribute('aria-label', e.name + ': траты');
-        tap(row, function () {
-          moneyPlaceSheet(e.name, e.rows, c[1].toLowerCase() + ' · ' + monthLabel(j.month).toLowerCase(), row, function () { close(); (done || noop)(); });
-        });
-        top.appendChild(row);
-      });
-      nodes.push(top);
-    }
-    // «Все траты: Спорт · октябрь 2026 (N)» (§7): the sheet closes, the list filters by the category and comes into view.
-    if (onSub && n) {
-      var allB = label(el('button', 'btn ghost mall'), 'wallet', 'Все траты: ' + c[1] + ' · ' + monthLabel(j.month).toLowerCase() + ' (' + n + ')');
-      allB.type = 'button';
-      allB.onclick = function () { close(); onSub(null); };
-      nodes.push(add(el('div', 'bar mact'), allB));
-    }
-    close = legalSheet(c[1], nodes, from);
-    if (!t) return add(chartBox, mtEmpty(120));
-    var p = t.pace || {}, now = monthNow(), vals = t.months.map(function (m) { return { month: m.month, v: m.by_category[key] || 0 }; });
-    var cur = vals[vals.length - 1], fc = cur.month === now && p.today_day >= 5 ? cur.v / p.today_day * p.days_in_month : null;
-    var W = chartBox.clientWidth;
-    // A tap on another month's bar (his word 24.10.2026) opens that month with this category's spends.
-    function pick(mm) {
-      if (mm === MONEY.month || mm < MONEY_FROM || mm > monthNow()) return;
+    nodes.push(post);
+    // Another month than the one on screen: the sheet closes and «Деньги» opens that month, its list filtered by the
+    // category (and the subcategory, sub) and in view.
+    function toMonth(mm, sub) {
       close();
       MONEY.month = mm;
-      MONEY.acct = MONEY.sub = null;
+      MONEY.acct = null;
+      MONEY.sub = sub;
       MONEY.filter = key;
       MONEY.toList = true;
       haptic();
       (done || noop)();
     }
-    chartBox.appendChild(mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: pick }, W, wide() ? 240 : 200));
+    function month(m) {
+      var other = m.month !== j.month, ml = monthLabel(m.month).toLowerCase();
+      clear(pre);
+      clear(post);
+      var entry = (m.by_category || []).filter(function (b) { return b.category === key; })[0];
+      if (MONEY_SUBS[key] && entry && entry.subs && entry.subs.length) {
+        var sb = add(el('div', 'msubs'), el('div', 'fst', 'По подкатегориям · ' + ml));
+        entry.subs.forEach(function (x) {
+          var sc = x.key ? moneySub(key, x.key) : null, share = entry.sum ? x.sum / entry.sum : 0;
+          var bar = moneyBar(share);
+          moneyTint(bar.firstChild, key);
+          var row = add(el('div', 'row mcat'), moneyCatTile(key, sc ? sc[2] : c[2]),
+            add(el('span', 'tx'), el('div', 't', sc ? sc[1] : 'Без подкатегории'), bar),
+            add(el('span', 'pr'), document.createTextNode(moneyFmt(x.sum)),
+              el('span', 'mu', x.count + ' ' + plural(x.count, ['покупка', 'покупки', 'покупок']) + ' · ' + moneyShare(share))));
+          if (onSub) {
+            row.setAttribute('role', 'button');
+            row.setAttribute('aria-label', 'Показать траты: ' + (sc ? sc[1] : 'без подкатегории'));
+            tap(row, function () {
+              if (other) return toMonth(m.month, x.key || '-');
+              close();
+              onSub(x.key || '-');
+            });
+          }
+          sb.appendChild(row);
+        });
+        pre.appendChild(sb);
+      }
+      // «Где больше всего» by place (docs/specs/money-11.md §2): a chain's shops as one, any other merchant without its
+      // digit tail. Each row's icon as a spend's: the logo, else the subcategory most of its spends have, else what its
+      // name says, else the category's; a tap opens the place with its spends.
+      var by = {}, list = [], n = 0;
+      (m.rows || []).forEach(function (r) {
+        if (r.category !== key || (r.kind || 'expense') !== 'expense') return;
+        n++;
+        if (r.currency !== 'PLN') return;
+        var name = moneyPlace(r), k = name.toLowerCase(), e = by[k] || (by[k] = { name: name, sum: 0, count: 0, rows: [], subs: {} });
+        if (!e.count) list.push(e);
+        e.sum += moneyOwn(r);
+        e.count++;
+        e.rows.push(r);
+        if (moneySub(key, r.subcategory)) e.subs[r.subcategory] = (e.subs[r.subcategory] || 0) + 1;
+      });
+      list.sort(function (a, b) { return b.sum - a.sum; });
+      if (list.length) {
+        var top = el('div', 'mtop5');
+        add(top, el('div', 'fst', 'Где больше всего · ' + ml));
+        list.slice(0, 5).forEach(function (e) {
+          var sk = Object.keys(e.subs).sort(function (a, b) { return e.subs[b] - e.subs[a]; })[0], sc = sk ? moneySub(key, sk) : null;
+          var row = add(el('div', 'row mplace'), moneyTile(e.rows[0].merchant || e.name, c[2], key, sc && sc[2]), add(el('span', 'tx'), el('div', 't', e.name),
+            el('div', 'mu', e.count + ' ' + plural(e.count, ['покупка', 'покупки', 'покупок']))), el('span', 'pr', moneyFmt(e.sum / 100)), icon('chevron-right', 'mgo'));
+          row.setAttribute('role', 'button');
+          row.setAttribute('aria-label', e.name + ': траты');
+          tap(row, function () {
+            moneyPlaceSheet(e.name, e.rows, c[1].toLowerCase() + ' · ' + ml, row, function () { close(); (done || noop)(); });
+          });
+          top.appendChild(row);
+        });
+        post.appendChild(top);
+      }
+      // «Все траты: Спорт · октябрь 2026 (N)» (§7): the sheet closes, the list filters by the category and comes into view.
+      if (onSub && n) {
+        var allB = label(el('button', 'btn ghost mall'), 'wallet', 'Все траты: ' + c[1] + ' · ' + ml + ' (' + n + ')');
+        allB.type = 'button';
+        allB.onclick = function () {
+          if (other) return toMonth(m.month, null);
+          close();
+          onSub(null);
+        };
+        post.appendChild(add(el('div', 'bar mact'), allB));
+      }
+    }
+    month(j);
+    close = legalSheet(c[1], nodes, from);
+    if (!t) return add(chartBox, mtEmpty(120));
+    var p = t.pace || {}, now = monthNow(), vals = t.months.map(function (m) { return { month: m.month, v: m.by_category[key] || 0 }; });
+    var cur = vals[vals.length - 1], fc = cur.month === now && p.today_day >= 5 ? cur.v / p.today_day * p.days_in_month : null;
+    var W = chartBox.clientWidth;
+    function chart() { add(clear(chartBox), mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: pick, sel: sel }, W, wide() ? 240 : 200)); }
+    // A redraw keeps the chart where it was on screen: the sheet scrolls by what the parts over it grew or shrank, and
+    // what is under it does not get lower while months are browsed (the sheet stands on the bottom edge and is often
+    // scrolled to its end, so a shorter month there would pull the chart down).
+    function keep(fn) {
+      var y0 = chartBox.getBoundingClientRect().top, sc = chartBox.parentNode;
+      post.style.minHeight = post.offsetHeight + 'px';
+      fn();
+      var d = chartBox.getBoundingClientRect().top - y0;
+      if (d && sc) sc.scrollTop += d;
+    }
+    // While another month loads, the subcategories keep their height over the skeleton, so the sheet does not fold
+    // and unfold.
+    function hold(on) { pre.style.minHeight = on ? pre.offsetHeight + 'px' : ''; }
+    // Another month's answer as «Деньги» reads it (money_month, cache key money:<month>): the cached one at once, the
+    // fresh one over it when it differs; nothing cached — a skeleton and the header's busy line; a failure —
+    // «Не загрузилось · Повторить» in the sheet.
+    function load(mm) {
+      var k = 'money:' + mm;
+      if (!cacheGet(k)) {
+        hold(true);
+        clear(pre);
+        add(clear(post), skeleton(1));
+      }
+      swr({ key: k, box: post, n: 0, live: function () { return current === 'money' && sel === mm && post.isConnected; },
+        fetch: function () { return moneyAsk('month', 'money_month', { month: mm }); },
+        render: function (m) { keep(function () { hold(false); month(m); }); },
+        fail: function () { keep(function () { hold(false); clear(pre); failed(post, function () { load(mm); }); }); } });
+    }
+    // A tap on a month's bar (his word 24.10.2026) shows that month in the sheet; the month on screen is one of them,
+    // drawn from the answer the view has.
+    function pick(mm) {
+      if (mm === sel || mm < MONEY_FROM || mm > monthNow()) return;
+      sel = mm;
+      haptic();
+      keep(function () {
+        chart();
+        if (mm !== j.month) return load(mm);
+        hold(false);
+        // What the swr drew into post last no longer is on screen: going back to it draws it again.
+        post.swrKey = null;
+        month(j);
+      });
+    }
+    chart();
   }
   function moneyView() {
     var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div'), fixed = el('div'), charts = el('div'), debts = el('div'), goals = el('div');
