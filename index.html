@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 18:01">
+<meta name="published" content="2026-10-24 22:00">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -27,7 +27,9 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap">
+<!-- Manrope without holding the first paint and the script back: preloaded, applied once it is here (display=swap). -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap"></noscript>
 <style>
 /* Design: Valerii's pair of 17.10.2026 on the Geist structure (docs/specs/miniapp-geist.md): dark «21» and light
    «22», glass cards (blurred, translucent) on a violet gradient, Manrope, rows split by 1 px hairlines edge to
@@ -1208,12 +1210,38 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var d = new Date(t), p = function (x) { return ('0' + x).slice(-2); }, hm = p(d.getHours()) + ':' + p(d.getMinutes());
     return d.toDateString() === new Date().toDateString() ? hm : p(d.getDate()) + '.' + p(d.getMonth() + 1) + ' ' + hm;
   }
+  // Draws in the next frame, once each. inFrame(key, fn): the latest fn of a key, the keys in the order they came, so
+  // answers landing within one frame are drawn together and a key asked twice is drawn once; framePending(key) tells
+  // whether one waits. afterDraws(fn): after the draws of the frame running now, still in it (a chart that reads its
+  // width reads it once the page is built), or in the next frame when none runs.
+  var frameQ = null, frameTail = null;
+  function inFrame(key, fn) {
+    if (!frameQ) {
+      frameQ = {};
+      requestAnimationFrame(frameRun);
+    }
+    frameQ[key] = fn;
+  }
+  function framePending(key) { return !!(frameQ && frameQ[key]); }
+  function afterDraws(fn) {
+    if (frameTail) frameTail.push(fn);
+    else requestAnimationFrame(fn);
+  }
+  function frameRun() {
+    var q = frameQ, run = function (fn) { try { fn(); } catch (e) { setTimeout(function () { throw e; }); } };
+    frameQ = null;
+    frameTail = [];
+    for (var k in q) run(q[k]);
+    while (frameTail.length) run(frameTail.shift());
+    frameTail = null;
+  }
   // Stale-while-revalidate (docs/specs/app-cache-first.md): the last answer is drawn at once, the fresh one
-  // replaces it only when it differs. o: {key, box, n, live, fetch, render, retry, fail}
+  // replaces it only when it differs. o: {key, box, n, live, fetch, render, retry, fail, frame}
   //   key    cache key;  box  the element the view draws into;  n  skeleton cards when nothing is cached (0: none)
   //   live() → whether the answer still applies (the tab is current and the view's own mode did not change)
   //   fetch() → the api() promise;  render(j) draws j into box;  retry() the view's load, for «Повторить»
   //   fail(e), optional: the view's own error state instead of failed(box, retry); no retry and no fail: silent
+  //   frame, optional: the fresh answer is drawn in the next frame (inFrame), with the others landing in it
   function swr(o) {
     var hit = cacheGet(o.key), live = o.live(), gen = busyGen, epoch = cacheEpoch, f = o.box.firstChild;
     if (hit && (!f || onScreen(o) !== hit.s)) {
@@ -1242,19 +1270,23 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var s = JSON.stringify(j);
       done();
       if (epoch === cacheEpoch) cacheSet(o.key, s);
-      if (!here()) return;
-      // Equal data: not one node is replaced, so open rows, the scroll and the focus stay.
-      if (s !== onScreen(o) || !o.box.firstChild) {
-        setShown(o, s);
-        try {
-          o.render(j);
-        } catch (e) {
-          // A fresh answer this view cannot draw: not kept for the next open, and the retry state instead.
-          cacheDrop(o.key);
-          delete shown[o.key];
-          if (o.retry) failed(o.box, o.retry);
+      function draw() {
+        if (!here()) return;
+        // Equal data: not one node is replaced, so open rows, the scroll and the focus stay.
+        if (s !== onScreen(o) || !o.box.firstChild) {
+          setShown(o, s);
+          try {
+            o.render(j);
+          } catch (e) {
+            // A fresh answer this view cannot draw: not kept for the next open, and the retry state instead.
+            cacheDrop(o.key);
+            delete shown[o.key];
+            if (o.retry) failed(o.box, o.retry);
+          }
         }
       }
+      if (o.frame) inFrame(o.key, draw);
+      else draw();
     }, function (e) {
       done();
       if (e.login || !here()) return;
@@ -1266,7 +1298,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // Today in Warsaw for the header: «сб, 10 октября».
   function todayLabel() {
     try {
-      return new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })
+      return (todayLabel.f || (todayLabel.f = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })))
         .format(new Date());
     } catch (e) { return ''; }
   }
@@ -1687,8 +1719,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         // A segment that redraws in place, not through show(), still comes in as a tab does.
         if (main.classList.contains('swipe-l') || main.classList.contains('swipe-r')) {
           main.classList.remove('swipe-l', 'swipe-r', 'in', 'in-r', 'in-l');
-          void main.offsetWidth;
-          main.classList.add('in');
+          moveIn('in');
         }
       }, 320);
       return true;
@@ -1783,7 +1814,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // 8. The bottom bar: away on a scroll down of more than 24 px in a row past 120 px; back on 12 px up, near the top,
     // 1.5 s after the scroll stops, on the sheet and on a tab switch (openSheet, show). The sheet's and the summary's own
     // scroll do not count.
-    var lastY = document.scrollingElement.scrollTop, down = 0, up = 0, idleT = 0;
+    // lastY is read in the first frame, not while the start builds the page (that read forced a layout).
+    var lastY = 0, down = 0, up = 0, idleT = 0;
+    requestAnimationFrame(function () { lastY = document.scrollingElement.scrollTop; });
     function barBack() {
       down = up = 0;
       tabbar.classList.remove('hid');
@@ -1931,6 +1964,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (tab === 'notif') bell.setAttribute('aria-current', 'page');
     else bell.removeAttribute('aria-current');
   }
+  // The entry of main (.main.in / .in-r / .in-l, the same keyframes) by animate(): taking the class off and on again
+  // restarted it only through a forced layout. Without animate() the class as before.
+  var ENTRY = { in: ['translateY(6px)', 500], 'in-r': ['translateX(36px)', 600], 'in-l': ['translateX(-36px)', 600] };
+  function moveIn(kind) {
+    if (!main.animate) {
+      void main.offsetWidth;
+      return main.classList.add(kind);
+    }
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try {
+      main.animate([{ opacity: 0, transform: ENTRY[kind][0] }, { opacity: 1, transform: 'none' }],
+        { duration: ENTRY[kind][1], easing: 'cubic-bezier(.4,0,.2,1)' });
+    } catch (e) {}
+  }
   function show(tab) {
     if (isSeg(tab)) {
       shopSeg = tab;
@@ -1964,8 +2011,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     tabbar.classList.remove('hid');
     clear(main);
     main.classList.remove('in', 'in-r', 'in-l', 'swipe-l', 'swipe-r');
-    void main.offsetWidth;
-    main.classList.add(entry);
+    moveIn(entry);
     window.scrollTo(0, 0);
     (desk || VIEWS[tab])();
   }
@@ -1980,13 +2026,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     [/walking/i, 'footprints', 'Ходьба'], [/cycling/i, 'bike', 'Велосипед'], [/strength/i, 'dumbbell', 'Силовая'], [/^other$/i, 'medal', 'Другое']];
   function grouped(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
   function sleepLine(min) { return Math.floor(min / 60) + ' ч ' + ('0' + min % 60).slice(-2) + ' мин'; }
-  // Year, month, day, hour and minute of a moment in Warsaw.
+  // Year, month, day, hour and minute of a moment in Warsaw. The formatter is built once (wp.f): building one per call
+  // was most of the time «Деньги» took to draw.
   function wp(ts) {
     var o = {};
-    new Intl.DateTimeFormat('en-GB', {
+    (wp.f || (wp.f = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/Warsaw', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit'
-    }).formatToParts(new Date(ts)).forEach(function (x) { o[x.type] = x.value; });
+    }))).formatToParts(new Date(ts)).forEach(function (x) { o[x.type] = x.value; });
     return o;
   }
   function whenW(ts) { var p = wp(ts); return p.day + '.' + p.month + ' ' + p.hour + ':' + p.minute; }
@@ -6823,7 +6870,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // «пт, 23 октября» in Warsaw; the time «08:15»; the day's key YYYY-MM-DD.
   function moneyDay(ts) {
     try {
-      return new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })
+      return (moneyDay.f || (moneyDay.f = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })))
         .format(new Date(ts)).toLowerCase();
     } catch (e) { return dmt(ts); }
   }
@@ -7261,20 +7308,50 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     haptic();
     load();
   }
+  // One request for the four answers «Деньги» opens with (miniapp money_bundle {month} → {month, state, trends, subs})
+  // while a view's load() asks for them together (moneyTogether); each part goes on through its own swr and cache key
+  // as before. A part asked for alone (a subscription saved, another month's charts) goes by its own action, and so
+  // do all four while the server does not know money_bundle yet.
+  var moneyGroup = null;
+  function moneyTogether(run) {
+    moneyGroup = {};
+    try { run(); } finally { moneyGroup = null; }
+  }
+  function moneyAsk(part, action, body) {
+    var g = moneyGroup;
+    function own() { return api('miniapp', { action: action }, undefined, true, body); }
+    if (!g) return own();
+    if (!g.p) {
+      if (!MONEY.month) MONEY.month = monthNow();
+      g.m = MONEY.month;
+      g.p = api('miniapp', { action: 'money_bundle' }, undefined, true, { month: g.m })
+        .catch(function (e) { if (e.code === 'unknown action') return null; throw e; });
+    }
+    var m = g.m;
+    return g.p.then(function (b) { return b && b[part] && (!body || body.month === m) ? b[part] : own(); });
+  }
   // The month's answer also brings the accounts for the sheets' chips; the logos' index is read on the first answer and
   // the month drawn again once it is there.
   function moneyLoad(box, render, retry) {
     if (!MONEY.month) MONEY.month = monthNow();
     var m = MONEY.month, last = null;
+    // The logos' index is asked for with the answer, so a first open usually draws once; when it comes after a draw,
+    // the month is drawn again in the next frame — unless a draw of it waits there already (it has the logos then).
+    moneyBrands(noop);
     swr({ key: 'money:' + m, box: box, n: 2, live: function () { return current === 'money' && MONEY.month === m; },
-      fetch: function () { return api('miniapp', { action: 'money_month' }, undefined, true, { month: m }); },
+      fetch: function () { return moneyAsk('month', 'money_month', { month: m }); },
       render: function (j) {
         last = j;
         if (j.accounts) MONEY.accounts = j.accounts;
         moneyColorsFrom(j);
         render(j);
-        if (!BRANDS) moneyBrands(function () { if (last === j && MONEY.month === m) render(j); });
-      }, retry: retry });
+        if (!BRANDS) {
+          moneyBrands(function () {
+            if (last !== j || MONEY.month !== m || framePending('money:' + m)) return;
+            inFrame('money:' + m, function () { if (last === j && MONEY.month === m && box.isConnected) render(j); });
+          });
+        }
+      }, retry: retry, frame: true });
   }
   // Logos (docs/specs/money-3.md §2): brands/index.json [{slug, re, name}] and brands/<slug>.png live in the app itself
   // (scripts/brand_logos.py fetched them once); nothing is asked of anyone else while the app runs. The index is read
@@ -8034,8 +8111,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // accounts and the wishlist line already on screen. The month's render draws them too (moneyStatePaint), so the two
   // answers can come in either order.
   function moneyState(debts, goals, live, done) {
-    swr({ key: 'money:state', box: debts, n: 0, live: live,
-      fetch: function () { return api('miniapp', { action: 'money_state' }, undefined, true).then(function (s) { MONEY.state = s; return s; }); },
+    swr({ key: 'money:state', box: debts, n: 0, live: live, frame: true,
+      fetch: function () { return moneyAsk('state', 'money_state').then(function (s) { MONEY.state = s; return s; }); },
       render: function (s) { MONEY.state = s; moneyStatePaint(debts, goals, done); } });
   }
   function moneyStatePaint(debts, goals, done) {
@@ -8532,8 +8609,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     box.fixedBox = fixedBox || null;
     box.reload = reload;
     MONEY.subsBox = box;
-    swr({ key: 'money:subs2', box: box, n: 0, live: live,
-      fetch: function () { return api('miniapp', { action: 'money_subs' }, undefined, true); },
+    swr({ key: 'money:subs2', box: box, n: 0, live: live, frame: true,
+      fetch: function () { return moneyAsk('subs', 'money_subs'); },
       render: function (j) { MONEY.subsData = j; moneySubsDraw(box, j); } });
   }
   function moneyCur(cur) { return !cur || cur === 'PLN' ? 'zł' : cur; }
@@ -9418,17 +9495,26 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       load();
     };
     if (box.mtMonth !== m) { clear(box); box.mtPend = null; }
-    swr({ key: 'money:trends:' + m, box: box, n: 0, live: function () { return live() && MONEY.month === m; },
-      fetch: function () { return api('miniapp', { action: 'money_trends' }, undefined, true, { month: m }); },
+    swr({ key: 'money:trends:' + m, box: box, n: 0, live: function () { return live() && MONEY.month === m; }, frame: true,
+      fetch: function () { return moneyAsk('trends', 'money_trends', { month: m }); },
       render: function (t) { moneyTrendsDraw(box, t); } });
   }
   // The card «Графики»: drawn to the box's width, so a box not on the page yet keeps the answer (mtPend) for the view
   // to draw once it places the box (moneyTrendsDraw(box) with no answer). box.mtFor is the month the view draws (its
   // render sets it): another month's charts wait there too, so they never run ahead of the header and the totals.
+  // It draws after the frame's draws (moneyTrendsPaint, afterDraws): the widths it reads forced a layout in the middle
+  // of the month's render, which the rest of the render then threw away.
   function moneyTrendsDraw(box, t) {
     t = t || box.mtPend;
     if (!t) return;
-    if (!box.isConnected || !box.clientWidth || t.month !== box.mtFor) { box.mtPend = t; return; }
+    box.mtPend = t;
+    if (box.mtWait) return;
+    box.mtWait = true;
+    afterDraws(function () { box.mtWait = false; moneyTrendsPaint(box); });
+  }
+  function moneyTrendsPaint(box) {
+    var t = box.mtPend;
+    if (!t || !box.isConnected || !box.clientWidth || t.month !== box.mtFor) return;
     box.mtPend = null;
     box.mtMonth = t.month;
     if (t.month === MONEY.month) MONEY.trends = t;
@@ -9447,10 +9533,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     add(clear(box), card);
     if (box.mtWide) {
       var grid = add(card, el('div', 'mt3')).lastChild;
-      MT_MODES.forEach(function (md) {
-        var col = add(grid, add(el('div', 'mtc'), el('div', 'fst', md[1]))).lastChild;
-        mtDraw(col, md[0], t, col.clientWidth - 16, 240, box.mtGo);
-      });
+      // The three columns placed first and measured together: one layout, not one per chart.
+      var cols = MT_MODES.map(function (md) { return add(grid, add(el('div', 'mtc'), el('div', 'fst', md[1]))).lastChild; });
+      var ws = cols.map(function (col) { return col.clientWidth; });
+      MT_MODES.forEach(function (md, k) { mtDraw(cols[k], md[0], t, ws[k] - 16, 240, box.mtGo); });
       return;
     }
     var mode = store('moneyChart'), seg = el('div', 'seg'), area = el('div'), segs = {};
@@ -9603,16 +9689,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     var p = t.pace || {}, now = monthNow(), vals = t.months.map(function (m) { return { month: m.month, v: m.by_category[key] || 0 }; });
     var cur = vals[vals.length - 1], fc = cur.month === now && p.today_day >= 5 ? cur.v / p.today_day * p.days_in_month : null;
     var W = chartBox.clientWidth;
-    chartBox.appendChild(mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: null }, W, wide() ? 240 : 200));
+    // A tap on another month's bar (his word 24.10.2026) opens that month with this category's spends.
+    function pick(mm) {
+      if (mm === MONEY.month || mm < MONEY_FROM || mm > monthNow()) return;
+      close();
+      MONEY.month = mm;
+      MONEY.acct = MONEY.sub = null;
+      MONEY.filter = key;
+      MONEY.toList = true;
+      haptic();
+      (done || noop)();
+    }
+    chartBox.appendChild(mtMonths({ vals: vals, fc: fc, avg: avg, budget: budget, pick: pick }, W, wide() ? 240 : 200));
   }
   function moneyView() {
     var body = add(main, el('div', 'mny')).lastChild, data = null, subs = el('div'), fixed = el('div'), charts = el('div'), debts = el('div'), goals = el('div');
     function live() { return current === 'money'; }
     function load() {
-      moneyState(debts, goals, live, load);
-      moneyLoad(body, render, load);
-      moneyTrends(charts, live, false, load);
-      moneySubs(subs, live, fixed);
+      moneyTogether(function () {
+        moneyState(debts, goals, live, load);
+        moneyLoad(body, render, load);
+        moneyTrends(charts, live, false, load);
+        moneySubs(subs, live, fixed);
+      });
     }
     moneyPrefsHook(function () { if (data) render(data); });
     function row(r) {
@@ -9629,25 +9728,56 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return x;
     }
     // The rows by day: «пт, 23 октября · 84,50 zł» (the day's spends, a split one by its share); search results carry
-    // the year when it is not this one.
+    // the year when it is not this one. About 40 rows (whole days) are drawn at once, the next ones as the end of the
+    // list comes within a screen (an empty sentinel at the end, watched); once all are there the sentinel goes, so the
+    // list is what it always was. What fill() adds after the rows stays after them.
     function days(box, rows, empty) {
-      var day = null, head = null, sum = 0;
+      var day = null, head = null, sum = 0, i = 0, end = null, io = null;
       function close() { if (head) text(head, head.dataset.d + (sum ? ' · ' + moneyFmt(sum / 100) : '')); }
-      rows.forEach(function (r) {
-        var k = moneyKey(r.at);
-        if (k !== day) {
-          close();
-          day = k;
-          sum = 0;
-          head = box.appendChild(el('div', 'mday'));
-          var dw = moneyDayWord(r.at);
-          head.dataset.d = (dw ? dw.charAt(0).toUpperCase() + dw.slice(1) : moneyDay(r.at)) + (k.slice(0, 4) !== monthNow().slice(0, 4) ? ' ' + k.slice(0, 4) : '');
-          if (dw === 'сегодня') head.className += ' mnow';
+      function put(n) { return end ? box.insertBefore(n, end) : box.appendChild(n); }
+      function batch() {
+        for (var stop = i + 40; i < rows.length; i++) {
+          var r = rows[i], k = moneyKey(r.at);
+          if (k !== day) {
+            if (i >= stop && io) break;
+            close();
+            day = k;
+            sum = 0;
+            head = put(el('div', 'mday'));
+            var dw = moneyDayWord(r.at);
+            head.dataset.d = (dw ? dw.charAt(0).toUpperCase() + dw.slice(1) : moneyDay(r.at)) + (k.slice(0, 4) !== monthNow().slice(0, 4) ? ' ' + k.slice(0, 4) : '');
+            if (dw === 'сегодня') head.className += ' mnow';
+          }
+          if (r.currency === 'PLN' && (r.kind || 'expense') === 'expense') sum += moneyOwn(r);
+          put(row(r));
         }
-        if (r.currency === 'PLN' && (r.kind || 'expense') === 'expense') sum += moneyOwn(r);
-        box.appendChild(row(r));
-      });
-      close();
+        close();
+      }
+      if (rows.length > 60 && window.IntersectionObserver) {
+        end = box.appendChild(el('div'));
+        // root: document — WebKit left a viewport-rooted observer silent while the page scrolled (body scrolls on
+        // its own here); a browser without a document root draws the whole list at once, as before.
+        var seen = function (es) {
+          if (!end || !end.isConnected) return io.disconnect();
+          if (!es[es.length - 1].isIntersecting) return;
+          batch();
+          if (i < rows.length) {
+            // Observed anew: still in view after this batch means the next one at once.
+            io.unobserve(end);
+            return io.observe(end);
+          }
+          io.disconnect();
+          end.remove();
+          end = null;
+        };
+        try { io = new IntersectionObserver(seen, { root: document, rootMargin: '0px 0px 900px 0px' }); } catch (e) {}
+        if (io) io.observe(end);
+        else {
+          end.remove();
+          end = null;
+        }
+      }
+      batch();
       if (!rows.length) box.appendChild(el('div', 'mday', empty));
     }
     function render(j) {
@@ -10677,7 +10807,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     PERIODS: PERIODS, WISH_STATUS: WISH_STATUS, WISH_PILL: WISH_PILL, DELA_ICON: DELA_ICON, DELA_KIND: DELA_KIND,
     DELA_DONE: DELA_DONE, delaHint: delaHint, swr: swr, chip: chip, MONEY: MONEY, MONEY_CATS: MONEY_CATS, moneyCat: moneyCat,
     moneyFmt: moneyFmt, moneyNav: moneyNav, moneyGo: moneyGo, moneyLoad: moneyLoad, moneyVs: moneyVs, moneySheet: moneySheet, moneyDelete: moneyDelete,
-    moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
+    moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyTogether: moneyTogether, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
     moneyCardsInto: moneyCardsInto, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,

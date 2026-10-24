@@ -561,10 +561,13 @@
     add(main, tool, body);
     function live() { return on('money'); }
     function load() {
-      A.moneyState(debts, goals, live, load);
-      A.moneyLoad(body, render, load);
-      A.moneyTrends(charts, live, true, load);
-      A.moneySubs(subs, live, fixed);
+      // One request for the four (index.html moneyTogether: money_bundle).
+      A.moneyTogether(function () {
+        A.moneyState(debts, goals, live, load);
+        A.moneyLoad(body, render, load);
+        A.moneyTrends(charts, live, true, load);
+        A.moneySubs(subs, live, fixed);
+      });
     }
     A.moneyPrefsHook(function () { if (data) render(data); });
     function render(j) {
