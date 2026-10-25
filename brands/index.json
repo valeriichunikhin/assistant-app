@@ -215,6 +215,11 @@
   "name": "Piłka na Hali"
  },
  {
+  "slug": "parktennis",
+  "re": "park tennis",
+  "name": "Park Tennis Academy"
+ },
+ {
   "slug": "bevel",
   "re": "\\bbevel\\b",
   "name": "Bevel"
@@ -368,6 +373,51 @@
   "slug": "bp",
   "re": "\\bbp\\b",
   "name": "BP"
+ },
+ {
+  "slug": "olx",
+  "re": "\\bolx",
+  "name": "OLX"
+ },
+ {
+  "slug": "wilson",
+  "re": "\\bwilson\\b",
+  "name": "Wilson"
+ },
+ {
+  "slug": "ugreen",
+  "re": "ugreen",
+  "name": "Ugreen"
+ },
+ {
+  "slug": "milka",
+  "re": "milka|мілка|милка",
+  "name": "Milka"
+ },
+ {
+  "slug": "aldente",
+  "re": "aldente",
+  "name": "AlDente"
+ },
+ {
+  "slug": "fineye",
+  "re": "fineye",
+  "name": "FinEye"
+ },
+ {
+  "slug": "pizzanawypasie",
+  "re": "na wypasie",
+  "name": "Pizza Na Wypasie"
+ },
+ {
+  "slug": "rollclub",
+  "re": "roll club",
+  "name": "Roll Club"
+ },
+ {
+  "slug": "ottopompieri",
+  "re": "otto pompieri",
+  "name": "Otto Pompieri"
  },
  {
   "slug": "millennium",
