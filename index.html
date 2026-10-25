@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 22:46">
+<meta name="published" content="2026-10-26 00:03">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -746,6 +746,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .htile .mu.warn{color:var(--warn)}
 @media (max-width:360px){.htile .mu{-webkit-line-clamp:3}}
 .htile .mbar{margin-top:auto;transform:translateY(4px)}
+.htile .k .ptile.ai{flex:none;margin:0}
+/* «Плитки на «Главной»» (docs/specs/home-tiles.md): the header's button beside the bell, a tile whose module is off grey. */
+.bell[hidden]{display:none}
+.row.htoff .lead,.row.htoff .tx .t{opacity:.5}
+.lead .ptile.ai{width:20px;height:20px;border-radius:5px}.lead .ptile.ai img{border-radius:4px}
+.card .sub.htadd{padding:12px 14px 4px;border-top:1px solid var(--line);font-weight:600}
+.card .sub.htadd[hidden]{display:none}
 .row.htr{min-height:40px;gap:10px}.row.htr .htm{flex:none;width:42px;color:var(--link);font:700 13px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
 .tabbar .ic,.sheet .ic,.rail .ic{position:relative}
 .ic>.bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--bg0)}
@@ -902,6 +909,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-fold-vertical" viewBox="0 0 24 24"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3-3-3 3"/><path d="m15 5-3 3-3-3"/></symbol>
 <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-grip-vertical" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
+<symbol id="i-layout-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1412,6 +1420,40 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
   // in its «Карточки на «Главной»»; the keys stay, so the desktop's overview keeps hiding «Деньги» and the debt.
   var TILED = ['tasks', 'money', 'card_debt', 'games', 'shows', 'vb', 'genshin'];
+  // The tiles he can put on «Главная» (docs/specs/home-tiles.md, 25.10.2026): key, name, icon; HOME_TILES of
+  // supabase/functions/miniapp/index.ts — edit both together. An account's tile is 'acct:<key>', one per visible account.
+  // prefs.tiles is his choice in order; [] — the first six, as the screen was before the choice.
+  var TILES = [['daily', 'Сегодня можно', 'wallet'], ['payday', 'До зарплаты', 'hourglass'], ['tasks', 'Задачи', 'check-square'],
+    ['vb', 'Волейбол', 'ball'], ['genshin', 'Genshin · смола', 'game'], ['cinema', 'Кино', 'film'],
+    ['card_debt', 'Долг по картам', 'trending-down'], ['month', 'Месяц и бюджет', 'chart'], ['debts', 'Долги людей', 'hand-coins'],
+    ['next_pay', 'Ближайший платёж', 'calendar-sync'], ['due', 'Сроки и посылки', 'package'], ['next_event', 'Следующее событие', 'calendar'],
+    ['inbox', 'Инбокс', 'inbox'], ['yesterday', 'Вчера', 'watch']];
+  var TILE_KEYS = TILES.map(function (t) { return t[0]; }), TILE_DEFAULT = TILE_KEYS.slice(0, 6);
+  // A card leaves the list under the tiles only while a chosen tile holds all of it; the default six hide what TILED
+  // always hid (the cards' debt among them, his choice of 25.10.2026).
+  var TILE_CARDS = { tasks: ['tasks'], daily: ['money'], month: ['money'], card_debt: ['card_debt'], vb: ['games', 'vb'], cinema: ['shows'],
+    genshin: ['genshin'] };
+  function tilesIn(v) {
+    return Array.isArray(v) ? v.filter(function (k, i) {
+      return typeof k === 'string' && (TILE_KEYS.indexOf(k) >= 0 || /^acct:[a-z0-9_-]{1,40}$/.test(k)) && v.indexOf(k) === i;
+    }).slice(0, 24) : [];
+  }
+  function homeTiles() { return prefs.tiles.length ? prefs.tiles : TILE_DEFAULT; }
+  function tiledCards() {
+    if (!prefs.tiles.length) return TILED;
+    var o = [];
+    prefs.tiles.forEach(function (k) { (TILE_CARDS[k] || []).forEach(function (c) { if (o.indexOf(c) < 0) o.push(c); }); });
+    return o;
+  }
+  // A tile whose module is off in «Модули» or whose tab is hidden: not drawn, grey in the choice.
+  function tileOff(k) {
+    function on(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
+    var money = !on('money', 'money');
+    if (k.indexOf('acct:') === 0) return money;
+    return { daily: money, payday: money, card_debt: money, month: money, debts: money, next_pay: money, tasks: !tabShown('tasks'),
+      inbox: !tabShown('inbox'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
+      cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema') }[k] || false;
+  }
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
   var MONEY_CARDS = [['card_debt', 'Долг по картам', 'trending-down'], ['charts', 'Графики', 'chart'], ['cats', 'По категориям', 'layers'], ['accts', 'По счетам', 'landmark'],
@@ -1437,7 +1479,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       fold: foldIn(h.fold, HOME_KEYS), folded: keysIn(h.folded, HOME_KEYS) },
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
       money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold, MONEY_CARD_KEYS),
-        folded: keysIn(mo.folded, MONEY_CARD_KEYS) } };
+        folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles) };
   }
   // The switchable modules [{env, name}] as the server last listed them.
   function normModules(v) {
@@ -1607,6 +1649,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   setUnread(Number(store('notifUnread')) || 0);
   hdr.appendChild(bell);
+  // «Плитки» (docs/specs/home-tiles.md): the sheet of «Главная»'s tiles, beside the bell on the phone's «Главная» only.
+  var tilesBtn = add(el('button', 'bell'), icon('layout-grid'));
+  tilesBtn.type = 'button';
+  tilesBtn.title = 'Плитки';
+  tilesBtn.setAttribute('aria-label', 'Плитки на «Главной»');
+  tilesBtn.hidden = true;
+  tilesBtn.onclick = function () { tilesSheet(tilesBtn); };
+  hdr.insertBefore(tilesBtn, bell);
   if (browser) {
     var out = label(el('button', 'out'), 'logout', 'выйти');
     out.type = 'button';
@@ -2133,6 +2183,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var desk = wide() && window.DESKTOP && DESKTOP.views && DESKTOP.views[tab];
     main.classList.toggle('narrow', !desk && NARROW.indexOf(tab === 'shop' ? shopSeg : tab) >= 0);
     main.classList.toggle('desk', !!desk);
+    tilesBtn.hidden = tab !== 'home' || !!desk;
     hideBack();
     tabbar.classList.remove('hid');
     clear(main);
@@ -2529,11 +2580,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       text(greet, d + (h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + ', Валерий');
     }
     function modOn(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
-    // A tile: the icon and the name, the value (vcls: s smaller, vw wrapped, bad / warn / vmu its colour), a line under it
-    // (a string or a node); a tap runs go(tile).
+    // A tile: the icon (a name or a node: an account's logo) and the name, the value (vcls: s smaller, vw wrapped, bad /
+    // warn / vmu its colour), a line under it (a string or a node); a tap runs go(tile).
     function tile(ic, k, v, vcls, sub, go) {
       var u = sub ? (sub.nodeType ? sub : el('div', 'mu', sub)) : null;
-      var t = add(el('div', 'htile'), add(el('div', 'k'), icon(ic), el('span', '', k)), el('div', 'v' + (vcls ? ' ' + vcls : ''), v), u);
+      var t = add(el('div', 'htile'), add(el('div', 'k'), ic.nodeType ? ic : icon(ic), el('span', '', k)), el('div', 'v' + (vcls ? ' ' + vcls : ''), v), u);
       t.setAttribute('aria-label', k + ': ' + v + (u ? ', ' + u.textContent : ''));
       dash.appendChild(tap(t, function () { go(t); }));
       return t;
@@ -2543,57 +2594,164 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var s = wp(ts);
       return WEEK[wd(s.year + '-' + s.month + '-' + s.day)] + ' ' + s.hour + ':' + s.minute;
     }
-    // The six tiles in their order, each left out while its module is off or its tab hidden (or with nothing to say).
+    // «сегодня», «завтра», «пн 26.10» of a day.
+    function dayWord(d, today) { return d === today ? 'сегодня' : d === addDays(today, 1) ? 'завтра' : WEEK[wd(d)] + ' ' + dm(d); }
+    // A card of the list below (docs/specs/home-tiles.md: «к этой карточке»): unfolded until he leaves the tab and
+    // brought under the header; a card he hid says how to bring it back.
+    function toCard(k) {
+      var c = cards[k];
+      if (!c) return;
+      if (!c.isConnected) return toast(FOLD.home.hid);
+      if (c.mfKey && cardFolded('home', k)) { HOMEF.foldTmp[k] = false; foldShow(c, false, true); }
+      haptic();
+      moneyScrollTo(c);
+    }
+    // His tiles in his order (docs/specs/home-tiles.md), each left out while its module is off or its tab hidden; one
+    // with nothing to say today says so («игр нет», «нет данных»), a failed source «недоступно».
     function tiles(j, today) {
       clear(dash);
       var m = j.morning || {}, now = Date.now(), p = wp(now), hm = p.hour + ':' + p.minute;
-      // «сегодня можно» in the three states of the «Сегодня можно ещё» line: can / overspent / only the necessary.
-      var dd = j.money && j.money.daily;
-      if (dd && moneyHomeOn(j) && tabShown('money')) {
-        var dt = moneyDailyText(dd), over = dd.left < 0;
-        tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
-          dt.tight ? 'vw warn' : over ? 'bad' : '', dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' : 'до зарплаты ' + dm(dd.payday),
-          function () { show('money'); });
+      var dd = j.money && j.money.daily, money = function () { show('money'); };
+      function none(ic, k, v, go) { return tile(ic, k, v, 's vmu', null, go); }
+      function lost(v) { return v === null ? 'недоступно' : 'нет данных'; }
+      var draw = {
+        // «сегодня можно» in the three states of the «Сегодня можно ещё» line: can / overspent / only the necessary.
+        daily: function () {
+          if (!dd) return none('wallet', 'сегодня можно', lost(j.money), money);
+          var dt = moneyDailyText(dd), over = dd.left < 0;
+          tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
+            dt.tight ? 'vw warn' : over ? 'bad' : '', dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' : 'до зарплаты ' + dm(dd.payday), money);
+        },
+        // Days to payday and what is paid before it (25.10.2026, his choice instead of the cards' debt).
+        payday: function () {
+          if (!dd) return none('hourglass', 'до зарплаты', lost(j.money), money);
+          var ob = (dd.obligations || []).length;
+          tile('hourglass', 'до зарплаты', dd.days + '\u00a0' + plural(dd.days, ['день', 'дня', 'дней']), '',
+            dm(dd.payday) + ' · ' + (ob ? ob + '\u00a0' + plural(ob, ['платёж', 'платежа', 'платежей']) + ' на ' + mtZl(dd.obligations_sum) : 'платежей нет'),
+            money);
+        },
+        // Overdue and today's; red while anything is overdue.
+        tasks: function () {
+          var go = function () { show('tasks'); };
+          if (!j.tasks) return none('check-square', 'задачи', lost(j.tasks), go);
+          var tk = j.tasks, nt = tk.today_count != null ? tk.today_count : (tk.today || []).length, od = tk.overdue || 0;
+          tile('check-square', 'задачи', grouped(od + nt), od ? 'bad' : '', [od ? 'просрочено ' + od : '', nt ? 'сегодня ' + nt : '',
+            tk.tomorrow_count ? 'завтра ' + tk.tomorrow_count : ''].filter(Boolean).join(' · ') || 'на сегодня ничего', go);
+        },
+        // His next game, else today's next free one with its places taken of all; none — «игр нет».
+        vb: function () {
+          var mine = (m.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; })[0];
+          var free = (m.volleyball || []).filter(function (g) { return g.start_at >= hm; })
+            .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
+          var go = function () { show('vb'); };
+          if (mine) tile('ball', 'волейбол', dayTime(mine.starts_at), 's', [mine.venue, 'записан'].filter(Boolean).join(' · '), go);
+          else if (free) {
+            tile('ball', 'волейбол', WEEK[wd(today)] + ' ' + free.start_at, 's', [free.venue, free.max_players != null && free.free_spots != null
+              ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '), go);
+          } else none('ball', 'волейбол', 'игр нет', go);
+        },
+        // The resin now, from the snapshot's «full at» (one per 8 minutes); full — «полная!» in amber.
+        genshin: function () {
+          var gs = j.genshin, go = function () { show('genshin'); };
+          if (!gs) return none('game', 'Genshin · смола', lost(gs), go);
+          var left = gs.full_at ? Date.parse(gs.full_at) - now : 0, full = gs.full_at ? left <= 0 : gs.current >= gs.max;
+          var cur = full ? gs.max : gs.full_at ? Math.max(0, gs.max - Math.ceil(left / 480000)) : gs.current;
+          tile('game', 'Genshin · смола', cur + ' / ' + gs.max, 's', full ? el('div', 'mu warn', 'полная!') : gs.full_at ? 'полная через ' +
+            (left >= 3600000 ? Math.round(left / 3600000) + ' ч' : Math.max(1, Math.round(left / 60000)) + ' мин') : null, go);
+        },
+        // His next screening, else the next premiere.
+        cinema: function () {
+          var cn = j.cinema_next, go = function () { show('cinema'); };
+          if (!cn) return none('film', 'кино', cn === null ? 'недоступно' : 'сеансов нет', go);
+          tile('film', 'кино', cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 's',
+            '«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'), go);
+        },
+        // The cards' debt now, the month's change, the bar to zero; a tap opens its sheet.
+        card_debt: function () {
+          var d = j.card_debt;
+          if (!d) return none('trending-down', 'долг по картам', lost(d), money);
+          if (!moneyDebtOn(d)) return none('trending-down', 'долг по картам', 'долга нет', money);
+          var t = tile('trending-down', 'долг по картам', mtZl(d.total), '', add(el('div', 'mu'), moneyDebtDiff(d, 'num')),
+            function () { moneyDebtSheet(d, t); });
+          if (d.progress !== null && d.progress !== undefined) t.appendChild(moneyBar(d.progress, 'done'));
+        },
+        // The month against its budget with the bar (green, amber from 80 %, red past it), else against the previous month.
+        month: function () {
+          var mo = j.money;
+          if (!mo) return none('chart', 'месяц', lost(mo), money);
+          var x = moneyHomeText(mo), name = MONTHS_RU[Number(mo.month.slice(5, 7)) - 1].toLowerCase();
+          var t = tile('chart', name, mtZl(mo.spent), x.cls === 'over' ? 'bad' : '', mo.budget ? 'из ' + mtInt(mo.budget) + ' · ' + x.pct : x.sub || null, money);
+          if (x.p !== null) t.appendChild(moneyBar(x.p, x.cls || 'done'));
+        },
+        // «мне должны N» (or «я должен N» when that is more) and who owes or is owed the most; a tap brings «Долги».
+        debts: function () {
+          var ds = j.debts, go = function () { MONEY.toDebts = true; show('money'); };
+          if (!ds) return none('hand-coins', 'долги', lost(ds), go);
+          if (!ds.owed && !ds.owe) return none('hand-coins', 'долги', 'все в расчёте', go);
+          var mine = ds.owe > ds.owed;
+          tile('hand-coins', 'долги', mtZl(mine ? ds.owe : ds.owed), mine ? 'bad' : '', (mine ? 'я должен' : 'мне должны') +
+            (ds.top ? ' · больше всех ' + ds.top.name : ''), go);
+        },
+        // The nearest payment before payday: its sum, name and day.
+        next_pay: function () {
+          if (!dd) return none('calendar-sync', 'ближайший платёж', lost(j.money), money);
+          var ob = (dd.obligations || []).slice().sort(function (x, y) { return x.on.localeCompare(y.on); })[0];
+          if (!ob) return none('calendar-sync', 'ближайший платёж', 'до зарплаты ничего', money);
+          tile('calendar-sync', 'ближайший платёж', moneyShort(ob.amount, 'PLN'), 's', ob.label + ' · ' + dayWord(ob.on, today), money);
+        },
+        // The nearest of «Сроки и посылки»: when, what, «ещё N».
+        due: function () {
+          var go = function () { toCard('due'); }, all = [];
+          (m.deadlines || []).forEach(function (d) { all.push({ on: d.due_date, t: d.title }); });
+          (m.payments || []).forEach(function (x) { all.push({ on: x.due_date, t: x.kind + ' · ' + x.period }); });
+          (m.parcels || []).forEach(function (x) {
+            var q = wp(x.pickup_deadline);
+            all.push({ on: q.year + '-' + q.month + '-' + q.day, t: [x.carrier, x.shop].filter(Boolean).join(' · ') || 'посылка' });
+          });
+          if (!all.length) return none('package', 'сроки и посылки', m.deadlines || m.payments || m.parcels ? 'ничего' : 'нет данных', go);
+          all.sort(function (x, y) { return x.on.localeCompare(y.on); });
+          var n = days(today, all[0].on);
+          tile('package', 'сроки и посылки', n < 0 ? 'просрочено' : dayWord(all[0].on, today), 's' + (n < 0 ? ' bad' : n <= 1 ? ' warn' : ''),
+            all[0].t + (all.length > 1 ? ' · ещё ' + (all.length - 1) : ''), go);
+        },
+        // The next event of «Календарь» not over yet: its time and name.
+        next_event: function () {
+          var go = function () { toCard('calendar'); };
+          var ev = (m.calendar_view || []).filter(function (x) {
+            return x.date > today || (x.date === today && (!x.time || x.time >= hm || (x.until && x.until > hm)));
+          })[0];
+          if (!ev) return none('calendar', 'следующее событие', m.calendar === null ? 'недоступно' : 'событий нет', go);
+          tile('calendar', 'следующее событие', (ev.date === today ? '' : dayWord(ev.date, today) + ' ') + (ev.time || (ev.date === today ? 'весь день' : '')),
+            's', (ev.kind === 'work' ? ev.icon + ' ' : '') + ev.text, go);
+        },
+        inbox: function () {
+          var n = j.inbox_new, go = function () { show('inbox'); };
+          if (n == null) return none('inbox', 'инбокс', 'недоступно', go);
+          tile('inbox', 'инбокс', grouped(n), n ? '' : 'vmu', n ? plural(n, ['новое', 'новых', 'новых']) : 'пусто', go);
+        },
+        // Yesterday's steps and sleep from the Shortcuts automation.
+        yesterday: function () {
+          var h = m.health, go = function () { toCard('yesterday'); };
+          if (!h || (h.steps == null && h.sleep_min == null)) return none('watch', 'вчера', 'нет данных', go);
+          tile('watch', 'вчера', h.steps != null ? grouped(h.steps) : sleepLine(h.sleep_min), 's', h.steps != null
+            ? plural(h.steps, ['шаг', 'шага', 'шагов']) + (h.sleep_min != null ? ' · сон ' + sleepLine(h.sleep_min) : '') : 'сон', go);
+        }
+      };
+      // An account: its balance (a minus in red) and «свободно N» on a credit one; a tap shows its every operation.
+      function acct(key) {
+        var a = (j.accounts || []).filter(function (x) { return x.key === key; })[0];
+        var name = a ? a.name : moneyAcctName(key) || key, logo = moneyAcctTile(key, 'ai');
+        var go = function () { show('money'); moneyAcctAll({ key: key }); };
+        if (!a) return none(logo, name, lost(j.accounts), go);
+        var sym = '\u00a0' + moneySym(a.currency), neg = a.balance < 0;
+        tile(logo, name, (neg ? '−' : '') + moneyInt(Math.abs(a.balance)) + sym, neg ? 'bad' : '', a.credit && a.credit_limit
+          ? 'свободно ' + moneyInt(Math.max(0, a.credit_limit + Math.min(0, a.balance))) + sym : null, go);
       }
-      // Days to payday and what is paid before it (25.10.2026, his choice instead of the cards' debt, which stays in «Деньги»).
-      if (dd && moneyHomeOn(j) && tabShown('money')) {
-        var ob = (dd.obligations || []).length;
-        tile('hourglass', 'до зарплаты', dd.days + '\u00a0' + plural(dd.days, ['день', 'дня', 'дней']), '',
-          dm(dd.payday) + ' · ' + (ob ? ob + '\u00a0' + plural(ob, ['платёж', 'платежа', 'платежей']) + ' на ' + mtZl(dd.obligations_sum) : 'платежей нет'),
-          function () { show('money'); });
-      }
-      // Overdue and today's; red while anything is overdue.
-      if (j.tasks && tabShown('tasks')) {
-        var tk = j.tasks, nt = tk.today_count != null ? tk.today_count : (tk.today || []).length, od = tk.overdue || 0;
-        tile('check-square', 'задачи', grouped(od + nt), od ? 'bad' : '', [od ? 'просрочено ' + od : '', nt ? 'сегодня ' + nt : '',
-          tk.tomorrow_count ? 'завтра ' + tk.tomorrow_count : ''].filter(Boolean).join(' · ') || 'на сегодня ничего', function () { show('tasks'); });
-      }
-      // His next game, else today's next free one with its places taken of all; none — «игр нет».
-      if (modOn('TELEGRAM_TOPIC_VOLLEYBALL', 'vb')) {
-        var mine = (m.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; })[0];
-        var free = (m.volleyball || []).filter(function (g) { return g.start_at >= hm; })
-          .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
-        var go = function () { show('vb'); };
-        if (mine) tile('ball', 'волейбол', dayTime(mine.starts_at), 's', [mine.venue, 'записан'].filter(Boolean).join(' · '), go);
-        else if (free) {
-          tile('ball', 'волейбол', WEEK[wd(today)] + ' ' + free.start_at, 's', [free.venue, free.max_players != null && free.free_spots != null
-            ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '), go);
-        } else tile('ball', 'волейбол', 'игр нет', 's vmu', null, go);
-      }
-      // The resin now, from the snapshot's «full at» (one per 8 minutes); full — «полная!» in amber.
-      var gs = j.genshin;
-      if (gs && modOn('TELEGRAM_TOPIC_GENSHIN', 'genshin')) {
-        var left = gs.full_at ? Date.parse(gs.full_at) - now : 0, full = gs.full_at ? left <= 0 : gs.current >= gs.max;
-        var cur = full ? gs.max : gs.full_at ? Math.max(0, gs.max - Math.ceil(left / 480000)) : gs.current;
-        tile('game', 'Genshin · смола', cur + ' / ' + gs.max, 's', full ? el('div', 'mu warn', 'полная!') : gs.full_at ? 'полная через ' +
-          (left >= 3600000 ? Math.round(left / 3600000) + ' ч' : Math.max(1, Math.round(left / 60000)) + ' мин') : null, function () { show('genshin'); });
-      }
-      // His next screening, else the next premiere.
-      var cn = j.cinema_next;
-      if (cn && modOn('TELEGRAM_TOPIC_CINEMA', 'cinema')) {
-        tile('film', 'кино', cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 's',
-          '«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'), function () { show('cinema'); });
-      }
+      homeTiles().forEach(function (k) {
+        if (tileOff(k)) return;
+        if (k.indexOf('acct:') === 0) acct(k.slice(5));
+        else if (draw[k]) draw[k]();
+      });
     }
     // «Завтра»: up to five of tomorrow's tasks, calendar events and his game — the timed ones by time, then the rest;
     // nothing tomorrow, no card.
@@ -2626,6 +2784,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       clear(body);
       cards = {};
       last = j;
+      HOMEF.accts = j.accounts || null;
       var p = wp(Date.now());
       var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
       greeting();
@@ -2664,14 +2823,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (j.pulse === null) down('alert', 'Система');
       else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
       // His order first, the rest after in HOME_KEYS order; the hidden ones and those the tiles show are left out.
-      var hid = prefs.home.hidden, off = HOME_KEYS.every(function (k) { return k === 'morning' || TILED.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
+      var hid = prefs.home.hidden, tiled = tiledCards(), off = HOME_KEYS.every(function (k) { return k === 'morning' || tiled.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
       if (off) {
         body.appendChild(tap(state('square', 'Все карточки выключены — включи в «Что нового» → «Настройки»'),
           function () { show('news'); }));
         return;
       }
       homeOrder().forEach(function (k) {
-        if (!cards[k] || hid.indexOf(k) >= 0 || TILED.indexOf(k) >= 0) return;
+        if (!cards[k] || hid.indexOf(k) >= 0 || tiled.indexOf(k) >= 0) return;
         if (!cards[k].mfs) cards[k].mfs = firstLine(cards[k]);
         body.appendChild(foldCard('home', cards[k], k));
       });
@@ -2693,6 +2852,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // A settings change redraws the cards and «Карточки на «Сегодня»» or a card's sheet if one is open.
     prefsHook = { tab: 'home', fn: function (focus) {
       if (HOMEF.cardsCard && HOMEF.cardsCard.isConnected) HOMEF.cardsCard.paint(focus);
+      if (HOMEF.tilesCard && HOMEF.tilesCard.isConnected) HOMEF.tilesCard.paint(focus);
       if (last) render(last);
       if (HOMEF.cardSheet && HOMEF.cardSheet.isConnected) HOMEF.cardSheet.paint();
     } };
@@ -8496,6 +8656,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     paint();
     add(box, add(card, rows));
+    // «Главная»'s debts tile (docs/specs/home-tiles.md) asked for this card: brought into view once it is on the page.
+    if (MONEY.toDebts && box.isConnected) {
+      MONEY.toDebts = false;
+      requestAnimationFrame(function () { moneyScrollTo(box); });
+    }
   }
   function moneyPersonNew(done, from) {
     var close = noop, name = el('input'), note = el('input');
@@ -10554,7 +10719,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // save waits 600 ms, so a run of taps is one request.
   function editPrefs(next, focus, quiet) {
     next = { tabs: next.tabs || prefs.tabs, home: next.home ? Object.assign({}, prefs.home, next.home) : prefs.home,
-      muted: next.muted || prefs.muted, money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money };
+      muted: next.muted || prefs.muted, money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money,
+      tiles: next.tiles || prefs.tiles };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -10678,7 +10844,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     foot.appendChild(reset);
     add(card, el('div', 'sub', 'Под названием — как карточка открывается'), rows);
     card.paint = function (focus) {
-      var hid = prefs.home.hidden, keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || TILED.indexOf(k) < 0); });
+      var hid = prefs.home.hidden, tiled = tiledCards(), keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || tiled.indexOf(k) < 0); });
       clear(rows);
       keys.forEach(function (k) {
         var on = hid.indexOf(k) < 0, name = HOME_NAMES[k], row = el('div', 'row');
@@ -10896,7 +11062,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         close();
         foldEdit(s, { hidden: prefs[s].hidden.concat([key]) }, [s, key, 'tog']);
         toast(F.hid);
-      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }));
+      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }),
+      s === 'home' && !wide() ? item('layout-grid', 'Плитки…', function () { close(); tilesSheet(from); }) : null);
       // The keyboard stays on the step he took, or the one beside it at the end of the order.
       var f = box.querySelector('button:focus') ? null : F.st.cardSheetFocus;
       if (f) { var b = [].filter.call(box.children, function (x) { return x.textContent === f && !x.disabled; })[0]; if (b) b.focus(); }
@@ -11195,6 +11362,63 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function homeCardsSheet(from) {
     HOMEF.cardsCard = homeCard();
     legalSheet('Карточки на «Главной»', [HOMEF.cardsCard], from);
+  }
+  // «Плитки на «Главной»» (docs/specs/home-tiles.md): the chosen tiles first, in his order, each with a grip and a
+  // toggle (the last one stays); under «Можно добавить» the others with «+», an account's tile for every visible account
+  // of home's last answer; a tile whose module is off or whose tab is hidden is grey with «модуль выключен». «Сбросить»
+  // brings back the six. Each change is one prefs_set, as the other settings.
+  function tileName(k) {
+    if (k.indexOf('acct:') < 0) return TILES[TILE_KEYS.indexOf(k)][1];
+    var key = k.slice(5), a = (HOMEF.accts || []).filter(function (x) { return x.key === key; })[0];
+    return a ? a.name : moneyAcctName(key) || key;
+  }
+  function tilesCard() {
+    var card = mkCard('layout-grid', 'Плитки'), sel = el('div'), more = el('div', 'sub htadd', 'Можно добавить'), rest = el('div');
+    var foot = el('div', 'foot'), reset = el('button', 'btn ghost', 'Сбросить');
+    reset.type = 'button';
+    reset.onclick = function () { editPrefs({ tiles: [] }, ['tiles', 'reset']); };
+    foot.appendChild(reset);
+    add(card, el('div', 'sub', 'Сверху — на «Главной», по порядку; тяни за ручку'), sel, more, rest);
+    function row(k, on, n) {
+      var off = tileOff(k), name = tileName(k), r = el('div', 'row' + (off ? ' htoff' : ''));
+      add(r, add(el('span', 'lead'), k.indexOf('acct:') === 0 ? moneyAcctTile(k.slice(5), 'ai') : icon(TILES[TILE_KEYS.indexOf(k)][2])),
+        add(el('span', 'tx'), el('div', 't', name), off ? el('div', 'mu', 'модуль выключен') : null));
+      if (on) {
+        add(r, dragGrip(name), rowBtn('check-square', { label: name + ' на «Главной»', on: true }, 'tog', n < 2, function () {
+          editPrefs({ tiles: homeTiles().filter(function (x) { return x !== k; }) }, ['tiles', k, 'add']);
+        }));
+      } else {
+        r.appendChild(rowBtn('plus', { label: 'Добавить на «Главную»: ' + name }, 'add', false, function () {
+          editPrefs({ tiles: homeTiles().concat([k]) }, ['tiles', k, 'tog']);
+        }));
+      }
+      r.k = k;
+      return r;
+    }
+    card.paint = function (focus) {
+      var mine = homeTiles(), all = TILE_KEYS.concat((HOMEF.accts || []).map(function (a) { return 'acct:' + a.key; }));
+      clear(sel);
+      clear(rest);
+      mine.forEach(function (k) { sel.appendChild(row(k, true, mine.length)); });
+      all.forEach(function (k) { if (mine.indexOf(k) < 0) rest.appendChild(row(k, false)); });
+      more.hidden = !rest.firstChild;
+      if (prefs.tiles.length) card.appendChild(foot);
+      else if (foot.parentNode) card.removeChild(foot);
+      // The rows are new nodes: the keyboard goes to the row it moved, on the button it has now.
+      if (!focus || focus[0] !== 'tiles') return;
+      if (focus[1] === 'reset') return sel.querySelector('button:not(:disabled)').focus();
+      var r = [].filter.call(sel.children, function (x) { return x.k === focus[1]; }).concat([].filter.call(rest.children, function (x) { return x.k === focus[1]; }))[0];
+      if (!r) return;
+      var b = [].filter.call(r.querySelectorAll('button'), function (x) { return x.f === focus[2] && !x.disabled; })[0];
+      (b || r.lastChild).focus();
+    };
+    dragSort(sel, function () { return [].slice.call(sel.children); }, function (keys, k) { editPrefs({ tiles: keys }, ['tiles', k, 'grip']); });
+    card.paint();
+    return card;
+  }
+  function tilesSheet(from) {
+    HOMEF.tilesCard = tilesCard();
+    legalSheet('Плитки на «Главной»', [HOMEF.tilesCard], from);
   }
 
   // --- bottom bar ---
