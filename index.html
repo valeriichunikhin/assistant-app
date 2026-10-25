@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 08:37">
+<meta name="published" content="2026-10-25 10:15">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -593,6 +593,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 /* «Долг по картам» (docs/specs/money-12.md §2): the month's change with its arrow (down --good, up --bad), the card being
    paid off as a row like «По счетам», the others small under it, a closed one struck through with ✓. */
 .mdd{white-space:nowrap}.mdd .i{width:13px;height:13px;margin-right:2px;vertical-align:-2px}
+/* When it closes (docs/specs/money-15.md §1): small under the bar, amber when the debt does not go down. */
+.mdf.warn{color:var(--warn)}
 .mbud.mdebt{border-top:0;padding-top:2px;cursor:pointer}.mbud.mdebt .mbig{font:700 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .mbud.mdebt .mbl{align-items:center;flex-wrap:wrap}.mbud.mdebt .mbl .tx{min-width:max-content}.mbud.mdebt>.mu{margin-top:6px;font-size:13px}
 .mdqb{cursor:pointer}.mdqb>.row:first-child{border-top:1px solid var(--line)}.mdql{padding:0 14px 12px}.mdqb>.mdql:first-child{padding-top:8px;border-top:1px solid var(--line)}
@@ -2409,6 +2411,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var c = card('trending-down', 'Долг по картам'), box = el('div', 'mbud mhome');
       add(box, add(el('div', 'mbl'), el('span', 'tx', mtZl(d.total)), moneyDebtDiff(d, 'num')));
       if (d.progress !== null && d.progress !== undefined) box.appendChild(moneyBar(d.progress, 'done'));
+      var fc = moneyDebtForecastEl(d);
+      if (fc) box.appendChild(fc);
       function open() { moneyDebtSheet(d, c); }
       tap(c.firstChild, open);
       c.appendChild(tap(box, open));
@@ -7730,6 +7734,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return v < 0 ? { s: '−' + mtInt(-v) + ' за месяц', cls: 'pos', ic: 'arrow-down' }
       : v > 0 ? { s: '+' + mtInt(v) + ' за месяц', cls: 'neg', ic: 'arrow-up' } : { s: 'без изменений', cls: 'mu', ic: null };
   }
+  // When the debt closes (docs/specs/money-15.md §1, card_debt.forecast from the server): {s: «по плану 1 000 в месяц —
+  // закроешь к марту 2027» / «при таком темпе — к маю 2027» / «долг не уменьшается — прогноза нет» (cls warn) /
+  // «больше 3 лет при таком темпе», cls}; null without a debt.
+  var MONTHS_D = ['январю', 'февралю', 'марту', 'апрелю', 'маю', 'июню', 'июлю', 'августу', 'сентябрю', 'октябрю', 'ноябрю', 'декабрю'];
+  function moneyDebtForecast(d) {
+    var f = d && d.forecast;
+    if (!f || !(d.total > 0)) return null;
+    var to = f.month ? 'к\u00a0' + MONTHS_D[Number(f.month.slice(5, 7)) - 1] + '\u00a0' + f.month.slice(0, 4) : '';
+    return f.kind === 'plan' ? { s: 'по плану 1\u00a0000 в месяц — закроешь ' + to, cls: '' }
+      : f.kind === 'pace' ? { s: 'при таком темпе — ' + to, cls: '' }
+      : f.kind === 'none' ? { s: 'долг не уменьшается — прогноза нет', cls: 'warn' }
+      : f.kind === 'far' ? { s: 'больше 3 лет при таком темпе', cls: '' } : null;
+  }
+  // The same as the small line under the bar.
+  function moneyDebtForecastEl(d) {
+    var f = moneyDebtForecast(d);
+    return f ? el('div', 'mu mdf' + (f.cls ? ' ' + f.cls : ''), f.s) : null;
+  }
   function moneyDebtDiff(d, cls) {
     var t = moneyDebtDiffText(d);
     return add(el('span', 'mdd ' + t.cls + (cls ? ' ' + cls : '')), t.ic ? icon(t.ic) : null, document.createTextNode(t.s));
@@ -7759,6 +7781,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     if (d.progress !== null && d.progress !== undefined) {
       add(box, moneyBar(d.progress, 'done'), el('div', 'mu', 'от ' + mtZl(d.start.amount) + ' · погашено ' + Math.round(d.progress * 100) + ' %'));
     }
+    add(box, moneyDebtForecastEl(d));
     var q = el('div', 'mdqb');
     moneyDebtQueue(d, q);
     function open() { moneyDebtSheet(d, c); }
@@ -10960,7 +10983,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
     moneyCardsInto: moneyCardsInto, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
-    moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText,
+    moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText, moneyDebtForecast: moneyDebtForecast,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };

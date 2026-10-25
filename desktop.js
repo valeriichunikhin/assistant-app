@@ -73,8 +73,8 @@
   };
 
   // Key/value tiles: items = [{ k: 'Траты', v: '1 234 zł', small: 'за месяц' }]; vcls colors the value (warn).
-  // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, tab?: what a tap opens, go?(cell): or what a
-  // tap does}.
+  // A tile: {k, v, small?, bar?: a share for a thin bar, cls?: its class, foot?: a small line under the bar, footCls?: its
+  // class, tab?: what a tap opens, go?(cell): or what a tap does}.
   D.tiles = function (items) {
     var box = el('div', 'kv');
     items.forEach(function (t) {
@@ -85,6 +85,7 @@
         bar.firstChild.style.width = Math.max(Math.min(t.bar, 1) * 100, 1).toFixed(1) + '%';
         cell.appendChild(bar);
       }
+      if (t.foot) cell.appendChild(el('div', 'dtf' + (t.footCls ? ' ' + t.footCls : ''), t.foot));
       if (t.tab) A.tap(cell, function () { A.show(t.tab); });
       else if (t.go) A.tap(cell, function () { t.go(cell); });
       box.appendChild(cell);
@@ -230,9 +231,11 @@
     }
     // «Долг по картам» (docs/specs/money-12.md §2): the debt, the month's change and the bar to zero; a tap opens its sheet.
     if (A.moneyDebtOn && A.moneyDebtOn(j.card_debt) && hid.indexOf('card_debt') < 0) {
-      var cd = j.card_debt;
+      var cd = j.card_debt, fc = A.moneyDebtForecast(cd);
+      // When it closes (docs/specs/money-15.md §1) under the bar.
       items.push({ k: 'Долг по картам', v: A.grouped(Math.round(cd.total)) + ' zł', small: A.moneyDebtDiffText(cd).s,
-        bar: cd.progress === null ? undefined : cd.progress, cls: 'done', go: function (cell) { A.moneyDebtSheet(cd, cell); } });
+        bar: cd.progress === null ? undefined : cd.progress, cls: 'done', foot: fc ? fc.s : undefined, footCls: fc && fc.cls,
+        go: function (cell) { A.moneyDebtSheet(cd, cell); } });
     }
     // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: a tap opens the month's review.
     if (A.moneyReviewOn && A.moneyReviewOn(j) && hid.indexOf('money_review') < 0) {
