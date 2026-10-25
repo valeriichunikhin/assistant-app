@@ -619,6 +619,7 @@
           var f = A.moneyRowInfo(r);
           var amt = num(f.amount);
           if (f.cls) amt.className += f.cls;
+          amt.className += ' nowrap';
           return [f.tile, add(el('div', 'tx'), el('div', 't', f.title), A.moneySubLine(r, f, '', 'mu')),
             el('span', 'mu', f.label), el('span', 'num nowrap' + (A.moneyDayWord(r.at) === 'сегодня' ? ' mnext accent' : ''),
               (A.moneyDayWord(r.at) || A.moneyDay(r.at) + (M.found ? ' ' + r.at.slice(0, 4) : '')) + ' · ' + A.moneyTime(r.at)), amt,

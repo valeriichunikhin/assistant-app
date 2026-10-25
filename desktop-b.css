@@ -49,7 +49,7 @@
 .dprod{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;padding:10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:border-color .12s,background .12s}
 .dprod.tap{cursor:pointer}
 .dprod.tap:focus-visible{outline-offset:-2px}
-@media (hover:hover){.dprod:hover{border-color:var(--line-2);background:var(--press)}}
+@media (hover:hover) and (pointer:fine){.dprod:hover{border-color:var(--line-2);background:var(--press)}}
 .dprod.on{border-color:var(--mark);box-shadow:inset 0 0 0 1px var(--mark)}
 .dprod .dpic{display:grid;place-items:center;height:104px;border-radius:var(--r-s);background:var(--surface-2);overflow:hidden}
 .dprod .dpic .tb{width:100%;height:100%;margin:0;border-radius:0}

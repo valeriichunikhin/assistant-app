@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-24 23:19">
+<meta name="published" content="2026-10-25 08:37">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -49,7 +49,9 @@
   --toast:#1d1b33;--toast-act:var(--link);--toast-fg:#fff;--scrim:rgba(0,0,0,.6);--shadow:0 8px 24px rgba(0,0,0,.35);
   --r:20px;--r-b:14px;--r-s:10px;--bar:60px;--rail:240px;
   --font:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --font-num:var(--font)}
+  --font-num:var(--font);
+  /* the one curve of every motion here (his choice 22.10.2026); EASE in the script is the same */
+  --ease:cubic-bezier(.4,0,.2,1)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;
   --bg0:#eef0ff;--grad:linear-gradient(160deg,#eef0ff 0%,#fde7f3 100%);--glass:rgba(255,255,255,.6);--solid:#fff;
   --surface:rgba(255,255,255,.72);--surface-2:rgba(20,22,41,.04);--card-line:rgba(255,255,255,.9);--line:rgba(20,22,41,.08);
@@ -90,14 +92,14 @@ button{cursor:pointer}
 @keyframes busy{to{transform:translateX(233.333%)}}
 /* pull to refresh (docs/specs/pull-to-refresh.md): a 36 px circle that slides out from under the header with the
    touch; it exists only in a browser on a touch screen under 900 px. Inline transform and opacity while dragged. */
-#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;will-change:transform,opacity;transition:transform .6s cubic-bezier(.4,0,.2,1),opacity .4s ease,background .25s,color .25s,box-shadow .3s}
+#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 52px);z-index:2;display:grid;place-items:center;width:36px;height:36px;margin-left:-18px;border:1px solid var(--card-line);border-radius:50%;background:var(--surface);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);opacity:0;transform:translateY(-48px);pointer-events:none;will-change:transform,opacity;transition:transform .6s var(--ease),opacity .4s ease,background .25s,color .25s,box-shadow .3s}
 #ptr.drag{transition:background .15s,color .15s,box-shadow .2s}
-#ptr .i{transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#ptr .i{transition:transform .3s var(--ease)}
 #ptr.drag .i{transition:none}
 #ptr.ready{box-shadow:var(--shadow),0 0 0 4px var(--accent-soft)}
 /* the page follows the finger a little and springs back (22.10.2026, «плавнее») */
 .main.pull{transition:none;will-change:transform}
-.main.pull-back{transition:transform .65s cubic-bezier(.4,0,.2,1)}
+.main.pull-back{transition:transform .65s var(--ease)}
 #ptr.ready,#ptr.spin{opacity:1;transform:translateY(24px);background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 #ptr.ready .i{transform:rotate(180deg)}
 #ptr.spin .i{animation:rotate .8s linear infinite}
@@ -107,21 +109,21 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .out{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:none;color:var(--muted);font-size:13px;transition:background .12s}
 .out .i{width:16px;height:16px}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
-.main.in{animation:fade .5s cubic-bezier(.4,0,.2,1)}
+.main.in{animation:fade .5s var(--ease)}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}}
 /* gestures (docs/specs/gestures.md): a tab to the right comes in from the right, to the left from the left; a sideways
    swipe nudges the page before its segment switches */
-.main.in-r{animation:in-r .6s cubic-bezier(.4,0,.2,1)}.main.in-l{animation:in-l .6s cubic-bezier(.4,0,.2,1)}
+.main.in-r{animation:in-r .6s var(--ease)}.main.in-l{animation:in-l .6s var(--ease)}
 @keyframes in-r{from{transform:translateX(36px);opacity:0}}
 @keyframes in-l{from{transform:translateX(-36px);opacity:0}}
-.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
+.main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .32s var(--ease),opacity .32s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
 /* A row's swipe (docs/specs/gestures-2.md): the row slides, the strip fills the gap it leaves, its mark at the near edge. */
 .swh{position:relative;overflow:hidden}.row.swr{position:relative;z-index:1;will-change:transform}
-.swp{position:absolute;overflow:hidden;color:var(--bg0);pointer-events:none}.swp.r{left:0;background:var(--good)}.swp.l{right:0;background:var(--bad)}
+.swp{position:absolute;width:96px;overflow:hidden;color:var(--bg0);pointer-events:none;-webkit-clip-path:inset(0 100% 0 0);clip-path:inset(0 100% 0 0)}.swp.r{left:0;background:var(--good)}.swp.l{right:0;background:var(--bad)}
 .swp .i{position:absolute;top:50%;margin-top:-10px}.swp.r .i{left:24px}.swp.l .i{right:24px}
-.row.swb{transition:transform .55s cubic-bezier(.4,0,.2,1)}.swp.swb{transition:width .55s cubic-bezier(.4,0,.2,1)}
+.row.swb{transition:transform .55s var(--ease)}.swp.swb{transition:clip-path .55s var(--ease),-webkit-clip-path .55s var(--ease)}
 /* The bar steps away on a scroll down and comes back on the way up (gestures-2.md, 8). */
-.tabbar{transition:transform .55s cubic-bezier(.4,0,.2,1)}.tabbar.hid{transform:translateY(calc(var(--vvy,0px) + 100% + env(safe-area-inset-bottom)))}
+.tabbar{transition:transform .55s var(--ease)}.tabbar.hid{transform:translateY(calc(var(--vvy,0px) + 100% + env(safe-area-inset-bottom)))}
 /* --vvy: the visual viewport's drift from the layout one, set only while iOS leaves one behind (gestures(), 10) */
 .tabbar:not(.hid){transform:translateY(var(--vvy,0px))}body::before{transform:translateY(var(--vvy,0px))}
 .rail{display:none}
@@ -131,10 +133,10 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .tabbar .lb{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tabbar [aria-current]{color:var(--accent)}
 .tabbar [aria-current] .ic{background:var(--accent-soft)}
-.scrim{position:fixed;inset:0;z-index:6;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity .4s,visibility 0s .4s}
-.sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:6px 12px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow);transform:translateY(105%);visibility:hidden;transition:transform .5s cubic-bezier(.4,0,.2,1),visibility 0s .5s}
+.scrim{position:fixed;inset:0;z-index:6;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility 0s .3s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:6px 12px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow),0 24px 0 var(--solid);transform:translateY(105%);visibility:hidden;transition:transform .35s var(--ease),visibility 0s .35s}
 .more .scrim{opacity:1;visibility:visible;transition:opacity .4s}
-.more .sheet{transform:none;visibility:visible;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.more .sheet{transform:none;visibility:visible;transition:transform .5s var(--ease)}
 .grab{width:36px;height:4px;margin:4px auto 10px;border-radius:2px;background:var(--line)}
 .sheet button,.rail>button{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0 12px;border:0;border-radius:var(--r-b);background:none;color:var(--fg);font:500 15px/1.2 var(--font);text-align:left;transition:background .12s}
 .sheet .ic,.rail .ic{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:var(--r-s);color:var(--muted)}
@@ -144,10 +146,15 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .mark{display:grid;place-items:center;width:24px;height:24px;border-radius:var(--r-s);background:var(--accent);color:var(--accent-ink)}
 .mark .i{width:16px;height:16px}
 .rfoot{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line);color:var(--muted-2);font-size:12px}
-@media (hover:hover){.rail button:not([aria-current]):hover,.sheet button:not([aria-current]):hover,.row.tap:hover,.row:has(button):hover,.btn.ghost:hover,.out:hover{background:var(--press)}.tabbar button:not([aria-current]):hover .ic{background:var(--press)}
+@media (hover:hover) and (pointer:fine){.rail button:not([aria-current]):hover,.sheet button:not([aria-current]):hover,.row.tap:hover,.row:has(button):hover,.btn.ghost:hover,.out:hover{background:var(--press)}.tabbar button:not([aria-current]):hover .ic{background:var(--press)}
   .btn:not(.ghost):not(.warn):hover{filter:brightness(.94)}.pg:hover,button.pill:hover,.chips .pill:hover{border-color:var(--line-2);color:var(--fg)}.seg button:hover,.rail>button:not([aria-current]):hover{color:var(--fg)}}
+/* A press answers at once on a touch screen (emil-design-eng): a tint on the controls, the small round ones squeeze a little. */
+.tabbar button:not([aria-current]):active .ic,.sheet button:not([aria-current]):active,.seg button:not(.on):active,button.pill:not(.acc,.good,.warn,.bad):active,.pg:not(.warn):active,.tb:active,.mnav button:not(:disabled):active,.bell:not([aria-current]):active{background:var(--press)}
+button.pill:active,.pg:active,.tb:active{transform:scale(.97)}
+/* What takes taps and swipes selects no text and raises no callout on a long press; the content itself stays selectable. */
+.row.tap:not(.nt),.fi>.row,.ch.tap,.card.tap,.tabbar button,.seg button,button.pill,.pg,.tb,.ft,.poster-btn{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 /* blocks */
-.card{background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);margin:0 0 16px;overflow:hidden;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow)}
+.card{background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow)}
 .ch{display:flex;align-items:center;gap:10px;min-height:44px;padding:10px 14px 6px}
 .ch:last-child{padding-bottom:10px}
 /* The Genshin namecard: a faint picture under the card's own surface, fading out behind the text (20.10.2026: the
@@ -164,10 +171,11 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .row.tap:focus-visible{outline-offset:-2px}
 .row.tap:active{background:var(--press)}
 .row>.i.go{width:16px;height:16px;color:var(--muted-2)}
-.row .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.row .tx{flex:1;min-width:6ch;overflow-wrap:anywhere}
 .row .t{font-weight:500}
 .row b{font-weight:600}
-.row .pr{flex:none;text-align:right;font:500 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* .tx keeps 6ch at least (large text, a narrow window: never a letter a line); .pr gives way then and wraps instead. */
+.row .pr{flex:0 1 auto;text-align:right;font:500 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
 .row .mech{display:block;color:var(--warn);font:400 12px var(--font)}
 .row .old{display:block;color:var(--muted-2);text-decoration:line-through;font:400 12px var(--font-num);font-variant-numeric:tabular-nums}
 .row .mk{width:22px;height:22px;color:var(--muted)}
@@ -193,7 +201,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .cmp .cw{font-weight:600;color:var(--link)}
 .meter{height:6px;margin:6px 0 2px;border-radius:3px;background:var(--track);overflow:hidden}
 .meter i{display:block;height:100%;border-radius:3px;background:var(--mark)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:var(--r-b);background:var(--accent);color:var(--accent-ink);font:500 14px/1.1 var(--font);white-space:nowrap;transition:background .12s,filter .12s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:var(--r-b);background:var(--accent);color:var(--accent-ink);font:500 14px/1.1 var(--font);white-space:nowrap;transition:background .12s,filter .12s,transform .12s var(--ease)}
 .btn .i{width:18px;height:18px}
 .btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.5}
@@ -204,6 +212,9 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .foot{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line)}
 .foot .btn{flex:1 1 auto;min-width:0;padding:0 12px}
 @media (max-width:399px){.foot .btn .i{display:none}}
+@media (max-width:340px){.macts .btn{padding:0 8px}.seg button{padding:0 4px}}
+/* «По счетам» on a narrow phone: «Порядок» is its icon (the word stays its name), so the title is never under it. */
+@media (max-width:360px){.ch>.mtoday.mord{gap:0;padding:0 9px;font-size:0}}
 .bar{display:flex;gap:8px;margin:0 0 12px}
 .field{flex:1;min-width:0;display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);transition:border-color .12s,box-shadow .12s}
 .field:focus-within{outline:2px solid var(--fg);outline-offset:2px}
@@ -211,7 +222,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .field input{flex:1;min-width:0;height:42px;padding:0;border:0;background:none;outline:none;-webkit-appearance:none;appearance:none}
 .field input::placeholder{color:var(--muted-2)}
 .seg{display:flex;gap:2px;margin:0 0 16px;padding:2px;border:1px solid var(--line);border-radius:var(--r-b)}
-.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;transition:color .4s,background .4s,box-shadow .4s}
+.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .4s,background .4s,box-shadow .4s}
 .seg.fit{overflow-x:auto;scrollbar-width:none}
 .seg.fit button{flex:1 0 auto}
 .seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -236,20 +247,20 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .ptile .bd{position:absolute;right:-6px;bottom:-6px;padding:2px;border-radius:6px;background:var(--solid);box-shadow:0 0 0 1px var(--line);font-size:12px}
 .ptile.none{color:var(--muted)}
 .ptile .i{width:18px;height:18px}.ptile .bd .i{display:block;width:12px;height:12px}
-.tb{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-4px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer}
+.tb{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-4px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer;transition:background .12s,transform .12s var(--ease)}
 .tb:has(.big){width:64px;height:64px}
 .poster{flex:none;width:56px;height:84px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface-2);object-fit:cover}
 .poster.ph{display:grid;place-items:center;color:var(--muted)}
 .poster.ph .i{width:22px;height:22px}
 .poster-btn{flex:none;padding:0;border:0;background:none;line-height:0}
 .zoom{position:fixed;inset:0;z-index:9;display:grid;place-content:center;justify-items:center;gap:12px;background:rgba(0,0,0,.95);color:var(--toast-fg);animation:fade .12s}
-.zoom img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:var(--r)}
+.zoom img{max-width:92vw;max-height:86vh;max-height:86dvh;object-fit:contain;border-radius:var(--r)}
 .zoom .x{position:absolute;top:calc(8px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right));border-radius:50%;color:inherit;background:rgba(0,0,0,.4)}
 .zoom div{max-width:92vw;text-align:center;overflow-wrap:anywhere}
 body.zoomed{overflow:hidden}
 .row.film{align-items:flex-start}
 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
-button.pill{cursor:pointer;transition:border-color .12s,color .12s}
+button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .12s,transform .12s var(--ease)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
 .chips.dchain{padding:0 0 12px}
 /* A goal's icons: four equal cells a row, so eight make two even rows (his word 24.10.2026: «не симметрично»). */
@@ -258,13 +269,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chips select{font-size:16px}
 .chips select{border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font-family:var(--font)}
 .row.off{opacity:.55}
-.pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font-size:12px;transition:border-color .12s,color .12s}
+.pg{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font-size:12px;transition:border-color .12s,color .12s,background .12s,transform .12s var(--ease)}
 .pg .i{width:14px;height:14px}
 .row.film .pg{min-height:44px}
 .acts{display:flex;flex-direction:column;align-items:stretch;gap:4px}.acts .pg{justify-content:center}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
-.row.mdebt .mnote{font-size:13px;line-height:1.35;margin-top:2px}
+.row.mdebt .mnote{font-size:13px;line-height:1.35;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row.dela .hint,.tx>.hint{font-size:13px;line-height:1.35;color:var(--muted);margin-top:4px}
 .row.ib .t{overflow-wrap:anywhere}.card.tap{cursor:pointer}
 .pg.warn{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
@@ -277,7 +288,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .dot{width:9px;height:9px;border-radius:50%}
 /* A row that unfolds on a tap (Genshin builds, the next plan, an event's tip): the chevron turns, the block under it is tinted. */
 .row>.i.go{transition:transform .15s}.row.open>.i.go{transform:rotate(180deg)}
-.det{background:var(--surface-2)}.det>.row:first-child{border-top:1px solid var(--line)}
+.det{background:var(--surface-2)}
+/* An unfolded block (a row's .det, an open task's .td, a poster's .fx) fades down into place as it is added. */
+.det,.td,.fx{transition:opacity .2s var(--ease),transform .2s var(--ease)}
+@starting-style{.det,.td,.fx{opacity:0;transform:translateY(-4px)}}.det.stay{transition:none}.det>.row:first-child{border-top:1px solid var(--line)}
 .tip{padding:9px 14px 12px;border-top:1px solid var(--line);font-size:13px;white-space:pre-line;overflow-wrap:anywhere}
 .code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em}
 .dash{width:14px;border-top:2px dashed var(--mark)}
@@ -291,10 +305,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chart .last{stroke:var(--solid);stroke-width:2}
 .chart .b{fill:var(--mark)}
 .chart .b.now{fill-opacity:.3;stroke:var(--mark)}
-.chart .nm{fill:var(--fg);font:12px var(--font)}.chart .hit{fill:transparent}.chart g:hover>.b{fill-opacity:.75}.chart g:focus{outline:none}.chart g:focus-visible>.b{stroke:var(--fg);stroke-width:1.5}
+.chart .nm{fill:var(--fg);font:12px var(--font)}.chart .hit{fill:transparent}@media (hover:hover) and (pointer:fine){.chart g:hover>.b{fill-opacity:.75}}.chart g:focus{outline:none}.chart g:focus-visible>.b{stroke:var(--fg);stroke-width:1.5}
 .fst{padding:14px 14px 0;color:var(--muted);font-size:12px;font-weight:600}
 .s-lf{fill:var(--mark);background:var(--mark)}.s-al{fill:var(--blue);background:var(--blue)}.s-rc{fill:var(--fg);background:var(--fg)}
-#toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bar) + 12px + env(safe-area-inset-bottom));z-index:9;max-width:420px;margin:0 auto;padding:12px 16px;border:1px solid var(--line-2);border-radius:var(--r-b);background:var(--toast);color:var(--toast-fg);box-shadow:var(--shadow);font-size:13px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(var(--bar) + 12px + env(safe-area-inset-bottom));z-index:9;max-width:420px;margin:0 auto;padding:12px 16px;border:1px solid var(--line-2);border-radius:var(--r-b);background:var(--toast);color:var(--toast-fg);box-shadow:var(--shadow);font-size:13px;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .2s var(--ease),transform .2s var(--ease);pointer-events:none}
 #toast.on{opacity:1;transform:none}
 #toast.act{pointer-events:auto}
 #toast .tl{min-height:44px;margin:-12px 0;padding:0 6px;border:0;background:none;color:var(--toast-act);font-weight:600}
@@ -373,7 +387,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   .tboard .fi>.row>.go{display:none}
 }
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}
+  /* No movement, but sheets and the poster's zoom still fade in and out (0.2 s); the refresh spinner and the busy bar run. */
+  .tsum::before,.tsum>div,.zoom{animation:rfade .2s var(--ease)!important}
+  .tsum.out::before,.tsum.out>div{animation:none!important;transform:none!important;opacity:0;transition:opacity .2s var(--ease)!important}
+  .scrim{transition:opacity .2s var(--ease),visibility 0s .2s!important}.more .scrim{transition:opacity .2s var(--ease)!important}
+  .sheet{transform:none!important;opacity:0;transition:opacity .2s var(--ease),visibility 0s .2s!important}.more .sheet{opacity:1;transition:opacity .2s var(--ease)!important}
+  #ptr.spin .i{animation:rotate .8s linear infinite!important}}
+@keyframes rfade{from{opacity:0}}
 /* After the Geist review (11.10): the active segment reads in dark, content centred on wide screens, a grey search
    clear in light, the focus ring inside a scrolling segment, 44 px segments on the phone, the current tab bolder. */
 .seg button.on{background:var(--line);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -441,8 +462,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .tst>button:disabled{opacity:.3;cursor:default}.tst>button .i{width:16px;height:16px}.tst>button .mk{width:20px;height:20px}.tst>button .mk.on{color:var(--mark)}
 .tst>.tx{flex:1;min-width:0;padding:4px 6px;overflow-wrap:anywhere;font-size:14px;cursor:pointer}.tst.done>.tx{color:var(--muted);text-decoration:line-through}.tst>.field{margin:4px 0}
 .tlg{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}.tlg>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}.tlg .dt{flex:none;color:var(--muted-2);font-variant-numeric:tabular-nums}.tlg+.pg{margin-top:6px}
-.tsum{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:flex-end;background:var(--scrim);animation:fade .12s}
-.tsum>div{max-height:85vh;overflow-y:auto;padding:6px 16px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow)}
+.tsum{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:flex-end}
+/* It opens as «Ещё» does: the scrim fades in, the panel comes up from below; closing (.out) is quicker, then it is removed.
+   The panel's shadow copy 24 px under it fills the gap an upward drag (with friction) would open. */
+.tsum::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--scrim);animation:scrim-in .4s var(--ease)}
+.tsum>div{animation:sheet-up .5s var(--ease)}
+.tsum.out{pointer-events:none}.tsum.out::before{opacity:0;transition:opacity .3s var(--ease)}
+.tsum.out>div{animation:none;transform:translateY(100%);transition:transform .35s var(--ease)}
+@keyframes scrim-in{from{opacity:0}}@keyframes sheet-up{from{transform:translateY(100%)}}
+.tsum>div{max-height:85vh;max-height:85dvh;overflow-y:auto;overscroll-behavior:contain;padding:6px 16px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow),0 24px 0 var(--solid)}
 .tsum pre{margin:0 0 4px;color:var(--fg);font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 @media (min-width:900px){.tsum>div{width:100%;max-width:640px;margin:0 auto}}
 .st{font-size:15px;letter-spacing:1px}.st .i{width:14px;height:14px;margin-right:1px;vertical-align:-2px;color:var(--muted-2)}.st .i.on{color:var(--mark);fill:currentColor}.st .i+.i.c{margin-left:8px}
@@ -473,13 +501,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    month), the spends by day; the sheet's category chips, «Всегда для этого продавца» and the steps for the iPhone. */
 .mhead{padding:6px 14px 14px}
 .mnav{display:flex;align-items:center;gap:4px;margin:0 -8px}
-.mnav button{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:var(--r-s);background:none;color:var(--fg);cursor:pointer}
+.mnav button{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:var(--r-s);background:none;color:var(--fg);cursor:pointer;transition:background .12s}
 .mnav button:disabled{opacity:.3;cursor:default}.mnav .i{width:20px;height:20px}
 .mnav .mtoday{width:auto;height:36px;padding:0 12px;gap:6px;display:inline-flex;align-items:center;margin-left:4px;border:1px solid var(--line);border-radius:999px;font:inherit;font-size:14px;color:var(--accent)}.mnav .mtoday .i{width:16px;height:16px}
 .mmon{flex:1;min-width:0;text-align:center;font:600 14px/1.3 var(--font)}
 .mtop{margin-top:2px}
 .msum{font:800 36px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
 @media (max-width:380px){.msum{font-size:32px}}
+/* The month's sum under the header scales down with its lane instead of being cut (large text, 320 px). */
+.mtop{container-type:inline-size}.mtop .msum{font-size:clamp(16px,12cqi,36px)}
 .mvs{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.35}
 .mvs .pill.mvd{height:22px;gap:3px;margin-right:6px;padding:0 7px;font:600 12px/1 var(--font-num);font-variant-numeric:tabular-nums}.mvs .pill.mvd .i{width:12px;height:12px}
 .row.mcat .tx{display:flex;flex-direction:column;gap:6px}.row.mcat.on{background:var(--accent-soft)}
@@ -508,6 +538,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mlink{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--link);font:14px var(--font);text-align:left;cursor:pointer}
 .mlink .i{width:16px;height:16px}
 .row.msub .t{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.t.tt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.msl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* A narrow phone: a task's steps and late pills go under its title. */
+@media (max-width:360px){.row.tk{flex-wrap:wrap}.row.tk>.pr{order:2;flex:0 0 calc(100% - 48px);margin:-6px 0 0 48px;text-align:left}}
 /* His own subscriptions (docs/specs/money-7.md): a switched-off one muted; a yearly one's month part under its sum; the
    detector's hint ends in a small «Добавить»; the header's other currency on its own line. */
 .row.msub.off .t,.row.msub.off .pr{color:var(--muted)}.row.msub.off .ptile{opacity:.5}
@@ -536,10 +569,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    what is owed to him in --good, a debt and a credit card in minus in --bad; an account's balance large, its month small;
    the search over the spends; a split's mark and the receipt's clip in a row; a person's and a goal's sheet. */
 .pos{color:var(--good)}.neg{color:var(--bad)}.minc b.pos{color:var(--good)}.minc b.neg{color:var(--bad)}
-.macts{display:flex;gap:8px;margin-top:12px}.macts .btn{flex:1 1 0;min-width:0;height:44px;padding:0 12px}.macts .btn:last-child{flex-grow:1.4}.btn.mplus{flex:0 0 56px;padding:0}.btn.mplus .i{margin:0}
+.macts{display:flex;gap:8px;margin-top:12px}.macts{flex-wrap:wrap}.macts .btn{flex:1 1 0;min-width:max-content;height:44px;padding:0 12px}.macts .btn:last-child{flex-grow:1.4}.btn.mplus{flex:0 0 56px;padding:0}.btn.mplus .i{margin:0}
 .minc{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.4}
 .minc b{color:var(--fg);font:600 13px/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
-.row.mcat .pr.mbal{font:600 15px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.row.mcat .pr.mbal{font:600 15px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.row.macc .pr.mbal{min-width:min(6em,40%)}.mdqb .row.macc .pr.mbal{min-width:0}
+/* «свободно N», «осталось N»: the line may wrap, the amount never breaks or is cut. */
+.row.macc .tx .mu.mfree{white-space:normal;overflow:visible}.mnw{white-space:nowrap}
 .row.mcat .pr.mbal.neg{color:var(--bad)}.row.macc .tx .mu{font-size:12px}
 .row.mrow .pr.mu{color:var(--muted)}.ptile.ai{display:inline-flex;width:14px;height:14px;min-width:0;margin:0 4px 0 0;padding:0;border-radius:4px;vertical-align:-2px}.ptile.ai img{border-radius:3px}.ptile.ai .i{width:11px;height:11px;margin:0}.i.mclip{width:12px;height:12px;margin-left:4px;vertical-align:-1px}
 .msearch{margin:0 14px 8px}.msearch .btn.x{min-width:32px;height:32px;margin-right:-8px;padding:0;background:none;box-shadow:none;color:var(--muted)}.msearch .btn.x[hidden]{display:none}
@@ -559,7 +594,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
    paid off as a row like «По счетам», the others small under it, a closed one struck through with ✓. */
 .mdd{white-space:nowrap}.mdd .i{width:13px;height:13px;margin-right:2px;vertical-align:-2px}
 .mbud.mdebt{border-top:0;padding-top:2px;cursor:pointer}.mbud.mdebt .mbig{font:700 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
-.mbud.mdebt .mbl{align-items:center}.mbud.mdebt>.mu{margin-top:6px;font-size:13px}
+.mbud.mdebt .mbl{align-items:center;flex-wrap:wrap}.mbud.mdebt .mbl .tx{min-width:max-content}.mbud.mdebt>.mu{margin-top:6px;font-size:13px}
 .mdqb{cursor:pointer}.mdqb>.row:first-child{border-top:1px solid var(--line)}.mdql{padding:0 14px 12px}.mdqb>.mdql:first-child{padding-top:8px;border-top:1px solid var(--line)}
 .mdq{display:flex;align-items:center;gap:8px;padding:4px 0 0;font-size:13px;color:var(--muted)}.mdq .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mdq .num{flex:none;font-variant-numeric:tabular-nums}.mdq.done .tx,.mdq.done .num{text-decoration:line-through}.mdq.done>.i{width:13px;height:13px;color:var(--good)}
@@ -578,7 +613,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .chart .fcl{stroke:var(--mark);stroke-width:2;stroke-dasharray:4 4;stroke-linecap:round}
 .chart .dot{fill:var(--mark);stroke:var(--solid);stroke-width:2}
 .chart .hc{fill:var(--mark)}.chart .hc.z{fill:var(--line);fill-opacity:1}
-.chart g.pick{cursor:pointer}.chart g.cell:hover>.hc{stroke:var(--fg);stroke-width:1}.chart g.cell:focus{outline:none}.chart g.cell:focus-visible>.hc{stroke:var(--fg);stroke-width:1.5}
+.chart g.pick{cursor:pointer}@media (hover:hover) and (pointer:fine){.chart g.cell:hover>.hc{stroke:var(--fg);stroke-width:1}}.chart g.cell:focus{outline:none}.chart g.cell:focus-visible>.hc{stroke:var(--fg);stroke-width:1.5}
 .chart rect.hit:focus{outline:none}
 .mtip{position:absolute;z-index:2;max-width:240px;padding:6px 9px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--solid);box-shadow:var(--shadow);pointer-events:none;font-size:12px;line-height:1.35}
 .mtip b{display:block;font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}.mtip span{display:block;color:var(--muted)}
@@ -622,7 +657,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .mfh{cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .mfh h3{border-radius:var(--r-s)}.mfh h3:focus-visible{outline-offset:4px}
 .mfh .mfv,.mfh .mfp{flex:none;width:18px;height:18px;color:var(--muted)}.mfh .mfp{width:15px;height:15px;display:none}
-.mfh .mfv{transform:rotate(180deg);transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.mfh .mfv{transform:rotate(180deg);transition:transform .22s var(--ease)}
 .mfh .btn.x.mfm{min-width:36px;min-height:36px;margin:-6px -8px -6px -4px;padding:0;background:none;box-shadow:none;color:var(--muted)}
 .mfh .mfs{display:none;order:9;flex-basis:100%;min-width:0;margin:-6px 0 0;padding-left:38px;color:var(--muted);font:13px/1.35 var(--font-num);
   font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -631,7 +666,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .card.mfx>.mfh{flex-wrap:wrap;row-gap:0;padding-bottom:10px}.card.mfx>.mfh .mfs{display:block}.card.mfx>.mfh .mfv{transform:none}
 .card.mfx>.mfh>:not(.ico):not(h3):not(.mfs):not(.mfp):not(.mfm):not(.mfv){display:none}
 .card.mfold>:not(.mfh){display:none}
-.card.mfanim{transition:height .22s cubic-bezier(.2,.8,.2,1)}
+.card.mfanim{transition:height .22s var(--ease)}
 .mfseg{display:inline-flex;gap:2px;margin:6px 0 0;padding:2px;border:1px solid var(--line);border-radius:var(--r-s)}
 .mfseg button{display:grid;place-items:center;width:40px;height:32px;padding:0;border:0;border-radius:6px;background:none;color:var(--muted);cursor:pointer}
 .mfseg button .i{width:16px;height:16px}.mfseg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -659,7 +694,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .myear .msum{margin:0}.myear .minc{margin-bottom:6px}.myear .mcs{margin-top:10px}
 .mcols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 24px}
 @media (min-width:900px){.tsum>div:has(>.myear){max-width:1040px}.mcols{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media print{body.printing>*:not(.tsum),body.printing::before{display:none!important}body.printing .tsum{position:static;background:none}
+@media print{body.printing>*:not(.tsum),body.printing::before,body.printing .tsum::before{display:none!important}body.printing .tsum{position:static;background:none}
   body.printing .tsum>div{max-height:none;overflow:visible;border:0;box-shadow:none;background:#fff;color:#000}
   body.printing .tsum .grab,body.printing .tsum .acts,body.printing .lsh,body.printing .tsum .lwk{display:none}
   body.printing .tsum .lprint{display:block}body.printing .tsum pre{color:#000;font:12pt/1.5 serif}}
@@ -670,7 +705,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
 .bell[aria-current]{color:var(--accent);background:var(--accent-soft)}
 .bell .bdg{position:absolute;top:3px;right:2px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--bg0)}
 .bell .bdg:empty{display:none}
-@media (hover:hover){.bell:not([aria-current]):hover{background:var(--press);color:var(--fg)}}
+@media (hover:hover) and (pointer:fine){.bell:not([aria-current]):hover{background:var(--press);color:var(--fg)}}
 /* A phone keeps the tab's name whole beside the bell: «выйти» is its icon only there (the word stays its name). */
 @media (max-width:479px){.hdr .out{gap:0;padding:0 9px;font-size:0}}
 @media (min-width:900px){.bell{width:36px;height:36px;margin:0}.bell .i{width:18px;height:18px}.bell .bdg{top:-4px;right:-6px}}
@@ -1473,6 +1508,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   function vSwipes(on) {
     try { if (!browser && tg.isVersionAtLeast('7.7')) tg[on ? 'enableVerticalSwipes' : 'disableVerticalSwipes'](); } catch (e) {}
   }
+  // A .tsum sheet (legalSheet, «Сводка») opens: off; it closes — the panel goes down, the scrim fades (.out, 0.35 s),
+  // then it is removed — and Telegram's swipe comes back once no sheet is left open.
+  function tsumOpened() { vSwipes(false); }
+  function tsumOut(z) {
+    z.classList.add('out');
+    var p = z.firstChild;
+    if (p && p.style) p.style.transition = p.style.transform = '';
+    setTimeout(function () { z.remove(); }, 350);
+    if (!shell.classList.contains('more') && !document.querySelector('.tsum:not(.out)')) vSwipes(true);
+  }
   function openSheet() {
     vSwipes(false);
     tabbar.classList.remove('hid');
@@ -1482,7 +1527,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (b) b.focus();
   }
   function closeSheet(refocus) {
-    if (shell.classList.contains('more')) vSwipes(true);
+    if (shell.classList.contains('more')) vSwipes(!document.querySelector('.tsum:not(.out)'));
     if (refocus && shell.classList.contains('more')) moreBtn.focus();
     shell.classList.remove('more');
     sheet.setAttribute('aria-hidden', 'true');
@@ -1671,8 +1716,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         s.className = 'swp ' + dir;
         add(clear(s), icon(dir === 'l' ? (g.row.mx ? 'trash' : 'x') : g.row.classList.contains('done') ? 'undo-2' : 'check'));
       }
-      s.style.width = Math.abs(o).toFixed(1) + 'px';
+      stripClip(s, Math.abs(o));
       g.row.style.transform = 'translateX(' + o.toFixed(1) + 'px)';
+    }
+    // The strip is a fixed 96 px; o px of it show at the row's edge it fills (clip-path, so nothing is laid out again).
+    function stripClip(s, o) {
+      var c = 'inset(0 ' + (s.dir === 'l' ? '0 0 ' + (96 - o).toFixed(1) + 'px' : (96 - o).toFixed(1) + 'px 0 0') + ')';
+      s.style.webkitClipPath = s.style.clipPath = c;
     }
     // The row springs back to its place and the strip goes with it.
     function rowBack(r, s) {
@@ -1681,7 +1731,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       r.classList.add('swb');
       s.classList.add('swb');
       r.style.transform = '';
-      s.style.width = '0px';
+      stripClip(s, 0);
       setTimeout(function () {
         var h = s.parentNode;
         r.classList.remove('swr', 'swb');
@@ -1693,11 +1743,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     document.addEventListener('click', function (e) {
       if (Date.now() < quiet) { e.stopPropagation(); e.preventDefault(); }
     }, true);
-    // Below the threshold the sheet springs back as the page does after a short pull.
-    function springBack() {
-      sheet.style.transition = 'transform .6s cubic-bezier(.4,0,.2,1)';
-      sheet.style.transform = '';
-      springT = setTimeout(function () { sheet.style.transition = ''; }, 650);
+    // Below the threshold the sheet («Ещё» or a .tsum panel) springs back as the page does after a short pull.
+    function springBack(p) {
+      p.style.transition = 'transform .6s ' + EASE;
+      p.style.transform = '';
+      springT = setTimeout(function () { p.style.transition = ''; }, 650);
     }
     // The tab's switch: the first .seg in main, and only while it is drawn and on screen («Фильмы» hides its «Подборка»
     // under a search, and its card can lie far below).
@@ -1734,12 +1784,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       setTimeout(function () { if (current !== k) show(k); }, 320);
     }
     document.addEventListener('touchstart', function (e) {
-      if (g && g.on && g.kind === 'sheet') springBack();
+      if (g && g.on && g.kind === 'sheet') springBack(g.panel);
       release();
       if (e.touches.length !== 1 || !shell.parentNode) return;
-      var t = e.target, p = e.touches[0], kind = null, row = null;
+      var t = e.target, p = e.touches[0], kind = null, row = null, panel = sheet, ts = null;
       if (!t.closest || t.closest('input,textarea,select,[contenteditable]')) return;
-      if (t.closest('.sheet')) {
+      // A .tsum sheet's panel follows a pull down as «Ещё» does, only from the top of its own scroll.
+      if ((ts = t.closest('.tsum'))) {
+        panel = ts.firstChild;
+        if (ts.classList.contains('out') || !ts.sheetClose || !panel || !panel.contains(t)) return;
+        try { if (!browser && !tg.isVersionAtLeast('7.7')) return; } catch (x) { return; }
+        for (var m = t; m; m = m === panel ? null : m.parentElement) if (m.scrollTop > 0) return;
+        kind = 'sheet';
+      } else if (t.closest('.sheet')) {
         if (!shell.classList.contains('more')) return;
         // In Telegram only where its own vertical swipe can be turned off (Bot API 7.7, as vSwipes).
         try { if (!browser && !tg.isVersionAtLeast('7.7')) return; } catch (x) { return; }
@@ -1748,11 +1805,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       } else if (sideways(t)) return;
       else if (backHandler) kind = browser && p.clientX <= 24 ? 'edge' : null;
       // The row is asked before the segment: a swipe that starts on a row is the row's.
-      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && (row = swipeRow(t))) kind = 'row';
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum:not(.out)') && (row = swipeRow(t))) kind = 'row';
       // «Фильмы» keep their switch to a tap (22.10.2026, his word): the poster grid is too easy to brush sideways —
       // there, and on a tab without a switch, a sideways swipe goes to the neighbouring tab of the bar.
-      else if (!shell.classList.contains('more') && !document.querySelector('.tsum') && !t.closest('.tabbar,.hdr')) kind = current !== 'films' && topSeg() ? 'seg' : 'tab';
-      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && (row.mx || row.querySelector(':scope>.x')) };
+      else if (!shell.classList.contains('more') && !document.querySelector('.tsum:not(.out)') && !t.closest('.tabbar,.hdr')) kind = current !== 'films' && topSeg() ? 'seg' : 'tab';
+      if (kind) g = { kind: kind, x0: p.clientX, y0: p.clientY, dx: 0, dy: 0, on: false, row: row, x: row && (row.mx || row.querySelector(':scope>.x')),
+        panel: panel, shut: ts && ts.sheetClose, t0: Date.now() };
     }, { passive: true });
     document.addEventListener('touchmove', function (e) {
       if (!g) return;
@@ -1765,7 +1823,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (touchOwner || (g.kind === 'sheet' ? side || g.dy < 0 : !side || (g.kind === 'edge' && g.dx < 0) || (g.kind === 'row' && g.dx < 0 && !g.x) || (g.kind === 'row' && g.dx > 0 && g.row.mx))) { g = null; return; }
         g.on = true;
         touchOwner = g.kind === 'sheet' ? 'sheet' : 'x';
-        if (g.kind === 'sheet') { clearTimeout(springT); sheet.style.transition = 'none'; }
+        if (g.kind === 'sheet') { clearTimeout(springT); g.panel.style.transition = 'none'; }
         if (g.kind === 'row' && !still.matches) {
           var h = g.row.parentNode;
           h.classList.add('swh');
@@ -1776,15 +1834,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         }
       }
       if (e.cancelable) e.preventDefault();
-      if (g.kind === 'sheet' && !still.matches) sheet.style.transform = 'translateY(' + Math.max(g.dy, 0).toFixed(1) + 'px)';
+      // Up past where it started the panel gives a little and stops at 24 px (friction, not a wall).
+      if (g.kind === 'sheet' && !still.matches) g.panel.style.transform = 'translateY(' + (g.dy < 0 ? Math.max(g.dy * 0.2, -24) : g.dy).toFixed(1) + 'px)';
       if (g.kind === 'row' && g.swp) rowPaint();
     }, { passive: false });
     document.addEventListener('touchend', function (e) {
       if (!g || e.touches.length) return;
-      var k = g.on && g.kind, dx = g.dx, dy = g.dy, row = g.row, x = g.x;
+      var k = g.on && g.kind, dx = g.dx, dy = g.dy, row = g.row, x = g.x, panel = g.panel, shut = g.shut;
+      // A flick is enough (emil-design-eng): the full distance, or a third of it at over 0.11 px/ms.
+      var v = Math.max(Math.abs(dx), Math.abs(dy)) / Math.max(1, Date.now() - g.t0);
       release();
       if (k === 'sheet') {
-        if (dy < 80) return springBack();
+        if (dy < 80 && !(dy >= 24 && v > 0.11)) return springBack(panel);
+        if (shut) return shut();
         sheet.style.transition = sheet.style.transform = '';
         closeSheet(true);
       } else if (k === 'edge') {
@@ -1798,8 +1860,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (!row.isConnected) { quiet = Date.now() + 200; return; }
         // The row's own handlers do the work: the task's ✓ (a list row's tap: its .tb may be the product's photo), the
         // list's ✕ — pressed twice, as the swipe is its «Точно?»; the «Вернуть» toasts come from them as on a tap.
-        if (dx >= 72 && !row.mx) (x ? row : row.querySelector('.tb')).click();
-        else if (dx <= -72 && x) {
+        if ((dx >= 72 || (dx >= 32 && v > 0.11)) && !row.mx) (x ? row : row.querySelector('.tb')).click();
+        else if ((dx <= -72 || (dx <= -32 && v > 0.11)) && x) {
           haptic();
           x.click();
           if (x.isConnected && x.classList.contains('warn')) x.click();
@@ -1808,7 +1870,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }
     });
     document.addEventListener('touchcancel', function () {
-      if (g && g.on && g.kind === 'sheet') springBack();
+      if (g && g.on && g.kind === 'sheet') springBack(g.panel);
       release();
     });
     // 8. The bottom bar: away on a scroll down of more than 24 px in a row past 120 px; back on 12 px up, near the top,
@@ -1825,7 +1887,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var y = document.scrollingElement.scrollTop, d = y - lastY;
       lastY = y;
       // A sheet's scroll leaves the timer running: a bar hidden before the sheet still comes back after it.
-      if (shell.classList.contains('more') || document.querySelector('.tsum')) return;
+      if (shell.classList.contains('more') || document.querySelector('.tsum:not(.out)')) return;
       clearTimeout(idleT);
       if (y < 120) return barBack();
       if (d > 0) {
@@ -1966,16 +2028,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // The entry of main (.main.in / .in-r / .in-l, the same keyframes) by animate(): taking the class off and on again
   // restarted it only through a forced layout. Without animate() the class as before.
+  // EASE: the CSS --ease, for the motion set from the script. Reduced motion: the tab only fades in, 0.2 s.
   var ENTRY = { in: ['translateY(6px)', 500], 'in-r': ['translateX(36px)', 600], 'in-l': ['translateX(-36px)', 600] };
+  var EASE = 'cubic-bezier(.4,0,.2,1)';
   function moveIn(kind) {
     if (!main.animate) {
       void main.offsetWidth;
       return main.classList.add(kind);
     }
-    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     try {
-      main.animate([{ opacity: 0, transform: ENTRY[kind][0] }, { opacity: 1, transform: 'none' }],
-        { duration: ENTRY[kind][1], easing: 'cubic-bezier(.4,0,.2,1)' });
+      main.animate(still ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: ENTRY[kind][0] }, { opacity: 1, transform: 'none' }],
+        { duration: still ? 200 : ENTRY[kind][1], easing: EASE });
     } catch (e) {}
   }
   function show(tab) {
@@ -2024,7 +2088,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // Shortcuts' workout types, by a word of the name, as the morning brief names them.
   var WORKOUTS = [[/volleyball/i, 'ball', 'Волейбол'], [/tennis/i, 'circle-dot', 'Теннис'], [/running/i, 'activity', 'Бег'],
     [/walking/i, 'footprints', 'Ходьба'], [/cycling/i, 'bike', 'Велосипед'], [/strength/i, 'dumbbell', 'Силовая'], [/^other$/i, 'medal', 'Другое']];
-  function grouped(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  // Thousands apart by a no-break space, so a number never breaks across lines (the inputs strip \s, which takes it).
+  function grouped(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
   function sleepLine(min) { return Math.floor(min / 60) + ' ч ' + ('0' + min % 60).slice(-2) + ' мин'; }
   // Year, month, day, hour and minute of a moment in Warsaw. The formatter is built once (wp.f): building one per call
   // was most of the time «Деньги» took to draw.
@@ -2310,8 +2375,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       }));
     }
     function tasksCard(tk, today) {
-      var c = card('check-square', 'Задачи', 'открыто ' + (tk.count_open || 0));
-      if (tk.overdue) c.firstChild.appendChild(pill('просрочено ' + tk.overdue, 'bad'));
+      var c = card('check-square', 'Задачи', 'открыто ' + grouped(tk.count_open || 0));
+      if (tk.overdue) c.firstChild.appendChild(pill('просрочено ' + grouped(tk.overdue), 'bad'));
       tap(c.firstChild, function () { show('tasks'); });
       (tk.today || []).slice(0, 5).forEach(function (t) {
         var m = marks[taskKey(t)], r = null;
@@ -2761,10 +2826,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   }
   // The title; a task about the shared YouTube subscription (the title starts with «YouTube») carries the YouTube
   // mark in its brand red before it (Lucide `youtube`), so those rows are told apart at a glance.
+  // At most three lines (the open task shows it whole in its field); an empty one reads «Без названия».
   function taskTitle(t) {
-    var d = el('div', 't');
+    var d = el('div', 't tt');
     if (/^youtube\b/i.test(t.title)) d.appendChild(icon('youtube', 'yt'));
-    d.appendChild(document.createTextNode(t.title));
+    d.appendChild(document.createTextNode(String(t.title || '').trim() || 'Без названия'));
     return d;
   }
   // A task's row: its ✓ button (tick), the title, the caption, the steps pill, a red pill of the days it is late.
@@ -2787,7 +2853,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       ml.setAttribute('aria-label', 'Открыть письмо: ' + t.title);
       ml.onclick = function (ev) { ev.stopPropagation(); openLink(t.mail_url); };
     }
-    return add(el('div', 'row' + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
+    return add(el('div', 'row tk' + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
       late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null, ml);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
@@ -3138,11 +3204,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         z.setAttribute('aria-modal', 'true');
         z.setAttribute('aria-label', 'Сводка');
         function close() {
-          z.remove();
+          if (z.classList.contains('out')) return;
+          tsumOut(z);
           h.remove('zoomed');
           hideBack();
           if (sm.isConnected) sm.focus();
         }
+        z.sheetClose = close;
         backHandler = close;
         x.onclick = close;
         z.onclick = function (ev) { if (ev.target === z) close(); };
@@ -3169,6 +3237,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         if (hasBack()) try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
         h.add('zoomed');
         add(document.body, add(z, add(el('div'), el('div', 'grab'), el('pre', 'code', s), add(el('div', 'acts'), cp, x))));
+        tsumOpened();
         haptic();
         cp.focus();
       }, function () { sm.disabled = false; });
@@ -3199,8 +3268,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       return row;
     }
     // The block under an open row: the title, the area, the due day and time, the steps, note and log, «Сводка», «Убрать».
+    // It fades in only when a tap opens it (unfold), not on every redraw while it stays open.
+    var unfold = null;
     function details(t, today) {
-      var d = el('div', 'det td'), ti = el('input'), di = el('input'), tm = el('input');
+      var d = el('div', 'det td' + (unfold === t.id ? '' : ' stay')), ti = el('input'), di = el('input'), tm = el('input');
+      unfold = null;
       ti.value = t.title;
       ti.maxLength = 200;
       ti.enterKeyHint = 'done';
@@ -3303,6 +3375,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         // An opened task fetches its steps and log afresh, unless a save of them is still under way.
         if (!open && more[t.id] && !more[t.id].busy) delete more[t.id];
         opened = open ? null : t.id;
+        unfold = opened;
         refocus = t.id;
         render();
       }
@@ -3440,10 +3513,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     // A sheet opened over another one (a spend from a place's sheet) closes back to it: the one under it keeps the
     // page locked and takes Back again.
     function close() {
-      if (!z.isConnected) return;
-      z.remove();
+      if (!z.isConnected || z.classList.contains('out')) return;
+      tsumOut(z);
       hideBack();
-      var under = [].slice.call(document.querySelectorAll('.tsum')).pop();
+      var under = [].slice.call(document.querySelectorAll('.tsum:not(.out)')).pop();
       if (under && under.sheetClose) {
         backHandler = under.sheetClose;
         if (hasBack()) try { tg.BackButton.onClick(backHandler); tg.BackButton.show(); } catch (e) {}
@@ -3461,6 +3534,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (hasBack()) try { tg.BackButton.onClick(close); tg.BackButton.show(); } catch (e) {}
     h.add('zoomed');
     add(document.body, add(z, box));
+    tsumOpened();
     haptic();
     // On a phone a focused field opens the keyboard over the sheet before he sees it (his screenshot 23.10.2026):
     // there the sheet itself takes focus and the keyboard waits for a tap on a field.
@@ -3954,9 +4028,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       if (st.mode === kind) focusEl = fi;
       return add(f, add(el('label', 'field'), icon(kind === 'posted' ? 'link' : 'file'), fi), ok);
     }
-    // The block under an open draft: the text, «Картинка: …», the day, the buttons and the open form.
+    // The block under an open draft: the text, «Картинка: …», the day, the buttons and the open form; it fades in only
+    // when a tap opens it (unfold).
+    var unfold = null;
     function details(p, today) {
-      var st = u(p), d = el('div', 'det td'), ta = el('textarea', 'lta');
+      var st = u(p), d = el('div', 'det td' + (unfold === p.id ? '' : ' stay')), ta = el('textarea', 'lta');
+      unfold = null;
       ta.value = st.text != null ? st.text : p.draft || '';
       ta.maxLength = 3000;
       ta.setAttribute('aria-label', 'Текст поста');
@@ -4019,6 +4096,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       var tx = r.querySelector('.tx');
       function toggle() {
         opened = open ? null : p.id;
+        unfold = opened;
         refocus = p.id;
         render();
       }
@@ -7421,12 +7499,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
   // The line under a row: «09:11 · Obozowa 16 · [logo] Revolut · ½ · Тетяна · note» — the chain's shop, then the bank's
   // small logo before its name, so the account reads at a glance (his word 23.10.2026). lead is the time on the phone,
   // none on the desktop's table.
+  // Empty or blank parts are dropped (no dangling «·»); two lines at most (.msl).
   function moneySubLine(r, f, lead, cls) {
-    var name = f.kind === 'transfer' ? '' : moneyAcctName(r.account);
-    var rest = f.marks.concat([r.note]).filter(Boolean).join(' · ');
-    if (f.kind === 'expense' && r.chain && r.store) lead = [lead, r.store].filter(Boolean).join(' · ');
+    function tr(v) { return String(v || '').trim(); }
+    var name = f.kind === 'transfer' ? '' : tr(moneyAcctName(r.account));
+    var rest = f.marks.concat([r.note]).map(tr).filter(Boolean).join(' · ');
+    lead = tr(lead);
+    if (f.kind === 'expense' && r.chain && tr(r.store)) lead = [lead, tr(r.store)].filter(Boolean).join(' · ');
     if (!lead && !name && !rest && !f.clip) return null;
-    return add(el('div', cls), lead ? document.createTextNode(lead + (name || rest ? ' · ' : '')) : null,
+    return add(el('div', cls + ' msl'), lead ? document.createTextNode(lead + (name || rest ? ' · ' : '')) : null,
       name ? moneyAcctTile(r.account, 'ai') : null, name ? document.createTextNode(name + (rest ? ' · ' : '')) : null,
       rest ? document.createTextNode(rest) : null, f.clip ? icon('paperclip', 'mclip') : null);
   }
@@ -7463,12 +7544,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     if (m.budget) {
       var p = m.spent / m.budget;
       return { line: line + ' из ' + mtInt(m.budget), sub: (m.left >= 0 ? 'осталось ' : 'больше бюджета на ') + mtZl(m.left),
-        pct: Math.round(p * 100) + ' %', p: p, cls: moneyBudgetCls(p) };
+        pct: grouped(Math.round(p * 100)) + ' %', p: p, cls: moneyBudgetCls(p) };
     }
     var d = m.diff_pct;
     return { line: line, pct: '', p: null, cls: '',
       sub: d === null || d === undefined ? '' : d === 0 ? 'как в прошлом месяце к этому дню'
-        : 'на ' + Math.abs(d) + ' % ' + (d > 0 ? 'больше' : 'меньше') + ' прошлого месяца к этому дню' };
+        : 'на ' + grouped(Math.abs(d)) + ' % ' + (d > 0 ? 'больше' : 'меньше') + ' прошлого месяца к этому дню' };
   }
   function moneyBar(p, cls) {
     var bar = add(el('div', 'mbar'), el('i', cls || ''));
@@ -7660,7 +7741,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     list.forEach(function (c) { if (!cur && c.key === d.current) cur = c; });
     if (cur) {
       box.appendChild(add(el('div', 'row mcat macc'), moneyAcctTile(cur.key), add(el('span', 'tx'), el('div', 't', 'Сейчас гасим: ' + cur.name),
-        el('div', 'mu', 'осталось ' + moneyDebtLeft(cur))), el('span', 'pr mbal neg', moneyDebtSum(cur.debt, cur.currency))));
+        add(el('div', 'mu mfree'), document.createTextNode('осталось '), el('span', 'mnw', moneyDebtLeft(cur)))), el('span', 'pr mbal neg', moneyDebtSum(cur.debt, cur.currency))));
     }
     var rest = el('div', 'mdql');
     list.forEach(function (c) {
@@ -7912,7 +7993,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
     card.mfs = st ? ['свои ' + mtZl(own), list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])]
       : [list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])];
     if (st && list.length > 1) {
-      var ord = label(el('button', 'mtoday'), 'arrow-up-down', 'Порядок');
+      var ord = label(el('button', 'mtoday mord'), 'arrow-up-down', 'Порядок');
       ord.type = 'button';
       ord.onclick = function () { moneyAcctOrderSheet(ord); };
       card.firstChild.appendChild(ord);
@@ -7923,12 +8004,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
       // month's spend sum lives in «По категориям» and in the account's own list (a tap), not here.
       var b = spent[a.key], on = MONEY.acct === a.key, cur = a.currency, sub = '', bar = null;
       var big, cls = '', set = a.balance !== null && a.balance !== undefined;
-      if (!set) { big = b ? moneyFmt(b.sum, b.currency) : '—'; sub = 'баланс не задан'; }
-      else if (a.balance < 0) { big = '−' + moneyFmt(-a.balance, cur); cls = ' neg'; }
-      else big = moneyFmt(a.balance, cur);
+      // The currency by its sign (moneySym: «₴», not «UAH»), the amount in one piece.
+      function bal(v, c) { return moneyNum(v) + '\u00a0' + moneySym(c); }
+      if (!set) { big = b ? bal(b.sum, b.currency) : '—'; sub = 'баланс не задан'; }
+      else if (a.balance < 0) { big = '−' + bal(-a.balance, cur); cls = ' neg'; }
+      else big = bal(a.balance, cur);
       if (a.credit && a.credit_limit && set) {
         var used = Math.min(1, Math.max(0, -a.balance) / a.credit_limit);
-        sub = 'свободно ' + moneyInt(Math.max(0, a.credit_limit + Math.min(0, a.balance))) + '\u00a0' + (cur === 'PLN' ? 'zł' : cur === 'UAH' ? '₴' : cur);
+        sub = add(el('div', 'mu mfree'), document.createTextNode('свободно '),
+          el('span', 'mnw', moneyInt(Math.max(0, a.credit_limit + Math.min(0, a.balance))) + '\u00a0' + moneySym(cur)));
         bar = add(el('div', 'mbar'), el('i', used >= 1 ? 'over' : used >= 0.8 ? 'warn' : ''));
         bar.firstChild.style.width = (used * 100).toFixed(1) + '%';
       } else if (set && b) sub = b.count + '\u00a0' + plural(b.count, ['покупка', 'покупки', 'покупок']) + ' за месяц';
@@ -7940,7 +8024,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s}
         more.onclick = function (ev) { ev.stopPropagation(); moneyAcctSheet(a, box.done || noop, more); };
       }
       var r = add(el('div', 'row mcat macc' + (on ? ' on' : '')), moneyAcctTile(a.key), add(el('span', 'tx'), el('div', 't', a.name),
-        bar, sub ? el('div', 'mu', sub) : null), el('span', 'pr mbal' + cls, big), more);
+        bar, !sub ? null : typeof sub === 'string' ? el('div', 'mu', sub) : sub), el('span', 'pr mbal' + cls, big), more);
       r.setAttribute('aria-pressed', String(on));
       tap(r, function () { box.onFilter(on ? null : a.key); });
       card.appendChild(r);
