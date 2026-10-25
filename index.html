@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 13:32">
+<meta name="published" content="2026-10-25 13:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -3218,6 +3218,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function drawV2(t, st) {
       var nb = el('form', 'bar'), nf = el('form', 'bar'), ni = el('input'), no = el('input');
       st.list = el('div');
+      // Index is the key: the rows are drawn anew from st.steps after every change. One drop, one save.
+      dragSort(st.list, function () { return [].slice.call(st.list.children); }, function (keys, key) {
+        var was = st.steps;
+        st.steps = keys.map(function (k) { return was[k]; });
+        changed(t, st, [st.steps.indexOf(was[key]), 'grip']);
+      });
       st.logEl = el('div');
       ni.placeholder = 'Новый шаг…';
       ni.maxLength = 200;
@@ -3262,7 +3268,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       drawSteps(t, st);
       drawLog(st);
     }
-    // f: [index, 'ck' | 't' | 'up' | 'down' | 'x'] — what gets the focus back after the redraw (keyboard use); none when
+    // f: [index, 'ck' | 't' | 'grip' | 'x'] — what gets the focus back after the redraw (keyboard use); none when
     // the list is empty, so a phone does not open its keyboard on the new step field.
     function changed(t, st, f) {
       recount(t, st);
@@ -3288,14 +3294,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           changed(t, st, [i, 'ck']);
         }), icon(done ? 'check-square' : 'square', 'mk' + (done ? ' on' : '')));
         ck.setAttribute('aria-pressed', String(done));
-        function move(k) {
-          var y = st.steps[i + k];
-          st.steps[i + k] = x;
-          st.steps[i] = y;
-          changed(t, st, [i + k, k < 0 ? 'up' : 'down']);
-        }
-        var up = add(sb(null, 'Выше: ' + x.title, function () { move(-1); }, i === 0), icon('chevron-up'));
-        var dn = add(sb(null, 'Ниже: ' + x.title, function () { move(1); }, i === st.steps.length - 1), icon('chevron-down'));
+        var gr = dragGrip(x.title);
         var rm = add(sb(null, 'Удалить шаг: ' + x.title, function () {
           st.steps.splice(i, 1);
           changed(t, st, [i, 'x']);
@@ -3325,12 +3324,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           fi.focus();
         });
         tt.setAttribute('aria-label', 'Изменить шаг: ' + x.title);
-        refs.push({ ck: ck, t: tt, up: up, down: dn, x: rm });
-        st.list.appendChild(add(r, ck, tt, up, dn, rm));
+        refs.push({ ck: ck, t: tt, grip: gr, x: rm });
+        r.k = i;
+        st.list.appendChild(add(r, ck, tt, gr, rm));
       });
       if (!f) return;
       var o = refs[Math.min(f[0], refs.length - 1)], b = o && o[f[1]];
-      if (b && b.disabled) b = f[1] === 'up' ? o.down : o.up;
       if (b && !b.disabled) b.focus();
     }
     // The whole list goes each time; one request at a time, the latest list follows when it is answered. New steps get
@@ -11184,6 +11183,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     };
     foot.appendChild(reset);
     add(card, line, rows);
+    // Only the rows in the bar move (they come first); one drop, one save.
+    dragSort(rows, function () { return [].slice.call(rows.children, 0, barTabs().length); }, function (keys, key) {
+      save(keys, [key, 'grip']);
+    });
     function save(keys, focus) {
       haptic();
       store('tabBar', JSON.stringify(keys));
@@ -11197,16 +11200,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       bar.concat(MORE).forEach(function (k) {
         var t = tabOf(k), i = bar.indexOf(k), on = i >= 0, row = lead(el('div', 'row'), t[1]);
         add(row, el('span', 'tx t', t[2]));
-        function move(d) {
-          var keys = bar.slice();
-          keys.splice(i, 1);
-          keys.splice(i + d, 0, k);
-          save(keys, [k, d < 0 ? 'up' : 'down']);
-        }
-        if (on) {
-          add(row, rowBtn('chevron-up', { label: t[2] + ': выше' }, 'up', i === 0, function () { move(-1); }),
-            rowBtn('chevron-down', { label: t[2] + ': ниже' }, 'down', i === bar.length - 1, function () { move(1); }));
-        }
+        if (on) row.appendChild(dragGrip(t[2]));
         row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: t[2] + ' в панели', on: on }, 'tog', !on && full, function () {
           save(on ? bar.filter(function (x) { return x !== k; }) : bar.concat([k]), [k, 'tog']);
         }));
