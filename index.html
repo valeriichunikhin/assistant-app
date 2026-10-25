@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 22:08">
+<meta name="published" content="2026-10-25 22:31">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -275,6 +275,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .acts{display:flex;flex-direction:column;align-items:stretch;gap:4px}.acts .pg{justify-content:center}
 .row.dela{flex-wrap:wrap;align-items:flex-start}.row.dela .pg{min-height:44px}.row.dela .pr{margin-top:8px}
 .row.dela>.acts{flex-basis:100%;margin:-4px 0 0 48px}
+.row.mdebt .pr .mfx,.mpsumx{display:block;color:var(--muted);font-size:12px;font-weight:400;text-align:right;white-space:nowrap}.mpsumx{text-align:inherit;font-size:13px;margin-top:2px}
 .row.mdebt .mnote{font-size:13px;line-height:1.35;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .row.dela .hint,.tx>.hint{font-size:13px;line-height:1.35;color:var(--muted);margin-top:4px}
 .row.ib .t{overflow-wrap:anywhere}.card.tap{cursor:pointer}
@@ -8444,6 +8445,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Долги» (§2): «Мне должны N zł · Я должен M zł», the people with a balance (green — they owe him, red — he owes),
   // «вернуть до 12.11», the settled ones under «ещё N»; a tap opens the person; «+ Человек». A removed (archived) person
   // is gone unless a balance is still open.
+  // A debt kept in dollars (his mother's, 25.10.2026): «1 000,00 $» and under it in grey «≈ 3 925 zł» at the NBP's
+  // rate of the day (p.fx from money_state); else the złoty as before.
+  function moneyDebtSum(p) {
+    if (!p.balance && !p.fx) return document.createTextNode('0');
+    if (!p.fx) return document.createTextNode(moneyFmt(Math.abs(p.balance)));
+    var f = document.createDocumentFragment();
+    f.appendChild(document.createTextNode(moneyNum(Math.abs(p.fx.amount)) + '\u00a0' + moneySym(p.fx.currency)));
+    if (p.balance) f.appendChild(el('span', 'mfx', '≈\u00a0' + moneyInt(Math.abs(p.balance)) + '\u00a0zł'));
+    return f;
+  }
   function moneyDebtsDraw(box, done) {
     clear(box);
     var st = MONEY.state;
@@ -8460,7 +8471,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var x = add(el('div', 'row mdebt'), add(el('span', 'ptile'), icon('users')), add(el('span', 'tx'), el('div', 't', p.name),
         el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due),
         p.note && p.balance ? el('div', 'mu mnote', p.note) : null),
-        el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : ''), p.balance ? moneyFmt(Math.abs(p.balance)) : '0'));
+        add(el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : '')), moneyDebtSum(p)));
       tap(x, function () { moneyPersonSheet(p, done, x); });
       return x;
     }
@@ -8511,7 +8522,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function moneyPersonSheet(p, done, from) {
     var close = noop, hist = add(el('div', 'mhist'), el('div', 'mu msrc', 'Загрузка…')), bal = el('div', 'msum mpsum'), now = p.balance;
     function balance(v) {
-      text(bal, v ? moneyFmt(Math.abs(v)) : '0,00 zł');
+      clear(bal);
+      // The sheet opens with the list's row (fx known); after a write the złoty is read again and the dollars kept.
+      if (p.fx && v) bal.appendChild(moneyDebtSum({ balance: v, fx: p.fx }));
+      else text(bal, v ? moneyFmt(Math.abs(v)) : '0,00 zł');
+      if (bal.lastChild && bal.lastChild.className === 'mfx') bal.lastChild.className = 'mpsumx';
       bal.className = 'msum mpsum' + (v > 0 ? ' pos' : v < 0 ? ' neg' : '');
       return el('div', 'mvs', v > 0 ? 'мне должны' : v < 0 ? 'я должен' : 'в расчёте');
     }
