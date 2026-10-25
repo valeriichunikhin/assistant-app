@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 10:15">
+<meta name="published" content="2026-10-25 10:32">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -654,7 +654,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .mcol.none.on{box-shadow:0 0 0 2px var(--solid),0 0 0 4px var(--muted)}.mcol.none.on::after{display:none}
 .mhist .row.tap{cursor:pointer}
 .row.mcat .btn.x.mopen{margin-left:-8px}
-/* Folding (docs/specs/money-13.md): a card of «Деньги» folds to its header; the chevron points up while it is open, the
+/* Folding (docs/specs/money-13.md): a card of «Деньги» or «Сегодня» folds to its header; the chevron points up while it is open, the
    pin marks a pinned mode, the total sits under the title while folded. The card's own height animates (mfanim). */
 .mfh{cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .mfh h3{border-radius:var(--r-s)}.mfh h3:focus-visible{outline-offset:4px}
@@ -1383,20 +1383,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function keysIn(v, keys) {
     return Array.isArray(v) ? v.filter(function (k, i) { return keys.indexOf(k) >= 0 && v.indexOf(k) === i; }) : [];
   }
-  // The «Деньги» cards pinned open or folded (docs/specs/money-13.md §2): {key: 'open' | 'closed'}, in MONEY_CARD_KEYS
-  // order as the server answers it; anything else → {}.
-  function foldIn(v) {
+  // The «Деньги» or «Сегодня» cards pinned open or folded (docs/specs/money-13.md §2): {key: 'open' | 'closed'}, in
+  // keys' order as the server answers it; anything else → {}.
+  function foldIn(v, keys) {
     var o = {};
     if (v && typeof v === 'object' && !Array.isArray(v)) {
-      MONEY_CARD_KEYS.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(v, k) && (v[k] === 'open' || v[k] === 'closed')) o[k] = v[k]; });
+      keys.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(v, k) && (v[k] === 'open' || v[k] === 'closed')) o[k] = v[k]; });
     }
     return o;
   }
   function normPrefs(p) {
     var t = (p && p.tabs) || {}, h = (p && p.home) || {}, m = p && p.muted, mo = (p && p.money) || {};
-    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS) },
+    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS),
+      fold: foldIn(h.fold, HOME_KEYS), folded: keysIn(h.folded, HOME_KEYS) },
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
-      money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold),
+      money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold, MONEY_CARD_KEYS),
         folded: keysIn(mo.folded, MONEY_CARD_KEYS) } };
   }
   // The switchable modules [{env, name}] as the server last listed them.
@@ -2138,6 +2139,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function homeView() {
     // cards: HOME_KEYS key → its card (or its «недоступно» stub) of this render; slot: the key being drawn.
     var body = el('div', 'cols'), cards = {}, slot = null, last = null;
+    // Him coming to the tab: the pinned cards are back in their mode (docs/specs/money-13.md §2).
+    HOMEF.foldTmp = {};
     var again = label(el('button', 'btn ghost wide'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
@@ -2149,7 +2152,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       cards[slot] = c;
       return c;
     }
-    function down(ic, title) { card(ic, title).firstChild.appendChild(pill('недоступно', 'warn')); }
+    function down(ic, title) {
+      var c = card(ic, title);
+      c.firstChild.appendChild(pill('недоступно', 'warn'));
+      c.mfs = ['недоступно'];
+    }
+    // Folded (docs/specs/money-13.md §1) without a total of its own: the subtitle, else the first row's line and the
+    // grey one under it.
+    function firstLine(c) {
+      var sub = c.querySelector(':scope>.sub'), r = c.querySelector(':scope>.row');
+      if (sub) return [sub.textContent];
+      if (!r) return [];
+      var t = r.querySelector('.t'), mu = r.querySelector('.tx>.mu');
+      return t ? [t.textContent, mu ? mu.textContent : ''] : [r.textContent];
+    }
     // The seven days from morning ?mode=week, a row each; hidden while the key
     // is missing (an older miniapp function).
     function plan(w) {
@@ -2158,6 +2174,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (!w || !Array.isArray(w.days)) return;
       // A day as a block: the date, then a line per event; untimed tasks fold into «N задач» past two (21.10.2026:
       // nine tasks joined by « · » read as one grey paragraph — «вообще не читабельно»).
+      var n = 0, free = 0;
+      w.days.forEach(function (d) { n += d.items.length; if (d.free_evening) free++; });
       card('calendar', 'План недели', null, w.days.map(function (d) {
         var ev = d.items.filter(function (x) { return x.kind !== 'task' || x.time; }),
           ts = d.items.filter(function (x) { return x.kind === 'task' && !x.time; });
@@ -2167,7 +2185,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         var r = hrow(WEEK[wd(d.date)] + ' ' + dm(d.date), null, d.free_evening ? pill('свободно', 'acc') : null), tx = r.querySelector('.tx');
         (lines.length ? lines : ['—']).forEach(function (t) { tx.appendChild(el('div', 'mu', t)); });
         return r;
-      }));
+      })).mfs = [n + ' ' + plural(n, ['дело', 'дела', 'дел']) + ' за неделю', free ? 'свободных вечеров ' + free : ''];
     }
     function morning(m, today, week) {
       // Google Calendar today and tomorrow, from the mail bridge; hidden when
@@ -2367,6 +2385,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function pulse(ps, today) {
       slot = 'system';
       if (!ps.some(function (x) { return x.stale; })) return;
+      var quiet = ps.filter(function (x) { return x.stale; }).map(function (x) { return x.label; });
       card('alert', 'Система', null, ps.map(function (x) {
         if (x.fails != null) return hrow(x.label, null, pill('сбой', 'bad'));
         if (!x.last_ok_at) return hrow(x.label, 'ещё не было', pill('—'));
@@ -2374,12 +2393,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         if (date !== today) at = (date > addDays(today, -7) ? WEEK[wd(date)] : dm(date)) + ' ' + at;
         return hrow(x.label, x.stale ? 'нет отметки с ' + at + ' · ждал ' + x.threshold : at,
           pill(x.stale ? 'тихо' : 'ок', x.stale ? 'warn' : 'acc'));
-      }));
+      })).mfs = ['тихо: ' + quiet.join(', ')];
     }
     function tasksCard(tk, today) {
-      var c = card('check-square', 'Задачи', 'открыто ' + grouped(tk.count_open || 0));
+      var c = card('check-square', 'Задачи', 'открыто ' + grouped(tk.count_open || 0)), nt = (tk.today || []).length;
       if (tk.overdue) c.firstChild.appendChild(pill('просрочено ' + grouped(tk.overdue), 'bad'));
-      tap(c.firstChild, function () { show('tasks'); });
+      // The header folds (docs/specs/money-13.md); the subtitle and the rows open «Задачи».
+      tap(c.lastChild, function () { show('tasks'); });
+      c.mfs = ['открыто ' + grouped(tk.count_open || 0), tk.overdue ? 'просрочено ' + grouped(tk.overdue) : '', nt ? 'на сегодня ' + nt : ''];
       (tk.today || []).slice(0, 5).forEach(function (t) {
         var m = marks[taskKey(t)], r = null;
         t.done = m ? m.want : t.status === 'done';
@@ -2402,7 +2423,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       add(box, add(el('div', 'mbl'), el('span', 'tx', t.line), t.pct ? el('span', 'num ' + t.cls, t.pct) : null));
       if (t.p !== null) box.appendChild(moneyBar(t.p, t.cls));
       if (t.sub) box.appendChild(el('div', 'mu', t.sub));
-      tap(c.firstChild, function () { show('money'); });
+      var dt = m.daily && moneyDailyText(m.daily);
+      c.mfs = [t.line, !dt ? t.sub : dt.tight ? 'только необходимое' : m.daily.left < 0 ? 'перерасход ' + mtZl(-m.daily.left)
+        : 'сегодня ещё ' + mtZl(m.daily.left)];
       c.appendChild(tap(box, function () { show('money'); }));
     }
     // «Долг по картам» (docs/specs/money-12.md §2): one line — the debt and the month's change — and the bar to zero; a
@@ -2414,7 +2437,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var fc = moneyDebtForecastEl(d);
       if (fc) box.appendChild(fc);
       function open() { moneyDebtSheet(d, c); }
-      tap(c.firstChild, open);
+      c.mfs = [mtZl(d.total), moneyDebtDiff(d, 'num')];
       c.appendChild(tap(box, open));
     }
     // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: the month in one line; a tap opens its review.
@@ -2422,7 +2445,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var t = moneyReviewHomeText(r), c = card('calendar-check', t.title), box = el('div', 'mbud mhome');
       add(box, el('div', 'mbl', t.line), r.accepted ? pill(t.sub, 'good') : el('div', 'mu', t.sub));
       function open() { moneyReviewSheet(r.month, c, function () { cacheDrop('home'); load(); }); }
-      tap(c.firstChild, open);
+      c.mfs = [t.line];
       c.appendChild(tap(box, open));
     }
     // Today's post: its idea, the language and how far it got; a tap opens the tab.
@@ -2430,7 +2453,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var c = card('linkedin', 'LinkedIn', 'сегодня пост');
       var st = p.status === 'ready' ? pill('готов', 'good') : p.status === 'posted' ? pill('опубликован', 'acc')
         : pill(p.status === 'draft' ? 'черновик' : 'черновика ещё нет', 'warn');
-      tap(c.firstChild, function () { show('li'); });
+      c.mfs = [st.textContent, p.idea];
       c.appendChild(tap(hrow(p.idea, String(p.lang || 'pl').toUpperCase(), st), function () { show('li'); }));
     }
     function render(j) {
@@ -2443,7 +2466,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       else { plan(j.week); slot = 'morning'; down('clock', 'Утренняя сводка'); }
       slot = 'inbox';
       if (j.inbox_new == null) down('inbox', 'Инбокс');
-      else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых'), function () { show('inbox'); });
+      else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых').lastChild, function () { show('inbox'); });
       // Tasks (docs/specs/tasks.md): the late count and today's, ✓ on each; hidden when nothing is late or due today.
       slot = 'tasks';
       if (j.tasks === null) down('check-square', 'Задачи');
@@ -2475,7 +2498,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           function () { show('news'); }));
         return;
       }
-      homeOrder().forEach(function (k) { if (cards[k] && hid.indexOf(k) < 0) body.appendChild(cards[k]); });
+      homeOrder().forEach(function (k) {
+        if (!cards[k] || hid.indexOf(k) >= 0) return;
+        if (!cards[k].mfs) cards[k].mfs = firstLine(cards[k]);
+        body.appendChild(foldCard('home', cards[k], k));
+      });
       if (!body.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
     }
     // The answer carries the settings too: taken unless a save of his is on its way or came after the request left.
@@ -2491,7 +2518,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           });
         }, render: render, retry: load });
     }
-    prefsHook = { tab: 'home', fn: function () { if (last) render(last); } };
+    // A settings change redraws the cards and «Карточки на «Сегодня»» or a card's sheet if one is open.
+    prefsHook = { tab: 'home', fn: function (focus) {
+      if (HOMEF.cardsCard && HOMEF.cardsCard.isConnected) HOMEF.cardsCard.paint(focus);
+      if (last) render(last);
+      if (HOMEF.cardSheet && HOMEF.cardSheet.isConnected) HOMEF.cardSheet.paint();
+    } };
     load();
   }
 
@@ -10321,13 +10353,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     cacheSet('prefs', JSON.stringify({ prefs: prefs, modules: modules }));
     if (prefsHook && prefsHook.tab === current && prefsHook.modules) prefsHook.modules();
   }
-  // next without muted keeps the modules as they are (the tab and card switches send the whole settings); without money,
-  // the «Деньги» cards (and the reverse: a money edit sends money only), whose fields left out stay as they are.
+  // next without muted keeps the modules as they are (the tab and card switches send the whole settings); without money
+  // or home, those cards (and the reverse: a money edit sends money only), whose fields left out stay as they are.
   // quiet: the view on screen is already right (a card folded by a tap, docs/specs/money-13.md §2) — no redraw, and the
   // save waits 600 ms, so a run of taps is one request.
   function editPrefs(next, focus, quiet) {
-    next = { tabs: next.tabs || prefs.tabs, home: next.home || prefs.home, muted: next.muted || prefs.muted,
-      money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money };
+    next = { tabs: next.tabs || prefs.tabs, home: next.home ? Object.assign({}, prefs.home, next.home) : prefs.home,
+      muted: next.muted || prefs.muted, money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -10440,16 +10472,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     card.paint();
     return card;
   }
-  // «Карточки на «Сегодня»»: a toggle, the name and ▲ ▼ per card, in the order «Сегодня» draws them; «Сбросить»
-  // brings back every card in the default order. The morning brief's own «недоступно» stub has no row and keeps
-  // its place after «План недели».
+  // «Карточки на «Сегодня»»: a toggle, the name with how the card opens under it (docs/specs/money-13.md §3) and ▲ ▼
+  // per card, in the order «Сегодня» draws them; «Сбросить» brings back every card in the default order, open as he
+  // leaves it. The morning brief's own «недоступно» stub has no row and keeps its place after «План недели».
   function homeCard() {
     var card = mkCard('house', 'Карточки на «Сегодня»'), rows = el('div'), foot = el('div', 'foot');
     var reset = el('button', 'btn ghost', 'Сбросить');
     reset.type = 'button';
-    reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [] } }, ['home', 'reset']); };
+    reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [], fold: {}, folded: [] } }, ['home', 'reset']); };
     foot.appendChild(reset);
-    card.appendChild(rows);
+    add(card, el('div', 'sub', 'Под названием — как карточка открывается'), rows);
     card.paint = function (focus) {
       var hid = prefs.home.hidden, keys = homeOrder().filter(function (k) { return k !== 'morning'; });
       clear(rows);
@@ -10465,13 +10497,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Сегодня»', on: on }, 'tog', false, function () {
           editPrefs({ tabs: prefs.tabs, home: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }),
             order: prefs.home.order } }, ['home', k, 'tog']);
-        }), el('span', 'tx t', name),
+        }), add(el('span', 'tx'), el('div', 't', name), foldSeg('home', k, name)),
           rowBtn('chevron-up', { label: name + ': выше' }, 'up', i === 0, function () { move(-1); }),
           rowBtn('chevron-down', { label: name + ': ниже' }, 'down', i === keys.length - 1, function () { move(1); }));
         row.k = k;
         rows.appendChild(row);
       });
-      if (hid.length || prefs.home.order.length) card.appendChild(foot);
+      if (hid.length || prefs.home.order.length || Object.keys(prefs.home.fold).length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       refocus(rows, focus, 'home');
     };
@@ -10495,55 +10527,75 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var n = (j.rows || []).filter(function (r) { return (r.kind || 'expense') === 'expense'; }).length;
     return n + (j.more ? '+' : '') + ' ' + plural(n, ['трата', 'траты', 'трат']);
   }
-  // Folding (docs/specs/money-13.md): a tap on a card's header folds it to the header and one line of total (card.mfs:
+  // Folding (docs/specs/money-13.md), the same on «Деньги» and on «Сегодня» (his «6 да», 25.10.2026): s is the section
+  // of the settings, 'money' or 'home'. A tap on a card's header folds it to the header and one line of total (card.mfs:
   // the strings or nodes its builder left), or unfolds it; the chevron turns and the card's own height animates. The
-  // mode is prefs.money.fold[key] — 'open' / 'closed' pinned (a tap only lasts until he leaves the tab: MONEY.foldTmp),
-  // none — as he left it, prefs.money.folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
-  function moneyFolded(k) {
-    if (Object.prototype.hasOwnProperty.call(MONEY.foldTmp, k)) return MONEY.foldTmp[k];
-    var f = prefs.money.fold[k];
-    return f ? f === 'closed' : prefs.money.folded.indexOf(k) >= 0;
+  // mode is prefs[s].fold[key] — 'open' / 'closed' pinned (a tap only lasts until he leaves the tab: foldTmp), none —
+  // as he left it, prefs[s].folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
+  // FOLD[s]: st — where the section keeps foldTmp, foldNodes (each card's node or box on screen), cardSheet,
+  // cardSheetFocus and cardsCard; name(k); order() — his order of every key; on(k) — not switched off; all(from) — the
+  // sheet of every card; hid — the toast after «Скрыть».
+  var HOMEF = { foldTmp: {}, foldNodes: {} };
+  var FOLD = {
+    money: { st: MONEY, name: function (k) { return MONEY_CARDS[MONEY_CARD_KEYS.indexOf(k)][1]; }, order: moneyCardOrder, on: moneyCardOn,
+      all: moneyCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Порядок карточек' },
+    home: { st: HOMEF, name: function (k) { return k === 'morning' ? 'Утренняя сводка' : HOME_NAMES[k]; }, order: homeOrder,
+      on: function (k) { return prefs.home.hidden.indexOf(k) < 0; }, all: homeCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Все карточки…' }
+  };
+  // An edit of section s only: its fields left out stay as they are.
+  function foldEdit(s, patch, focus, quiet) {
+    var n = {};
+    n[s] = patch;
+    editPrefs(n, focus, quiet);
+  }
+  function cardFolded(s, k) {
+    var st = FOLD[s].st;
+    if (Object.prototype.hasOwnProperty.call(st.foldTmp, k)) return st.foldTmp[k];
+    var f = prefs[s].fold[k];
+    return f ? f === 'closed' : prefs[s].folded.indexOf(k) >= 0;
   }
   // node is the card, or a box its painter draws the card into again (charts, accounts, debts, goals, subscriptions): a
   // card that lands there later is dressed as it comes, before it is painted.
-  function moneyFold(node, key) {
-    MONEY.foldNodes[key] = node;
-    if (node.classList.contains('card')) moneyFoldDress(node, key);
+  function foldCard(s, node, key) {
+    FOLD[s].st.foldNodes[key] = node;
+    if (node.classList.contains('card')) foldDress(s, node, key);
     else {
       if (!node.mfObs && window.MutationObserver) {
-        node.mfObs = new MutationObserver(function () { moneyFoldDress(node.firstElementChild, key); });
+        node.mfObs = new MutationObserver(function () { foldDress(s, node.firstElementChild, key); });
         node.mfObs.observe(node, { childList: true });
       }
-      moneyFoldDress(node.firstElementChild, key);
+      foldDress(s, node.firstElementChild, key);
     }
     return node;
   }
+  function moneyFold(node, key) { return foldCard('money', node, key); }
   // The click that ends a long press is the finger lifting, not a tap: swallowed once.
   var foldSwallow = 0;
   document.addEventListener('click', function (ev) {
     if (Date.now() < foldSwallow) { foldSwallow = 0; ev.stopPropagation(); ev.preventDefault(); }
   }, true);
-  function moneyFoldDress(card, key) {
+  function foldDress(s, card, key) {
     var h = card && card.firstElementChild;
     if (!h || !card.classList.contains('card') || !h.classList.contains('ch')) return;
-    if (card.mfKey === key) return moneyFoldShow(card, moneyFolded(key));
-    var h3 = h.querySelector('h3'), name = MONEY_CARDS[MONEY_CARD_KEYS.indexOf(key)][1], lt = 0, lx = 0, ly = 0;
+    if (card.mfKey === key) return foldShow(card, cardFolded(s, key));
+    var h3 = h.querySelector('h3'), name = FOLD[s].name(key), lt = 0, lx = 0, ly = 0;
     var more = add(el('button', 'btn ghost x mfm'), icon('more'));
     more.type = 'button';
     more.setAttribute('aria-label', name + ': порядок и закрепление');
-    more.onclick = function () { moneyCardSheet(key, more); };
+    more.onclick = function () { cardSheet(s, key, more); };
     h.insertBefore(dotted(el('span', 'mfs'), card.mfs || []), h3.nextSibling);
     add(h, icon('lock', 'mfp'), more, icon('chevron-down', 'mfv'));
     h.classList.add('mfh');
     card.classList.add('mf');
     card.mfKey = key;
+    card.mfSec = s;
     h3.tabIndex = 0;
     h3.setAttribute('role', 'button');
     function toggle() {
-      var c = !moneyFolded(key), f = prefs.money.folded;
-      if (prefs.money.fold[key]) { MONEY.foldTmp[key] = c; haptic(); }
-      else editPrefs({ money: { folded: c ? f.concat([key]) : f.filter(function (k) { return k !== key; }) } }, null, true);
-      moneyFoldShow(card, c, true);
+      var c = !cardFolded(s, key), f = prefs[s].folded;
+      if (prefs[s].fold[key]) { FOLD[s].st.foldTmp[key] = c; haptic(); }
+      else foldEdit(s, { folded: c ? f.concat([key]) : f.filter(function (k) { return k !== key; }) }, null, true);
+      foldShow(card, c, true);
     }
     // The header's own buttons (accounts' «Порядок», «Сегодня», a filter's chip, «⋯») keep their taps.
     function own(t) { var b = t && t.closest ? t.closest('button, a, input, select') : null; return !!b && h.contains(b); }
@@ -10564,21 +10616,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         }
         document.addEventListener('pointerup', lift, true);
         document.addEventListener('pointercancel', lift, true);
-        moneyCardSheet(key, h3);
+        cardSheet(s, key, h3);
       }, 500);
     });
     h.addEventListener('pointermove', function (ev) { if (lt && Math.abs(ev.clientX - lx) + Math.abs(ev.clientY - ly) > 10) stop(); });
     h.addEventListener('pointerup', stop);
     h.addEventListener('pointercancel', stop);
     h.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
-    moneyFoldShow(card, moneyFolded(key));
+    foldShow(card, cardFolded(s, key));
   }
   // The card on screen folded (closed) or open; anim: from its height now to the new one, the content clipped by the
   // card while it folds. mfx turns the chevron and shows the total, mfold hides the body, mfpin shows the pin.
-  function moneyFoldShow(card, closed, anim) {
+  function foldShow(card, closed, anim) {
     var h3 = card.firstElementChild.querySelector('h3');
     h3.setAttribute('aria-expanded', String(!closed));
-    card.classList.toggle('mfpin', !!prefs.money.fold[card.mfKey]);
+    card.classList.toggle('mfpin', !!prefs[card.mfSec].fold[card.mfKey]);
     if (card.classList.contains('mfx') === closed && !card.mfT) return;
     var from = card.offsetHeight;
     clearTimeout(card.mfT);
@@ -10602,62 +10654,79 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }, 240);
   }
   // A card's mode: 'open', 'closed' or null — as he leaves it, starting from how it is now.
-  function moneyCardMode(key, mode) {
-    var fold = Object.assign({}, prefs.money.fold), now = moneyFolded(key);
-    var folded = prefs.money.folded.filter(function (k) { return k !== key; }).concat(!mode && now ? [key] : []);
+  function cardMode(s, key, mode) {
+    var fold = Object.assign({}, prefs[s].fold), now = cardFolded(s, key);
+    var folded = prefs[s].folded.filter(function (k) { return k !== key; }).concat(!mode && now ? [key] : []);
     if (mode) fold[key] = mode;
     else delete fold[key];
-    delete MONEY.foldTmp[key];
-    editPrefs({ money: { fold: fold, folded: folded } }, ['money', key, 'm-' + (mode || 'auto')]);
+    delete FOLD[s].st.foldTmp[key];
+    foldEdit(s, { fold: fold, folded: folded }, [s, key, 'm-' + (mode || 'auto')]);
   }
   // The cards he sees: on, and drawn now (a card without data, «Постоянные платежи» with none, is not passed over).
-  function moneyCardShown(k) {
-    var n = MONEY.foldNodes[k];
-    return moneyCardOn(k) && !!n && n.isConnected && (n.classList.contains('card') || !!n.querySelector(':scope>.card'));
+  function cardShown(s, k) {
+    var n = FOLD[s].st.foldNodes[k];
+    return FOLD[s].on(k) && !!n && n.isConnected && (n.classList.contains('card') || !!n.querySelector(':scope>.card'));
   }
   // «Выше» / «Ниже»: past the next card he sees, in his whole order.
-  function moneyCardMove(key, d) {
-    var o = moneyCardOrder(), vis = o.filter(function (k) { return k === key || moneyCardShown(k); }), to = vis[vis.indexOf(key) + d];
+  function cardMove(s, key, d) {
+    var o = FOLD[s].order(), vis = o.filter(function (k) { return k === key || cardShown(s, k); }), to = vis[vis.indexOf(key) + d];
     if (!to) return;
     o.splice(o.indexOf(key), 1);
     o.splice(o.indexOf(to) + (d > 0 ? 1 : 0), 0, key);
-    editPrefs({ money: { order: o } }, ['money', key, d < 0 ? 'up' : 'down']);
+    foldEdit(s, { order: o }, [s, key, d < 0 ? 'up' : 'down']);
   }
   var FOLD_MODES = [['open', 'unfold-vertical', 'Всегда открыта'], ['closed', 'fold-vertical', 'Всегда свёрнута'], [null, 'history', 'Помнить, как оставил']];
   // The card's sheet (§3): «Выше» / «Ниже» move it at once and the sheet stays for another step; the three modes, the
-  // current one checked; «Скрыть»; «Все карточки…» — «Порядок карточек». Painted again on a settings change.
-  function moneyCardSheet(key, from) {
-    var c = MONEY_CARDS[MONEY_CARD_KEYS.indexOf(key)], close = noop, box = el('div', 'mmenus');
-    function item(ic, s, fn, on) {
-      var b = add(el('button', 'mlink mmenu'), icon(ic), add(el('span', 'tx'), el('span', 't', s)), on ? icon('check', 'mfon') : null);
+  // current one checked; «Скрыть»; «Все карточки…» — every card of the section. Painted again on a settings change.
+  function cardSheet(s, key, from) {
+    var F = FOLD[s], close = noop, box = el('div', 'mmenus');
+    function item(ic, t, fn, on) {
+      var b = add(el('button', 'mlink mmenu'), icon(ic), add(el('span', 'tx'), el('span', 't', t)), on ? icon('check', 'mfon') : null);
       b.type = 'button';
       b.onclick = fn;
       if (on !== undefined) b.setAttribute('aria-pressed', String(on));
       return b;
     }
     function paint() {
-      if (!moneyCardOn(key)) return close();
-      var vis = moneyCardOrder().filter(function (k) { return k === key || moneyCardShown(k); }), i = vis.indexOf(key), mode = prefs.money.fold[key] || null;
-      var up = item('arrow-up', 'Выше', function () { moneyCardMove(key, -1); }), down = item('arrow-down', 'Ниже', function () { moneyCardMove(key, 1); });
+      if (!F.on(key)) return close();
+      var vis = F.order().filter(function (k) { return k === key || cardShown(s, k); }), i = vis.indexOf(key), mode = prefs[s].fold[key] || null;
+      var up = item('arrow-up', 'Выше', function () { cardMove(s, key, -1); }), down = item('arrow-down', 'Ниже', function () { cardMove(s, key, 1); });
       up.disabled = i <= 0;
       down.disabled = i < 0 || i >= vis.length - 1;
       add(clear(box), up, down);
-      FOLD_MODES.forEach(function (m) { box.appendChild(item(m[1], m[2], function () { if (mode !== m[0]) moneyCardMode(key, m[0]); }, mode === m[0])); });
+      FOLD_MODES.forEach(function (m) { box.appendChild(item(m[1], m[2], function () { if (mode !== m[0]) cardMode(s, key, m[0]); }, mode === m[0])); });
       add(box, item('eye-off', 'Скрыть', function () {
         close();
-        editPrefs({ money: { hidden: prefs.money.hidden.concat([key]) } }, ['money', key, 'tog']);
-        toast('Карточка скрыта — вернуть: ⋯ → Порядок карточек');
-      }), item('arrow-up-down', 'Все карточки…', function () { close(); moneyCardsSheet(from); }));
+        foldEdit(s, { hidden: prefs[s].hidden.concat([key]) }, [s, key, 'tog']);
+        toast(F.hid);
+      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }));
       // The keyboard stays on the step he took, or the one beside it at the end of the order.
-      var f = box.querySelector('button:focus') ? null : MONEY.cardSheetFocus;
+      var f = box.querySelector('button:focus') ? null : F.st.cardSheetFocus;
       if (f) { var b = [].filter.call(box.children, function (x) { return x.textContent === f && !x.disabled; })[0]; if (b) b.focus(); }
     }
     box.paint = paint;
-    MONEY.cardSheetFocus = null;
-    box.addEventListener('click', function (ev) { var b = ev.target.closest('button'); MONEY.cardSheetFocus = b ? b.textContent : null; }, true);
-    MONEY.cardSheet = box;
+    F.st.cardSheetFocus = null;
+    box.addEventListener('click', function (ev) { var b = ev.target.closest('button'); F.st.cardSheetFocus = b ? b.textContent : null; }, true);
+    F.st.cardSheet = box;
     paint();
-    close = legalSheet(c[1], [box], from);
+    close = legalSheet(F.name(key), [box], from);
+  }
+  // A settings row's mode switch (docs/specs/money-13.md §3): as he leaves it, always open, always folded.
+  function foldSeg(s, k, name) {
+    var seg = el('div', 'mfseg'), mode = prefs[s].fold[k] || null;
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', name + ': как открывается');
+    [FOLD_MODES[2], FOLD_MODES[0], FOLD_MODES[1]].forEach(function (m) {
+      var b = add(el('button', mode === m[0] ? 'on' : ''), icon(m[1]));
+      b.type = 'button';
+      b.title = m[2];
+      b.setAttribute('aria-label', name + ': ' + m[2].toLowerCase());
+      b.setAttribute('aria-pressed', String(mode === m[0]));
+      b.f = 'm-' + (m[0] || 'auto');
+      b.onclick = function () { if (mode !== m[0]) cardMode(s, k, m[0]); };
+      seg.appendChild(b);
+    });
+    return seg;
   }
   // «Карточки «Денег»»: the same rows as «Карточки на «Сегодня»» — a toggle, the name, ▲ ▼ — and «Сбросить»; on «Что
   // нового» and in the month's «⋯» → «Порядок карточек». The month's header with «Сегодня можно ещё» stays first.
@@ -10679,24 +10748,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           o.splice(i + d, 0, k);
           editPrefs({ money: { hidden: hid, order: o } }, ['money', k, d < 0 ? 'up' : 'down']);
         }
-        // The card's mode (docs/specs/money-13.md §3): as he leaves it, always open, always folded.
-        var seg = el('div', 'mfseg'), mode = prefs.money.fold[k] || null;
-        seg.setAttribute('role', 'group');
-        seg.setAttribute('aria-label', name + ': как открывается');
-        [FOLD_MODES[2], FOLD_MODES[0], FOLD_MODES[1]].forEach(function (m) {
-          var b = add(el('button', mode === m[0] ? 'on' : ''), icon(m[1]));
-          b.type = 'button';
-          b.title = m[2];
-          b.setAttribute('aria-label', name + ': ' + m[2].toLowerCase());
-          b.setAttribute('aria-pressed', String(mode === m[0]));
-          b.f = 'm-' + (m[0] || 'auto');
-          b.onclick = function () { if (mode !== m[0]) moneyCardMode(k, m[0]); };
-          seg.appendChild(b);
-        });
         add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' во вкладке «Деньги»', on: on }, 'tog', false, function () {
           editPrefs({ money: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }), order: prefs.money.order } },
             ['money', k, 'tog']);
-        }), add(el('span', 'tx'), el('div', 't', name), seg),
+        }), add(el('span', 'tx'), el('div', 't', name), foldSeg('money', k, name)),
           rowBtn('chevron-up', { label: name + ': выше' }, 'up', i === 0, function () { move(-1); }),
           rowBtn('chevron-down', { label: name + ': ниже' }, 'down', i === keys.length - 1, function () { move(1); }));
         row.k = k;
@@ -10722,6 +10777,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function moneyCardsSheet(from) {
     MONEY.cardsCard = moneyCardsCard();
     legalSheet('Порядок карточек', [MONEY.cardsCard], from);
+  }
+  // «Все карточки…» from a «Сегодня» card's sheet: «Карточки на «Сегодня»», as on «Что нового».
+  function homeCardsSheet(from) {
+    HOMEF.cardsCard = homeCard();
+    legalSheet('Карточки на «Сегодня»', [HOMEF.cardsCard], from);
   }
 
   // --- bottom bar ---
