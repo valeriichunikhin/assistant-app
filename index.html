@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 20:41">
+<meta name="published" content="2026-10-25 21:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -7816,7 +7816,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       add(box, el('div', 'mdbig ' + t.cls, t.big), el('div', 'mu msrc', t.sub), t.own ? el('div', 'mu msrc', t.own) : null);
       add(box, head('wallet', 'Деньги сейчас · ' + mtZl(d.money)));
       d.accounts.filter(function (a) { return a.amount > 0; }).forEach(function (a) {
-        box.appendChild(mrRow(moneyAcctTile(a.key), a.name, a.credit ? 'кредитка · доступно' : '', el('span', 'pr', moneyNb(a.amount))));
+        box.appendChild(mrRow(moneyAcctTile(a.key), a.name, '', el('span', 'pr', moneyNb(a.amount))));
       });
       if (d.spent_back > 0) box.appendChild(el('div', 'mu msrc', 'Сегодняшние траты (' + mtZl(d.spent_back) + ') считаются от начала дня: они снимаются только со «можно ещё».'));
       if (d.incomes.length) {
@@ -8212,8 +8212,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     clear(box);
     if (!list.length) return;
     var card = mkCard('landmark', 'По счетам'), own = 0;
-    // Folded (docs/specs/money-13.md §1): his own money — what the accounts in zł that are not credit cards hold.
-    list.forEach(function (a) { if (!a.credit && a.currency === 'PLN' && a.balance > 0) own += a.balance; });
+    // Folded (docs/specs/money-13.md §1): his own money — what the accounts in zł hold above zero; a credit account
+    // in plus counts too (25.10.2026: Millennium is a debit account with an overdraft, the salary on it is his).
+    list.forEach(function (a) { if (a.currency === 'PLN' && a.balance > 0) own += a.balance; });
     card.mfs = st ? ['свои ' + mtZl(own), list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])]
       : [list.length + ' ' + plural(list.length, ['счёт', 'счёта', 'счетов'])];
     if (st && list.length > 1) {
