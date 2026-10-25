@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 10:32">
+<meta name="published" content="2026-10-25 12:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -718,6 +718,30 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .row.nt>.pg{margin-top:-4px}
 .row.nt.unr{box-shadow:inset 3px 0 0 var(--accent)}.row.nt.unr .ptile{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .row.nt.unr .t{font-weight:700}
+/* «Главная» (docs/specs/home-dashboard.md, variant A of 25.10.2026): the date and the greeting under the title, the
+   tiles two to a row and all one height (an odd last one takes the row), «Завтра» under them; the «Задачи» count on
+   its tab's icon, the bell's badge. */
+.hgreet{margin:0 2px 12px;color:var(--muted);font-size:13px}
+.hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:10px;margin:0 0 16px}
+.htile{display:flex;flex-direction:column;min-width:0;padding:12px 14px;background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);box-shadow:var(--shadow);cursor:pointer;transition:transform .2s var(--ease)}
+.htile:nth-child(odd):last-child{grid-column:1/-1}
+.htile:active{transform:scale(.97)}
+.htile:focus-visible{outline-offset:-2px}
+.htile .k{display:flex;align-items:center;gap:6px;min-width:0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htile .k .i{width:14px;height:14px}
+.htile .v{margin:6px 0 2px;font:800 26px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htile .v.s{font-size:20px;line-height:1.3}.htile .v.vw{font-size:16px;white-space:normal}
+.htile .v.bad{color:var(--bad)}.htile .v.warn{color:var(--warn)}.htile .v.vmu{color:var(--muted)}
+.htile .mu{font-size:12.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.htile .mu.warn{color:var(--warn)}
+@media (max-width:360px){.htile .mu{-webkit-line-clamp:3}}
+.htile .mbar{margin-top:auto;transform:translateY(4px)}
+.row.htr{min-height:40px;gap:10px}.row.htr .htm{flex:none;width:42px;color:var(--link);font:700 13px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.tabbar .ic,.sheet .ic,.rail .ic{position:relative}
+.ic>.bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--bg0)}
+.ic>.bdg:empty{display:none}
+@media (hover:hover) and (pointer:fine){.htile:hover{border-color:var(--line-2)}}
+@media (min-width:900px){.rail .ic>.bdg{top:-8px;left:8px;min-width:16px;height:16px;padding:0 4px;font-size:10px;line-height:16px}}
 .row.nt.hl{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
 @media (min-width:900px){.row.nt>.pg{margin-top:0}}
 /* «Уведомления»: the day header's check (reads that day) keeps the header's 44 px, the count sits before it. */
@@ -1346,7 +1370,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // From 900 px: all fourteen in a left rail. Tabs he hid in «Вкладки» (prefs) are in none of them. The tab is kept in localStorage and,
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
-  var TABS = [['home', 'house', 'Сегодня'], ['shop', 'cart', 'Покупки'],
+  var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
     ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
@@ -1373,6 +1397,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
+  // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
+  // in its «Карточки на «Главной»»; the keys stay, so the desktop's overview keeps hiding «Деньги» and the debt.
+  var TILED = ['tasks', 'money', 'card_debt', 'games', 'shows', 'vb', 'genshin'];
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
   var MONEY_CARDS = [['card_debt', 'Долг по картам', 'trending-down'], ['charts', 'Графики', 'chart'], ['cats', 'По категориям', 'layers'], ['accts', 'По счетам', 'landmark'],
@@ -1440,9 +1467,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       });
     }).observe(main, { childList: true, subtree: true });
   }
+  // The «Задачи» count (docs/specs/home-dashboard.md): overdue and today's open tasks, from home's tasks or the
+  // «Задачи» list, kept for the next start; a red badge on the tab's icon wherever it sits (the bar, «Ещё», the rail),
+  // none at 0, «99+» past 99, and the Home Screen icon's own badge where the Badging API is.
+  var taskCount = Number(store('taskBadge')) || 0;
+  function badgeText(n) { return n > 99 ? '99+' : n > 0 ? String(n) : ''; }
+  function setTaskBadge(n) {
+    taskCount = n > 0 ? n : 0;
+    store('taskBadge', String(taskCount));
+    (navs.tasks || []).forEach(function (b) {
+      text(b.querySelector('.bdg'), badgeText(taskCount));
+      if (taskCount) b.setAttribute('aria-label', 'Задачи: на сегодня и просрочено ' + taskCount);
+      else b.removeAttribute('aria-label');
+    });
+    try {
+      if (navigator.setAppBadge) (taskCount ? navigator.setAppBadge(taskCount) : navigator.clearAppBadge()).catch(noop);
+    } catch (e) {}
+  }
   function navBtn(t) {
-    var b = add(el('button'), add(el('span', 'ic'), icon(t[1])), el('span', 'lb', t[2]));
+    var b = add(el('button'), add(el('span', 'ic'), icon(t[1]), t[0] === 'tasks' ? el('span', 'bdg', badgeText(taskCount)) : null), el('span', 'lb', t[2]));
     b.type = 'button';
+    if (t[0] === 'tasks' && taskCount) b.setAttribute('aria-label', 'Задачи: на сегодня и просрочено ' + taskCount);
     // The active tab again (the sheet closed): to the top, smoothly; already at the top, drawn again as a pull down does.
     b.onclick = function () {
       var open = shell.classList.contains('more');
@@ -2139,12 +2184,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function homeView() {
     // cards: HOME_KEYS key → its card (or its «недоступно» stub) of this render; slot: the key being drawn.
     var body = el('div', 'cols'), cards = {}, slot = null, last = null;
+    // «Главная» (docs/specs/home-dashboard.md): the greeting, the tiles and «Завтра» over the cards; the date is in the
+    // greeting, not beside the title.
+    var greet = el('div', 'hgreet'), dash = el('div', 'hgrid'), tmr = el('div');
+    text(hDate, '');
     // Him coming to the tab: the pinned cards are back in their mode (docs/specs/money-13.md §2).
     HOMEF.foldTmp = {};
     var again = label(el('button', 'btn ghost wide'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
-    add(main, body, again);
+    add(main, greet, dash, tmr, body, again);
 
     function card(ic, title, sub, rows) {
       var c = mkCard(ic, title, sub);
@@ -2456,12 +2505,119 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       c.mfs = [st.textContent, p.idea];
       c.appendChild(tap(hrow(p.idea, String(p.lang || 'pl').toUpperCase(), st), function () { show('li'); }));
     }
+    // «воскресенье, 25 октября · Добрый день, Валерий»: morning to 12, day to 18, evening after.
+    function greeting() {
+      var h = Number(wp(Date.now()).hour), d = '';
+      try {
+        d = (greeting.f || (greeting.f = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'long', day: 'numeric', month: 'long' })))
+          .format(new Date()) + ' · ';
+      } catch (e) {}
+      text(greet, d + (h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + ', Валерий');
+    }
+    function modOn(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
+    // A tile: the icon and the name, the value (vcls: s smaller, vw wrapped, bad / warn / vmu its colour), a line under it
+    // (a string or a node); a tap runs go(tile).
+    function tile(ic, k, v, vcls, sub, go) {
+      var u = sub ? (sub.nodeType ? sub : el('div', 'mu', sub)) : null;
+      var t = add(el('div', 'htile'), add(el('div', 'k'), icon(ic), el('span', '', k)), el('div', 'v' + (vcls ? ' ' + vcls : ''), v), u);
+      t.setAttribute('aria-label', k + ': ' + v + (u ? ', ' + u.textContent : ''));
+      dash.appendChild(tap(t, function () { go(t); }));
+      return t;
+    }
+    // «пн 19:30» of a moment in Warsaw.
+    function dayTime(ts) {
+      var s = wp(ts);
+      return WEEK[wd(s.year + '-' + s.month + '-' + s.day)] + ' ' + s.hour + ':' + s.minute;
+    }
+    // The six tiles in their order, each left out while its module is off or its tab hidden (or with nothing to say).
+    function tiles(j, today) {
+      clear(dash);
+      var m = j.morning || {}, now = Date.now(), p = wp(now), hm = p.hour + ':' + p.minute;
+      // «сегодня можно» in the three states of the «Сегодня можно ещё» line: can / overspent / only the necessary.
+      var dd = j.money && j.money.daily;
+      if (dd && moneyHomeOn(j) && tabShown('money')) {
+        var dt = moneyDailyText(dd), over = dd.left < 0;
+        tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
+          dt.tight ? 'vw warn' : over ? 'bad' : '', 'до зарплаты ' + dm(dd.payday), function () { show('money'); });
+      }
+      // The cards' debt with the month's change and the bar to zero; a tap opens its sheet, as the card's does.
+      if (moneyDebtOn(j.card_debt) && tabShown('money')) {
+        var cd = j.card_debt, dtl = tile('trending-down', 'долг по картам', mtInt(cd.total), '', add(el('div', 'mu'), moneyDebtDiff(cd)),
+          function (n) { moneyDebtSheet(cd, n); });
+        if (cd.progress !== null && cd.progress !== undefined) dtl.appendChild(moneyBar(cd.progress, 'done'));
+      }
+      // Overdue and today's; red while anything is overdue.
+      if (j.tasks && tabShown('tasks')) {
+        var tk = j.tasks, nt = tk.today_count != null ? tk.today_count : (tk.today || []).length, od = tk.overdue || 0;
+        tile('check-square', 'задачи', grouped(od + nt), od ? 'bad' : '', [od ? 'просрочено ' + od : '', nt ? 'сегодня ' + nt : '',
+          tk.tomorrow_count ? 'завтра ' + tk.tomorrow_count : ''].filter(Boolean).join(' · ') || 'на сегодня ничего', function () { show('tasks'); });
+      }
+      // His next game, else today's next free one with its places taken of all; none — «игр нет».
+      if (modOn('TELEGRAM_TOPIC_VOLLEYBALL', 'vb')) {
+        var mine = (m.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; })[0];
+        var free = (m.volleyball || []).filter(function (g) { return g.start_at >= hm; })
+          .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
+        var go = function () { show('vb'); };
+        if (mine) tile('ball', 'волейбол', dayTime(mine.starts_at), 's', [mine.venue, 'записан'].filter(Boolean).join(' · '), go);
+        else if (free) {
+          tile('ball', 'волейбол', WEEK[wd(today)] + ' ' + free.start_at, 's', [free.venue, free.max_players != null && free.free_spots != null
+            ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '), go);
+        } else tile('ball', 'волейбол', 'игр нет', 's vmu', null, go);
+      }
+      // The resin now, from the snapshot's «full at» (one per 8 minutes); full — «полная!» in amber.
+      var gs = j.genshin;
+      if (gs && modOn('TELEGRAM_TOPIC_GENSHIN', 'genshin')) {
+        var left = gs.full_at ? Date.parse(gs.full_at) - now : 0, full = gs.full_at ? left <= 0 : gs.current >= gs.max;
+        var cur = full ? gs.max : gs.full_at ? Math.max(0, gs.max - Math.ceil(left / 480000)) : gs.current;
+        tile('game', 'Genshin · смола', cur + ' / ' + gs.max, 's', full ? el('div', 'mu warn', 'полная!') : gs.full_at ? 'полная через ' +
+          (left >= 3600000 ? Math.round(left / 3600000) + ' ч' : Math.max(1, Math.round(left / 60000)) + ' мин') : null, function () { show('genshin'); });
+      }
+      // His next screening, else the next premiere.
+      var cn = j.cinema_next;
+      if (cn && modOn('TELEGRAM_TOPIC_CINEMA', 'cinema')) {
+        tile('film', 'кино', cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 's',
+          '«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'), function () { show('cinema'); });
+      }
+    }
+    // «Завтра»: up to five of tomorrow's tasks, calendar events and his game — the timed ones by time, then the rest;
+    // nothing tomorrow, no card.
+    function tomorrow(j, today) {
+      clear(tmr);
+      var m = j.morning || {}, tm = addDays(today, 1), items = [];
+      ((j.tasks && j.tasks.tomorrow) || []).forEach(function (t) {
+        items.push({ time: t.due_time ? String(t.due_time).slice(0, 5) : '', text: t.title, tab: 'tasks' });
+      });
+      (m.calendar_view || []).forEach(function (x) {
+        if (x.date === tm) items.push({ time: x.time || '', text: (x.kind === 'work' ? x.icon + ' ' : '') + x.text });
+      });
+      if (modOn('TELEGRAM_TOPIC_VOLLEYBALL', 'vb')) {
+        (m.my_games || []).forEach(function (g) {
+          var s = wp(g.starts_at);
+          if (s.year + '-' + s.month + '-' + s.day === tm) items.push({ time: s.hour + ':' + s.minute, text: 'Волейбол · ' + g.venue, tab: 'vb' });
+        });
+      }
+      if (!items.length) return;
+      items.sort(function (x, y) { return (x.time ? 0 : 1) - (y.time ? 0 : 1) || x.time.localeCompare(y.time); });
+      var c = mkCard('calendar', 'Завтра');
+      c.firstChild.appendChild(el('span', 'mu', WEEK[wd(tm)] + ' ' + dm(tm)));
+      items.slice(0, 5).forEach(function (x) {
+        var r = add(el('div', 'row htr'), el('span', 'htm', x.time), el('span', 'tx t', x.text));
+        c.appendChild(x.tab && tabShown(x.tab) ? tap(r, function () { show(x.tab); }) : r);
+      });
+      tmr.appendChild(c);
+    }
     function render(j) {
       clear(body);
       cards = {};
       last = j;
       var p = wp(Date.now());
       var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
+      greeting();
+      tiles(j, today);
+      tomorrow(j, today);
+      if (j.tasks) {
+        setTaskBadge((j.tasks.overdue || 0) + (j.tasks.today_count != null ? j.tasks.today_count : (j.tasks.today || []).length));
+      }
       if (j.morning) morning(j.morning, today, j.week);
       else { plan(j.week); slot = 'morning'; down('clock', 'Утренняя сводка'); }
       slot = 'inbox';
@@ -2491,19 +2647,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       slot = 'system';
       if (j.pulse === null) down('alert', 'Система');
       else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
-      // His order first, the rest after in HOME_KEYS order; the hidden ones are left out.
-      var hid = prefs.home.hidden, off = HOME_KEYS.every(function (k) { return k === 'morning' || hid.indexOf(k) >= 0; });
+      // His order first, the rest after in HOME_KEYS order; the hidden ones and those the tiles show are left out.
+      var hid = prefs.home.hidden, off = HOME_KEYS.every(function (k) { return k === 'morning' || TILED.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
       if (off) {
         body.appendChild(tap(state('square', 'Все карточки выключены — включи в «Что нового» → «Настройки»'),
           function () { show('news'); }));
         return;
       }
       homeOrder().forEach(function (k) {
-        if (!cards[k] || hid.indexOf(k) >= 0) return;
+        if (!cards[k] || hid.indexOf(k) >= 0 || TILED.indexOf(k) >= 0) return;
         if (!cards[k].mfs) cards[k].mfs = firstLine(cards[k]);
         body.appendChild(foldCard('home', cards[k], k));
       });
-      if (!body.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
+      if (!body.firstChild && !dash.firstChild && !tmr.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
     }
     // The answer carries the settings too: taken unless a save of his is on its way or came after the request left.
     function load() {
@@ -3451,6 +3607,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (!areas.some(function (a) { return a[0] === area; })) area = '';
       drawChips();
       var today = warsawToday(), soon = addDays(today, 7), g = { over: [], today: [], soon: [], later: [], none: [], done: [] };
+      // The badge (docs/specs/home-dashboard.md) counts every area's overdue and today's, whatever the chip.
+      setTaskBadge(tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date <= today; }).length);
       tasks.forEach(function (t) {
         if (t.status === 'dropped' || (area && t.area !== area)) return;
         if (t.done) g.done.push(t);
@@ -10476,14 +10634,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // per card, in the order «Сегодня» draws them; «Сбросить» brings back every card in the default order, open as he
   // leaves it. The morning brief's own «недоступно» stub has no row and keeps its place after «План недели».
   function homeCard() {
-    var card = mkCard('house', 'Карточки на «Сегодня»'), rows = el('div'), foot = el('div', 'foot');
+    var card = mkCard('house', 'Карточки на «Главной»'), rows = el('div'), foot = el('div', 'foot');
     var reset = el('button', 'btn ghost', 'Сбросить');
     reset.type = 'button';
     reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [], fold: {}, folded: [] } }, ['home', 'reset']); };
     foot.appendChild(reset);
     add(card, el('div', 'sub', 'Под названием — как карточка открывается'), rows);
     card.paint = function (focus) {
-      var hid = prefs.home.hidden, keys = homeOrder().filter(function (k) { return k !== 'morning'; });
+      var hid = prefs.home.hidden, keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || TILED.indexOf(k) < 0); });
       clear(rows);
       keys.forEach(function (k, i) {
         var on = hid.indexOf(k) < 0, name = HOME_NAMES[k], row = el('div', 'row');
@@ -10494,7 +10652,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           o.splice(o.indexOf('plan') + 1, 0, 'morning');
           editPrefs({ tabs: prefs.tabs, home: { hidden: hid, order: o } }, ['home', k, d < 0 ? 'up' : 'down']);
         }
-        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Сегодня»', on: on }, 'tog', false, function () {
+        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Главной»', on: on }, 'tog', false, function () {
           editPrefs({ tabs: prefs.tabs, home: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }),
             order: prefs.home.order } }, ['home', k, 'tog']);
         }), add(el('span', 'tx'), el('div', 't', name), foldSeg('home', k, name)),
@@ -10781,7 +10939,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Все карточки…» from a «Сегодня» card's sheet: «Карточки на «Сегодня»», as on «Что нового».
   function homeCardsSheet(from) {
     HOMEF.cardsCard = homeCard();
-    legalSheet('Карточки на «Сегодня»', [HOMEF.cardsCard], from);
+    legalSheet('Карточки на «Главной»', [HOMEF.cardsCard], from);
   }
 
   // --- bottom bar ---
