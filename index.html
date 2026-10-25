@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-25 21:22">
+<meta name="published" content="2026-10-25 21:35">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -8227,7 +8227,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       // One short line under the name (his word 23.10.2026: «много текста, ничего не понимаю»): a credit card shows how
       // much of its limit is used as a bar (the limit itself is in its sheet) and «свободно N»; another account how many spends. The
       // month's spend sum lives in «По категориям» and in the account's own list (a tap), not here.
-      var b = spent[a.key], on = MONEY.acct === a.key, cur = a.currency, sub = '', bar = null;
+      var b = spent[a.key], cur = a.currency, sub = '', bar = null;
+      var on = MONEY.found ? MONEY.found.account === a.key : MONEY.acct === a.key;
       var big, cls = '', set = a.balance !== null && a.balance !== undefined;
       // The currency by its sign (moneySym: «₴», not «UAH»), the amount in one piece.
       function bal(v, c) { return moneyNum(v) + '\u00a0' + moneySym(c); }
@@ -8251,7 +8252,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var r = add(el('div', 'row mcat macc' + (on ? ' on' : '')), moneyAcctTile(a.key), add(el('span', 'tx'), el('div', 't', a.name),
         bar, !sub ? null : typeof sub === 'string' ? el('div', 'mu', sub) : sub), el('span', 'pr mbal' + cls, big), more);
       r.setAttribute('aria-pressed', String(on));
-      tap(r, function () { box.onFilter(on ? null : a.key); });
+      // A tap shows every operation of the account, all months (his word 25.10.2026: «нажимал на карту — видел все
+      // траты на карте»); a second tap takes them away.
+      tap(r, function () {
+        if (!on) return moneyAcctAll(a);
+        MONEY.found = null;
+        haptic();
+        box.onFilter(null);
+      });
       card.appendChild(r);
     });
     // «Перевод» right here (his word 24.10.2026: he could not find it under «+»): the transfer sheet, from the last account.
@@ -8390,6 +8398,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function moneyListShown(list) {
     if (!MONEY.toList) return;
     MONEY.toList = false;
+    // A folded «Траты» opens for it (till he leaves the tab; his own fold setting is not written).
+    if (list.mfSec && cardFolded('money', 'list')) { MONEY.foldTmp.list = false; foldShow(list, false); }
     requestAnimationFrame(function () { moneyScrollTo(list); });
   }
   // «Все операции» of an account (its sheet): money_search {account} — every month's rows of it, shown in «Траты» as a
