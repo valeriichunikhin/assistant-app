@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 07:36">
+<meta name="published" content="2026-10-26 09:07">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -2641,7 +2641,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           if (!dd) return none('wallet', 'сегодня можно', lost(j.money), money);
           var dt = moneyDailyText(dd), over = dd.left < 0;
           tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
-            dt.tight ? 'vw warn' : over ? 'bad' : '', dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' : 'до зарплаты ' + dm(dd.payday), money);
+            dt.tight ? 'vw warn' : over ? 'bad' : '', dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' + (dd.step && dd.step.per_day <= dd.per_day_calc + 0.005 ? ' до ' + dm(dd.step.until) : '') : dd.step ? 'своих нет до ' + dm(dd.step.until) : 'до зарплаты ' + dm(dd.payday), money);
         },
         // Days to payday and what is paid before it (25.10.2026, his choice instead of the cards' debt).
         payday: function () {
@@ -7950,15 +7950,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Перерасход N zł» in red; own — «по деньгам выходит N» under his own limit. Nothing of his own left before payday
   // (per_day ≤ 0, docs/specs/money-12.md §1): «До 10-го — только необходимое» in amber — an honest state, not an error.
   function moneySgn(v) { return (v < 0 ? '−' : '') + mtInt(v); }
+  // By income dates (26.10.2026): while the day comes from the money before the next income (d.step, his Pomoc on the
+  // 5th), the dates in the lines are that income's, and «с 5.11 — M» says what opens after it.
   function moneyDailyText(d) {
-    var over = d.left < 0, tight = d.per_day <= 0;
-    return { big: tight ? 'До ' + Number(d.payday.slice(8, 10)) + '-го — только необходимое' : over ? 'Перерасход ' + mtZl(-d.left)
+    var over = d.left < 0, tight = d.per_day <= 0, st = d.step && d.step.per_day * 100 <= Math.round(d.per_day_calc * 100) + 0.5 ? d.step : null;
+    var to = st ? st.until : d.payday, then = st ? ' · с ' + dm(st.until) + ' — ' + moneySgn(st.after_per_day) + ' в день' : '';
+    return { big: tight ? 'До ' + Number(to.slice(8, 10)) + '-го — только необходимое' : over ? 'Перерасход ' + mtZl(-d.left)
       : 'Сегодня можно ещё ' + mtZl(d.left), cls: tight ? 'warn' : over ? 'neg' : '', tight: tight,
-      sub: (tight ? 'своих денег до зарплаты ' + dm(d.payday) + ' не хватает' : moneySgn(d.per_day) + ' в день до зарплаты ' + dm(d.payday)) +
+      sub: (tight ? (st ? 'своих денег до ' + st.label + ' ' + dm(to) + ' не хватает' : 'своих денег до зарплаты ' + dm(to) + ' не хватает')
+        : moneySgn(d.per_day) + ' в день до ' + (st ? dm(to) : 'зарплаты ' + dm(to))) + then +
         (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
       own: d.own_limit != null && !tight ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '',
       // One line under the headline (the month's head, variant A 24.10.2026): «90 в день до 10.11 · обязательное 156».
-      short: (tight ? 'своих не хватает' : moneySgn(d.per_day) + ' в день до ' + dm(d.payday)) +
+      short: (tight ? 'своих не хватает до ' + dm(to) : moneySgn(d.per_day) + ' в день до ' + dm(to)) +
         (d.obligations_sum ? ' · обязательное ' + mtInt(d.obligations_sum) : '') };
   }
   // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день», where the full sub-line
@@ -8026,6 +8030,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       add(box, el('div', 'mu msrc mdcalc', '(' + mtInt(start) + (d.incomes_sum ? ' + ' + mtInt(d.incomes_sum) : '') +
         (d.obligations_sum ? ' − ' + mtInt(d.obligations_sum) : '') + ') / ' + d.days + ' = ' + moneySgn(d.per_day_calc) + ' zł в день' +
         (d.spent_today ? ' · сегодня потрачено ' + mtZl(d.spent_today) : '')));
+      // The step by income dates: the money before the first income, over the days to it.
+      if (d.step) add(box, el('div', 'mu msrc mdcalc', 'до ' + d.step.label + ' ' + dm(d.step.until) + ': (' + mtInt(start) +
+        (d.step.obligations_sum ? ' − ' + mtInt(d.step.obligations_sum) : '') + ') / ' + d.step.days + ' = ' + moneySgn(d.step.per_day) +
+        ' zł в день · с ' + dm(d.step.until) + ' — ' + moneySgn(d.step.after_per_day)));
       settings(d);
     }
     function settings(d) {
