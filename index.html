@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 21:34">
+<meta name="published" content="2026-10-26 22:00">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1711,8 +1711,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     loadPrefs();
     var h = location.hash.slice(1), last = store('tab'), n = notifHash(h);
     if (n) notifFocus = n.id;
-    // A link (#tab) opens even a hidden tab; the remembered one only while it is shown.
-    show(n ? 'notif' : isView(canon(h)) ? h : last && tabShown(canon(last)) ? last : 'home');
+    // A link (#tab) opens even a hidden tab; the remembered one only while it is shown. The Home Screen app
+    // starts from the address it was installed with, whose #tab is stale (26.10.2026: it always opened «Главная»
+    // while he goes straight to «Деньги»), so there the last tab wins over the hash; a push tap (#notif) still goes.
+    var pwa = navigator.standalone || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    var lastOk = last && isView(canon(last)) && tabShown(canon(last));
+    show(n ? 'notif' : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : 'home');
     // The bell's count when the first screen does not bring it (home and «Уведомления» do); the answer is the
     // center's cached copy too.
     if (current !== 'home' && current !== 'notif') {
