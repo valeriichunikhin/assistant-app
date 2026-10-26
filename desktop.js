@@ -211,8 +211,9 @@
         small: st.totals.receipts + ' ' + A.plural(st.totals.receipts, ['чек', 'чека', 'чеков']) });
     }
     if (j.inbox_new) items.push({ k: 'Инбокс', v: String(j.inbox_new), small: 'новых' });
-    // «Деньги» (docs/specs/money-6.md §2): the phone's «Сегодня» card as a tile, hidden with that card.
-    var hid = (j.prefs && j.prefs.home && j.prefs.home.hidden) || [];
+    // «Деньги» (docs/specs/money-6.md §2): the phone's «Сегодня» card as a tile, hidden with that card — in this
+    // screen's view (docs/specs/device-views.md).
+    var hid = A.viewPrefs('home').hidden;
     if (j.money && A.moneyHomeOn && A.moneyHomeOn(j) && hid.indexOf('money') < 0) {
       var mm = j.money, mt = A.moneyHomeText(mm), d = mm.diff_pct;
       items.push({ k: 'Деньги · ' + A.monthLabel(mm.month).split(' ')[0].toLowerCase(), v: A.grouped(Math.round(mm.spent)) + ' zł',

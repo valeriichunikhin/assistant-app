@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 00:03">
+<meta name="published" content="2026-10-26 07:33">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -753,6 +753,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .lead .ptile.ai{width:20px;height:20px;border-radius:5px}.lead .ptile.ai img{border-radius:4px}
 .card .sub.htadd{padding:12px 14px 4px;border-top:1px solid var(--line);font-weight:600}
 .card .sub.htadd[hidden]{display:none}
+/* Whose view a sheet changes, «Как на телефоне» on the wide layout (docs/specs/device-views.md). */
+.card .sub.vline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px;padding-top:0;font-size:12px}
+.card .sub.vline .btn{flex:none;font-size:13px}
 .row.htr{min-height:40px;gap:10px}.row.htr .htm{flex:none;width:42px;color:var(--link);font:700 13px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
 .tabbar .ic,.sheet .ic,.rail .ic{position:relative}
 .ic>.bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--bg0)}
@@ -1438,11 +1441,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       return typeof k === 'string' && (TILE_KEYS.indexOf(k) >= 0 || /^acct:[a-z0-9_-]{1,40}$/.test(k)) && v.indexOf(k) === i;
     }).slice(0, 24) : [];
   }
-  function homeTiles() { return prefs.tiles.length ? prefs.tiles : TILE_DEFAULT; }
+  function homeTiles() { return viewPrefs('tiles').length ? viewPrefs('tiles') : TILE_DEFAULT; }
   function tiledCards() {
-    if (!prefs.tiles.length) return TILED;
+    if (!viewPrefs('tiles').length) return TILED;
     var o = [];
-    prefs.tiles.forEach(function (k) { (TILE_CARDS[k] || []).forEach(function (c) { if (o.indexOf(c) < 0) o.push(c); }); });
+    viewPrefs('tiles').forEach(function (k) { (TILE_CARDS[k] || []).forEach(function (c) { if (o.indexOf(c) < 0) o.push(c); }); });
     return o;
   }
   // A tile whose module is off in «Модули» or whose tab is hidden: not drawn, grey in the choice.
@@ -1473,13 +1476,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     return o;
   }
-  function normPrefs(p) {
-    var t = (p && p.tabs) || {}, h = (p && p.home) || {}, m = p && p.muted, mo = (p && p.money) || {};
-    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS),
-      fold: foldIn(h.fold, HOME_KEYS), folded: keysIn(h.folded, HOME_KEYS) },
-      muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
+  // A view's fields (docs/specs/device-views.md): «Сегодня»'s and «Деньги»'s cards and the tiles, of the settings
+  // themselves (the phone's view) or of views.wide.
+  function viewIn(p) {
+    var h = (p && p.home) || {}, mo = (p && p.money) || {};
+    return { home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS), fold: foldIn(h.fold, HOME_KEYS),
+      folded: keysIn(h.folded, HOME_KEYS) },
       money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold, MONEY_CARD_KEYS),
         folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles) };
+  }
+  function normPrefs(p) {
+    var t = (p && p.tabs) || {}, m = p && p.muted, v = viewIn(p), w = p && p.views && p.views.wide;
+    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: v.home,
+      muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
+      money: v.money, tiles: v.tiles, views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {} };
   }
   // The switchable modules [{env, name}] as the server last listed them.
   function normModules(v) {
@@ -1487,6 +1497,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       .map(function (x) { return { env: x.env, name: x.name }; }) : null;
   }
   var prefsHit = cacheGet('prefs'), prefs = normPrefs(prefsHit && prefsHit.j && prefsHit.j.prefs);
+  // The view on screen (docs/specs/device-views.md, his ask of 25.10.2026: folded on the phone, open on the Mac): the
+  // phone's (wide() false) is prefs itself; the wide layout's — by the window's width, so an iPad across counts and a
+  // narrow Mac window does not — is prefs.views.wide once he changed something there, till then the phone's order,
+  // hidden cards and tiles with nothing folded. s: 'home', 'money' or 'tiles'. Every read of those goes through here.
+  function viewPrefs(s) {
+    if (!wide()) return prefs[s];
+    if (prefs.views.wide) return prefs.views.wide[s];
+    return s === 'tiles' ? prefs.tiles : Object.assign({}, prefs[s], { fold: {}, folded: [] });
+  }
   var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
   function tabShown(k) { return k === 'home' || k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
   function visibleTabs() { return TABS.filter(function (t) { return tabShown(t[0]); }); }
@@ -2823,7 +2842,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (j.pulse === null) down('alert', 'Система');
       else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
       // His order first, the rest after in HOME_KEYS order; the hidden ones and those the tiles show are left out.
-      var hid = prefs.home.hidden, tiled = tiledCards(), off = HOME_KEYS.every(function (k) { return k === 'morning' || tiled.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
+      var hid = viewPrefs('home').hidden, tiled = tiledCards(), off = HOME_KEYS.every(function (k) { return k === 'morning' || tiled.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
       if (off) {
         body.appendChild(tap(state('square', 'Все карточки выключены — включи в «Что нового» → «Настройки»'),
           function () { show('news'); }));
@@ -8610,7 +8629,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // is gone unless a balance is still open.
   // A debt kept in dollars (his mother's, 25.10.2026): «1 000,00 $» and under it in grey «≈ 3 925 zł» at the NBP's
   // rate of the day (p.fx from money_state); else the złoty as before.
-  function moneyDebtSum(p) {
+  function moneyPersonSum(p) {
     if (!p.balance && !p.fx) return document.createTextNode('0');
     if (!p.fx) return document.createTextNode(moneyFmt(Math.abs(p.balance)));
     var f = document.createDocumentFragment();
@@ -8634,7 +8653,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var x = add(el('div', 'row mdebt'), add(el('span', 'ptile'), icon('users')), add(el('span', 'tx'), el('div', 't', p.name),
         el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due),
         p.note && p.balance ? el('div', 'mu mnote', p.note) : null),
-        add(el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : '')), moneyDebtSum(p)));
+        add(el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : '')), moneyPersonSum(p)));
       tap(x, function () { moneyPersonSheet(p, done, x); });
       return x;
     }
@@ -8692,7 +8711,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function balance(v) {
       clear(bal);
       // The sheet opens with the list's row (fx known); after a write the złoty is read again and the dollars kept.
-      if (p.fx && v) bal.appendChild(moneyDebtSum({ balance: v, fx: p.fx }));
+      if (p.fx && v) bal.appendChild(moneyPersonSum({ balance: v, fx: p.fx }));
       else text(bal, v ? moneyFmt(Math.abs(v)) : '0,00 zł');
       if (bal.lastChild && bal.lastChild.className === 'mfx') bal.lastChild.className = 'mpsumx';
       bal.className = 'msum mpsum' + (v > 0 ? ' pos' : v < 0 ? ' neg' : '');
@@ -10692,7 +10711,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   };
   // His order of the «Сегодня» cards, then the keys he did not place, in HOME_KEYS order.
   function homeOrder() {
-    var o = prefs.home.order;
+    var o = viewPrefs('home').order;
     return o.concat(HOME_KEYS.filter(function (k) { return o.indexOf(k) < 0; }));
   }
   // New settings (normalized) on screen: the rail, the bar and the sheet; a tab hidden right now gives way to
@@ -10716,11 +10735,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // next without muted keeps the modules as they are (the tab and card switches send the whole settings); without money
   // or home, those cards (and the reverse: a money edit sends money only), whose fields left out stay as they are.
   // quiet: the view on screen is already right (a card folded by a tap, docs/specs/money-13.md §2) — no redraw, and the
-  // save waits 600 ms, so a run of taps is one request.
+  // save waits 600 ms, so a run of taps is one request. home, money and tiles are the view on screen's
+  // (docs/specs/device-views.md): on the wide layout they go to views.wide, made from that view the first time;
+  // next.views replaces them all («Как на телефоне»: {}).
   function editPrefs(next, focus, quiet) {
-    next = { tabs: next.tabs || prefs.tabs, home: next.home ? Object.assign({}, prefs.home, next.home) : prefs.home,
-      muted: next.muted || prefs.muted, money: next.money ? Object.assign({}, prefs.money, next.money) : prefs.money,
-      tiles: next.tiles || prefs.tiles };
+    var view = !!(next.home || next.money || next.tiles), w = view && wide(), h = viewPrefs('home'), mo = viewPrefs('money');
+    var v = { home: next.home ? Object.assign({}, h, next.home) : h, money: next.money ? Object.assign({}, mo, next.money) : mo,
+      tiles: next.tiles || viewPrefs('tiles') };
+    next = { tabs: next.tabs || prefs.tabs, home: view && !w ? v.home : prefs.home, muted: next.muted || prefs.muted,
+      money: view && !w ? v.money : prefs.money, tiles: view && !w ? v.tiles : prefs.tiles,
+      views: next.views || (w ? { wide: v } : prefs.views) };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -10791,8 +10815,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         else {
           var on = hid.indexOf(k) < 0;
           row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: t[2] + ': показывать', on: on }, 'tog', false, function () {
-            editPrefs({ tabs: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }) }, home: prefs.home },
-              ['tab', k, 'tog']);
+            editPrefs({ tabs: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }) } }, ['tab', k, 'tog']);
           }));
         }
         row.k = k;
@@ -10822,7 +10845,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       modules.forEach(function (m) {
         var k = m.env, on = off.indexOf(k) < 0, row = add(lead(el('div', 'row'), MODULE_ICONS[k] || 'bell'), el('span', 'tx t', m.name));
         row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: m.name + ': включён', on: on }, 'tog', false, function () {
-          editPrefs({ tabs: prefs.tabs, home: prefs.home, muted: on ? off.concat([k]) : off.filter(function (x) { return x !== k; }) },
+          editPrefs({ tabs: prefs.tabs, muted: on ? off.concat([k]) : off.filter(function (x) { return x !== k; }) },
             ['module', k, 'tog']);
         }));
         row.k = k;
@@ -10833,36 +10856,50 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     card.paint();
     return card;
   }
+  // The line of the view sheets (docs/specs/device-views.md): whose view they change, and on the wide layout, once it
+  // has its own, «Как на телефоне» — views.wide dropped in one prefs_set, the phone's order and hidden cards back,
+  // nothing folded. kind: the card's focus kind, so the keyboard lands on its first row after.
+  function viewLine(line, kind) {
+    clear(line);
+    line.appendChild(el('span', 'tx', 'Настройки этого экрана: ' + (wide() ? 'Mac' : 'телефон')));
+    if (!wide() || !prefs.views.wide) return line;
+    var b = el('button', 'btn ghost', 'Как на телефоне');
+    b.type = 'button';
+    b.onclick = function () { editPrefs({ views: {} }, [kind, 'reset']); };
+    line.appendChild(b);
+    return line;
+  }
   // «Карточки на «Сегодня»»: a toggle, the name with how the card opens under it (docs/specs/money-13.md §3) and a
   // grip to drag it by (docs/specs/drag-sort.md) per card, in the order «Сегодня» draws them; «Сбросить» brings back every card in the default order, open as he
   // leaves it. The morning brief's own «недоступно» stub has no row and keeps its place after «План недели».
   function homeCard() {
-    var card = mkCard('house', 'Карточки на «Главной»'), rows = el('div'), foot = el('div', 'foot');
+    var card = mkCard('house', 'Карточки на «Главной»'), rows = el('div'), foot = el('div', 'foot'), vl = el('div', 'sub vline');
     var reset = el('button', 'btn ghost', 'Сбросить');
     reset.type = 'button';
     reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [], fold: {}, folded: [] } }, ['home', 'reset']); };
     foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Под названием — как карточка открывается'), rows);
+    add(card, el('div', 'sub', 'Под названием — как карточка открывается'), vl, rows);
     card.paint = function (focus) {
-      var hid = prefs.home.hidden, tiled = tiledCards(), keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || tiled.indexOf(k) < 0); });
+      viewLine(vl, 'home');
+      var hid = viewPrefs('home').hidden, tiled = tiledCards(), keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || tiled.indexOf(k) < 0); });
       clear(rows);
       keys.forEach(function (k) {
         var on = hid.indexOf(k) < 0, name = HOME_NAMES[k], row = el('div', 'row');
         add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Главной»', on: on }, 'tog', false, function () {
           editPrefs({ tabs: prefs.tabs, home: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }),
-            order: prefs.home.order } }, ['home', k, 'tog']);
+            order: viewPrefs('home').order } }, ['home', k, 'tog']);
         }), add(el('span', 'tx'), el('div', 't', name), foldSeg('home', k, name)), dragGrip(name));
         row.k = k;
         rows.appendChild(row);
       });
-      if (hid.length || prefs.home.order.length || Object.keys(prefs.home.fold).length) card.appendChild(foot);
+      if (hid.length || viewPrefs('home').order.length || Object.keys(viewPrefs('home').fold).length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       refocus(rows, focus, 'home');
     };
     // A drop: the morning brief's stub goes back after «План недели», as it stood.
     dragSort(rows, function () { return [].slice.call(rows.children); }, function (o, k) {
       o.splice(o.indexOf('plan') + 1, 0, 'morning');
-      editPrefs({ tabs: prefs.tabs, home: { hidden: prefs.home.hidden, order: o } }, ['home', k, 'grip']);
+      editPrefs({ tabs: prefs.tabs, home: { hidden: viewPrefs('home').hidden, order: o } }, ['home', k, 'grip']);
     });
     card.paint();
     return card;
@@ -10871,10 +10908,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Деньги»'s cards in his order (docs/specs/money-11.md §8): the keys he placed, then the others in MONEY_CARDS order;
   // moneyCardOn(k) is false for a card he switched off.
   function moneyCardOrder() {
-    var o = prefs.money.order;
+    var o = viewPrefs('money').order;
     return o.concat(MONEY_CARD_KEYS.filter(function (k) { return o.indexOf(k) < 0; }));
   }
-  function moneyCardOn(k) { return prefs.money.hidden.indexOf(k) < 0; }
+  function moneyCardOn(k) { return viewPrefs('money').hidden.indexOf(k) < 0; }
   // The cards of the tab in order into box, the switched-off ones left out (an absent card is skipped), each foldable.
   function moneyCardsInto(box, cards) {
     moneyCardOrder().forEach(function (k) { if (moneyCardOn(k) && cards[k]) box.appendChild(moneyFold(cards[k], k)); });
@@ -10887,8 +10924,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // Folding (docs/specs/money-13.md), the same on «Деньги» and on «Сегодня» (his «6 да», 25.10.2026): s is the section
   // of the settings, 'money' or 'home'. A tap on a card's header folds it to the header and one line of total (card.mfs:
   // the strings or nodes its builder left), or unfolds it; the chevron turns and the card's own height animates. The
-  // mode is prefs[s].fold[key] — 'open' / 'closed' pinned (a tap only lasts until he leaves the tab: foldTmp), none —
-  // as he left it, prefs[s].folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
+  // mode is viewPrefs(s).fold[key] — 'open' / 'closed' pinned (a tap only lasts until he leaves the tab: foldTmp), none —
+  // as he left it, viewPrefs(s).folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
   // FOLD[s]: st — where the section keeps foldTmp, foldNodes (each card's node or box on screen), cardSheet,
   // cardSheetFocus and cardsCard; name(k); order() — his order of every key; on(k) — not switched off; all(from) — the
   // sheet of every card; hid — the toast after «Скрыть».
@@ -10897,7 +10934,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     money: { st: MONEY, name: function (k) { return MONEY_CARDS[MONEY_CARD_KEYS.indexOf(k)][1]; }, order: moneyCardOrder, on: moneyCardOn,
       all: moneyCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Порядок карточек' },
     home: { st: HOMEF, name: function (k) { return k === 'morning' ? 'Утренняя сводка' : HOME_NAMES[k]; }, order: homeOrder,
-      on: function (k) { return prefs.home.hidden.indexOf(k) < 0; }, all: homeCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Все карточки…' }
+      on: function (k) { return viewPrefs('home').hidden.indexOf(k) < 0; }, all: homeCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Все карточки…' }
   };
   // An edit of section s only: its fields left out stay as they are.
   function foldEdit(s, patch, focus, quiet) {
@@ -10909,8 +10946,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     if (reorder && reorder.s === s) return true;
     var st = FOLD[s].st;
     if (Object.prototype.hasOwnProperty.call(st.foldTmp, k)) return st.foldTmp[k];
-    var f = prefs[s].fold[k];
-    return f ? f === 'closed' : prefs[s].folded.indexOf(k) >= 0;
+    var f = viewPrefs(s).fold[k];
+    return f ? f === 'closed' : viewPrefs(s).folded.indexOf(k) >= 0;
   }
   // node is the card, or a box its painter draws the card into again (charts, accounts, debts, goals, subscriptions): a
   // card that lands there later is dressed as it comes, before it is painted.
@@ -10952,8 +10989,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     h3.setAttribute('role', 'button');
     function toggle() {
       if (reorder) return;
-      var c = !cardFolded(s, key), f = prefs[s].folded;
-      if (prefs[s].fold[key]) { FOLD[s].st.foldTmp[key] = c; haptic(); }
+      var c = !cardFolded(s, key), f = viewPrefs(s).folded;
+      if (viewPrefs(s).fold[key]) { FOLD[s].st.foldTmp[key] = c; haptic(); }
       else foldEdit(s, { folded: c ? f.concat([key]) : f.filter(function (k) { return k !== key; }) }, null, true);
       foldShow(card, c, true);
     }
@@ -10990,7 +11027,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function foldShow(card, closed, anim) {
     var h3 = card.firstElementChild.querySelector('h3');
     h3.setAttribute('aria-expanded', String(!closed));
-    card.classList.toggle('mfpin', !!prefs[card.mfSec].fold[card.mfKey]);
+    card.classList.toggle('mfpin', !!viewPrefs(card.mfSec).fold[card.mfKey]);
     if (card.classList.contains('mfx') === closed && !card.mfT) return;
     var from = card.offsetHeight;
     clearTimeout(card.mfT);
@@ -11015,8 +11052,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // A card's mode: 'open', 'closed' or null — as he leaves it, starting from how it is now.
   function cardMode(s, key, mode) {
-    var fold = Object.assign({}, prefs[s].fold), now = cardFolded(s, key);
-    var folded = prefs[s].folded.filter(function (k) { return k !== key; }).concat(!mode && now ? [key] : []);
+    var fold = Object.assign({}, viewPrefs(s).fold), now = cardFolded(s, key);
+    var folded = viewPrefs(s).folded.filter(function (k) { return k !== key; }).concat(!mode && now ? [key] : []);
     if (mode) fold[key] = mode;
     else delete fold[key];
     delete FOLD[s].st.foldTmp[key];
@@ -11050,7 +11087,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     function paint() {
       if (!F.on(key)) return close();
-      var vis = F.order().filter(function (k) { return k === key || cardShown(s, k); }), i = vis.indexOf(key), mode = prefs[s].fold[key] || null;
+      var vis = F.order().filter(function (k) { return k === key || cardShown(s, k); }), i = vis.indexOf(key), mode = viewPrefs(s).fold[key] || null;
       var up = item('arrow-up', 'Выше', function () { cardMove(s, key, -1); }), down = item('arrow-down', 'Ниже', function () { cardMove(s, key, 1); });
       var re = item('grip-vertical', 'Переставить', function () { close(); reorderStart(s, from); });
       up.disabled = i <= 0;
@@ -11060,7 +11097,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       FOLD_MODES.forEach(function (m) { box.appendChild(item(m[1], m[2], function () { if (mode !== m[0]) cardMode(s, key, m[0]); }, mode === m[0])); });
       add(box, item('eye-off', 'Скрыть', function () {
         close();
-        foldEdit(s, { hidden: prefs[s].hidden.concat([key]) }, [s, key, 'tog']);
+        foldEdit(s, { hidden: viewPrefs(s).hidden.concat([key]) }, [s, key, 'tog']);
         toast(F.hid);
       }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }),
       s === 'home' && !wide() ? item('layout-grid', 'Плитки…', function () { close(); tilesSheet(from); }) : null);
@@ -11077,7 +11114,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // A settings row's mode switch (docs/specs/money-13.md §3): as he leaves it, always open, always folded.
   function foldSeg(s, k, name) {
-    var seg = el('div', 'mfseg'), mode = prefs[s].fold[k] || null;
+    var seg = el('div', 'mfseg'), mode = viewPrefs(s).fold[k] || null;
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', name + ': как открывается');
     [FOLD_MODES[2], FOLD_MODES[0], FOLD_MODES[1]].forEach(function (m) {
@@ -11316,30 +11353,31 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Карточки «Денег»»: the same rows as «Карточки на «Сегодня»» — a toggle, the name, the grip — and «Сбросить»; on «Что
   // нового» and in the month's «⋯» → «Порядок карточек». The month's header with «Сегодня можно ещё» stays first.
   function moneyCardsCard() {
-    var card = mkCard('arrow-up-down', 'Карточки «Денег»'), rows = el('div'), foot = el('div', 'foot');
+    var card = mkCard('arrow-up-down', 'Карточки «Денег»'), rows = el('div'), foot = el('div', 'foot'), vl = el('div', 'sub vline');
     var reset = el('button', 'btn ghost', 'Сбросить');
     reset.type = 'button';
     reset.onclick = function () { editPrefs({ money: { hidden: [], order: [], fold: {}, folded: [] } }, ['money', 'reset']); };
     foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Шапка месяца всегда первая; категории внутри карточки — по сумме. Под названием — как карточка открывается'), rows);
+    add(card, el('div', 'sub', 'Шапка месяца всегда первая; категории внутри карточки — по сумме. Под названием — как карточка открывается'), vl, rows);
     card.paint = function (focus) {
-      var hid = prefs.money.hidden, keys = moneyCardOrder();
+      viewLine(vl, 'money');
+      var hid = viewPrefs('money').hidden, keys = moneyCardOrder();
       clear(rows);
       keys.forEach(function (k) {
         var on = hid.indexOf(k) < 0, c = MONEY_CARDS[MONEY_CARD_KEYS.indexOf(k)], name = c[1], row = el('div', 'row');
         add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' во вкладке «Деньги»', on: on }, 'tog', false, function () {
-          editPrefs({ money: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }), order: prefs.money.order } },
+          editPrefs({ money: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }), order: viewPrefs('money').order } },
             ['money', k, 'tog']);
         }), add(el('span', 'tx'), el('div', 't', name), foldSeg('money', k, name)), dragGrip(name));
         row.k = k;
         rows.appendChild(row);
       });
-      if (hid.length || prefs.money.order.length || Object.keys(prefs.money.fold).length) card.appendChild(foot);
+      if (hid.length || viewPrefs('money').order.length || Object.keys(viewPrefs('money').fold).length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       refocus(rows, focus, 'money');
     };
     dragSort(rows, function () { return [].slice.call(rows.children); }, function (o, k) {
-      editPrefs({ money: { hidden: prefs.money.hidden, order: o } }, ['money', k, 'grip']);
+      editPrefs({ money: { hidden: viewPrefs('money').hidden, order: o } }, ['money', k, 'grip']);
     });
     card.paint();
     return card;
@@ -11374,11 +11412,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   function tilesCard() {
     var card = mkCard('layout-grid', 'Плитки'), sel = el('div'), more = el('div', 'sub htadd', 'Можно добавить'), rest = el('div');
-    var foot = el('div', 'foot'), reset = el('button', 'btn ghost', 'Сбросить');
+    var foot = el('div', 'foot'), reset = el('button', 'btn ghost', 'Сбросить'), vl = el('div', 'sub vline');
     reset.type = 'button';
     reset.onclick = function () { editPrefs({ tiles: [] }, ['tiles', 'reset']); };
     foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Сверху — на «Главной», по порядку; тяни за ручку'), sel, more, rest);
+    add(card, el('div', 'sub', 'Сверху — на «Главной», по порядку; тяни за ручку'), vl, sel, more, rest);
     function row(k, on, n) {
       var off = tileOff(k), name = tileName(k), r = el('div', 'row' + (off ? ' htoff' : ''));
       add(r, add(el('span', 'lead'), k.indexOf('acct:') === 0 ? moneyAcctTile(k.slice(5), 'ai') : icon(TILES[TILE_KEYS.indexOf(k)][2])),
@@ -11396,13 +11434,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       return r;
     }
     card.paint = function (focus) {
+      viewLine(vl, 'tiles');
       var mine = homeTiles(), all = TILE_KEYS.concat((HOMEF.accts || []).map(function (a) { return 'acct:' + a.key; }));
       clear(sel);
       clear(rest);
       mine.forEach(function (k) { sel.appendChild(row(k, true, mine.length)); });
       all.forEach(function (k) { if (mine.indexOf(k) < 0) rest.appendChild(row(k, false)); });
       more.hidden = !rest.firstChild;
-      if (prefs.tiles.length) card.appendChild(foot);
+      if (viewPrefs('tiles').length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       // The rows are new nodes: the keyboard goes to the row it moved, on the button it has now.
       if (!focus || focus[0] !== 'tiles') return;
@@ -11673,7 +11712,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     moneyCats: moneyCats, moneySubs: moneySubs, moneyTrends: moneyTrends, moneyTrendsDraw: moneyTrendsDraw, moneyTogether: moneyTogether, moneyAccts: moneyAccts, moneyShown: moneyShown, moneyFilterChips: moneyFilterChips,
     moneyState: moneyState, moneyStatePaint: moneyStatePaint, moneyRowInfo: moneyRowInfo, moneyIncomeLine: moneyIncomeLine, moneyMonthMenu: moneyMonthMenu, moneySearchBar: moneySearchBar, moneyOwn: moneyOwn,
     moneyTile: moneyTile, merchantIc: merchantIc, moneyAcctName: moneyAcctName, moneySubLine: moneySubLine, moneyRegularSheet: moneyRegularSheet, moneyListShown: moneyListShown, moneyFoundChip: moneyFoundChip,
-    moneyCardsInto: moneyCardsInto, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
+    moneyCardsInto: moneyCardsInto, viewPrefs: viewPrefs, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText, moneyDebtForecast: moneyDebtForecast,
     moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
