@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 13:55">
+<meta name="published" content="2026-10-26 21:34">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -428,7 +428,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .fclr{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-right:-12px;padding:0;border:0;background:none}.fclr[hidden]{display:none}
 /* v2 (docs/specs/films-v2.md): the type switch inside «Подборка», the status chips under the rating strip, the small
    «сериал»/«аниме» tag, a folded list card's header with its chevron. */
-.card>.seg{margin:0 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty,.hs.tch{padding:0 0 12px}
+.card>.seg{margin:0 14px}.card>.seg.tgseg{margin:0 14px 14px}.hs+.hs,.fi>.row+.hs{padding-top:0}.fk{font-size:12px}.ch.tap{cursor:pointer}.hs.fty,.hs.tch{padding:0 0 12px}
 /* Вишлист (docs/specs/wishlist-tetyana.md): the «для Тетяны» chip in the add form, as tall as the field. */
 .bar>.pill{flex:none;height:44px;padding:0 12px;font-size:13px}@media (min-width:900px){.bar>.pill{height:36px}}
 .ch>.i.go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ch[aria-expanded="true"]>.i.go{transform:rotate(180deg)}
@@ -857,6 +857,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-briefcase-business" viewBox="0 0 24 24"><path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></symbol>
 <symbol id="i-toggle-right" viewBox="0 0 24 24"><circle cx="15" cy="12" r="3"/><rect width="20" height="14" x="2" y="5" rx="7"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></symbol>
 <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
 <symbol id="i-undo-2" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
@@ -1491,7 +1492,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: v.home,
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
       money: v.money, tiles: v.tiles, views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
-      cents: !!(p && p.cents === true) };
+      cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full' };
   }
   // The switchable modules [{env, name}] as the server last listed them.
   function normModules(v) {
@@ -10781,7 +10782,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       tiles: next.tiles || viewPrefs('tiles') };
     next = { tabs: next.tabs || prefs.tabs, home: view && !w ? v.home : prefs.home, muted: next.muted || prefs.muted,
       money: view && !w ? v.money : prefs.money, tiles: view && !w ? v.tiles : prefs.tiles,
-      views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents };
+      views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
+      telegram: next.telegram || prefs.telegram };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -10889,6 +10891,28 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         rows.appendChild(row);
       });
       refocus(rows, focus, 'module');
+    };
+    card.paint();
+    return card;
+  }
+  // «Telegram» (docs/specs/telegram-input-only.md): «Всё» — the modules post to their topics as before; «Только ввод» —
+  // only Claude and the alerts do, the rest rings in the app and waits under the bell. Saved with the other settings.
+  function telegramCard() {
+    var card = mkCard('send', 'Telegram'), seg = el('div', 'seg tgseg');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Telegram');
+    add(card, el('div', 'sub', 'Только ввод: в группу пишут только Claude и тревоги, остальное — в приложении (колокольчик). ' +
+      'Голосовые, ссылки и команды боту работают'), seg);
+    card.paint = function (focus) {
+      clear(seg);
+      [['full', 'Всё'], ['input', 'Только ввод']].forEach(function (m) {
+        var on = prefs.telegram === m[0], b = el('button', on ? 'on' : '', m[1]);
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(on));
+        b.onclick = function () { if (!on) editPrefs({ telegram: m[0] }, ['telegram', m[0]]); };
+        seg.appendChild(b);
+        if (focus && focus[0] === 'telegram' && focus[1] === m[0]) b.focus();
+      });
     };
     card.paint();
     return card;
@@ -11573,15 +11597,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), mc = modulesCard(), hc = homeCard(), bc = barCard(), mo = moneyCardsCard();
-    prefsHook = { tab: 'news', fn: function (focus) { tc.paint(focus); mc.paint(focus); hc.paint(focus); mo.paint(focus); bc.paint(); },
+    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), hc = homeCard(), bc = barCard(), mo = moneyCardsCard();
+    prefsHook = { tab: 'news', fn: function (focus) {
+      tc.paint(focus); mc.paint(focus); tgc.paint(focus); hc.paint(focus); mo.paint(focus); bc.paint();
+    },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
       body.className = 'cols';
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tc, hc, mo, bc), body, note);
-    } else add(main, browser ? pushCard() : null, tc, mc, hc, mo, bc, body, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, hc, mo, bc), body, note);
+    } else add(main, browser ? pushCard() : null, tc, mc, tgc, hc, mo, bc, body, note);
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
