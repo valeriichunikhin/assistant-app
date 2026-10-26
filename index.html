@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 22:40">
+<meta name="published" content="2026-10-26 23:38">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -728,31 +728,82 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .row.nt>.pg{margin-top:-4px}
 .row.nt.unr{box-shadow:inset 3px 0 0 var(--accent)}.row.nt.unr .ptile{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
 .row.nt.unr .t{font-weight:700}
-/* «Главная» (docs/specs/home-dashboard.md, variant A of 25.10.2026): the date and the greeting under the title, the
-   tiles two to a row and all one height (an odd last one takes the row), «Завтра» under them; the «Задачи» count on
-   its tab's icon, the bell's badge. */
-.hgreet{margin:0 2px 12px;color:var(--muted);font-size:13px}
-.hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:10px;margin:0 0 16px}
-.htile{display:flex;flex-direction:column;min-width:0;padding:12px 14px;background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);box-shadow:var(--shadow);cursor:pointer;transition:transform .2s var(--ease)}
-.htile:nth-child(odd):last-child{grid-column:1/-1}
-.htile:active{transform:scale(.97)}
-.htile:focus-visible{outline-offset:-2px}
-.htile .k{display:flex;align-items:center;gap:6px;min-width:0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.htile .k .i{width:14px;height:14px}
-.htile .v{margin:6px 0 2px;font:800 26px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.htile .v.s{font-size:20px;line-height:1.3}.htile .v.vw{font-size:16px;white-space:normal}
-.htile .v.bad{color:var(--bad)}.htile .v.warn{color:var(--warn)}.htile .v.vmu{color:var(--muted)}
-.htile .mu{font-size:12.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.htile .mu.warn{color:var(--warn)}
-@media (max-width:360px){.htile .mu{-webkit-line-clamp:3}}
-.htile .mbar{margin-top:auto;transform:translateY(4px)}
-.htile .k .ptile.ai{flex:none;margin:0}
+/* «Главная» as a board (docs/specs/home-board.md, 26.10.2026): square cells of the column's width (container units),
+   two columns on the phone, four from 900 px (cells no taller than 200 px); m two cells wide, l two by two, packed densely
+   in his order. A widget: the head (icon, name, «сейчас»), a big figure that shrinks rather than cut, a muted note at
+   the foot; rows split by hairlines. Editing: dashed outlines, ✕ top left, the size chips bottom right. */
+.bhint{display:flex;align-items:center;gap:10px;margin:0 2px 10px;color:var(--muted);font-size:13px}
+.bhint:empty{display:none}
+.bhint .tx{flex:1;min-width:0}
+.bhint .btn{flex:none;min-height:36px;padding:0 12px;font-size:13px}.bhint .btn .i{width:16px;height:16px}
+.bwrap{container-type:inline-size}
+.board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:170px;grid-auto-rows:calc((100cqw - 12px) / 2);grid-auto-flow:row dense;gap:12px;margin:0 0 16px}
+@media (min-width:900px){.board{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:190px;grid-auto-rows:min(calc((100cqw - 36px) / 4),200px)}}
+.bw{position:relative;isolation:isolate;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;padding:12px 14px;background:var(--surface);border:1px solid var(--card-line);border-radius:var(--r);box-shadow:var(--shadow);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.bw-m{grid-column:span 2}.bw-l{grid-column:span 2;grid-row:span 2}
+.board>.bw{transition:transform .22s var(--ease)}
+.bw.tap{cursor:pointer}.bw.tap:active{transform:scale(.97)}.bw:focus-visible{outline-offset:-2px}
+.bh{display:flex;align-items:center;gap:6px;min-width:0;min-height:20px;color:var(--muted);font-size:12px}
+.bh>.i{flex:none;width:14px;height:14px}.bh>.ptile.ai{flex:none;width:18px;height:18px;margin:0;border-radius:5px}.bh>.ptile.ai img{border-radius:4px}
+.bn{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bnow{flex:none;height:17px;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:700 10px/17px var(--font)}
+.bh.hot{align-items:flex-start;gap:5px}.bh.hot>.i,.bh.hot>.ptile{margin-top:1px}
+.bh.hot .bn{white-space:normal;overflow-wrap:normal;-webkit-hyphens:auto;hyphens:auto;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35}
+.bv{flex:none;margin:6px 0 2px;font:800 28px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap;overflow:hidden}
+.bv.vs{font-size:22px;line-height:1.25}.bv.vw{font-size:16px;line-height:1.3;white-space:normal}
+.bv.bad{color:var(--bad)}.bv.good{color:var(--good)}.bv.warn{color:var(--warn)}.bv.vmu{color:var(--muted)}
+.bnt{margin-top:auto;padding-top:4px;color:var(--muted);font-size:12.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.bnt.warn{color:var(--warn)}
+.bl{flex:none;font-size:13px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bl.mu{color:var(--muted)}.bl.bad{color:var(--bad)}
+.bh+.bl{margin-top:6px}
+.bl.bt{margin:6px 0 2px;font-weight:600;font-size:14px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.bl.bday{margin-top:6px;color:var(--muted);font:600 11.5px/1.3 var(--font)}
+.bw .mbar{flex:none;margin:6px 0 2px}
+.brow{flex:none;display:flex;align-items:center;gap:8px;min-height:30px;padding:4px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.3}
+.bh+.brow,.bv+.brow,.bl+.brow{margin-top:6px}.bl+.brow:not(.htr){border-top:0}
+.brow .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow .tx .t,.brow .tx .mu{overflow:hidden;text-overflow:ellipsis}.brow .tx .mu{color:var(--muted);font-size:12px}
+.brow .pr{flex:none;font:500 13.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums}.brow .pr.bad{color:var(--bad)}
+.brow>.i{flex:none;width:16px;height:16px;color:var(--muted)}.brow>.ptile.ai{width:22px;height:22px;border-radius:6px}.brow>.ptile.ai img{border-radius:5px}
+.brow.htr .htm{flex:none;width:40px;color:var(--link);font:700 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.bq{margin:auto 0;color:var(--muted);font-size:13px;text-align:center}
+.bdays{flex:none;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px;margin:8px 0 4px}
+.bdays i{height:7px;border-radius:2px;background:var(--good)}.bw-m .bdays i{height:9px}
+.bdays i.p{background:var(--track)}.bdays i.t{background:var(--accent)}.bdays i.t.bad{background:var(--bad)}.bdays i.t.warn{background:var(--warn)}
+.bring{position:relative;flex:none;display:grid;place-items:center;width:84px;height:84px;margin:6px auto 0}
+.bring::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p) * 360deg),var(--track) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px))}
+.bring.hot::before{background:conic-gradient(var(--warn) calc(var(--p) * 360deg),var(--track) 0)}
+.bring b{position:relative;font:800 22px/1 var(--font-num);font-variant-numeric:tabular-nums}
+.bsplit{display:flex;align-items:center;gap:14px;flex:1;min-height:0}.bsplit .bring{margin:0}
+.bcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.bcol .bt{font:800 20px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.bcol .mu{color:var(--muted);font-size:12.5px}.bcol .mu.warn{color:var(--warn)}.bclip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bempty .btn .i{width:18px;height:18px}.bempty p.mu{font-size:12px}
+.btn.bagain[hidden]{display:none}
+.board.bedit .bw{outline:2px dashed color-mix(in srgb,var(--accent) 75%,transparent);outline-offset:-2px;touch-action:none;cursor:grab}
+.board.bedit .bh{min-height:30px;margin:-5px 0}.board.bedit .bnow,.board.bedit .bw-s .bn{display:none}
+.board.bedit .bw>:not(.bh){opacity:.4}.board.bedit .bw>.bnt{visibility:hidden}
+.bw.blift{z-index:2;background:var(--solid);box-shadow:0 18px 40px rgba(0,0,0,.35);cursor:grabbing;transition:none}
+.bw.bnew{animation:bnew 1.2s var(--ease)}@keyframes bnew{from{box-shadow:0 0 0 3px var(--accent)}}
+.bx{position:relative;flex:none;display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:var(--fg);color:var(--bg0);box-shadow:var(--shadow);cursor:pointer}
+.bx::after{content:"";position:absolute;inset:-9px}.bx .i{width:14px;height:14px}
+.bsz{display:flex;gap:6px}
+.bh>.bsz{flex:none;margin-left:auto;gap:4px}
+.bsz button{display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line-2);border-radius:8px;background:none;color:var(--muted);cursor:pointer}
+.bsz button.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.bszi{display:grid;gap:2px;grid-template-columns:repeat(2,7px)}.bszi i{width:7px;height:7px;border:1.5px solid currentColor;border-radius:2px}
+.bszi-s{grid-template-columns:9px}.bszi-s i{width:9px;height:9px}
+.bcat .row.bcr{gap:12px;padding:10px 0}.bcat .bsz button{width:44px;height:44px}
+.bpv{position:relative;flex:none;width:88px;height:64px;overflow:hidden;border-radius:10px}
+.bpvi{position:absolute;top:0;left:12px;width:170px;height:170px;transform-origin:0 0;pointer-events:none}
+.bpv.wide .bpvi{left:0;top:11px;width:352px}
+.tsum .sub.bcsub,.tsum .sub.vline{padding:0 0 10px;color:var(--muted);font-size:13px}
+.btn.bdone{display:none;flex:none;min-height:36px;padding:0 14px}
+.hdr.bediting .btn.bdone{display:inline-flex}.hdr.bediting .date,.hdr.bediting .bell{display:none}
+@media (hover:hover) and (pointer:fine){.bw.tap:hover{border-color:var(--line-2)}}
 /* «Плитки на «Главной»» (docs/specs/home-tiles.md): the header's button beside the bell, a tile whose module is off grey. */
 .bell[hidden]{display:none}
 .row.htoff .lead,.row.htoff .tx .t{opacity:.5}
 .lead .ptile.ai{width:20px;height:20px;border-radius:5px}.lead .ptile.ai img{border-radius:4px}
-.card .sub.htadd{padding:12px 14px 4px;border-top:1px solid var(--line);font-weight:600}
-.card .sub.htadd[hidden]{display:none}
 /* Whose view a sheet changes, «Как на телефоне» on the wide layout (docs/specs/device-views.md). */
 .card .sub.vline{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px;padding-top:0;font-size:12px}
 .card .sub.vline .btn{flex:none;font-size:13px}
@@ -760,7 +811,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .tabbar .ic,.sheet .ic,.rail .ic{position:relative}
 .ic>.bdg{position:absolute;top:-4px;left:calc(50% + 4px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px/18px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;box-shadow:0 0 0 2px var(--bg0)}
 .ic>.bdg:empty{display:none}
-@media (hover:hover) and (pointer:fine){.htile:hover{border-color:var(--line-2)}}
 @media (min-width:900px){.rail .ic>.bdg{top:-8px;left:8px;min-width:16px;height:16px;padding:0 4px;font-size:10px;line-height:16px}}
 .row.nt.hl{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
 @media (min-width:900px){.row.nt>.pg{margin-top:0}}
@@ -1450,14 +1500,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     viewPrefs('tiles').forEach(function (k) { (TILE_CARDS[k] || []).forEach(function (c) { if (o.indexOf(c) < 0) o.push(c); }); });
     return o;
   }
-  // A tile whose module is off in «Модули» or whose tab is hidden: not drawn, grey in the choice.
-  function tileOff(k) {
-    function on(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
-    var money = !on('money', 'money');
-    if (k.indexOf('acct:') === 0) return money;
-    return { daily: money, payday: money, card_debt: money, month: money, debts: money, next_pay: money, tasks: !tabShown('tasks'),
-      inbox: !tabShown('inbox'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
-      cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema') }[k] || false;
+  // «Главная» as a board (docs/specs/home-board.md, 26.10.2026): key, name, icon, the sizes it comes in (s a cell, m two
+  // cells wide, l two by two); BOARD_WIDGETS of supabase/functions/miniapp/index.ts — edit both together. prefs.board
+  // is his widgets in order, [{id, w, s}], up to 24; [] — the empty board. The tiles and cards above stay in prefs: «Заполнить
+  // как раньше» builds the board from them.
+  var BOARD = [['daily', 'Сегодня можно', 'wallet', 'sm'], ['revolut', 'Revolut и последние траты', 'acct:revolut', 'ml'],
+    ['payday', 'До зарплаты', 'hourglass', 's'], ['month', 'Месяц из бюджета', 'chart', 'sm'], ['debts', 'Долги людей', 'hand-coins', 'sm'],
+    ['card_debt', 'Долг по картам', 'trending-down', 'sm'], ['accounts', 'Счета', 'landmark', 'ml'], ['tasks', 'Задачи', 'check-square', 'sml'],
+    ['days', 'Сегодня и завтра', 'calendar', 'ml'], ['vb', 'Волейбол', 'ball', 'sm'], ['cinema', 'Кино', 'film', 'sm'],
+    ['genshin', 'Genshin · смола', 'game', 'sm'], ['review', 'Разбор месяца', 'calendar-check', 'ml'], ['notif', 'Уведомления', 'bell', 's'],
+    ['linkedin', 'LinkedIn', 'linkedin', 'sm']];
+  var BOARD_BY = {};
+  BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
+  // His board as the server keeps it: the known widgets in a size each comes in, ids once each, 24 at most.
+  function boardIn(v) {
+    var ids = {};
+    return Array.isArray(v) ? v.filter(function (b) {
+      var ok = b && typeof b.id === 'string' && /^[a-z0-9]{1,12}$/.test(b.id) && !ids[b.id] && BOARD_BY[b.w] && typeof b.s === 'string' &&
+        b.s.length === 1 && BOARD_BY[b.w][3].indexOf(b.s) >= 0;
+      if (ok) ids[b.id] = 1;
+      return ok;
+    }).slice(0, 24).map(function (b) { return { id: b.id, w: b.w, s: b.s }; }) : [];
   }
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
@@ -1485,13 +1548,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return { home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS), fold: foldIn(h.fold, HOME_KEYS),
       folded: keysIn(h.folded, HOME_KEYS) },
       money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold, MONEY_CARD_KEYS),
-        folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles) };
+        folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles), board: boardIn(p && p.board) };
   }
   function normPrefs(p) {
     var t = (p && p.tabs) || {}, m = p && p.muted, v = viewIn(p), w = p && p.views && p.views.wide;
     return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: v.home,
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
-      money: v.money, tiles: v.tiles, views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
+      money: v.money, tiles: v.tiles, board: v.board, board_now: !(p && p.board_now === false),
+      views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full' };
   }
   // The switchable modules [{env, name}] as the server last listed them.
@@ -1503,11 +1567,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // The view on screen (docs/specs/device-views.md, his ask of 25.10.2026: folded on the phone, open on the Mac): the
   // phone's (wide() false) is prefs itself; the wide layout's — by the window's width, so an iPad across counts and a
   // narrow Mac window does not — is prefs.views.wide once he changed something there, till then the phone's order,
-  // hidden cards and tiles with nothing folded. s: 'home', 'money' or 'tiles'. Every read of those goes through here.
+  // hidden cards, tiles and board with nothing folded. s: 'home', 'money', 'tiles' or 'board'. Every read of those goes
+  // through here.
   function viewPrefs(s) {
     if (!wide()) return prefs[s];
     if (prefs.views.wide) return prefs.views.wide[s];
-    return s === 'tiles' ? prefs.tiles : Object.assign({}, prefs[s], { fold: {}, folded: [] });
+    return s === 'tiles' || s === 'board' ? prefs[s] : Object.assign({}, prefs[s], { fold: {}, folded: [] });
   }
   var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
   function tabShown(k) { return k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
@@ -1674,14 +1739,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   setUnread(Number(store('notifUnread')) || 0);
   hdr.appendChild(bell);
-  // «Плитки» (docs/specs/home-tiles.md): the sheet of «Главная»'s tiles, beside the bell on the phone's «Главная» only.
-  var tilesBtn = add(el('button', 'bell'), icon('layout-grid'));
+  // The board's «⋯» (docs/specs/home-board.md): «Добавить виджет», «Изменить», «Подсказки «сейчас»», «Заполнить как
+  // раньше» — beside the bell on «Главная» only; while the board is edited «Готово» stands in for both.
+  var tilesBtn = add(el('button', 'bell'), icon('more')), boardDone = el('button', 'btn bdone', 'Готово'), boardMenu = noop, boardLeave = null;
   tilesBtn.type = 'button';
-  tilesBtn.title = 'Плитки';
-  tilesBtn.setAttribute('aria-label', 'Плитки на «Главной»');
+  tilesBtn.title = 'Виджеты';
+  tilesBtn.setAttribute('aria-label', 'Виджеты на «Главной»');
+  tilesBtn.setAttribute('aria-haspopup', 'dialog');
   tilesBtn.hidden = true;
-  tilesBtn.onclick = function () { tilesSheet(tilesBtn); };
+  tilesBtn.onclick = function () { boardMenu(tilesBtn); };
+  boardDone.type = 'button';
   hdr.insertBefore(tilesBtn, bell);
+  hdr.insertBefore(boardDone, tilesBtn);
   if (browser) {
     var out = label(el('button', 'out'), 'logout', 'выйти');
     out.type = 'button';
@@ -2190,6 +2259,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     // «Главная» hidden: every way to it (the widget's #home, a stale hash, the remembered tab) lands on homeTab().
     if (!isView(tab) || (tab === 'home' && !tabShown('home'))) tab = homeTab();
+    if (boardLeave) boardLeave();
     reorderEnd();
     flushMarks('');
     // From one shown tab to another on the phone: in from the side it lies on (in-r / in-l), in the order of his bar with
@@ -2209,11 +2279,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     text(hTitle, NAMES[tab]);
     text(hDate, todayLabel());
     text(rDate, todayLabel());
-    // A wide screen draws the desktop view of the tab when app/desktop*.js registered one.
-    var desk = wide() && window.DESKTOP && DESKTOP.views && DESKTOP.views[tab];
+    // A wide screen draws the desktop view of the tab when app/desktop*.js registered one; «Главная» is his board on
+    // both (docs/specs/home-board.md), four columns there.
+    var desk = wide() && tab !== 'home' && window.DESKTOP && DESKTOP.views && DESKTOP.views[tab];
     main.classList.toggle('narrow', !desk && NARROW.indexOf(tab === 'shop' ? shopSeg : tab) >= 0);
     main.classList.toggle('desk', !!desk);
-    tilesBtn.hidden = tab !== 'home' || !!desk;
+    tilesBtn.hidden = tab !== 'home';
     hideBack();
     tabbar.classList.remove('hid');
     clear(main);
@@ -2353,586 +2424,660 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return !tabShown('home') && j.month === monthNow() && moneyReviewOn(j) ? moneyReviewCard(j.money_review, done) : null;
   }
 
+  // --- «Главная»: the board (docs/specs/home-board.md, 26.10.2026) ---
+  // His widgets (prefs.board, the view's own on the wide layout) in his order on a grid that packs densely: two columns
+  // on the phone, four on the wide layout; s a cell, m two cells wide, l two by two. Each draws from home's answer and
+  // taps through to its tab; one whose module is off or whose data is missing says so quietly. «сейчас» (board_now):
+  // a small pill on a widget whose thing is current — a badge, the order stays his. Editing («Изменить» or a long press)
+  // works on a draft — ✕, the sizes it comes in, drag to reorder — that «Готово» (or leaving the tab) saves in one
+  // prefs_set.
+  // A widget whose module is off in «Модули» or whose tab is hidden.
+  function boardOff(w) {
+    function on(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
+    var money = !on('money', 'money');
+    return { daily: money, revolut: money, payday: money, month: money, debts: money, card_debt: money, accounts: money, review: money,
+      tasks: !tabShown('tasks'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
+      cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li') }[w] || false;
+  }
+  // A widget's icon: a Lucide name, or 'acct:<key>' for an account's logo.
+  function boardIcon(ic) { return ic.indexOf('acct:') === 0 ? moneyAcctTile(ic.slice(5), 'ai') : icon(ic); }
+  // A new widget's id: six letters and digits, none of the board's.
+  function boardId(list) {
+    var id;
+    do id = (Math.random().toString(36) + '000000').slice(2, 8); while (list.some(function (b) { return b.id === id; }));
+    return id;
+  }
+  // «Заполнить как раньше»: the board from the tiles and the cards «Главная» showed before it (the view's own), each
+  // widget once — a tile as a square (the accounts' tiles as one «Счета»), a card wide (the calendar large), in that
+  // order. The cards with no widget (План недели, Сроки, Документы, Корты, Вчера, Неделя, Система, Инбокс) are left out.
+  function boardSeed() {
+    var out = [], has = {};
+    function put(w, s) {
+      if (has[w] || out.length >= 24) return;
+      has[w] = 1;
+      out.push({ id: boardId(out), w: w, s: s });
+    }
+    var T = { daily: 'daily', payday: 'payday', tasks: 'tasks', vb: 'vb', genshin: 'genshin', cinema: 'cinema', card_debt: 'card_debt',
+      month: 'month', debts: 'debts' };
+    var C = { calendar: ['days', 'l'], tasks: ['tasks', 'm'], money: ['month', 'm'], card_debt: ['card_debt', 'm'], money_review: ['review', 'm'],
+      linkedin: ['linkedin', 'm'], games: ['vb', 'm'], vb: ['vb', 'm'], shows: ['cinema', 'm'], genshin: ['genshin', 'm'] };
+    homeTiles().forEach(function (k) { if (k.indexOf('acct:') === 0) put('accounts', 'm'); else if (T[k]) put(T[k], 's'); });
+    var hid = viewPrefs('home').hidden, tiled = tiledCards();
+    homeOrder().forEach(function (k) { if (C[k] && hid.indexOf(k) < 0 && tiled.indexOf(k) < 0) put(C[k][0], C[k][1]); });
+    return out;
+  }
+  // A size's chip: a small drawing of the shape (a square, two side by side, four), not a glyph.
+  function boardSizeIc(s) {
+    var b = el('span', 'bszi bszi-' + s);
+    for (var k = 0; k < (s === 'l' ? 4 : s === 'm' ? 2 : 1); k++) b.appendChild(el('i'));
+    b.setAttribute('aria-hidden', 'true');
+    return b;
+  }
+  var BOARD_SIZE = { s: 'квадрат', m: 'широкий', l: 'большой' };
+
+  // One widget of the board: the node (.bw .bw-<s>) with its head and body; r.go — what a tap does, r.now — «сейчас».
+  // j: home's answer (or {} before one); preview: drawn in the catalog, no taps.
+  function boardWidget(b, j, preview) {
+    var c = BOARD_BY[b.w], n = el('div', 'bw bw-' + b.s), name = el('span', 'bn', c[1]), head = add(el('div', 'bh'), boardIcon(c[2]), name);
+    var r = { go: null, now: false }, s = b.s, m = j.morning || {}, now = Date.now(), p = wp(now), today = m.today || p.year + '-' + p.month + '-' + p.day;
+    var dd = j.money && j.money.daily;
+    n.appendChild(head);
+    n.bid = b.id;
+    function big(v, cls) { return n.appendChild(el('div', 'bv' + (cls ? ' ' + cls : ''), v)); }
+    function note(v, cls) { return n.appendChild(v && v.nodeType ? add(el('div', 'bnt' + (cls ? ' ' + cls : '')), v) : el('div', 'bnt' + (cls ? ' ' + cls : ''), v)); }
+    function line(v, cls) { return n.appendChild(el('div', 'bl' + (cls ? ' ' + cls : ''), v)); }
+    function quiet(v) { n.classList.add('bwq'); n.appendChild(el('div', 'bq', v)); }
+    function lost(v) { return v === null ? 'недоступно' : 'нет данных'; }
+    function tab(t) { return function () { show(t); }; }
+    // A row of a list widget: a lead (an icon or a node), the text, the right column; tap → fn.
+    function row(lead, t, right, fn, cls) {
+      var x = add(el('div', 'brow' + (cls ? ' ' + cls : '')), lead ? (lead.nodeType ? lead : icon(lead)) : null, el('span', 'tx', t),
+        right == null ? null : right.nodeType ? right : el('span', 'pr', right));
+      if (fn && !preview) x.onclick = function (ev) { ev.stopPropagation(); fn(); };
+      return n.appendChild(x);
+    }
+    function dayTime(ts) { var q = wp(ts); return WEEK[wd(q.year + '-' + q.month + '-' + q.day)] + ' ' + q.hour + ':' + q.minute; }
+    function soon(from, to) { return Date.parse(from) - now <= 3 * 3600000 && Date.parse(to || from) > now; }
+    var draw = {
+      // The day's amount (red over it, amber «только необходимое»), the period's days as squares — gone ones faded,
+      // today's in the state's colour — and the payday's step or the days to it, «с лимитом карт» when the cards count.
+      daily: function () {
+        if (!dd) return quiet(lost(j.money));
+        var t = moneyDailyText(dd), over = dd.left < 0, st = dd.step && dd.step.per_day <= dd.per_day_calc + 0.005 ? dd.step : null;
+        r.go = tab('money');
+        r.now = over && !t.tight;
+        big(t.tight ? 'только необходимое' : (over ? '−' : '') + mtZl(Math.abs(dd.left)), t.tight ? 'vw warn' : over ? 'bad' : '');
+        var pd = dd.payday, mo = Number(pd.slice(5, 7)) - 1, prev = (mo ? pd.slice(0, 4) : Number(pd.slice(0, 4)) - 1) + '-' +
+          ('0' + (mo || 12)).slice(-2) + '-' + pd.slice(8, 10), total = days(prev, pd);
+        if (!(total > 0) || total > 31) total = Math.min(31, dd.days + 1);
+        var gone = Math.max(0, total - Math.min(dd.days, total)), sq = el('div', 'bdays');
+        sq.style.setProperty('--n', s === 's' ? Math.ceil(total / 2) : total);
+        for (var k = 0; k < total; k++) sq.appendChild(el('i', k < gone ? 'p' : k === gone ? 't' + (over ? ' bad' : t.tight ? ' warn' : '') : ''));
+        n.appendChild(sq);
+        if (s === 's') note([st ? 'до ' + dm(st.until) : 'до зп ' + dd.days + '\u00a0' + plural(dd.days, ['день', 'дня', 'дней']),
+          dd.from_limit > 0 ? 'с\u00a0лимитом\u00a0карт' : ''].filter(Boolean).join(' · '));
+        else {
+          note(t.short);
+          if (st) line('с ' + dm(st.until) + ' — ' + moneySgn(st.after_per_day) + ' в день', 'mu');
+        }
+      },
+      // Revolut's balance and the latest three spends (any account), newest first; large — when and from where.
+      revolut: function () {
+        var a = (j.accounts || []).filter(function (x) { return x.key === 'revolut'; })[0], rc = j.money && j.money.recent;
+        if (!a && !rc) return quiet(lost(j.accounts));
+        r.go = tab('money');
+        name.textContent = 'Revolut';
+        big(a ? (a.balance < 0 ? '−' : '') + moneyInt(Math.abs(a.balance)) + '\u00a0' + moneySym(a.currency) : '—', 'vs' + (a && a.balance < 0 ? ' bad' : ''));
+        if (!rc || !rc.length) return note(rc ? 'трат пока нет' : 'траты недоступны');
+        var names = {};
+        (j.accounts || []).forEach(function (x) { names[x.key] = x.name; });
+        rc.slice(0, 3).forEach(function (x) {
+          var q = wp(x.at), d = q.year + '-' + q.month + '-' + q.day, sub = (d === today ? 'сегодня' : d === addDays(today, -1) ? 'вчера' : dm(d)) +
+            ' ' + q.hour + ':' + q.minute + (x.account && names[x.account] ? ' · ' + names[x.account] : '');
+          var nm = x.name || 'трата', tx = s === 'l' ? add(el('span', 'tx'), el('div', 't', nm), el('div', 'mu', sub)) : el('span', 'tx', nm);
+          n.appendChild(add(el('div', 'brow'), tx, el('span', 'pr', '−' + moneyShort(x.amount, x.currency))));
+        });
+      },
+      // Days to payday, its date and what is paid before it; «сейчас» the day before.
+      payday: function () {
+        if (!dd) return quiet(lost(j.money));
+        var ob = (dd.obligations || []).length;
+        r.go = tab('money');
+        r.now = dd.days === 1;
+        big(dd.days + '\u00a0' + plural(dd.days, ['день', 'дня', 'дней']));
+        note(dm(dd.payday) + ' · ' + (ob ? ob + '\u00a0' + plural(ob, ['платёж', 'платежа', 'платежей']) : 'платежей нет'));
+      },
+      // The month spent against its budget, the bar green / amber from 80 % / red past it; wide — what is left.
+      month: function () {
+        var mo = j.money;
+        if (!mo) return quiet(lost(mo));
+        var x = moneyHomeText(mo);
+        r.go = tab('money');
+        name.textContent = MONTHS_RU[Number(mo.month.slice(5, 7)) - 1];
+        big(mtZl(mo.spent), x.cls === 'over' ? 'bad' : '');
+        if (x.p !== null) n.appendChild(moneyBar(x.p, x.cls || 'done'));
+        note(mo.budget ? 'из ' + mtInt(mo.budget) + ' · ' + x.pct : x.sub || 'бюджета нет');
+        if (s === 'm' && mo.budget && x.sub) line(x.sub, 'mu');
+      },
+      // The bigger side — «мне должны» in green, «я должен» in red — and the other; wide — who owes the most.
+      debts: function () {
+        var ds = j.debts;
+        if (!ds) return quiet(lost(ds));
+        r.go = function () { MONEY.toDebts = true; show('money'); };
+        if (!ds.owed && !ds.owe) return quiet('все в расчёте');
+        var mine = ds.owe > ds.owed;
+        big((mine ? '−' : '+') + mtZl(mine ? ds.owe : ds.owed), mine ? 'bad' : 'good');
+        var other = mine ? ds.owed : ds.owe;
+        note((mine ? 'я должен' : 'мне должны') + (other ? ' · ' + (mine ? 'мне должны ' : 'я должен ') + mtInt(other) : ''));
+        if (s === 'm' && ds.top) line('больше всех: ' + ds.top.name + ' · ' + mtZl(Math.abs(ds.top.amount)), 'mu');
+      },
+      // The cards' debt, the month's change, the bar to zero; wide — when it closes. A tap opens its sheet.
+      card_debt: function () {
+        var d = j.card_debt;
+        if (!d) return quiet(lost(d));
+        if (!moneyDebtOn(d)) return quiet('долга нет');
+        r.go = function (node) { moneyDebtSheet(d, node); };
+        big(mtZl(d.total));
+        if (d.progress !== null && d.progress !== undefined) n.appendChild(moneyBar(d.progress, 'done'));
+        note(moneyDebtDiff(d, 'num'));
+        var fc = s === 'm' && moneyDebtForecast(d);
+        if (fc) line(fc.s, 'mu');
+      },
+      // Every account with its balance (a minus in red), three wide, seven large.
+      accounts: function () {
+        var list = j.accounts;
+        if (!list) return quiet(lost(list));
+        if (!list.length) return quiet('счетов нет');
+        r.go = tab('money');
+        var cap = s === 'l' ? 7 : 3;
+        list.slice(0, list.length > cap ? cap - 1 : cap).forEach(function (a) {
+          row(moneyAcctTile(a.key, 'ai'), a.name, add(el('span', 'pr' + (a.balance < 0 ? ' bad' : '')),
+            document.createTextNode((a.balance < 0 ? '−' : '') + moneyInt(Math.abs(a.balance)) + '\u00a0' + moneySym(a.currency))));
+        });
+        if (list.length > cap) line('+' + (list.length - cap + 1) + ' ещё', 'mu');
+      },
+      // Overdue and today's open tasks (red while anything is overdue); wide and large — today's list, a tap opens it.
+      tasks: function () {
+        var tk = j.tasks;
+        if (!tk) return quiet(lost(tk));
+        var nt = tk.today_count != null ? tk.today_count : (tk.today || []).length, od = tk.overdue || 0;
+        var sum = [od ? 'просрочено ' + od : '', nt ? 'сегодня ' + nt : '', tk.tomorrow_count ? 'завтра ' + tk.tomorrow_count : ''].filter(Boolean).join(' · ');
+        r.go = tab('tasks');
+        r.now = od > 0;
+        if (s === 's') {
+          big(grouped(od + nt), od ? 'bad' : '');
+          return note(sum || 'на сегодня ничего');
+        }
+        line(sum || 'на сегодня ничего', 'mu' + (od ? ' bad' : ''));
+        var open = (tk.today || []).filter(function (t) { return t.status !== 'done'; }), cap = s === 'l' ? 6 : 2;
+        open.slice(0, cap).forEach(function (t) {
+          row('square', t.title, t.due_time ? String(t.due_time).slice(0, 5) : null, function () { taskOpenId = t.id; show('tasks'); });
+        });
+        if (nt > Math.min(open.length, cap)) line('+' + (nt - Math.min(open.length, cap)) + ' ещё', 'mu');
+      },
+      // Today's timed tasks, events, games and shows, then tomorrow's — as «Календарь» lists them; wide three, large eight.
+      days: function () {
+        var td = j.tasks || {}, tm = addDays(today, 1);
+        var a = dayRows(j, today, (td.today || []).filter(function (t) { return t.due_time && t.status !== 'done'; }), true);
+        var z = dayRows(j, tm, td.tomorrow || [], true), cap = s === 'l' ? 8 : 3;
+        if (!a.length && !z.length) return quiet(j.morning === null ? 'недоступно' : 'сегодня и завтра свободно');
+        r.go = function () { show(tabShown('tasks') ? 'tasks' : 'home'); };
+        var left = cap;
+        [[a, 'Сегодня'], [z, 'Завтра · ' + WEEK[wd(tm)] + ' ' + dm(tm)]].forEach(function (d) {
+          if (!d[0].length || left <= 0) return;
+          if (a.length && z.length) line(d[1], 'bday');
+          d[0].slice(0, left).forEach(function (x) {
+            x.className = 'brow htr' + (x.classList.contains('tap') ? ' tap' : '');
+            if (preview) x.onclick = null;
+            n.appendChild(x);
+          });
+          left -= d[0].length;
+        });
+      },
+      // His next game (else today's next free one, taken/all); «сейчас» within three hours; wide — the one after too.
+      vb: function () {
+        var mine = (m.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; })
+          .sort(function (x, y) { return x.starts_at.localeCompare(y.starts_at); });
+        var hm = p.hour + ':' + p.minute, free = (m.volleyball || []).filter(function (g) { return g.start_at >= hm; })
+          .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
+        r.go = tab('vb');
+        if (mine.length) {
+          r.now = soon(mine[0].starts_at, mine[0].ends_at);
+          big(dayTime(mine[0].starts_at), 'vs');
+          note([mine[0].venue, mine[0].status === 'paid' ? 'оплачено' : 'записан'].filter(Boolean).join(' · '));
+          if (s === 'm' && mine[1]) line('дальше: ' + dayTime(mine[1].starts_at) + ' · ' + mine[1].venue, 'mu');
+        } else if (free) {
+          big(WEEK[wd(today)] + ' ' + free.start_at, 'vs');
+          note([free.venue, free.max_players != null && free.free_spots != null ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '));
+        } else quiet(m.volleyball === null ? 'недоступно' : 'игр нет');
+      },
+      // His next screening (else the next premiere); «сейчас» within three hours.
+      cinema: function () {
+        var cn = j.cinema_next;
+        if (!cn) return quiet(cn === null ? 'недоступно' : 'сеансов нет');
+        r.go = tab('cinema');
+        r.now = cn.kind === 'show' && soon(cn.starts_at);
+        big(cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 'vs');
+        if (s === 'm') {
+          line('«' + cn.title + '»', 'bt');
+          note(cn.kind === 'show' ? cn.cinema : 'премьера');
+        } else note('«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'));
+      },
+      // The resin now as a ring (one per 8 minutes from the snapshot's «full at»); «сейчас» from 180 or full. Wide —
+      // when it fills and the events ending soonest.
+      genshin: function () {
+        var gs = j.genshin;
+        if (!gs) return quiet(lost(gs));
+        var left = gs.full_at ? Date.parse(gs.full_at) - now : 0, full = gs.full_at ? left <= 0 : gs.current >= gs.max;
+        var cur = full ? gs.max : gs.full_at ? Math.max(0, gs.max - Math.ceil(left / 480000)) : gs.current;
+        var when = full ? 'полная' : gs.full_at ? 'полная через ' + (left >= 3600000 ? Math.round(left / 3600000) + ' ч' : Math.max(1, Math.round(left / 60000)) + ' мин') : '';
+        r.go = tab('genshin');
+        r.now = full || cur >= 180;
+        name.textContent = 'Смола';
+        var ring = add(el('div', 'bring' + (r.now ? ' hot' : '')), el('b', '', String(cur)));
+        ring.style.setProperty('--p', Math.min(1, cur / (gs.max || 200)).toFixed(3));
+        if (s === 's') {
+          n.appendChild(ring);
+          return note(when || cur + ' / ' + gs.max, full ? 'warn' : '');
+        }
+        var col = el('div', 'bcol');
+        add(n, add(el('div', 'bsplit'), ring, col));
+        add(col, el('div', 'bt', cur + ' / ' + gs.max), when ? el('div', 'mu' + (full ? ' warn' : ''), when) : null);
+        (m.genshin || []).slice().sort(function (x, y) { return Date.parse(x.ends_at) - Date.parse(y.ends_at); }).slice(0, 2).forEach(function (e) {
+          var q = wp(e.ends_at);
+          col.appendChild(el('div', 'mu bclip', e.title + ' · до ' + dm(q.year + '-' + q.month + '-' + q.day)));
+        });
+      },
+      // «Сентябрь закрыт» from the 1st to the 7th (a tap opens the review; «сейчас» until it is accepted), else when
+      // the next one comes.
+      review: function () {
+        var rv = j.money_review;
+        if (j.money_review === null) return quiet('недоступно');
+        if (!rv) {
+          var q = monthStep(monthNow(), 1);
+          return quiet('следующий разбор 1.' + q.slice(5, 7));
+        }
+        var t = moneyReviewHomeText(rv);
+        name.textContent = t.title;
+        r.now = !rv.accepted;
+        r.go = function (node) { moneyReviewSheet(rv.month, node, function () { cacheDrop('home'); boardReload(); }); };
+        if (s === 'l') {
+          big(mtZl(rv.total));
+          line(t.line.replace(/^Потратил [^·]*· ?/, '') || 'потрачено за месяц', 'mu');
+        } else line(t.line, 'bt');
+        note(rv.accepted ? add(el('span'), pill(t.sub, 'good')) : t.sub);
+      },
+      // The bell's unread count.
+      notif: function () {
+        var u = typeof j.notif_unread === 'number' ? j.notif_unread : notifUnread;
+        r.go = tab('notif');
+        r.now = u > 0;
+        big(u > 99 ? '99+' : String(u), u ? '' : 'vmu');
+        note(u ? plural(u, ['непрочитанное', 'непрочитанных', 'непрочитанных']) : 'всё прочитано');
+      },
+      // Today's post and how far it got.
+      linkedin: function () {
+        var li = j.linkedin, q = li && li.today;
+        if (!q) return quiet(li === null ? 'недоступно' : li ? 'сегодня поста нет' : 'нет данных');
+        r.go = tab('li');
+        var st = q.status === 'ready' ? ['готов', 'good'] : q.status === 'posted' ? ['опубликован', 'acc'] : [q.status === 'draft' ? 'черновик' : 'черновика нет', 'warn'];
+        if (s === 's') {
+          big(st[0], 'vs ' + (st[1] === 'acc' ? '' : st[1]));
+          return note(q.idea);
+        }
+        line(q.idea, 'bt b2');
+        note(add(el('span'), pill(st[0], st[1]), document.createTextNode(' ' + String(q.lang || 'pl').toUpperCase())));
+      }
+    };
+    try {
+      if (boardOff(b.w)) quiet('модуль выключен');
+      else draw[b.w]();
+    } catch (e) {
+      clear(n).appendChild(head);
+      r.go = null;
+      r.now = false;
+      quiet('нет данных');
+    }
+    if (r.now && prefs.board_now && !preview) {
+      head.classList.add('hot');
+      head.appendChild(el('span', 'bnow', 'сейчас'));
+    }
+    n.setAttribute('aria-label', name.textContent + (r.now && prefs.board_now ? ', сейчас' : ''));
+    n.r = r;
+    return n;
+  }
+  // The live home view's reload, for a sheet opened from a widget (the review) — set by homeView.
+  var boardReload = noop;
+
   function homeView() {
-    // cards: HOME_KEYS key → its card (or its «недоступно» stub) of this render; slot: the key being drawn.
-    var body = el('div', 'cols'), cards = {}, slot = null, last = null;
-    // «Главная» (docs/specs/home-dashboard.md): the greeting, the tiles and «Завтра» over the cards; the date is in the
-    // greeting, not beside the title.
-    var greet = el('div', 'hgreet'), dash = el('div', 'hgrid'), tmr = el('div');
-    text(hDate, '');
-    // Him coming to the tab: the pinned cards are back in their mode (docs/specs/money-13.md §2).
-    HOMEF.foldTmp = {};
-    var again = label(el('button', 'btn ghost wide'), 'refresh', 'Обновить');
+    // last: home's answer on screen; draft: the board being edited (null — not editing); nodes: id → its widget.
+    var hint = el('div', 'bhint'), wrap = el('div', 'bwrap'), grid = null, last = null, draft = null, nodes = {}, lp = null, drag = null;
+    var again = label(el('button', 'btn ghost wide bagain'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
-    add(main, greet, dash, tmr, body, again);
-
-    function card(ic, title, sub, rows) {
-      var c = mkCard(ic, title, sub);
-      (rows || []).forEach(function (r) { c.appendChild(r); });
-      cards[slot] = c;
-      return c;
-    }
-    function down(ic, title) {
-      var c = card(ic, title);
-      c.firstChild.appendChild(pill('недоступно', 'warn'));
-      c.mfs = ['недоступно'];
-    }
-    // Folded (docs/specs/money-13.md §1) without a total of its own: the subtitle, else the first row's line and the
-    // grey one under it.
-    function firstLine(c) {
-      var sub = c.querySelector(':scope>.sub'), r = c.querySelector(':scope>.row');
-      if (sub) return [sub.textContent];
-      if (!r) return [];
-      var t = r.querySelector('.t'), mu = r.querySelector('.tx>.mu');
-      return t ? [t.textContent, mu ? mu.textContent : ''] : [r.textContent];
-    }
-    // The seven days from morning ?mode=week, a row each; hidden while the key
-    // is missing (an older miniapp function).
-    function plan(w) {
-      slot = 'plan';
-      if (w === null) return down('calendar', 'План недели');
-      if (!w || !Array.isArray(w.days)) return;
-      // A day as a block: the date, then a line per event; untimed tasks fold into «N задач» past two (21.10.2026:
-      // nine tasks joined by « · » read as one grey paragraph — «вообще не читабельно»).
-      var n = 0, free = 0;
-      w.days.forEach(function (d) { n += d.items.length; if (d.free_evening) free++; });
-      card('calendar', 'План недели', null, w.days.map(function (d) {
-        var ev = d.items.filter(function (x) { return x.kind !== 'task' || x.time; }),
-          ts = d.items.filter(function (x) { return x.kind === 'task' && !x.time; });
-        var lines = ev.map(function (x) { return x.icon + ' ' + (x.time ? x.time + ' ' : '') + x.text; });
-        if (ts.length > 2) lines.push('☑️ ' + ts.length + ' ' + plural(ts.length, ['задача', 'задачи', 'задач']));
-        else ts.forEach(function (x) { lines.push(x.icon + ' ' + x.text); });
-        var r = hrow(WEEK[wd(d.date)] + ' ' + dm(d.date), null, d.free_evening ? pill('свободно', 'acc') : null), tx = r.querySelector('.tx');
-        (lines.length ? lines : ['—']).forEach(function (t) { tx.appendChild(el('div', 'mu', t)); });
-        return r;
-      })).mfs = [n + ' ' + plural(n, ['дело', 'дела', 'дел']) + ' за неделю', free ? 'свободных вечеров ' + free : ''];
-    }
-    function morning(m, today, week) {
-      // Google Calendar today and tomorrow, from the mail bridge; hidden when
-      // empty or the key is missing (an older morning). An event begun on an
-      // earlier day is today's: «до 01:00» when it ends today, else all day.
-      // calendar_view: the same after the week's rules (work hours one 💼
-      // row, a game's copy dropped); m.calendar while an older morning runs.
-      slot = 'calendar';
-      if (m.calendar === null) down('calendar', 'Календарь');
-      else if (m.calendar_view) {
-        if (m.calendar_view.length) card('calendar', 'Календарь', null, capped(m.calendar_view.map(function (x) {
-          return hrow((x.kind === 'work' ? x.icon + ' ' : '') + x.text, [x.date === today ? 'сегодня' : WEEK[wd(x.date)] + ' ' + dm(x.date),
-            x.time ? x.time + (x.until ? '–' + x.until : '') : x.until ? 'до ' + x.until : 'весь день', x.location].filter(Boolean).join(' · '));
-        }), 6));
-      } else if (m.calendar && m.calendar.length) {
-        card('calendar', 'Календарь', null, capped(m.calendar.map(function (e) {
-          var p = wp(e.starts_at), date = p.year + '-' + p.month + '-' + p.day;
-          var q = e.ends_at && wp(e.ends_at), end = q && q.year + '-' + q.month + '-' + q.day;
-          var ongoing = date < today;
-          var time = e.all_day || (ongoing && end !== today) ? 'весь день' : ongoing ? 'до ' + q.hour + ':' + q.minute : p.hour + ':' + p.minute;
-          if (!e.all_day && !ongoing && e.ends_at && e.ends_at !== e.starts_at) time += '–' + q.hour + ':' + q.minute;
-          return hrow(e.title || 'без названия', [ongoing || date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), time,
-            e.location].filter(Boolean).join(' · '));
-        }), 6));
+    add(main, hint, wrap, again);
+    function list() { return draft || viewPrefs('board'); }
+    function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
+    // The board's line: what is current now, or in editing what to do; nothing else.
+    function paintHint() {
+      clear(hint);
+      hdr.classList.toggle('bediting', !!draft);
+      if (draft) {
+        var add1 = label(el('button', 'btn ghost'), 'plus', 'Добавить');
+        add1.type = 'button';
+        add1.onclick = function () { boardCatalog(add1); };
+        add(hint, el('span', 'tx', 'Перетащи, выбери размер, ✕ — убрать'), add1);
+        return;
       }
-      plan(week);
-
-      slot = 'due';
-      if (!m.deadlines && !m.payments && !m.parcels) down('package', 'Сроки и посылки');
-      else {
-        var due = [];
-        var rel = function (d) {
-          var n = days(today, d);
-          return pill(n < 0 ? 'просрочено' : n === 0 ? 'сегодня' : n === 1 ? 'завтра' : 'через ' + n + ' дн',
-            n < 0 ? 'bad' : n <= 1 ? 'warn' : '');
-        };
-        if (m.deadlines) {
-          m.deadlines.forEach(function (d) {
-            due.push(hrow(d.title, (d.sender ? d.sender + ' · ' : '') + 'до ' + dm(d.due_date), rel(d.due_date)));
-          });
-        } else due.push(hrow('сроки из писем — недоступно'));
-        if (m.payments) {
-          m.payments.forEach(function (p) {
-            due.push(hrow(p.kind + ' · ' + p.period, 'до ' + dm(p.due_date), rel(p.due_date)));
-          });
-        } else due.push(hrow('платежи — недоступно'));
-        if (m.parcels) {
-          m.parcels.forEach(function (p) {
-            due.push(lead(hrow([p.carrier, p.shop].filter(Boolean).join(' · '),
-              'забрать до ' + whenW(p.pickup_deadline)), 'package'));
-          });
-        } else due.push(hrow('посылки — недоступно'));
-        if (due.length) card('package', 'Сроки и посылки', null, capped(due, 8));
-      }
-
-      // Documents within 90 days (the morning loader's window); red at 7 days
-      // or less. The key is missing while an older morning function is deployed.
-      slot = 'docs';
-      if (m.documents === null) down('id-card', 'Документы');
-      else if (m.documents && m.documents.length) {
-        card('id-card', 'Документы', null, m.documents.map(function (d) {
-          var n = days(today, d.expires_on);
-          var r = hrow(d.name, dm(d.expires_on) + '.' + d.expires_on.slice(0, 4),
-            pill(n < 0 ? 'просрочено ' + (-n) + ' дн' : n === 0 ? 'сегодня' : 'через ' + n + ' дн', n <= 7 ? 'bad' : ''));
-          if (n <= 7) r.className += ' soon';
-          return r;
-        }));
-      }
-
-      // Only on the days of the tennis rule (0 = Monday, as wd()).
-      slot = 'courts';
-      if (!m.courts) down('pin', 'Корты сегодня');
-      else if (!Array.isArray(m.courts.days) || m.courts.days.indexOf(wd(today)) >= 0) {
-        // Slots that have not started yet, earliest first, then cheapest.
-        var names = {}, now = wp(Date.now()), hm = now.hour + ':' + now.minute;
-        m.courts.clubs.forEach(function (c) { names[c.slug] = c.name; });
-        var slots = m.courts.slots.filter(function (s) { return names[s.slug] && s.start_time >= hm; })
-          .sort(function (x, y) { return x.start_time.localeCompare(y.start_time) || Number(x.price) - Number(y.price); });
-        if (slots.length) {
-          card('pin', 'Корты сегодня', null, capped(slots.map(function (s) {
-            return hrow(s.start_time + ' · ' + names[s.slug], null, zl(s.price) + ' zł',
-              'https://playmore.pl/klub/' + s.slug + '/');
-          }), 6));
-        }
-      }
-
-      // Own games from PNH mails, the week ahead; the key is missing while an
-      // older morning function is deployed.
-      slot = 'games';
-      if (m.my_games === null) down('ball', 'Мои игры');
-      else if (m.my_games && m.my_games.length) {
-        card('ball', 'Мои игры', null, m.my_games.map(myGameRow));
-      }
-
-      // Cinema City screenings today and tomorrow, from the purchase mails;
-      // hidden when there are none or the key is missing (an older morning).
-      slot = 'shows';
-      if (m.my_shows === null) down('film', 'Мои сеансы');
-      else if (m.my_shows && m.my_shows.length) {
-        card('film', 'Мои сеансы', null, m.my_shows.map(function (s) {
-          var p = wp(s.starts_at), date = p.year + '-' + p.month + '-' + p.day;
-          return hrow(s.display || s.film, [date === today ? 'сегодня' : WEEK[wd(date)] + ' ' + dm(date), p.hour + ':' + p.minute,
-            [s.cinema, s.hall].filter(Boolean).join(', ')].join(' · '));
-        }));
-      }
-
-      slot = 'vb';
-      if (!m.volleyball) down('ball', 'Волейбол');
-      else if (m.volleyball.length) {
-        // A flame on ср/пт, the priority evenings, as the volleyball digest marks them.
-        var hot = wd(today) === 2 || wd(today) === 4, day = WEEK[wd(today)] + ' ' + dm(today) + ' ';
-        card('ball', 'Волейбол', 'свободных игр сегодня: ' + m.volleyball.length, capped(m.volleyball.slice()
-          .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })
-          .map(function (g) {
-            var taken = g.max_players != null && g.free_spots != null
-              ? (g.max_players - g.free_spots) + '/' + g.max_players : '';
-            var main = day + g.start_at + ' · ' + g.venue;
-            return hrow(hot ? ict('flame', main) : main, taken ? 'занято ' + taken : null,
-              g.price == null ? null : zl(g.price) + ' zł', 'https://pilkanahali.pl/zajecia/' + g.activity_id);
-          }), 6));
-      }
-
-      slot = 'genshin';
-      if (!m.genshin) down('game', 'Genshin');
-      else if (m.genshin.length) {
-        card('game', 'Genshin · заканчивается', null, m.genshin.slice()
-          .sort(function (x, y) { return Date.parse(x.ends_at) - Date.parse(y.ends_at); }).slice(0, 5)
-          .map(function (r) {
-            return hrow(r.title || r.item_id, 'до ' + whenW(r.ends_at), null,
-              'https://www.hoyolab.com/article/' + r.item_id);
-          }));
-      }
-
-      // Yesterday from the Shortcuts automation; hidden when it did not post
-      // or the key is missing (an older morning).
-      slot = 'yesterday';
-      var h = m.health;
-      if (h) {
-        var ws = h.workouts || [], timed = ws.filter(function (w) { return w.minutes != null; });
-        var mins = h.exercise_min != null ? h.exercise_min
-          : timed.length ? timed.reduce(function (a, w) { return a + w.minutes; }, 0) : null;
-        var parts = [h.steps != null ? grouped(h.steps) + ' ' + plural(h.steps, ['шаг', 'шага', 'шагов']) : '',
-          mins != null ? mins + ' мин тренировок' : '', h.sleep_min != null ? 'сон ' + sleepLine(h.sleep_min) : '']
-          .filter(Boolean);
-        var kinds = {}, order = [], ics = {};
-        ws.forEach(function (w) {
-          var name = w.type, ic = 'medal';
-          WORKOUTS.some(function (k) { return k[0].test(w.type) && (ic = k[1], name = k[2]); });
-          if (!(name in kinds)) { kinds[name] = 0; order.push(name); ics[name] = ic; }
-          kinds[name] += w.minutes || 0;
-        });
-        var rows = parts.length ? [hrow(parts.join(' · '))] : [];
-        order.forEach(function (k) { rows.push(hrow(ict(ics[k], k), null, kinds[k] ? kinds[k] + ' мин' : null)); });
-        if (rows.length) card('watch', 'Вчера', null, rows);
-      }
-    }
-    function weekly(w) {
-      var rows = [];
-      var rc = w.receipts;
-      if (!rc) rows.push(hrow('чеки — недоступно'));
-      else if (rc.receipts.length) {
-        var chains = {}, total = 0, disc = 0;
-        rc.receipts.forEach(function (r) {
-          var c = chains[r.chain] = chains[r.chain] || { n: 0, total: 0, disc: 0 };
-          c.n++;
-          c.total += Number(r.total);
-          c.disc += Number(r.discounts_total || 0);
-          total += Number(r.total);
-          disc += Number(r.discounts_total || 0);
-        });
-        rows.push(lead(hrow(receiptsLine(rc.receipts.length, total, disc)), 'receipt'));
-        Object.keys(chains).sort(function (x, y) { return chains[y].total - chains[x].total; })
-          .forEach(function (k) {
-            var c = chains[k];
-            rows.push(lead(el('div', 'row small mu', k + ' · ' + receiptsLine(c.n, c.total, c.disc)), 'bag'));
-          });
-      }
-      var sh = w.shopping;
-      if (!sh) rows.push(hrow('список — недоступно'));
-      else {
-        var parts = [sh.added ? 'добавлено ' + sh.added : '', sh.done ? 'куплено ' + sh.done : '',
-          sh.picks ? 'из акций выбрано ' + sh.picks : ''].filter(Boolean);
-        if (parts.length) rows.push(lead(hrow(parts.join(' · ')), 'cart'));
-      }
-      if (!w.volleyball) rows.push(hrow('волейбол — недоступно'));
-      else if (w.volleyball.length) {
-        var counts = {}, order = Object.keys(KINDS);
-        w.volleyball.forEach(function (r) { counts[r.kind] = (counts[r.kind] || 0) + 1; });
-        var rank = function (k) { return order.indexOf(k) < 0 ? order.length : order.indexOf(k); };
-        rows.push(lead(hrow(Object.keys(counts).sort(function (x, y) { return rank(x) - rank(y); })
-          .map(function (k) { return (KINDS[k] || k) + ' ' + counts[k]; }).join(' · ')), 'ball'));
-      }
-      if (rows.length) card('calendar', 'Неделя ' + dm(w.week) + '–' + dm(addDays(w.week, 6)), null, rows);
-    }
-    // The Mac jobs and the mail bridge (mail-events ?action=pulse), last: shown
-    // only when a part went quiet or a cron job is failing.
-    function pulse(ps, today) {
-      slot = 'system';
-      if (!ps.some(function (x) { return x.stale; })) return;
-      var quiet = ps.filter(function (x) { return x.stale; }).map(function (x) { return x.label; });
-      card('alert', 'Система', null, ps.map(function (x) {
-        if (x.fails != null) return hrow(x.label, null, pill('сбой', 'bad'));
-        if (!x.last_ok_at) return hrow(x.label, 'ещё не было', pill('—'));
-        var p = wp(x.last_ok_at), date = p.year + '-' + p.month + '-' + p.day, at = p.hour + ':' + p.minute;
-        if (date !== today) at = (date > addDays(today, -7) ? WEEK[wd(date)] : dm(date)) + ' ' + at;
-        return hrow(x.label, x.stale ? 'нет отметки с ' + at + ' · ждал ' + x.threshold : at,
-          pill(x.stale ? 'тихо' : 'ок', x.stale ? 'warn' : 'acc'));
-      })).mfs = ['тихо: ' + quiet.join(', ')];
-    }
-    function tasksCard(tk, today) {
-      var c = card('check-square', 'Задачи', 'открыто ' + grouped(tk.count_open || 0)), nt = (tk.today || []).length;
-      if (tk.overdue) c.firstChild.appendChild(pill('просрочено ' + grouped(tk.overdue), 'bad'));
-      // The header folds (docs/specs/money-13.md); the subtitle and the rows open «Задачи».
-      tap(c.lastChild, function () { show('tasks'); });
-      c.mfs = ['открыто ' + grouped(tk.count_open || 0), tk.overdue ? 'просрочено ' + grouped(tk.overdue) : '', nt ? 'на сегодня ' + nt : ''];
-      (tk.today || []).slice(0, 5).forEach(function (t) {
-        var m = marks[taskKey(t)], r = null;
-        t.done = m ? m.want : t.status === 'done';
-        function paint() {
-          var n = taskLine(t, null, today, function () { markTask(t, paint); });
-          n.className += ' tap';
-          n.onclick = function () { show('tasks'); };
-          if (r) c.replaceChild(n, r);
-          r = n;
-          return n;
-        }
-        c.appendChild(paint());
+      if (!prefs.board_now || !grid) return;
+      var hot = [];
+      [].forEach.call(grid.children, function (x) {
+        var t = x.r && x.r.now && x.querySelector('.bn').textContent;
+        if (t && hot.indexOf(t) < 0) hot.push(t);
       });
+      if (hot.length) hint.appendChild(el('span', 'tx', 'Сейчас: ' + hot.slice(0, 3).join(' · ') + (hot.length > 3 ? ' и ещё ' + (hot.length - 3) : '')));
     }
-    // The month's spends: against the budget with its bar, else against the previous month to this day; a tap opens
-    // «Деньги».
-    function moneyCard(m) {
-      var t = moneyHomeText(m), c = card('wallet', 'Деньги'), box = el('div', 'mbud mhome');
-      if (m.daily) box.appendChild(moneyDailyLine(m.daily, function () { load(); }));
-      add(box, add(el('div', 'mbl'), el('span', 'tx', t.line), t.pct ? el('span', 'num ' + t.cls, t.pct) : null));
-      if (t.p !== null) box.appendChild(moneyBar(t.p, t.cls));
-      if (t.sub) box.appendChild(el('div', 'mu', t.sub));
-      var dt = m.daily && moneyDailyText(m.daily);
-      c.mfs = [t.line, !dt ? t.sub : dt.tight ? 'только необходимое' : m.daily.left < 0 ? 'перерасход ' + mtZl(-m.daily.left)
-        : 'сегодня ещё ' + mtZl(m.daily.left)];
-      c.appendChild(tap(box, function () { show('money'); }));
-    }
-    // «Долг по картам» (docs/specs/money-12.md §2): one line — the debt and the month's change — and the bar to zero; a
-    // tap opens its sheet.
-    function debtCard(d) {
-      var c = card('trending-down', 'Долг по картам'), box = el('div', 'mbud mhome');
-      add(box, add(el('div', 'mbl'), el('span', 'tx', mtZl(d.total)), moneyDebtDiff(d, 'num')));
-      if (d.progress !== null && d.progress !== undefined) box.appendChild(moneyBar(d.progress, 'done'));
-      var fc = moneyDebtForecastEl(d);
-      if (fc) box.appendChild(fc);
-      function open() { moneyDebtSheet(d, c); }
-      c.mfs = [mtZl(d.total), moneyDebtDiff(d, 'num')];
-      c.appendChild(tap(box, open));
-    }
-    // «Октябрь закрыт» (moneyReviewCard).
-    function reviewCard(r) { cards[slot] = moneyReviewCard(r, function () { cacheDrop('home'); load(); }); }
-    // Today's post: its idea, the language and how far it got; a tap opens the tab.
-    function liCard(p) {
-      var c = card('linkedin', 'LinkedIn', 'сегодня пост');
-      var st = p.status === 'ready' ? pill('готов', 'good') : p.status === 'posted' ? pill('опубликован', 'acc')
-        : pill(p.status === 'draft' ? 'черновик' : 'черновика ещё нет', 'warn');
-      c.mfs = [st.textContent, p.idea];
-      c.appendChild(tap(hrow(p.idea, String(p.lang || 'pl').toUpperCase(), st), function () { show('li'); }));
-    }
-    // «воскресенье, 25 октября · Добрый день, Валерий»: morning to 12, day to 18, evening after.
-    function greeting() {
-      var h = Number(wp(Date.now()).hour), d = '';
-      try {
-        d = (greeting.f || (greeting.f = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'long', day: 'numeric', month: 'long' })))
-          .format(new Date()) + ' · ';
-      } catch (e) {}
-      text(greet, d + (h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + ', Валерий');
-    }
-    // A tile: the icon (a name or a node: an account's logo) and the name, the value (vcls: s smaller, vw wrapped, bad /
-    // warn / vmu its colour), a line under it (a string or a node); a tap runs go(tile).
-    function tile(ic, k, v, vcls, sub, go) {
-      var u = sub ? (sub.nodeType ? sub : el('div', 'mu', sub)) : null;
-      var t = add(el('div', 'htile'), add(el('div', 'k'), ic.nodeType ? ic : icon(ic), el('span', '', k)), el('div', 'v' + (vcls ? ' ' + vcls : ''), v), u);
-      t.setAttribute('aria-label', k + ': ' + v + (u ? ', ' + u.textContent : ''));
-      dash.appendChild(tap(t, function () { go(t); }));
-      return t;
-    }
-    // «пн 19:30» of a moment in Warsaw.
-    function dayTime(ts) {
-      var s = wp(ts);
-      return WEEK[wd(s.year + '-' + s.month + '-' + s.day)] + ' ' + s.hour + ':' + s.minute;
-    }
-    // «сегодня», «завтра», «пн 26.10» of a day.
-    function dayWord(d, today) { return d === today ? 'сегодня' : d === addDays(today, 1) ? 'завтра' : WEEK[wd(d)] + ' ' + dm(d); }
-    // A card of the list below (docs/specs/home-tiles.md: «к этой карточке»): unfolded until he leaves the tab and
-    // brought under the header; a card he hid says how to bring it back.
-    function toCard(k) {
-      var c = cards[k];
-      if (!c) return;
-      if (!c.isConnected) return toast(FOLD.home.hid);
-      if (c.mfKey && cardFolded('home', k)) { HOMEF.foldTmp[k] = false; foldShow(c, false, true); }
-      haptic();
-      moneyScrollTo(c);
-    }
-    // His tiles in his order (docs/specs/home-tiles.md), each left out while its module is off or its tab hidden; one
-    // with nothing to say today says so («игр нет», «нет данных»), a failed source «недоступно».
-    function tiles(j, today) {
-      clear(dash);
-      var m = j.morning || {}, now = Date.now(), p = wp(now), hm = p.hour + ':' + p.minute;
-      var dd = j.money && j.money.daily, money = function () { show('money'); };
-      function none(ic, k, v, go) { return tile(ic, k, v, 's vmu', null, go); }
-      function lost(v) { return v === null ? 'недоступно' : 'нет данных'; }
-      var draw = {
-        // «сегодня можно» in the three states of the «Сегодня можно ещё» line: can / overspent / only the necessary.
-        daily: function () {
-          if (!dd) return none('wallet', 'сегодня можно', lost(j.money), money);
-          var dt = moneyDailyText(dd), over = dd.left < 0;
-          tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
-            dt.tight ? 'vw warn' : over ? 'bad' : '', (dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' + (dd.step && dd.step.per_day <= dd.per_day_calc + 0.005 ? ' до ' + dm(dd.step.until) : '') : dd.step ? 'своих нет до ' + dm(dd.step.until) : 'до зарплаты ' + dm(dd.payday)) +
-            (dd.from_limit > 0 ? ' · с\u00a0лимитом\u00a0карт' : ''), money);
-        },
-        // Days to payday and what is paid before it (25.10.2026, his choice instead of the cards' debt).
-        payday: function () {
-          if (!dd) return none('hourglass', 'до зарплаты', lost(j.money), money);
-          var ob = (dd.obligations || []).length;
-          tile('hourglass', 'до зарплаты', dd.days + '\u00a0' + plural(dd.days, ['день', 'дня', 'дней']), '',
-            dm(dd.payday) + ' · ' + (ob ? ob + '\u00a0' + plural(ob, ['платёж', 'платежа', 'платежей']) + ' на ' + mtZl(dd.obligations_sum) : 'платежей нет'),
-            money);
-        },
-        // Overdue and today's; red while anything is overdue.
-        tasks: function () {
-          var go = function () { show('tasks'); };
-          if (!j.tasks) return none('check-square', 'задачи', lost(j.tasks), go);
-          var tk = j.tasks, nt = tk.today_count != null ? tk.today_count : (tk.today || []).length, od = tk.overdue || 0;
-          tile('check-square', 'задачи', grouped(od + nt), od ? 'bad' : '', [od ? 'просрочено ' + od : '', nt ? 'сегодня ' + nt : '',
-            tk.tomorrow_count ? 'завтра ' + tk.tomorrow_count : ''].filter(Boolean).join(' · ') || 'на сегодня ничего', go);
-        },
-        // His next game, else today's next free one with its places taken of all; none — «игр нет».
-        vb: function () {
-          var mine = (m.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; })[0];
-          var free = (m.volleyball || []).filter(function (g) { return g.start_at >= hm; })
-            .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
-          var go = function () { show('vb'); };
-          if (mine) tile('ball', 'волейбол', dayTime(mine.starts_at), 's', [mine.venue, 'записан'].filter(Boolean).join(' · '), go);
-          else if (free) {
-            tile('ball', 'волейбол', WEEK[wd(today)] + ' ' + free.start_at, 's', [free.venue, free.max_players != null && free.free_spots != null
-              ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '), go);
-          } else none('ball', 'волейбол', 'игр нет', go);
-        },
-        // The resin now, from the snapshot's «full at» (one per 8 minutes); full — «полная!» in amber.
-        genshin: function () {
-          var gs = j.genshin, go = function () { show('genshin'); };
-          if (!gs) return none('game', 'Genshin · смола', lost(gs), go);
-          var left = gs.full_at ? Date.parse(gs.full_at) - now : 0, full = gs.full_at ? left <= 0 : gs.current >= gs.max;
-          var cur = full ? gs.max : gs.full_at ? Math.max(0, gs.max - Math.ceil(left / 480000)) : gs.current;
-          tile('game', 'Genshin · смола', cur + ' / ' + gs.max, 's', full ? el('div', 'mu warn', 'полная!') : gs.full_at ? 'полная через ' +
-            (left >= 3600000 ? Math.round(left / 3600000) + ' ч' : Math.max(1, Math.round(left / 60000)) + ' мин') : null, go);
-        },
-        // His next screening, else the next premiere.
-        cinema: function () {
-          var cn = j.cinema_next, go = function () { show('cinema'); };
-          if (!cn) return none('film', 'кино', cn === null ? 'недоступно' : 'сеансов нет', go);
-          tile('film', 'кино', cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 's',
-            '«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'), go);
-        },
-        // The cards' debt now, the month's change, the bar to zero; a tap opens its sheet.
-        card_debt: function () {
-          var d = j.card_debt;
-          if (!d) return none('trending-down', 'долг по картам', lost(d), money);
-          if (!moneyDebtOn(d)) return none('trending-down', 'долг по картам', 'долга нет', money);
-          var t = tile('trending-down', 'долг по картам', mtZl(d.total), '', add(el('div', 'mu'), moneyDebtDiff(d, 'num')),
-            function () { moneyDebtSheet(d, t); });
-          if (d.progress !== null && d.progress !== undefined) t.appendChild(moneyBar(d.progress, 'done'));
-        },
-        // The month against its budget with the bar (green, amber from 80 %, red past it), else against the previous month.
-        month: function () {
-          var mo = j.money;
-          if (!mo) return none('chart', 'месяц', lost(mo), money);
-          var x = moneyHomeText(mo), name = MONTHS_RU[Number(mo.month.slice(5, 7)) - 1].toLowerCase();
-          var t = tile('chart', name, mtZl(mo.spent), x.cls === 'over' ? 'bad' : '', mo.budget ? 'из ' + mtInt(mo.budget) + ' · ' + x.pct : x.sub || null, money);
-          if (x.p !== null) t.appendChild(moneyBar(x.p, x.cls || 'done'));
-        },
-        // «мне должны N» (or «я должен N» when that is more) and who owes or is owed the most; a tap brings «Долги».
-        debts: function () {
-          var ds = j.debts, go = function () { MONEY.toDebts = true; show('money'); };
-          if (!ds) return none('hand-coins', 'долги', lost(ds), go);
-          if (!ds.owed && !ds.owe) return none('hand-coins', 'долги', 'все в расчёте', go);
-          var mine = ds.owe > ds.owed;
-          tile('hand-coins', 'долги', mtZl(mine ? ds.owe : ds.owed), mine ? 'bad' : '', (mine ? 'я должен' : 'мне должны') +
-            (ds.top ? ' · больше всех ' + ds.top.name : ''), go);
-        },
-        // The nearest payment before payday: its sum, name and day.
-        next_pay: function () {
-          if (!dd) return none('calendar-sync', 'ближайший платёж', lost(j.money), money);
-          var ob = (dd.obligations || []).slice().sort(function (x, y) { return x.on.localeCompare(y.on); })[0];
-          if (!ob) return none('calendar-sync', 'ближайший платёж', 'до зарплаты ничего', money);
-          tile('calendar-sync', 'ближайший платёж', moneyShort(ob.amount, 'PLN'), 's', ob.label + ' · ' + dayWord(ob.on, today), money);
-        },
-        // The nearest of «Сроки и посылки»: when, what, «ещё N».
-        due: function () {
-          var go = function () { toCard('due'); }, all = [];
-          (m.deadlines || []).forEach(function (d) { all.push({ on: d.due_date, t: d.title }); });
-          (m.payments || []).forEach(function (x) { all.push({ on: x.due_date, t: x.kind + ' · ' + x.period }); });
-          (m.parcels || []).forEach(function (x) {
-            var q = wp(x.pickup_deadline);
-            all.push({ on: q.year + '-' + q.month + '-' + q.day, t: [x.carrier, x.shop].filter(Boolean).join(' · ') || 'посылка' });
-          });
-          if (!all.length) return none('package', 'сроки и посылки', m.deadlines || m.payments || m.parcels ? 'ничего' : 'нет данных', go);
-          all.sort(function (x, y) { return x.on.localeCompare(y.on); });
-          var n = days(today, all[0].on);
-          tile('package', 'сроки и посылки', n < 0 ? 'просрочено' : dayWord(all[0].on, today), 's' + (n < 0 ? ' bad' : n <= 1 ? ' warn' : ''),
-            all[0].t + (all.length > 1 ? ' · ещё ' + (all.length - 1) : ''), go);
-        },
-        // The next event of «Календарь» not over yet: its time and name.
-        next_event: function () {
-          var go = function () { toCard('calendar'); };
-          var ev = (m.calendar_view || []).filter(function (x) {
-            return x.date > today || (x.date === today && (!x.time || x.time >= hm || (x.until && x.until > hm)));
-          })[0];
-          if (!ev) return none('calendar', 'следующее событие', m.calendar === null ? 'недоступно' : 'событий нет', go);
-          tile('calendar', 'следующее событие', (ev.date === today ? '' : dayWord(ev.date, today) + ' ') + (ev.time || (ev.date === today ? 'весь день' : '')),
-            's', (ev.kind === 'work' ? ev.icon + ' ' : '') + ev.text, go);
-        },
-        inbox: function () {
-          var n = j.inbox_new, go = function () { show('inbox'); };
-          if (n == null) return none('inbox', 'инбокс', 'недоступно', go);
-          tile('inbox', 'инбокс', grouped(n), n ? '' : 'vmu', n ? plural(n, ['новое', 'новых', 'новых']) : 'пусто', go);
-        },
-        // Yesterday's steps and sleep from the Shortcuts automation.
-        yesterday: function () {
-          var h = m.health, go = function () { toCard('yesterday'); };
-          if (!h || (h.steps == null && h.sleep_min == null)) return none('watch', 'вчера', 'нет данных', go);
-          tile('watch', 'вчера', h.steps != null ? grouped(h.steps) : sleepLine(h.sleep_min), 's', h.steps != null
-            ? plural(h.steps, ['шаг', 'шага', 'шагов']) + (h.sleep_min != null ? ' · сон ' + sleepLine(h.sleep_min) : '') : 'сон', go);
-        }
+    // The ✕ and the size chips of a widget being edited (only the sizes it comes in, none for a one-size widget).
+    function chrome(node, b) {
+      var x = add(el('button', 'bx'), icon('x'));
+      x.type = 'button';
+      x.setAttribute('aria-label', 'Убрать: ' + BOARD_BY[b.w][1]);
+      x.onclick = function () {
+        draft = draft.filter(function (o) { return o.id !== b.id; });
+        haptic();
+        draw();
       };
-      // An account: its balance (a minus in red) and «свободно N» on a credit one; a tap shows its every operation.
-      function acct(key) {
-        var a = (j.accounts || []).filter(function (x) { return x.key === key; })[0];
-        var name = a ? a.name : moneyAcctName(key) || key, logo = moneyAcctTile(key, 'ai');
-        var go = function () { show('money'); moneyAcctAll({ key: key }); };
-        if (!a) return none(logo, name, lost(j.accounts), go);
-        var sym = '\u00a0' + moneySym(a.currency), neg = a.balance < 0;
-        tile(logo, name, (neg ? '−' : '') + moneyInt(Math.abs(a.balance)) + sym, neg ? 'bad' : '', a.credit && a.credit_limit
-          ? 'свободно ' + moneyInt(Math.max(0, a.credit_limit + Math.min(0, a.balance))) + sym : null, go);
-      }
-      homeTiles().forEach(function (k) {
-        if (tileOff(k)) return;
-        if (k.indexOf('acct:') === 0) acct(k.slice(5));
-        else if (draw[k]) draw[k]();
+      var head = node.querySelector('.bh');
+      head.insertBefore(x, head.firstChild);
+      var sizes = BOARD_BY[b.w][3];
+      if (sizes.length < 2) return;
+      var box = el('div', 'bsz');
+      sizes.split('').forEach(function (z) {
+        var c = add(el('button', z === b.s ? 'on' : ''), boardSizeIc(z));
+        c.type = 'button';
+        c.setAttribute('aria-label', BOARD_BY[b.w][1] + ': ' + BOARD_SIZE[z]);
+        c.setAttribute('aria-pressed', String(z === b.s));
+        c.onclick = function () {
+          if (z === b.s) return;
+          draft = draft.map(function (o) { return o.id === b.id ? { id: o.id, w: o.w, s: z } : o; });
+          haptic();
+          draw();
+        };
+        box.appendChild(c);
+      });
+      head.appendChild(box);
+    }
+    // The amounts that do not fit their widget get smaller, never cut; a list's last rows that would run past the
+    // widget's foot (a narrow phone, a long day) are left out, the first always stays.
+    function fit() {
+      if (!grid) return;
+      [].forEach.call(grid.querySelectorAll('.bv'), function (v) {
+        v.style.fontSize = '';
+        var fs = parseFloat(getComputedStyle(v).fontSize);
+        while (v.scrollWidth > v.clientWidth + 1 && fs > 15) { fs -= 2; v.style.fontSize = fs + 'px'; }
+      });
+      [].forEach.call(grid.children, function (w) {
+        var foot = w.getBoundingClientRect().bottom - 8, rows = w.querySelectorAll(':scope>.brow,:scope>.bl.bday,:scope>.bl.mu');
+        for (var k = rows.length - 1; k > 0 && rows[k].getBoundingClientRect().bottom > foot; k--) rows[k].remove();
       });
     }
-    // «Завтра»: up to five of tomorrow's tasks, calendar events and his game — the timed ones by time, then the rest;
-    // nothing tomorrow, no card.
-    function tomorrow(j, today) {
-      clear(tmr);
-      var tm = addDays(today, 1), rows = dayRows(j, tm, (j.tasks && j.tasks.tomorrow) || []);
-      if (!rows.length) return;
-      var c = mkCard('calendar', 'Завтра');
-      c.firstChild.appendChild(el('span', 'mu', WEEK[wd(tm)] + ' ' + dm(tm)));
-      rows.forEach(function (r) { c.appendChild(r); });
-      tmr.appendChild(c);
+    function draw() {
+      var j = last || {}, bl = list();
+      clear(wrap);
+      nodes = {};
+      grid = null;
+      again.hidden = !bl.length;
+      if (!bl.length) {
+        var plus = label(el('button', 'btn'), 'plus', 'Добавить виджет');
+        plus.type = 'button';
+        plus.onclick = function () { boardCatalog(plus); };
+        add(wrap, add(el('div', 'state bempty'), icon('layout-grid'), el('p', '', 'Здесь пусто. Собери «Главную» из виджетов — как на экране iPhone'),
+          plus, el('p', 'mu', 'Или ⋯ → «Заполнить как раньше»')));
+        if (draft) wrap.firstChild.appendChild(el('p', 'mu', 'Нажми «Готово», чтобы сохранить'));
+        paintHint();
+        return;
+      }
+      grid = el('div', 'board' + (draft ? ' bedit' : ''));
+      bl.forEach(function (b) {
+        var node = boardWidget(b, j, false);
+        nodes[b.id] = node;
+        if (draft) chrome(node, b);
+        else if (node.r.go) {
+          node.tabIndex = 0;
+          node.setAttribute('role', 'button');
+          node.classList.add('tap');
+        }
+        node.onkeydown = function (ev) {
+          if (!draft && node.r.go && ev.target === node && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); node.r.go(node); }
+        };
+        node.onclick = function () { if (!draft && node.r.go) node.r.go(node); };
+        grid.appendChild(node);
+      });
+      wrap.appendChild(grid);
+      paintHint();
+      requestAnimationFrame(fit);
     }
     function render(j) {
-      clear(body);
-      cards = {};
       last = j;
-      HOMEF.accts = j.accounts || null;
-      var p = wp(Date.now());
-      var today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day;
-      greeting();
-      tiles(j, today);
-      tomorrow(j, today);
       if (j.tasks) {
         setTaskBadge((j.tasks.overdue || 0) + (j.tasks.today_count != null ? j.tasks.today_count : (j.tasks.today || []).length));
       }
-      if (j.morning) morning(j.morning, today, j.week);
-      else { plan(j.week); slot = 'morning'; down('clock', 'Утренняя сводка'); }
-      slot = 'inbox';
-      if (j.inbox_new == null) down('inbox', 'Инбокс');
-      else if (j.inbox_new) tap(card('inbox', 'Инбокс', j.inbox_new + ' новых').lastChild, function () { show('inbox'); });
-      // Tasks (docs/specs/tasks.md): the late count and today's, ✓ on each; hidden when nothing is late or due today.
-      slot = 'tasks';
-      if (j.tasks === null) down('check-square', 'Задачи');
-      else if (j.tasks && (j.tasks.overdue || (j.tasks.today || []).length)) tasksCard(j.tasks, today);
-      // LinkedIn (docs/specs/linkedin.md): today's post, only when there is one.
-      slot = 'linkedin';
-      if (j.linkedin === null) down('linkedin', 'LinkedIn');
-      else if (j.linkedin && j.linkedin.today) liCard(j.linkedin.today);
-      // «Деньги» (docs/specs/money-6.md §2): the month against its budget or the previous month; gone while the module is off.
-      slot = 'money';
-      if (j.money === null && moneyHomeOn(j)) down('wallet', 'Деньги');
-      else if (moneyHomeOn(j)) moneyCard(j.money);
-      slot = 'card_debt';
-      if (j.card_debt === null && prefs.muted.indexOf('money') < 0) down('trending-down', 'Долг по картам');
-      else if (moneyDebtOn(j.card_debt)) debtCard(j.card_debt);
-      slot = 'money_review';
-      if (j.money_review === null && prefs.muted.indexOf('money') < 0) down('calendar-check', 'Разбор месяца');
-      else if (moneyReviewOn(j)) reviewCard(j.money_review);
-      slot = 'week';
-      if (j.weekly) weekly(j.weekly);
-      else down('calendar', 'Неделя');
-      slot = 'system';
-      if (j.pulse === null) down('alert', 'Система');
-      else if (j.pulse && Array.isArray(j.pulse.parts)) pulse(j.pulse.parts, today);
-      // His order first, the rest after in HOME_KEYS order; the hidden ones and those the tiles show are left out.
-      var hid = viewPrefs('home').hidden, tiled = tiledCards(), off = HOME_KEYS.every(function (k) { return k === 'morning' || tiled.indexOf(k) >= 0 || hid.indexOf(k) >= 0; });
-      if (off) {
-        body.appendChild(tap(state('square', 'Все карточки выключены — включи в «Что нового» → «Настройки»'),
-          function () { show('news'); }));
-        return;
-      }
-      homeOrder().forEach(function (k) {
-        if (!cards[k] || hid.indexOf(k) >= 0 || tiled.indexOf(k) >= 0) return;
-        if (!cards[k].mfs) cards[k].mfs = firstLine(cards[k]);
-        body.appendChild(foldCard('home', cards[k], k));
-      });
-      if (!body.firstChild && !dash.firstChild && !tmr.firstChild) body.appendChild(state('check', 'На сегодня ничего'));
+      if (!drag) draw();
     }
-    // The answer carries the settings too: taken unless a save of his is on its way or came after the request left.
     function load() {
-      swr({ key: 'home', box: body, n: 4, live: function () { return current === 'home'; },
+      swr({ key: 'home', box: wrap, n: 2, live: function () { return current === 'home'; },
         fetch: homeFetch, render: render, retry: load });
     }
-    // A settings change redraws the cards and «Карточки на «Сегодня»» or a card's sheet if one is open.
-    prefsHook = { tab: 'home', fn: function (focus) {
-      if (HOMEF.cardsCard && HOMEF.cardsCard.isConnected) HOMEF.cardsCard.paint(focus);
-      if (HOMEF.tilesCard && HOMEF.tilesCard.isConnected) HOMEF.tilesCard.paint(focus);
-      if (last) render(last);
-      if (HOMEF.cardSheet && HOMEF.cardSheet.isConnected) HOMEF.cardSheet.paint();
-    } };
+    boardReload = load;
+    // Editing: a draft of the board; «Готово» saves it when it changed (one prefs_set) and leaves.
+    function edit() {
+      if (draft) return;
+      draft = list().slice();
+      if (grid) {
+        grid.classList.add('bedit');
+        list().forEach(function (b) {
+          var node = nodes[b.id];
+          node.classList.remove('tap');
+          node.removeAttribute('role');
+          node.removeAttribute('tabindex');
+          chrome(node, b);
+        });
+      } else draw();
+      paintHint();
+      boardLeave = done;
+    }
+    function done() {
+      boardLeave = null;
+      var d = draft;
+      draft = null;
+      dragEnd(false);
+      hdr.classList.remove('bediting');
+      if (d && !same(d, viewPrefs('board'))) editPrefs({ board: d });
+      else if (current === 'home') draw();
+    }
+    boardDone.onclick = done;
+    // Adds a widget at the end: to the draft while editing, else saved at once and brought into view.
+    function addWidget(w, s) {
+      var bl = list(), b = { id: boardId(bl), w: w, s: s };
+      if (bl.length >= 24) return toast('На «Главной» не больше 24 виджетов');
+      if (draft) { draft = draft.concat([b]); draw(); }
+      else editPrefs({ board: bl.concat([b]) });
+      var nd = nodes[b.id];
+      if (nd) { nd.classList.add('bnew'); nd.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+    }
+    // The catalog: a row per widget with a small live preview, its name and the sizes it comes in; a size adds it.
+    function boardCatalog(from) {
+      var box = el('div', 'bcat'), close = noop;
+      BOARD.forEach(function (c) {
+        var low = c[3][0], pv = el('div', 'bpv'), inner = boardWidget({ id: 'pv', w: c[0], s: low }, last || {}, true), sc = low === 's' ? 64 / 170 : 88 / 352;
+        inner.classList.add('bpvi');
+        inner.style.transform = 'scale(' + sc.toFixed(3) + ')';
+        inner.setAttribute('aria-hidden', 'true');
+        inner.inert = true;
+        if (low !== 's') pv.classList.add('wide');
+        pv.appendChild(inner);
+        var chips = el('div', 'bsz');
+        c[3].split('').forEach(function (z) {
+          var b = add(el('button'), boardSizeIc(z));
+          b.type = 'button';
+          b.title = BOARD_SIZE[z];
+          b.setAttribute('aria-label', 'Добавить «' + c[1] + '»: ' + BOARD_SIZE[z]);
+          b.onclick = function () { close(); haptic(); addWidget(c[0], z); };
+          chips.appendChild(b);
+        });
+        var off = boardOff(c[0]);
+        box.appendChild(add(el('div', 'row bcr' + (off ? ' htoff' : '')), pv,
+          add(el('span', 'tx'), el('div', 't', c[1]), off ? el('div', 'mu', 'модуль выключен') : null), chips));
+      });
+      close = legalSheet('Добавить виджет', [el('div', 'sub bcsub', 'Нажми размер — виджет встанет в конец'), box], from);
+    }
+    // The ⋯ menu: add, edit, the «сейчас» switch, the board from the tiles and cards of before; whose view it is.
+    boardMenu = function (from) {
+      var close = noop, box = el('div', 'mmenus'), vl = el('div', 'sub vline');
+      function item(ic, t, fn, on) {
+        var b = add(el('button', 'mlink mmenu'), icon(ic), add(el('span', 'tx'), el('span', 't', t)), on ? icon('check', 'mfon') : null);
+        b.type = 'button';
+        b.onclick = fn;
+        if (on !== undefined) b.setAttribute('aria-pressed', String(on));
+        return b;
+      }
+      viewLine(vl, 'board');
+      add(box, item('plus', 'Добавить виджет', function () { close(); boardCatalog(from); }),
+        list().length ? item('pen-line', 'Изменить', function () { close(); edit(); }) : null,
+        item('lightbulb', 'Подсказки «сейчас»', function () { close(); editPrefs({ board_now: !prefs.board_now }); }, prefs.board_now),
+        item('history', 'Заполнить как раньше', function () {
+          close();
+          var was = list(), seed = boardSeed();
+          if (draft) { draft = seed; draw(); return; }
+          editPrefs({ board: seed });
+          if (was.length) backToast('Заполнено как раньше', function () { editPrefs({ board: was }); });
+        }));
+      close = legalSheet('Главная', [vl, box], from);
+    };
+    // A settings change: the board drawn again (the draft stays while editing; a drag in progress is left alone).
+    prefsHook = { tab: 'home', fn: function () { if (!drag) draw(); } };
+
+    // --- the long press and the drag ---
+    // A press held 500 ms on a widget, the finger still, starts editing with that widget lifted; in editing a press on a
+    // widget lifts it at once. The lifted widget follows the finger; over another one it takes that one's place and the
+    // others ease to theirs (FLIP); near the screen's top or bottom the page scrolls. The drop saves nothing — «Готово» does.
+    function pt(ev) { return { x: ev.clientX, y: ev.clientY }; }
+    function down(ev) {
+      if (ev.button > 0 || drag || !grid) return;
+      var w = ev.target.closest('.bw');
+      if (!w || w.parentNode !== grid || ev.target.closest('.bx,.bsz')) return;
+      var q = pt(ev);
+      if (draft) {
+        if (ev.pointerType === 'mouse') ev.preventDefault();
+        return dragStart(w, q);
+      }
+      clearTimeout(lp && lp.t);
+      lp = { w: w, q: q, t: setTimeout(function () {
+        var n = lp && lp.w;
+        lp = null;
+        if (!n || !n.isConnected) return;
+        edit();
+        dragStart(n, q);
+      }, 500) };
+    }
+    function dragStart(w, q) {
+      drag = { w: w, q0: q, q: q, ox: w.offsetLeft, oy: w.offsetTop, s0: window.scrollY, cool: 0, raf: 0, v: 0, moved: false };
+      touchOwner = 'board';
+      w.classList.add('blift');
+      haptic();
+    }
+    function place() {
+      var d = drag, w = d.w;
+      var dx = d.q.x - d.q0.x - (w.offsetLeft - d.ox), dy = d.q.y - d.q0.y + (window.scrollY - d.s0) - (w.offsetTop - d.oy);
+      w.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(1.03)';
+      if (Date.now() < d.cool) return;
+      var over = [].filter.call(grid.children, function (x) {
+        if (x === w) return false;
+        var r = x.getBoundingClientRect();
+        return d.q.x >= r.left && d.q.x <= r.right && d.q.y >= r.top && d.q.y <= r.bottom;
+      })[0];
+      if (!over) return;
+      var ids = draft.map(function (b) { return b.id; }), i = ids.indexOf(w.bid), k = ids.indexOf(over.bid);
+      if (i < 0 || k < 0) return;
+      var before = {};
+      [].forEach.call(grid.children, function (x) { if (x !== w) before[x.bid] = x.getBoundingClientRect(); });
+      var it = draft.splice(i, 1)[0];
+      draft.splice(k, 0, it);
+      draft.forEach(function (b) { grid.appendChild(nodes[b.id]); });
+      d.cool = Date.now() + 220;
+      haptic();
+      var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      [].forEach.call(grid.children, function (x) {
+        if (x === w || !before[x.bid] || still) return;
+        var a = before[x.bid], r = x.getBoundingClientRect();
+        x.style.transition = 'none';
+        x.style.transform = 'translate(' + (a.left - r.left).toFixed(1) + 'px,' + (a.top - r.top).toFixed(1) + 'px)';
+      });
+      grid.offsetWidth; // the inverted places land before the ease back to none
+      [].forEach.call(grid.children, function (x) {
+        if (x === w) return;
+        x.style.transition = '';
+        x.style.transform = '';
+      });
+      // Its own place moved: the follow is measured again from the new place.
+      dx = d.q.x - d.q0.x - (w.offsetLeft - d.ox);
+      dy = d.q.y - d.q0.y + (window.scrollY - d.s0) - (w.offsetTop - d.oy);
+      w.style.transform = 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px) scale(1.03)';
+    }
+    // Within 72 px of the screen's top or bottom the page scrolls itself, faster nearer the edge.
+    function auto() {
+      var d = drag;
+      if (!d) return;
+      d.raf = 0;
+      var h = window.innerHeight, e = 72, v = d.q.y < e + 52 ? -(e + 52 - d.q.y) / 4 : d.q.y > h - e - 70 ? (d.q.y - (h - e - 70)) / 4 : 0;
+      if (!v) return;
+      window.scrollBy(0, Math.max(-18, Math.min(18, v)));
+      place();
+      d.raf = requestAnimationFrame(auto);
+    }
+    function move(ev) {
+      if (lp) {
+        var q = pt(ev);
+        if (Math.abs(q.x - lp.q.x) > 8 || Math.abs(q.y - lp.q.y) > 8) { clearTimeout(lp.t); lp = null; }
+        return;
+      }
+      if (!drag) return;
+      drag.q = pt(ev);
+      drag.moved = true;
+      place();
+      if (!drag.raf) drag.raf = requestAnimationFrame(auto);
+    }
+    function dragEnd() {
+      if (lp) { clearTimeout(lp.t); lp = null; }
+      var d = drag;
+      if (!d) return;
+      drag = null;
+      if (touchOwner === 'board') touchOwner = null;
+      cancelAnimationFrame(d.raf);
+      d.w.style.transition = 'transform .2s var(--ease)';
+      d.w.style.transform = '';
+      setTimeout(function () { d.w.classList.remove('blift'); d.w.style.transition = ''; }, 200);
+    }
+    wrap.addEventListener('pointerdown', down);
+    // In editing nothing inside a widget opens anything: only its ✕ and its sizes answer.
+    wrap.addEventListener('click', function (ev) { if (draft && !ev.target.closest('.bx,.bsz')) ev.stopPropagation(); }, true);
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', dragEnd);
+    window.addEventListener('pointercancel', dragEnd);
+    // The page does not scroll under a lifted widget, and a held press does not call up the system's menu.
+    wrap.addEventListener('touchmove', function (ev) { if (drag) ev.preventDefault(); }, { passive: false });
+    wrap.addEventListener('contextmenu', function (ev) { if (ev.target.closest('.bw')) ev.preventDefault(); });
+    // The listeners on window go with the view: the next show() clears main and they would answer for nothing.
+    var unhook = new MutationObserver(function () {
+      if (wrap.isConnected) return;
+      unhook.disconnect();
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', dragEnd);
+      window.removeEventListener('pointercancel', dragEnd);
+      hdr.classList.remove('bediting');
+      if (boardLeave === done) boardLeave = null;
+    });
+    unhook.observe(main, { childList: true });
     load();
   }
 
@@ -10850,11 +10995,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // (docs/specs/device-views.md): on the wide layout they go to views.wide, made from that view the first time;
   // next.views replaces them all («Как на телефоне»: {}).
   function editPrefs(next, focus, quiet) {
-    var view = !!(next.home || next.money || next.tiles), w = view && wide(), h = viewPrefs('home'), mo = viewPrefs('money');
+    var view = !!(next.home || next.money || next.tiles || next.board), w = view && wide(), h = viewPrefs('home'), mo = viewPrefs('money');
     var v = { home: next.home ? Object.assign({}, h, next.home) : h, money: next.money ? Object.assign({}, mo, next.money) : mo,
-      tiles: next.tiles || viewPrefs('tiles') };
+      tiles: next.tiles || viewPrefs('tiles'), board: next.board || viewPrefs('board') };
     next = { tabs: next.tabs || prefs.tabs, home: view && !w ? v.home : prefs.home, muted: next.muted || prefs.muted,
-      money: view && !w ? v.money : prefs.money, tiles: view && !w ? v.tiles : prefs.tiles,
+      money: view && !w ? v.money : prefs.money, tiles: view && !w ? v.tiles : prefs.tiles, board: view && !w ? v.board : prefs.board,
+      board_now: next.board_now !== undefined ? next.board_now : prefs.board_now,
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
       telegram: next.telegram || prefs.telegram };
     haptic();
@@ -11233,8 +11379,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         close();
         foldEdit(s, { hidden: viewPrefs(s).hidden.concat([key]) }, [s, key, 'tog']);
         toast(F.hid);
-      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }),
-      s === 'home' && !wide() ? item('layout-grid', 'Плитки…', function () { close(); tilesSheet(from); }) : null);
+      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }));
       // The keyboard stays on the step he took, or the one beside it at the end of the order.
       var f = box.querySelector('button:focus') ? null : F.st.cardSheetFocus;
       if (f) { var b = [].filter.call(box.children, function (x) { return x.textContent === f && !x.disabled; })[0]; if (b) b.focus(); }
@@ -11552,65 +11697,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     HOMEF.cardsCard = homeCard();
     legalSheet('Карточки на «Главной»', [HOMEF.cardsCard], from);
   }
-  // «Плитки на «Главной»» (docs/specs/home-tiles.md): the chosen tiles first, in his order, each with a grip and a
-  // toggle (the last one stays); under «Можно добавить» the others with «+», an account's tile for every visible account
-  // of home's last answer; a tile whose module is off or whose tab is hidden is grey with «модуль выключен». «Сбросить»
-  // brings back the six. Each change is one prefs_set, as the other settings.
-  function tileName(k) {
-    if (k.indexOf('acct:') < 0) return TILES[TILE_KEYS.indexOf(k)][1];
-    var key = k.slice(5), a = (HOMEF.accts || []).filter(function (x) { return x.key === key; })[0];
-    return a ? a.name : moneyAcctName(key) || key;
-  }
-  function tilesCard() {
-    var card = mkCard('layout-grid', 'Плитки'), sel = el('div'), more = el('div', 'sub htadd', 'Можно добавить'), rest = el('div');
-    var foot = el('div', 'foot'), reset = el('button', 'btn ghost', 'Сбросить'), vl = el('div', 'sub vline');
-    reset.type = 'button';
-    reset.onclick = function () { editPrefs({ tiles: [] }, ['tiles', 'reset']); };
-    foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Сверху — на «Главной», по порядку; тяни за ручку'), vl, sel, more, rest);
-    function row(k, on, n) {
-      var off = tileOff(k), name = tileName(k), r = el('div', 'row' + (off ? ' htoff' : ''));
-      add(r, add(el('span', 'lead'), k.indexOf('acct:') === 0 ? moneyAcctTile(k.slice(5), 'ai') : icon(TILES[TILE_KEYS.indexOf(k)][2])),
-        add(el('span', 'tx'), el('div', 't', name), off ? el('div', 'mu', 'модуль выключен') : null));
-      if (on) {
-        add(r, dragGrip(name), rowBtn('check-square', { label: name + ' на «Главной»', on: true }, 'tog', n < 2, function () {
-          editPrefs({ tiles: homeTiles().filter(function (x) { return x !== k; }) }, ['tiles', k, 'add']);
-        }));
-      } else {
-        r.appendChild(rowBtn('plus', { label: 'Добавить на «Главную»: ' + name }, 'add', false, function () {
-          editPrefs({ tiles: homeTiles().concat([k]) }, ['tiles', k, 'tog']);
-        }));
-      }
-      r.k = k;
-      return r;
-    }
-    card.paint = function (focus) {
-      viewLine(vl, 'tiles');
-      var mine = homeTiles(), all = TILE_KEYS.concat((HOMEF.accts || []).map(function (a) { return 'acct:' + a.key; }));
-      clear(sel);
-      clear(rest);
-      mine.forEach(function (k) { sel.appendChild(row(k, true, mine.length)); });
-      all.forEach(function (k) { if (mine.indexOf(k) < 0) rest.appendChild(row(k, false)); });
-      more.hidden = !rest.firstChild;
-      if (viewPrefs('tiles').length) card.appendChild(foot);
-      else if (foot.parentNode) card.removeChild(foot);
-      // The rows are new nodes: the keyboard goes to the row it moved, on the button it has now.
-      if (!focus || focus[0] !== 'tiles') return;
-      if (focus[1] === 'reset') return sel.querySelector('button:not(:disabled)').focus();
-      var r = [].filter.call(sel.children, function (x) { return x.k === focus[1]; }).concat([].filter.call(rest.children, function (x) { return x.k === focus[1]; }))[0];
-      if (!r) return;
-      var b = [].filter.call(r.querySelectorAll('button'), function (x) { return x.f === focus[2] && !x.disabled; })[0];
-      (b || r.lastChild).focus();
-    };
-    dragSort(sel, function () { return [].slice.call(sel.children); }, function (keys, k) { editPrefs({ tiles: keys }, ['tiles', k, 'grip']); });
-    card.paint();
-    return card;
-  }
-  function tilesSheet(from) {
-    HOMEF.tilesCard = tilesCard();
-    legalSheet('Плитки на «Главной»', [HOMEF.tilesCard], from);
-  }
-
   // --- bottom bar ---
   // «Кнопки внизу»: the four tabs of the phone's bottom bar and their order, kept on this device (store tabBar,
   // a JSON array of tab keys); the others go to «Ещё», the wide rail shows all. Chosen rows come first, in order.
@@ -11670,17 +11756,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), hc = homeCard(), bc = barCard(), mo = moneyCardsCard();
+    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), bc = barCard(), mo = moneyCardsCard();
     prefsHook = { tab: 'news', fn: function (focus) {
-      tc.paint(focus); mc.paint(focus); tgc.paint(focus); hc.paint(focus); mo.paint(focus); bc.paint();
+      tc.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); bc.paint();
     },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
       body.className = 'cols';
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, hc, mo, bc), body, note);
-    } else add(main, browser ? pushCard() : null, tc, mc, tgc, hc, mo, bc, body, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, mo, bc), body, note);
+    } else add(main, browser ? pushCard() : null, tc, mc, tgc, mo, bc, body, note);
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
