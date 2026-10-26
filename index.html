@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 22:00">
+<meta name="published" content="2026-10-26 22:40">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1414,12 +1414,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var shopSeg = isSeg(store('shopSeg')) ? store('shopSeg') : 'list';
   function shopIs(k) { return current === 'shop' && shopSeg === k; }
   // Settings kept on the server, one copy for the phone and the Mac (docs/specs/app-settings.md):
-  // {tabs: {hidden}, home: {hidden, order}, muted}. The keys are miniapp's TAB_KEYS and HOME_KEYS (home and news are never
-  // hidden); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. muted: the switched-off
+  // {tabs: {hidden}, home: {hidden, order}, muted}. The keys are miniapp's TAB_KEYS and HOME_KEYS (news, where the settings
+  // are, is never hidden; «Главная» can be since 26.10.2026 — homeTab() stands in for it); HOME_KEYS here run in the order «Сегодня» draws its cards when he chose none. muted: the switched-off
   // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
+  var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
@@ -1510,7 +1510,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return s === 'tiles' ? prefs.tiles : Object.assign({}, prefs[s], { fold: {}, folded: [] });
   }
   var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
-  function tabShown(k) { return k === 'home' || k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
+  function tabShown(k) { return k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
   function visibleTabs() { return TABS.filter(function (t) { return tabShown(t[0]); }); }
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date'), rDate = el('span');
@@ -1610,6 +1610,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     visibleTabs().forEach(function (t) { if (bar.length < want && bar.indexOf(t[0]) < 0) bar.push(t[0]); });
     return bar;
   }
+  // The start tab (26.10.2026, his «я не использую [Главную]… делай первое»): «Главная» while it is shown, else the
+  // first tab of his bar (normally «Деньги»); every place that fell back to 'home' asks this.
+  function homeTab() { return tabShown('home') ? 'home' : barTabs()[0] || 'news'; }
   function tabOf(k) { return TABS.filter(function (t) { return t[0] === k; })[0]; }
   // The rail, the bar and the sheet are drawn again on every change of the choice or of the hidden tabs.
   function drawBar() {
@@ -1711,12 +1714,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     loadPrefs();
     var h = location.hash.slice(1), last = store('tab'), n = notifHash(h);
     if (n) notifFocus = n.id;
-    // A link (#tab) opens even a hidden tab; the remembered one only while it is shown. The Home Screen app
+    // A link (#tab) opens even a hidden tab (but #home, see show()); the remembered one only while it is shown. The Home Screen app
     // starts from the address it was installed with, whose #tab is stale (26.10.2026: it always opened «Главная»
     // while he goes straight to «Деньги»), so there the last tab wins over the hash; a push tap (#notif) still goes.
     var pwa = navigator.standalone || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
     var lastOk = last && isView(canon(last)) && tabShown(canon(last));
-    show(n ? 'notif' : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : 'home');
+    show(n ? 'notif' : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : homeTab());
     // The bell's count when the first screen does not bring it (home and «Уведомления» do); the answer is the
     // center's cached copy too.
     if (current !== 'home' && current !== 'notif') {
@@ -2185,7 +2188,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       store('shopSeg', tab);
       tab = 'shop';
     }
-    if (!isView(tab)) tab = 'home';
+    // «Главная» hidden: every way to it (the widget's #home, a stale hash, the remembered tab) lands on homeTab().
+    if (!isView(tab) || (tab === 'home' && !tabShown('home'))) tab = homeTab();
     reorderEnd();
     flushMarks('');
     // From one shown tab to another on the phone: in from the side it lies on (in-r / in-l), in the order of his bar with
@@ -2270,6 +2274,83 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return hrow(WEEK[wd(date)] + ' ' + dm(date) + ' · ' + time, [g.venue, g.address].filter(Boolean).join(', '),
       g.status === 'paid' ? pill('оплачено', 'good') : pill('записан', 'acc'),
       g.activity_id > 0 ? 'https://pilkanahali.pl/zajecia/' + g.activity_id : null);
+  }
+
+  // A day's feed as «Завтра» on «Главная» draws it: the tasks given, the morning's calendar events of that day and his
+  // games (shows: his cinema tickets too) — the timed ones by time, then the rest, five at most; a tap on a task, a
+  // game or a show opens its tab. [] — nothing that day.
+  function dayRows(j, date, tasks, shows) {
+    var m = j.morning || {}, items = [];
+    function on(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
+    function day(ts) { var s = wp(ts); return s.year + '-' + s.month + '-' + s.day; }
+    tasks.forEach(function (t) {
+      items.push({ time: t.due_time ? String(t.due_time).slice(0, 5) : '', text: t.title, tab: 'tasks' });
+    });
+    (m.calendar_view || []).forEach(function (x) {
+      if (x.date === date) items.push({ time: x.time || '', text: (x.kind === 'work' ? x.icon + ' ' : '') + x.text });
+    });
+    if (on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb')) {
+      (m.my_games || []).forEach(function (g) {
+        var s = wp(g.starts_at);
+        if (day(g.starts_at) === date) items.push({ time: s.hour + ':' + s.minute, text: 'Волейбол · ' + g.venue, tab: 'vb' });
+      });
+    }
+    if (shows && on('TELEGRAM_TOPIC_CINEMA', 'cinema')) {
+      (m.my_shows || []).forEach(function (x) {
+        var s = wp(x.starts_at);
+        if (day(x.starts_at) === date) items.push({ time: s.hour + ':' + s.minute, text: 'Кино · ' + (x.display || x.film), tab: 'cinema' });
+      });
+    }
+    items.sort(function (x, y) { return (x.time ? 0 : 1) - (y.time ? 0 : 1) || x.time.localeCompare(y.time); });
+    return items.slice(0, 5).map(function (x) {
+      var r = add(el('div', 'row htr'), el('span', 'htm', x.time), el('span', 'tx t', x.text));
+      return x.tab && tabShown(x.tab) ? tap(r, function () { show(x.tab); }) : r;
+    });
+  }
+  // home's answer, fetched: the settings, the modules and the bell's count it carries are taken on the way (the settings
+  // unless a save of his is on its way or came after the request left).
+  function homeFetch() {
+    var gen = prefsGen;
+    return api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
+      if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
+      if (j) setModules(j.modules);
+      if (j && typeof j.notif_unread === 'number') setUnread(j.notif_unread);
+      return j;
+    });
+  }
+  // «Главная» hidden (26.10.2026): its calendar feed over the task list of «Задачи» — today's timed tasks, events, games
+  // and shows, then tomorrow's as «Завтра» lists them, from home's answer. One card that folds, and hides, as
+  // «Календарь» on «Главная» does (prefs.home, key calendar); null — nothing today or tomorrow, or the card hidden.
+  function calFeedCard(j) {
+    if (viewPrefs('home').hidden.indexOf('calendar') >= 0) return null;
+    var p = wp(Date.now()), today = (j.morning && j.morning.today) || p.year + '-' + p.month + '-' + p.day, tm = addDays(today, 1);
+    var td = j.tasks || {}, down = !j.morning || j.morning.calendar === null;
+    var now = dayRows(j, today, (td.today || []).filter(function (t) { return t.due_time; }), true);
+    var next = dayRows(j, tm, td.tomorrow || [], true);
+    if (!now.length && !next.length && !down) return null;
+    var c = mkCard('calendar', 'Календарь');
+    if (down) c.firstChild.appendChild(pill('недоступно', 'warn'));
+    if (now.length) add(c, el('div', 'mday mnow', 'Сегодня · ' + WEEK[wd(today)] + ' ' + dm(today)));
+    now.forEach(function (r) { c.appendChild(r); });
+    if (next.length) add(c, el('div', 'mday', 'Завтра · ' + WEEK[wd(tm)] + ' ' + dm(tm)));
+    next.forEach(function (r) { c.appendChild(r); });
+    c.mfs = [now.length ? 'сегодня ' + now.length : '', next.length ? 'завтра ' + next.length : ''];
+    return foldCard('home', c, 'calendar');
+  }
+  // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: the month in one line; a tap opens its review,
+  // done() after a write there. On «Главная», and over «Деньги» while «Главная» is hidden (moneyReviewTop).
+  function moneyReviewCard(r, done) {
+    var t = moneyReviewHomeText(r), c = mkCard('calendar-check', t.title), box = el('div', 'mbud mhome');
+    add(box, el('div', 'mbl', t.line), r.accepted ? pill(t.sub, 'good') : el('div', 'mu', t.sub));
+    function open() { moneyReviewSheet(r.month, c, done); }
+    c.mfs = [t.line];
+    c.appendChild(tap(box, open));
+    return c;
+  }
+  // The review over «Деньги» (26.10.2026): while «Главная» is hidden, on the current month, money_month's money_review
+  // (the home card's) — null else.
+  function moneyReviewTop(j, done) {
+    return !tabShown('home') && j.month === monthNow() && moneyReviewOn(j) ? moneyReviewCard(j.money_review, done) : null;
   }
 
   function homeView() {
@@ -2580,14 +2661,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       c.mfs = [mtZl(d.total), moneyDebtDiff(d, 'num')];
       c.appendChild(tap(box, open));
     }
-    // «Октябрь закрыт» (docs/specs/money-8.md §1), the 1st to the 7th: the month in one line; a tap opens its review.
-    function reviewCard(r) {
-      var t = moneyReviewHomeText(r), c = card('calendar-check', t.title), box = el('div', 'mbud mhome');
-      add(box, el('div', 'mbl', t.line), r.accepted ? pill(t.sub, 'good') : el('div', 'mu', t.sub));
-      function open() { moneyReviewSheet(r.month, c, function () { cacheDrop('home'); load(); }); }
-      c.mfs = [t.line];
-      c.appendChild(tap(box, open));
-    }
+    // «Октябрь закрыт» (moneyReviewCard).
+    function reviewCard(r) { cards[slot] = moneyReviewCard(r, function () { cacheDrop('home'); load(); }); }
     // Today's post: its idea, the language and how far it got; a tap opens the tab.
     function liCard(p) {
       var c = card('linkedin', 'LinkedIn', 'сегодня пост');
@@ -2605,7 +2680,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       } catch (e) {}
       text(greet, d + (h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + ', Валерий');
     }
-    function modOn(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
     // A tile: the icon (a name or a node: an account's logo) and the name, the value (vcls: s smaller, vw wrapped, bad /
     // warn / vmu its colour), a line under it (a string or a node); a tap runs go(tile).
     function tile(ic, k, v, vcls, sub, go) {
@@ -2784,27 +2858,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // nothing tomorrow, no card.
     function tomorrow(j, today) {
       clear(tmr);
-      var m = j.morning || {}, tm = addDays(today, 1), items = [];
-      ((j.tasks && j.tasks.tomorrow) || []).forEach(function (t) {
-        items.push({ time: t.due_time ? String(t.due_time).slice(0, 5) : '', text: t.title, tab: 'tasks' });
-      });
-      (m.calendar_view || []).forEach(function (x) {
-        if (x.date === tm) items.push({ time: x.time || '', text: (x.kind === 'work' ? x.icon + ' ' : '') + x.text });
-      });
-      if (modOn('TELEGRAM_TOPIC_VOLLEYBALL', 'vb')) {
-        (m.my_games || []).forEach(function (g) {
-          var s = wp(g.starts_at);
-          if (s.year + '-' + s.month + '-' + s.day === tm) items.push({ time: s.hour + ':' + s.minute, text: 'Волейбол · ' + g.venue, tab: 'vb' });
-        });
-      }
-      if (!items.length) return;
-      items.sort(function (x, y) { return (x.time ? 0 : 1) - (y.time ? 0 : 1) || x.time.localeCompare(y.time); });
+      var tm = addDays(today, 1), rows = dayRows(j, tm, (j.tasks && j.tasks.tomorrow) || []);
+      if (!rows.length) return;
       var c = mkCard('calendar', 'Завтра');
       c.firstChild.appendChild(el('span', 'mu', WEEK[wd(tm)] + ' ' + dm(tm)));
-      items.slice(0, 5).forEach(function (x) {
-        var r = add(el('div', 'row htr'), el('span', 'htm', x.time), el('span', 'tx t', x.text));
-        c.appendChild(x.tab && tabShown(x.tab) ? tap(r, function () { show(x.tab); }) : r);
-      });
+      rows.forEach(function (r) { c.appendChild(r); });
       tmr.appendChild(c);
     }
     function render(j) {
@@ -2866,15 +2924,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // The answer carries the settings too: taken unless a save of his is on its way or came after the request left.
     function load() {
       swr({ key: 'home', box: body, n: 4, live: function () { return current === 'home'; },
-        fetch: function () {
-          var gen = prefsGen;
-          return api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
-            if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
-            if (j) setModules(j.modules);
-            if (j && typeof j.notif_unread === 'number') setUnread(j.notif_unread);
-            return j;
-          });
-        }, render: render, retry: load });
+        fetch: homeFetch, render: render, retry: load });
     }
     // A settings change redraws the cards and «Карточки на «Сегодня»» or a card's sheet if one is open.
     prefsHook = { tab: 'home', fn: function (focus) {
@@ -3270,7 +3320,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var chips = el('div', 'hs tch'), body = el('div', wide() ? 'tboard' : '');
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', 'Метка');
-    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), chips, body);
+    // feed: «Главная»'s calendar while it is hidden (calFeedCard), between the field and the list.
+    var feed = el('div'), feedLast = null;
+    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), feed, chips, body);
     // What the server understood: « · до пт 24.10 · 15:00 · Pomoc».
     function parsedLine(p) {
       var s = [p.due_date ? 'до ' + WEEK[wd(p.due_date)] + ' ' + dm(p.due_date) : '', p.due_time ? String(p.due_time).slice(0, 5) : '',
@@ -3866,8 +3918,24 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           render();
         }, retry: load });
     }
+    function paintFeed(j) {
+      feedLast = j;
+      clear(feed);
+      var c = calFeedCard(j);
+      if (c) feed.appendChild(c);
+    }
+    // From home's answer, cached first; a failure leaves it as it is.
+    function loadFeed() {
+      if (tabShown('home')) return;
+      delete HOMEF.foldTmp.calendar;
+      swr({ key: 'home', box: feed, n: 0, live: function () { return current === 'tasks'; }, fetch: homeFetch,
+        render: paintFeed, fail: noop });
+    }
+    // «Скрыть» or a mode from the card's sheet: the feed drawn again.
+    prefsHook = { tab: 'tasks', fn: function () { if (feedLast && !tabShown('home')) paintFeed(feedLast); } };
     drawChips();
     load();
+    loadFeed();
   }
 
   // --- «Легализация» (docs/specs/legal.md) ---
@@ -10423,7 +10491,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       tr.onclick = function () { moneySheet(null, load, tr, 'transfer'); };
       var head = add(el('div', 'card mhead'), moneyNav(function (n) { moneyGo(n, load); }, j.month), moneyDailyBox(j, load),
         add(el('div', 'mtop'), el('div', 'msum', moneyFmt(j.total)), moneyVs(j), add(el('div', 'macts'), tr, menu, add1)), moneyIncomeLine(j));
-      body.appendChild(head);
+      // «Октябрь закрыт» first while «Главная» is hidden (moneyReviewTop).
+      add(body, moneyReviewTop(j, load), head);
       moneySwipe(head, function (n) { moneyGo(n, load); });
       moneySwipe(charts, function (n) { moneyGo(n, load); });
       var rows = j.rows || [];
@@ -10757,13 +10826,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return o.concat(HOME_KEYS.filter(function (k) { return o.indexOf(k) < 0; }));
   }
   // New settings (normalized) on screen: the rail, the bar and the sheet; a tab hidden right now gives way to
-  // «Сегодня»; else the view redraws (quiet: the caller draws it). focus: [card, key, button] to keep the keyboard.
+  // homeTab(); else the view redraws (quiet: the caller draws it). focus: [card, key, button] to keep the keyboard.
   function setPrefs(p, focus, quiet) {
     if (JSON.stringify(p) === JSON.stringify(prefs)) return;
     var was = current && tabShown(current);
     prefs = p;
     drawBar();
-    if (was && !tabShown(current)) show('home');
+    if (was && !tabShown(current)) show(homeTab());
     else if (!quiet && prefsHook && prefsHook.tab === current) prefsHook.fn(focus);
   }
   // A new list of modules from the server: kept for the next start, the «Модули» card redrawn.
@@ -10845,7 +10914,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var b = [].filter.call(r.querySelectorAll('button'), function (x) { return x.f === focus[2] && !x.disabled; })[0];
     (b || r.querySelector('button')).focus();
   }
-  // «Вкладки»: every tab with a toggle; «Сегодня» and «Что нового» always stay.
+  // «Вкладки»: every tab with a toggle; «Что нового» (the settings) always stays.
   function tabsCard() {
     var card = mkCard('more', 'Вкладки'), rows = el('div');
     card.appendChild(rows);
@@ -11799,7 +11868,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     moneyCardsInto: moneyCardsInto, viewPrefs: viewPrefs, moneyFold: moneyFold, moneySpendsLine: moneySpendsLine, moneyCardOn: moneyCardOn, moneyCardOrder: moneyCardOrder, moneyPrefsHook: moneyPrefsHook, moneyEmpty: moneyEmpty, moneyDay: moneyDay, moneyDayWord: moneyDayWord, moneyShare: moneyShare, moneyTime: moneyTime, monthLabel: monthLabel, moneyHomeOn: moneyHomeOn, moneyHomeText: moneyHomeText,
     moneyDailyText: moneyDailyText, moneyDailySheet: moneyDailySheet, moneyDailyBox: moneyDailyBox,
     moneyDebtOn: moneyDebtOn, moneyDebtCard: moneyDebtCard, moneyDebtSheet: moneyDebtSheet, moneyDebtDiffText: moneyDebtDiffText, moneyDebtForecast: moneyDebtForecast,
-    moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
+    moneyReviewOn: moneyReviewOn, moneyReviewHomeText: moneyReviewHomeText, moneyReviewSheet: moneyReviewSheet, moneyReviewTop: moneyReviewTop, moneyYearSheet: moneyYearSheet, VB_FROM: VB_FROM, CAT_EMO: CAT_EMO, mechRu: mechRu, levelRu: levelRu, hallRu: hallRu,
     get current() { return current; }, get login() { return login; }
   };
   window.DESKTOP = window.DESKTOP || { views: {} };

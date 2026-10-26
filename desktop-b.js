@@ -597,7 +597,8 @@
       (j.other || []).forEach(function (o) { tiles.push({ k: 'Не в злотых', v: A.moneyFmt(o.sum, o.currency) }); });
       // «Сегодня можно ещё N zł» (docs/specs/money-9.md) over the tiles, the current month only.
       var daily = A.moneyDailyBox(j, load);
-      add(body, add(el('div', 'card dmdaily'), daily), D.tiles(tiles));
+      // «Октябрь закрыт» first while «Главная» is hidden (index.html moneyReviewTop; an older page has none).
+      add(body, A.moneyReviewTop ? A.moneyReviewTop(j, load) : null, add(el('div', 'card dmdaily'), daily), D.tiles(tiles));
       daily.parentNode.hidden = daily.hidden;
       daily.onfill = function () { daily.parentNode.hidden = daily.hidden; };
       // «Долг по картам» (docs/specs/money-12.md §2): first in the right column (his order), whichever month is on screen.
