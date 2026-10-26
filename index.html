@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 09:07">
+<meta name="published" content="2026-10-26 13:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -2641,7 +2641,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           if (!dd) return none('wallet', 'сегодня можно', lost(j.money), money);
           var dt = moneyDailyText(dd), over = dd.left < 0;
           tile('wallet', over && !dt.tight ? 'перерасход сегодня' : 'сегодня можно', dt.tight ? 'только необходимое' : mtZl(dd.left),
-            dt.tight ? 'vw warn' : over ? 'bad' : '', dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' + (dd.step && dd.step.per_day <= dd.per_day_calc + 0.005 ? ' до ' + dm(dd.step.until) : '') : dd.step ? 'своих нет до ' + dm(dd.step.until) : 'до зарплаты ' + dm(dd.payday), money);
+            dt.tight ? 'vw warn' : over ? 'bad' : '', (dd.per_day > 0 ? 'из ' + mtZl(dd.per_day) + ' в день' + (dd.step && dd.step.per_day <= dd.per_day_calc + 0.005 ? ' до ' + dm(dd.step.until) : '') : dd.step ? 'своих нет до ' + dm(dd.step.until) : 'до зарплаты ' + dm(dd.payday)) +
+            (dd.from_limit > 0 ? ' · с\u00a0лимитом\u00a0карт' : ''), money);
         },
         // Days to payday and what is paid before it (25.10.2026, his choice instead of the cards' debt).
         payday: function () {
@@ -7951,19 +7952,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // (per_day ≤ 0, docs/specs/money-12.md §1): «До 10-го — только необходимое» in amber — an honest state, not an error.
   function moneySgn(v) { return (v < 0 ? '−' : '') + mtInt(v); }
   // By income dates (26.10.2026): while the day comes from the money before the next income (d.step, his Pomoc on the
-  // 5th), the dates in the lines are that income's, and «с 5.11 — M» says what opens after it.
+  // 5th), the dates in the lines are that income's, and «с 5.11 — M» says what opens after it. With the cards' free
+  // limit counted (d.from_limit > 0, his switch 26.10.2026) both lines end in «· с лимитом карт» — that part is a debt.
   function moneyDailyText(d) {
     var over = d.left < 0, tight = d.per_day <= 0, st = d.step && d.step.per_day * 100 <= Math.round(d.per_day_calc * 100) + 0.5 ? d.step : null;
     var to = st ? st.until : d.payday, then = st ? ' · с ' + dm(st.until) + ' — ' + moneySgn(st.after_per_day) + ' в день' : '';
+    var lim = d.from_limit > 0 ? ' · с\u00a0лимитом\u00a0карт' : '';
     return { big: tight ? 'До ' + Number(to.slice(8, 10)) + '-го — только необходимое' : over ? 'Перерасход ' + mtZl(-d.left)
       : 'Сегодня можно ещё ' + mtZl(d.left), cls: tight ? 'warn' : over ? 'neg' : '', tight: tight,
       sub: (tight ? (st ? 'своих денег до ' + st.label + ' ' + dm(to) + ' не хватает' : 'своих денег до зарплаты ' + dm(to) + ' не хватает')
         : moneySgn(d.per_day) + ' в день до ' + (st ? dm(to) : 'зарплаты ' + dm(to))) + then +
-        (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : ''),
+        (d.obligations_sum ? ' · обязательное ' + mtZl(d.obligations_sum) : '') + lim,
       own: d.own_limit != null && !tight ? 'свой лимит · по деньгам выходит ' + moneySgn(d.per_day_calc) + ' в день' : '',
       // One line under the headline (the month's head, variant A 24.10.2026): «90 в день до 10.11 · обязательное 156».
       short: (tight ? 'своих не хватает до ' + dm(to) : moneySgn(d.per_day) + ' в день до ' + dm(to)) +
-        (d.obligations_sum ? ' · обязательное ' + mtInt(d.obligations_sum) : '') };
+        (d.obligations_sum ? ' · обязательное ' + mtInt(d.obligations_sum) : '') + lim };
   }
   // The line as a button (the «Сегодня» card, the month's head): a tap opens «Бюджет на день», where the full sub-line
   // and «свой лимит · по деньгам выходит …» stay; done() after a save.
@@ -8003,9 +8006,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       clear(box);
       var t = moneyDailyText(d);
       add(box, el('div', 'mdbig ' + t.cls, t.big), el('div', 'mu msrc', t.sub), t.own ? el('div', 'mu msrc', t.own) : null);
-      add(box, head('wallet', 'Деньги сейчас · ' + mtZl(d.money)));
+      add(box, head('wallet', 'Деньги сейчас' + (d.from_limit > 0 ? ' с лимитом карт' : '') + ' · ' + mtZl(d.money)));
       d.accounts.filter(function (a) { return a.amount > 0; }).forEach(function (a) {
-        box.appendChild(mrRow(moneyAcctTile(a.key), a.name, '', el('span', 'pr', moneyNb(a.amount))));
+        box.appendChild(mrRow(moneyAcctTile(a.key), a.name, a.from_limit > 0 ? 'из них лимит карты ' + mtZl(a.from_limit) + ' — в долг' : '',
+          el('span', 'pr', moneyNb(a.amount))));
       });
       if (d.spent_back > 0) box.appendChild(el('div', 'mu msrc', 'Сегодняшние траты (' + mtZl(d.spent_back) + ') считаются от начала дня: они снимаются только со «можно ещё».'));
       if (d.incomes.length) {
@@ -8036,8 +8040,35 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         ' zł в день · с ' + dm(d.step.until) + ' — ' + moneySgn(d.step.after_per_day)));
       settings(d);
     }
+    // money_daily_set answered: the sheet, «Деньги» and what is under it redrawn.
+    function saved(j) {
+      if (MONEY.state) MONEY.state.daily = j.daily;
+      cacheDrop('money');
+      cacheDrop('home');
+      toast('Сохранено', 'check');
+      if (box.isConnected) paint(j.daily);
+      if (MONEY.dailyEl && MONEY.dailyEl.isConnected) moneyDailyFill(MONEY.dailyEl);
+      done();
+    }
+    // «Считать свободный лимит карт» (26.10.2026, his «у меня есть кредитные деньги»): the PLN cards' free limit goes
+    // into «можно»; the hint names each card's free sum now, so he sees what it adds — and that it is a debt.
+    function limitSwitch(d) {
+      var on = !!d.config.use_limit, cards = (d.card_limits || []).filter(function (c) { return c.free > 0; });
+      var hint = cards.length ? cards.map(function (c) { return c.name + ': свободно ' + mtZl(c.free); }).join(', ') +
+        ' пойдут в «можно» — это в долг' : 'свободного лимита на картах сейчас нет';
+      var b = add(el('button', 'mlink mmenu'), icon('credit-card'),
+        add(el('span', 'tx'), el('span', 't', 'Считать свободный лимит карт'), el('span', 'mu', hint)), on ? icon('check', 'mfon') : null);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(on));
+      b.onclick = function () {
+        b.disabled = true;
+        haptic();
+        api('miniapp', { action: 'money_daily_set' }, undefined, false, { use_limit: !on }).then(saved, function () { b.disabled = false; });
+      };
+      return add(el('div', 'mmenus'), b);
+    }
     function settings(d) {
-      add(box, head('pen-line', 'Настройки'));
+      add(box, head('pen-line', 'Настройки'), limitSwitch(d));
       var lim = el('input');
       lim.inputMode = 'decimal';
       lim.placeholder = 'по расчёту';
@@ -8096,15 +8127,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         }
         save.disabled = true;
         haptic();
-        api('miniapp', { action: 'money_daily_set' }, undefined, false, { daily: daily, incomes: incomes }).then(function (j) {
-          if (MONEY.state) MONEY.state.daily = j.daily;
-          cacheDrop('money');
-          cacheDrop('home');
-          toast('Сохранено', 'check');
-          if (box.isConnected) paint(j.daily);
-          if (MONEY.dailyEl && MONEY.dailyEl.isConnected) moneyDailyFill(MONEY.dailyEl);
-          done();
-        }, function () { save.disabled = false; });
+        api('miniapp', { action: 'money_daily_set' }, undefined, false, { daily: daily, incomes: incomes }).then(saved,
+          function () { save.disabled = false; });
       };
       add(box, list, add(el('div', 'bar'), more), add(el('div', 'bar mact'), save));
     }
