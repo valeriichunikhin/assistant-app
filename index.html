@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 09:06">
+<meta name="published" content="2026-10-27 10:32">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -819,6 +819,22 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .bnt.bts{flex:none;margin-top:6px;padding-top:0;min-height:2.7em;-webkit-line-clamp:2}.bnt.bts.ok{color:var(--good)}
 .bcfg{flex:none;display:grid;place-items:center;width:30px;height:30px;margin-left:auto;padding:0;border:1px solid var(--line-2);border-radius:8px;background:none;color:var(--fg);cursor:pointer}
 .bcfg .i{width:15px;height:15px}
+/* The third batch (27.10.2026): a row's own ✓ — 44 px to tap, its mark in line with the other rows' leads, the widget's
+   press left still —, an episode's ✓ in a ring, the resin's «/200» and its two counts. */
+.brow.bckr{min-height:45px;padding:0}
+.bck{flex:none;display:grid;place-items:center;width:44px;height:44px;margin:0 -10px 0 -12px;padding:0;border:0;background:none;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.bck .i{transition:transform .12s var(--ease)}.bck:active .i{transform:scale(.86)}.bck:disabled{cursor:default}
+.bck .mk{width:20px;height:20px}.bck .mk.on{color:var(--mark)}
+.brow.done .tx{color:var(--muted);text-decoration:line-through}
+.bw.tap:has(.bck:active){transform:none}
+.bck.bep{margin:0 -8px 0 -4px}
+.bep .i{width:15px;height:15px;padding:6px;box-sizing:content-box;border:1.5px solid var(--line-2);border-radius:50%;color:var(--fg)}
+.bep.acc .i{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}.bep:disabled .i{opacity:.45}
+.bsf{flex:none;display:flex;align-items:flex-end;gap:2px;margin-top:auto}.bsf>.bnt{flex:1;min-width:0;margin-top:0}.bsf>.bck{margin:0 -8px -8px 0}
+.bvd{margin-left:1px;color:var(--muted);font-size:.6em;letter-spacing:0}
+.bsplit .bcol>.bv{margin:0 0 6px}.bsplit .bcol>.mbar{margin:0 0 6px}
+.brs{flex:none;gap:10px}.bst{display:flex;flex-direction:column;gap:1px}.bst .mu{font-size:12px}
+.bst b{font:700 16px/1.2 var(--font-num);font-variant-numeric:tabular-nums}.bst b.good{color:var(--good)}.bst b.warn{color:var(--warn)}
 .tsum .sub.bcsub,.tsum .sub.vline{padding:0 0 10px;color:var(--muted);font-size:13px}
 .btn.bdone{display:none;flex:none;min-height:36px;padding:0 14px}
 .hdr.bediting .btn.bdone{display:inline-flex}.hdr.bediting .date,.hdr.bediting .bell{display:none}
@@ -1000,6 +1016,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-grip-vertical" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
 <symbol id="i-layout-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+<symbol id="i-battery-charging" viewBox="0 0 24 24"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1552,14 +1569,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     ['wish', 'Вишлист', 'gift', 'ml', 'wish'], ['deals', 'Акции на мои товары', 'tag', 'ml', 'picks'],
     ['events', 'События сегодня', 'party-popper', 'ml', 'events'], ['news', 'Новости дня', 'news', 'ml', 'news'],
     ['parcels', 'Посылки', 'package', 'sm', 'dela'], ['gtoday', 'Genshin сегодня', 'book-open', 'sm', 'genshin'],
-    ['countdown', 'Обратный отсчёт', 'timer', 's']];
+    ['countdown', 'Обратный отсчёт', 'timer', 's'],
+    // 27.10.2026, the third batch: the resin counted on live, his volleyball booking and the open games on his days.
+    ['resin', 'Смола, поручения, экспедиции', 'battery-charging', 'sm', 'genshin'], ['volley', 'Волейбол: запись и игры', 'ball', 'sml', 'vb']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin']],
-    ['Отдых', ['vb', 'cinema', 'series']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -2496,7 +2515,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return { daily: money, revolut: money, payday: money, month: money, debts: money, card_debt: money, accounts: money, review: money,
       payments: money, goals: money, spend: money,
       tasks: !tabShown('tasks'), addtask: !tabShown('tasks'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
-      gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
+      gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
       events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela') }[w] || false;
   }
@@ -2557,7 +2576,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     state: ['money:state', bsrcApi('miniapp', 'money_state')], films: ['films:lists', bsrcApi('miniapp', 'films_lists', 15000)],
     wish: ['wish', bsrcApi('telegram-webhook', 'wish')], picks: ['picks:batches', bsrcApi('telegram-webhook', 'picks')],
     events: ['feed:events', bsrcApi('miniapp', 'events')], news: ['feed:all', bsrcApi('miniapp', 'news', undefined, { stream: 'all' })],
-    dela: ['dela', bsrcApi('telegram-webhook', 'dela')], genshin: ['genshin', bsrcApi('miniapp', 'genshin', 25000)] };
+    dela: ['dela', bsrcApi('telegram-webhook', 'dela')], genshin: ['genshin', bsrcApi('miniapp', 'genshin', 25000)],
+    vb: ['vb', bsrcApi('miniapp', 'volleyball', 25000)] };
   // k → {t, j}, the source's last answer here (kept beside the cache, which refuses a big one), or {fail} when the
   // request failed with nothing cached.
   var bsrcMem = {};
@@ -2585,6 +2605,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (!hit && !(bsrcMem[k] && bsrcMem[k].j)) { bsrcMem[k] = { fail: true }; boardRedraw(); }
     });
   }
+  // A widget's own change (a ✓ on the list, an episode seen) written into its source's answer — the cache and the copy
+  // here — so that the board's next redraw draws it too.
+  function bsrcPut(k, fn) {
+    var j = boardSrc(k);
+    if (!j) return;
+    fn(j);
+    cacheSet(BSRC[k][0], JSON.stringify(j));
+    bsrcMem[k] = { t: Date.now(), j: j };
+  }
+  // Rows ticked on the board (the list's ✓, a task's ✓) stay where they are, done, until «Главная» is opened again: a
+  // redraw does not pull a row out from under the finger. Keys as the marks': 'item:<id>', 'task:<id>'.
+  var boardTicked = {};
   // WMO weather codes (Open-Meteo) → [icon, words]; a clear or partly cloudy night gets the moon.
   function wmo(c, day) {
     return c === 0 ? [day ? 'sun' : 'moon', 'ясно'] : c <= 2 ? [day ? 'cloud-sun' : 'cloud-moon', 'малооблачно'] : c === 3 ? ['cloud', 'пасмурно'] :
@@ -2613,6 +2645,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var dd = j.money && j.money.daily;
     n.appendChild(head);
     n.bid = b.id;
+    n.bw = b.w;
     function big(v, cls) { return n.appendChild(el('div', 'bv' + (cls ? ' ' + cls : ''), v)); }
     function note(v, cls) { return n.appendChild(v && v.nodeType ? add(el('div', 'bnt' + (cls ? ' ' + cls : '')), v) : el('div', 'bnt' + (cls ? ' ' + cls : ''), v)); }
     function line(v, cls) { return n.appendChild(el('div', 'bl' + (cls ? ' ' + cls : ''), v)); }
@@ -2634,6 +2667,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var cap = s === 'l' ? 8 : 3;
     // A list row's text: a title, and on a large widget a muted second line under it.
     function two(t, sub) { return s === 'l' && sub ? add(el('span', 'tx'), el('div', 't', t), el('div', 'mu', sub)) : el('span', 'tx', t); }
+    // A row's own ✓ (27.10.2026): a 44 px button before it, drawn ticked or not by paint(on), which also greys the row;
+    // a tap runs fn(paint, button) and nothing else — the row's and the widget's own taps stay theirs. Off in the catalog.
+    function tick(x, on, lbl, fn) {
+      var bt = el('button', 'bck');
+      bt.type = 'button';
+      bt.setAttribute('aria-label', lbl);
+      function paint(v) {
+        clear(bt).appendChild(icon(v ? 'check-square' : 'square', 'mk' + (v ? ' on' : '')));
+        bt.setAttribute('aria-pressed', String(!!v));
+        x.classList.toggle('done', !!v);
+      }
+      paint(on);
+      if (preview) bt.disabled = true;
+      else bt.onclick = function (ev) { ev.stopPropagation(); fn(paint, bt); };
+      x.insertBefore(bt, x.firstChild);
+      x.classList.add('bckr');
+      return bt;
+    }
+    // After a change on a row the board draws it again from the source when a redraw has replaced the row since, or when
+    // another widget of the same kind shows the same rows.
+    function stale(bt) {
+      if (!bt.isConnected || (n.parentNode && [].some.call(n.parentNode.children, function (x) { return x !== n && x.bw === b.w; }))) boardRedraw();
+    }
     var draw = {
       // The day's amount (red over it, amber «только необходимое»), the period's days as squares — gone ones faded,
       // today's in the state's colour — and the payday's step or the days to it, «с лимитом карт» when the cards count.
@@ -2745,9 +2801,28 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           return note(sum || 'на сегодня ничего');
         }
         line(sum || 'на сегодня ничего', 'mu' + (od ? ' bad' : ''));
-        var open = (tk.today || []).filter(function (t) { return t.status !== 'done'; }), cap = s === 'l' ? 6 : 2;
+        // A ✓ still on its way is drawn as tapped; one ticked here stays in its place, done.
+        (tk.today || []).forEach(function (t) {
+          var mk = marks[taskKey(t)];
+          if (mk) setDone(t, mk.want);
+          else t.done = t.status === 'done';
+        });
+        var open = (tk.today || []).filter(function (t) { return t.status !== 'done' || boardTicked[taskKey(t)]; }), cap = s === 'l' ? 6 : 2;
         open.slice(0, cap).forEach(function (t) {
-          row('square', t.title, t.due_time ? String(t.due_time).slice(0, 5) : null, function () { taskOpenId = t.id; show('tasks'); });
+          var x = row(null, t.title, t.due_time ? String(t.due_time).slice(0, 5) : null, function () { taskOpenId = t.id; show('tasks'); });
+          // A repeating one moves to its next date (rollTask) and comes back only through its toast's «Вернуть».
+          function on() { return t.status === 'done' || !!t.ticking || (!!t.repeat && t.due_date > today); }
+          tick(x, on(), 'Сделано: ' + t.title, function (paint, bt) {
+            if (t.repeat && on()) return;
+            haptic();
+            boardTicked[taskKey(t)] = 1;
+            if (t.repeat) { t.ticking = true; paint(true); }
+            markTask(t, function () {
+              if (!t.rolling) t.ticking = false;
+              paint(on());
+              stale(bt);
+            }, null, function () { t.ticking = false; paint(on()); stale(bt); });
+          });
         });
         if (nt > Math.min(open.length, cap)) line('+' + (nt - Math.min(open.length, cap)) + ' ещё', 'mu');
       },
@@ -2904,16 +2979,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         var l = src('list');
         if (!l) return wait(l);
         var open = (l.items || []).filter(function (i) { return !i.done; });
+        // Wide and large: the ✓ of each (the list's own toggle); one ticked here stays in its place, done.
+        var rows = (l.items || []).filter(function (i) { return !i.done || boardTicked[itemKey(i)]; });
         r.go = tab('list');
         name.textContent = 'Купить';
-        if (!open.length) return quiet('список пуст');
+        if (!rows.length || (s === 's' && !open.length)) return quiet('список пуст');
         if (s === 's') {
           big(grouped(open.length));
           return note(open.slice(0, 4).map(function (i) { return i.text; }).join(', '));
         }
-        line(open.length + ' ' + plural(open.length, ['позиция', 'позиции', 'позиций']), 'mu');
-        open.slice(0, cap).forEach(function (i) { row(i.emoji ? el('span', 'bem', i.emoji) : 'square', i.text, i.qty > 1 ? '×' + i.qty : null); });
-        if (open.length > cap) line('+' + (open.length - cap) + ' ещё', 'mu');
+        line(open.length ? open.length + ' ' + plural(open.length, ['позиция', 'позиции', 'позиций']) : 'всё куплено', 'mu');
+        rows.slice(0, cap).forEach(function (i) {
+          var x = row(i.emoji ? el('span', 'bem', i.emoji) : null, i.text, i.qty > 1 ? '×' + i.qty : null);
+          tick(x, i.done, 'Куплено: ' + i.text, function (paint, bt) {
+            haptic();
+            boardTicked[itemKey(i)] = 1;
+            markItem(i, function () {
+              paint(i.done);
+              bsrcPut('list', function (a) { (a.items || []).forEach(function (o) { if (o.id === i.id) o.done = i.done; }); });
+              stale(bt);
+            });
+          });
+        });
+        if (rows.length > cap) line('+' + (rows.length - cap) + ' ещё', 'mu');
       },
       // What is paid before payday (money's daily obligations): their sum, then each with its day and amount.
       payments: function () {
@@ -3008,7 +3096,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         r.go = tab('films');
         if (!list.length) return quiet('сериалов нет');
         function fresh(f) { var a = f.progress.aired_on; return !f.progress.waiting && !!a && a <= today && days(a, today) <= 2; }
-        function rank(f) { return fresh(f) ? 0 : f.progress.waiting ? 2 : 1; }
+        // A series seen here keeps its place until «Главная» is opened again (its rank of before, in boardTicked).
+        function rank(f) { var k = boardTicked['tv:' + f.tmdb_id]; return k != null ? k : fresh(f) ? 0 : f.progress.waiting ? 2 : 1; }
         function next(f) {
           var q = f.progress, nx = q.of != null && q.episode >= q.of ? [q.season + 1, 1] : [q.season, q.episode + 1];
           if (q.waiting) return q.next_air ? 'жду S' + q.next_air.season + 'E' + q.next_air.episode + (q.next_air.date ? ' · ' + dm(q.next_air.date) : '') : 'жду новый сезон';
@@ -3016,11 +3105,70 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         }
         list.sort(function (x, y) { return rank(x) - rank(y); });
         r.now = list.some(fresh);
-        if (s === 's') {
-          line(list[0].title, 'bt b2');
-          return note(fresh(list[0]) ? add(el('span'), pill('новая серия', 'acc'), document.createTextNode(' ' + next(list[0]).replace('вышла ', ''))) : next(list[0]));
+        // «✓ посмотрел» (series_next, as «+1 серия» in «Фильмы»): the next episode at once, the answer's position after it,
+        // the old one back on a failure; none while he waits for an episode, none once the series is seen.
+        function seen(f, box, paint) {
+          if (f.status === 'seen' || f.progress.waiting) return;
+          var bt = el('button', 'bck bep' + (fresh(f) ? ' acc' : ''));
+          bt.type = 'button';
+          bt.setAttribute('aria-label', 'Посмотрел ' + next(f).replace(/^(вышла|дальше) /, '') + ': ' + f.title);
+          bt.appendChild(icon('check'));
+          if (preview || f.moving) bt.disabled = true;
+          else {
+            bt.onclick = function (ev) {
+              ev.stopPropagation();
+              if (bt.disabled) return;
+              if (boardTicked['tv:' + f.tmdb_id] == null) boardTicked['tv:' + f.tmdb_id] = rank(f);
+              var was = f.progress, q = Object.assign({}, was), nx = q.of != null && q.episode >= q.of ? [q.season + 1, 1] : [q.season, q.episode + 1];
+              q.season = nx[0];
+              q.episode = nx[1];
+              q.aired_on = null;
+              f.moving = true;
+              haptic();
+              f.progress = q;
+              paint();
+              api('miniapp', { action: 'series_next' }, 15000, true, { tmdb_id: f.tmdb_id }).then(function (j) {
+                f.moving = false;
+                f.progress = Object.assign({}, j.progress, { aired_on: j.progress.waiting ? null : was.aired_on });
+                f.status = j.status;
+                if (j.status === 'seen') toast('Досмотрел — поставь оценку в «Фильмах»', 'star');
+                bsrcPut('films', function (a) {
+                  (a.watching || []).forEach(function (o) { if (o.tmdb_id === f.tmdb_id) { o.progress = f.progress; o.status = f.status; } });
+                });
+                paint();
+                stale(box);
+              }, function (e) {
+                f.moving = false;
+                f.progress = was;
+                paint();
+                if (!e.login) toast(SAVE_FAILED);
+              });
+            };
+          }
+          box.appendChild(bt);
         }
-        list.slice(0, cap).forEach(function (f) { row(null, f.title, fresh(f) ? pill(next(f), 'acc') : next(f)); });
+        function say(f) { return f.status === 'seen' ? pill('досмотрел', 'good') : fresh(f) ? pill(next(f), 'acc') : next(f); }
+        if (s === 's') {
+          var f0 = list[0];
+          line(f0.title, 'bt b2');
+          var foot = n.appendChild(el('div', 'bsf'));
+          var paint0 = function () {
+            add(clear(foot), add(el('div', 'bnt'), f0.status === 'seen' ? pill('досмотрел', 'good') : fresh(f0)
+              ? add(el('span'), pill('новая серия', 'acc'), document.createTextNode(' ' + next(f0).replace('вышла ', ''))) : document.createTextNode(next(f0))));
+            seen(f0, foot, paint0);
+          };
+          return paint0();
+        }
+        list.slice(0, cap).forEach(function (f) {
+          var x = row(null, f.title, null, null, 'bckr');
+          var paint = function () {
+            while (x.childNodes.length > 1) x.removeChild(x.lastChild);
+            var v = say(f);
+            x.appendChild(v.nodeType ? add(el('span', 'pr'), v) : el('span', 'pr', v));
+            seen(f, x, paint);
+          };
+          paint();
+        });
       },
       // His wishlist: an item back in stock first, then those at their target, then the nearest to it; «сейчас» — one
       // back in stock within two days.
@@ -3140,6 +3288,84 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         big(dn === 0 ? 'сегодня' : grouped(Math.abs(dn)), dn === 0 ? 'vs' : '');
         note((dn ? (dn > 0 ? plural(dn, ['день', 'дня', 'дней']) : plural(-dn, ['день', 'дня', 'дней']) + ' назад') + ' · ' : '') + WEEK[wd(c.date)] + ' ' + dm(c.date) +
           (c.date.slice(0, 4) !== today.slice(0, 4) ? '.' + c.date.slice(0, 4) : ''));
+      },
+      // The resin now, counted on from the Mac's snapshot (genshin_state, every 30 minutes): one per 8 minutes to the cap,
+      // from HoYoLAB's «full at» when the snapshot has it; and when it is full, by Warsaw's clock. Wide — the commissions
+      // done of four and the expeditions back. «сейчас» from 160.
+      resin: function () {
+        var g = src('genshin');
+        if (!g) return wait(g);
+        var st = g.state || {}, nt = st.notes || {}, rs = nt.resin;
+        r.go = tab('genshin');
+        name.textContent = 'Смола';
+        if (!rs || typeof rs.current !== 'number' || !(rs.max > 0)) return quiet('снимка смолы нет');
+        var at = Date.parse(st.notes_at) || now, full = Date.parse(rs.resin_full_at);
+        if (!(full > 0)) full = at + Math.max(0, rs.max - rs.current) * 480000;
+        var cur = rs.current >= rs.max ? rs.current : full <= now ? rs.max : Math.max(rs.current, rs.max - Math.ceil((full - now) / 480000));
+        var fq = wp(full), fd = fq.year + '-' + fq.month + '-' + fq.day, max = cur >= rs.max;
+        var when = max ? 'уже полная' : 'полная ' + (fd === today ? '' : fd === addDays(today, 1) ? 'завтра ' : WEEK[wd(fd)] + ' ' + dm(fd) + ' ') +
+          'в ' + fq.hour + ':' + fq.minute;
+        r.now = cur >= 160;
+        var v = add(el('div', 'bv'), document.createTextNode(String(cur)), el('span', 'bvd', '/' + rs.max)), bar = moneyBar(cur / rs.max, r.now ? 'warn' : '');
+        v.setAttribute('aria-label', cur + ' из ' + rs.max);
+        if (s === 's') {
+          add(n, v, bar);
+          return note(when, max ? 'warn' : '');
+        }
+        var c = nt.commissions, ex = nt.expeditions || [], back = ex.filter(function (e) { return e.done || (e.finish_at && Date.parse(e.finish_at) <= now); }).length;
+        var right = el('div', 'bcol brs');
+        if (c && c.total) {
+          add(right, add(el('div', 'bst'), el('span', 'mu', 'Поручения'),
+            el('b', c.claimed ? 'good' : c.done >= c.total ? 'warn' : '', c.done + '/' + c.total)));
+        }
+        if (ex.length) add(right, add(el('div', 'bst'), el('span', 'mu', 'Экспедиции'), el('b', back ? 'warn' : '', back ? 'готово ' + back + '/' + ex.length : 'в пути')));
+        add(n, add(el('div', 'bsplit'), add(el('div', 'bcol'), v, bar, el('div', 'mu' + (max ? ' warn' : ''), when)), right.firstChild ? right : null));
+      },
+      // His next booked game — the day, the time, the hall, taken/total («10/12», never the free spots) — and on a wide
+      // or large widget the open games on his priority days (the tab's filter, a flame as there), not on an evening he
+      // is busy. The same answer as «Волейбол» (miniapp ?action=volleyball). «сейчас» on a game day.
+      volley: function () {
+        var v = src('vb');
+        if (!v) return wait(v);
+        if (!v.filter) return quiet('нет данных');
+        var games = v.games || [], by = {}, hm = p.hour + ':' + p.minute, pri = v.filter.priority_weekdays || [];
+        games.forEach(function (g) { by[g.id] = g; });
+        var mine = (v.my_games || []).filter(function (g) { return Date.parse(g.ends_at || g.starts_at) > now; });
+        var open = games.filter(function (g) {
+          return !g.mine && !g.full && !g.busy && pri.indexOf(wd(g.date)) >= 0 && (g.date > today || (g.date === today && g.start_at > hm));
+        });
+        r.go = tab('vb');
+        name.textContent = 'Волейбол';
+        function day(d) { return d === today ? 'сегодня' : d === addDays(today, 1) ? 'завтра' : WEEK[wd(d)] + ' ' + dm(d); }
+        function tt(g) { return g && g.taken != null && g.max_players ? g.taken + '/' + g.max_players : ''; }
+        function at(g) { var q = wp(g.starts_at); return { d: q.year + '-' + q.month + '-' + q.day, t: q.hour + ':' + q.minute }; }
+        var g0 = mine[0], a0 = g0 && at(g0);
+        if (g0) r.now = a0.d === today;
+        if (s === 's') {
+          if (!g0) {
+            if (!open.length) return quiet('записи нет');
+            line('записи нет', 'mu');
+            big(String(open.length));
+            return note(plural(open.length, ['игра', 'игры', 'игр']) + ' в мои дни');
+          }
+          line(day(a0.d), 'mu');
+          big(a0.t);
+          return note([g0.venue, tt(by[g0.activity_id])].filter(Boolean).join(' · '));
+        }
+        if (g0) {
+          big(day(a0.d) + ' · ' + a0.t, 'vs');
+          line([g0.venue, g0.status === 'paid' ? 'оплачено' : 'записан', tt(by[g0.activity_id])].filter(Boolean).join(' · '), 'mu');
+          if (s === 'l' && mine[1]) {
+            var a1 = at(mine[1]);
+            line('дальше: ' + day(a1.d) + ' · ' + a1.t + ' · ' + mine[1].venue, 'mu');
+          }
+        } else line('записи нет', 'bt');
+        if (!open.length) return line(g0 ? 'других игр в мои дни нет' : 'игр в мои дни нет', 'mu');
+        if (s === 'l') line('Игры в мои дни · ' + open.length, 'bday');
+        open.slice(0, s === 'l' ? 8 : 2).forEach(function (g) {
+          var sub = [levelRu(g.lv), g.price != null ? (g.price % 1 ? zl(g.price) : g.price) + ' zł' : ''].filter(Boolean).join(' · ');
+          row('flame', two(day(g.date) + ' · ' + g.start_at + ' · ' + g.venue, sub), tt(g));
+        });
       }
     };
     try {
@@ -3165,6 +3391,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var boardCfgEdit = noop;
 
   function homeView() {
+    boardTicked = {};
     // last: home's answer on screen; draft: the board being edited (null — not editing); nodes: id → its widget.
     var hint = el('div', 'bhint'), wrap = el('div', 'bwrap'), grid = null, last = null, draft = null, nodes = {}, lp = null, drag = null;
     var again = label(el('button', 'btn ghost wide bagain'), 'refresh', 'Обновить');
@@ -3838,9 +4065,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     t.done_at = v ? t.done_at || new Date().toISOString() : null;
   }
   // The ✓ of a task, on the tab and on «Сегодня»: flipped and drawn (render) at once, tasks_done 400 ms after the last tap.
-  // An open repeating task (v3) goes through rollTask instead; moved(t), when given, runs after it moves.
-  function markTask(t, render, moved) {
-    if (t.repeat && !t.done) return rollTask(t, render, moved);
+  // An open repeating task (v3) goes through rollTask instead; moved(t), when given, runs after it moves, failed() after
+  // its roll did not go through.
+  function markTask(t, render, moved, failed) {
+    if (t.repeat && !t.done) return rollTask(t, render, moved, failed);
     var was = !!t.done;
     setDone(t, !was);
     render();
@@ -3853,7 +4081,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // «Сделано» on a repeating task: the server moves it to the next due date and it stays open (the answer's rolled
   // {from, to}, the steps open again); the toast «Сделано · дальше пн 26.10» brings it back once.
-  function rollTask(t, render, moved) {
+  function rollTask(t, render, moved, failed) {
     if (t.rolling) return;
     t.rolling = true;
     api('miniapp', { action: 'tasks_done' }, 15000, true, { id: t.id, done: true }).then(function (j) {
@@ -3884,6 +4112,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       });
     }, function (e) {
       t.rolling = false;
+      if (failed) failed();
       if (!e.login) toast(SAVE_FAILED);
     });
   }
