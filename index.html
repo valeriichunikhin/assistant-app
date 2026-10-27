@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 19:06">
+<meta name="published" content="2026-10-27 19:07">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -3695,7 +3695,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           b.onclick = function () { period(q[0]); };
           seg.appendChild(b);
         });
-        add(hint, seg, el('span', 'tx', pq ? pq[1] + ' ' + pq[2] + ' · перетащи, ✕ — убрать' : 'Перетащи, выбери размер, ✕ — убрать'), add1);
+        add(hint, seg, el('span', 'tx', pq && pq[2] ? pq[1] + ' ' + pq[2] + ' · перетащи, ✕ — убрать' : 'Перетащи, выбери размер, ✕ — убрать'), add1);
         return;
       }
       if (!prefs.board_now || !grid) return;
