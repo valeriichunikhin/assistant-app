@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 19:07">
+<meta name="published" content="2026-10-27 19:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -858,6 +858,26 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .bsf{flex:none;display:flex;align-items:flex-end;gap:2px;margin-top:auto}.bsf>.bnt{flex:1;min-width:0;margin-top:0}.bsf>.bck{margin:0 -8px -8px 0}
 .bvd{margin-left:1px;color:var(--muted);font-size:.6em;letter-spacing:0}
 .bsplit .bcol>.bv{margin:0 0 6px}.bsplit .bcol>.mbar{margin:0 0 6px}
+/* Posters on the board (docs/specs/widget-posters.md, 27.10.2026): beside a series' title or a screening's date, a
+   thumbnail in a series row, the «Последние отметки» grid with the rating under each; no poster or a failed one — the
+   film glyph in the same box (.fp.ph), with the title under it where the box is big enough. */
+.fp.ph{display:grid;place-items:center;align-content:center;gap:4px;overflow:hidden;color:var(--muted)}
+.fp.ph .i{width:20px;height:20px}.fp .fpt{display:none}
+.bsplit.bpo{flex:none;align-items:flex-start;gap:10px;margin-top:6px}
+.bpo>.fp{width:44px;height:66px}.bpo>.bl.bt{flex:1;min-width:0;margin:0;-webkit-line-clamp:3}
+.bpo .bcin{gap:2px}.bsplit .bcin>.bv{margin:0 0 2px}
+.bcin .t{font-weight:600;font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.brow.bpr{gap:10px}.brow.bpr>.fp{width:26px;height:39px}.brow.bpr>.fp.ph .i{width:14px;height:14px}
+.brc{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:6px 10px;margin-top:6px}
+.brc.l{grid-template-rows:repeat(2,minmax(0,1fr))}
+.brcc{display:flex;flex-direction:column;align-items:stretch;gap:3px;min-width:0;min-height:0;padding:0;border:0;background:none;color:var(--fg);font:inherit;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.brcp{position:relative;flex:1;min-height:0}
+.brcp>.fp{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:auto;height:100%;max-width:100%;aspect-ratio:2/3;box-sizing:border-box}
+.brcc:active .brcp>.fp{opacity:.8}
+.brcp>.fp.ph .fpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding:0 4px;font-size:10.5px;line-height:1.25;overflow-wrap:anywhere}
+.brcr{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:3px;font:600 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.brcr .i{width:12px;height:12px;color:var(--accent);fill:currentColor}
+.bw.tap:has(.brcc:active){transform:none}
 .brs{flex:none;gap:10px}.bst{display:flex;flex-direction:column;gap:1px}.bst .mu{font-size:12px}
 .bst b{font:700 16px/1.2 var(--font-num);font-variant-numeric:tabular-nums}.bst b.good{color:var(--good)}.bst b.warn{color:var(--warn)}
 .tsum .sub.bcsub,.tsum .sub.vline{padding:0 0 10px;color:var(--muted);font-size:13px}
@@ -1625,14 +1645,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // 27.10.2026, the third batch: the resin counted on live, his volleyball booking and the open games on his days.
     ['resin', 'Смола, поручения, экспедиции', 'battery-charging', 'sm', 'genshin'], ['volley', 'Волейбол: запись и игры', 'ball', 'sml', 'vb'],
     // 27.10.2026, the fourth batch: today's mail in numbers, the system's pulse (both from home's answer).
-    ['mail', 'Почта сегодня', 'mail', 'sm'], ['health', 'Система', 'heart-pulse', 'sm']];
+    ['mail', 'Почта сегодня', 'mail', 'sm'], ['health', 'Система', 'heart-pulse', 'sm'],
+    // 27.10.2026, docs/specs/widget-posters.md: the films and series marked «видел» last, as posters (the films source).
+    ['recent', 'Последние отметки', 'star', 'ml', 'films']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
-    ['Отдых', ['vb', 'volley', 'cinema', 'series']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -2994,17 +3016,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           note([free.venue, free.max_players != null && free.free_spots != null ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '));
         } else quiet(m.volleyball === null ? 'недоступно' : 'игр нет');
       },
-      // His next screening (else the next premiere); «сейчас» within three hours.
+      // His next screening (else the next premiere); «сейчас» within three hours. Its poster (widget-posters.md) on the
+      // left: beside the date in s, beside the date and the title in m; none — the film glyph in the same box.
       cinema: function () {
         var cn = j.cinema_next;
         if (!cn) return quiet(cn === null ? 'недоступно' : 'сеансов нет');
         r.go = tab('cinema');
         r.now = cn.kind === 'show' && soon(cn.starts_at);
-        big(cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date), 'vs');
-        if (s === 'm') {
-          line('«' + cn.title + '»', 'bt');
-          note(cn.kind === 'show' ? cn.cinema : 'премьера');
-        } else note('«' + cn.title + '» · ' + (cn.kind === 'show' ? cn.cinema : 'премьера'));
+        var col = add(el('div', 'bcol bcin'), el('div', 'bv vs', cn.kind === 'show' ? dayTime(cn.starts_at) : WEEK[wd(cn.date)] + ' ' + dm(cn.date)));
+        add(n, add(el('div', 'bsplit bpo'), filmPoster(cn, false, true), col));
+        if (s === 'm') add(col, el('div', 't', '«' + cn.title + '»'), el('div', 'mu', cn.kind === 'show' ? cn.cinema : 'премьера'));
+        else {
+          col.appendChild(el('div', 'mu', cn.kind === 'show' ? cn.cinema : 'премьера'));
+          note('«' + cn.title + '»');
+        }
       },
       // The resin now as a ring (one per 8 minutes from the snapshot's «full at»); «сейчас» from 180 or full. Wide —
       // when it fills and the events ending soonest.
@@ -3337,7 +3362,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         function say(f) { return f.status === 'seen' ? pill('досмотрел', 'good') : fresh(f) ? pill(next(f), 'acc') : next(f); }
         if (s === 's') {
           var f0 = list[0];
-          line(f0.title, 'bt b2');
+          add(n, add(el('div', 'bsplit bpo'), filmPoster(f0, false, true), el('div', 'bl bt b3', f0.title)));
           var foot = n.appendChild(el('div', 'bsf'));
           var paint0 = function () {
             add(clear(foot), add(el('div', 'bnt'), f0.status === 'seen' ? pill('досмотрел', 'good') : fresh(f0)
@@ -3348,15 +3373,42 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           return paint0();
         }
         list.slice(0, cap).forEach(function (f) {
-          var x = row(null, f.title, null, null, 'bckr');
+          var x = row(filmPoster(f, false, true), f.title, null, null, 'bckr bpr');
           sheet(x, f);
           var paint = function () {
-            while (x.childNodes.length > 1) x.removeChild(x.lastChild);
+            while (x.childNodes.length > 2) x.removeChild(x.lastChild);
             var v = say(f);
             x.appendChild(v.nodeType ? add(el('span', 'pr'), v) : el('span', 'pr', v));
             seen(f, x, paint);
           };
           paint();
+        });
+      },
+      // The films and series he marked «видел» last (films_lists' «Видел», newest mark first, widget-posters.md): three
+      // posters in a row, six in two rows large, the rating under each («—» without one). A poster opens its card in
+      // «Фильмы», the rest of the widget the tab.
+      recent: function () {
+        var fl = src('films');
+        if (!fl) return wait(fl);
+        var seen = (fl.seen || []).slice(0, s === 'l' ? 6 : 3);
+        r.go = tab('films');
+        if (!seen.length) return quiet('пока ничего не отмечено');
+        var g = n.appendChild(el('div', 'brc' + (s === 'l' ? ' l' : '')));
+        seen.forEach(function (f) {
+          var rt = f.rating != null ? rateText(f.rating) : '—', c = add(el(preview ? 'div' : 'button', 'brcc'), add(el('span', 'brcp'), filmPoster(f, false, true)),
+            add(el('span', 'brcr'), f.rating != null ? icon('star') : null, document.createTextNode(rt)));
+          c.setAttribute('aria-label', f.title + (f.rating != null ? ', ' + rt : ', без оценки'));
+          if (!preview) {
+            c.type = 'button';
+            c.onclick = function (ev) {
+              ev.stopPropagation();
+              if (n.closest('.bedit')) return;
+              filmOpen = (f.kind === 'tv' ? 'tv' : 'movie') + ':' + f.tmdb_id;
+              filmQuery = '';
+              show('films');
+            };
+          }
+          g.appendChild(c);
         });
       },
       // His wishlist: an item back in stock first, then those at their target, then the nearest to it; «сейчас» — one
@@ -7251,6 +7303,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // and «убрать». A film is (kind, tmdb_id): movie and tv ids overlap. A row unfolds on a tap (one at a time across
   // the tab); a mark is drawn at once and saved in the background through mark(), its state a string «status:rating».
   var filmQuery = '';
+  // A film to open in its list once «Фильмы» has them ('<kind>:<tmdb_id>'), set by the board's «Последние отметки».
+  var filmOpen = null;
   var FILM_GENRES = [[35, 'Комедия'], [28, 'Боевик'], [53, 'Триллер'], [18, 'Драма'], [27, 'Ужасы'], [878, 'Фантастика'],
     [16, 'Мультфильм'], [10749, 'Мелодрама']];
   var FILM_RATES = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
@@ -7278,10 +7332,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       : /^(movie|tv|anime)$/.test(p.type) && PICK_GENRES[p.type].some(function (g) { return g[0] === p.genre; }));
     return ok ? { type: p.type, genre: p.genre, random: p.random === true } : { type: 'movie', genre: 35, random: false };
   }
-  // A film's poster (the «Фильмы» rows, the board's series sheet); a grey box when there is none or it fails.
-  function filmPoster(f, big) {
-    var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls), u = String(f.poster || '');
+  // A film's poster (the «Фильмы» rows, the board's series sheet); a grey box when there is none or it fails. glyph (the
+  // board's widgets, docs/specs/widget-posters.md): the box shows the film glyph, and the title under it where it is big
+  // enough (CSS), as «Кино»'s poster() does.
+  function filmPoster(f, big, glyph) {
+    var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls + (glyph ? ' ph' : '')), u = String(f.poster || '');
     ph.setAttribute('aria-hidden', 'true');
+    if (glyph) add(ph, icon('film'), el('span', 'fpt', f.title || ''));
     if (!imgOk(u)) return ph;
     var img = el('img', cls);
     img.alt = '';
@@ -7916,7 +7973,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         render: function (j) {
           lists = {};
           FILM_LISTS.forEach(function (k) { lists[k] = (j[k] || []).map(own); });
+          // The film the board asked for opens in its list (shown whatever the filter, unfolded) and comes into view.
+          var f = filmOpen && byId[filmOpen], sec = f && FILM_LISTS.filter(function (k) { return lists[k].indexOf(f) >= 0; })[0];
+          filmOpen = null;
+          if (sec) {
+            if (only(lists[sec]).indexOf(f) < 0) { listType = 'all'; drawTypes(); }
+            folded[sec] = false;
+            opened = { f: f, sec: sec, wrap: el('div'), close: noop };
+          }
           drawLists();
+          if (sec && opened && opened.f === f && opened.wrap.isConnected) {
+            var w = opened.wrap;
+            requestAnimationFrame(function () { try { w.scrollIntoView({ block: 'center' }); } catch (e) {} });
+          }
         }, retry: loadLists, fail: function (e) {
           lists = { err: e };
           drawLists();
