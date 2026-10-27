@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 10:32">
+<meta name="published" content="2026-10-27 12:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -839,6 +839,28 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .btn.bdone{display:none;flex:none;min-height:36px;padding:0 14px}
 .hdr.bediting .btn.bdone{display:inline-flex}.hdr.bediting .date,.hdr.bediting .bell{display:none}
 @media (hover:hover) and (pointer:fine){.bw.tap:hover{border-color:var(--line-2)}}
+/* The fourth batch (27.10.2026): the period switch over the board in editing; a stack — a strip of widgets that snaps one
+   at a time with dots under it, a card in editing; «В стопку» at a widget's foot and the picking of its partner; the
+   mail's three counts, the system's silent rows. */
+.bhint.bhed{flex-wrap:wrap;row-gap:8px}.bhint .seg.bper{flex:1 0 100%;margin:0}
+@media (min-width:900px){.bhint .seg.bper{flex:0 0 auto;width:max-content}}
+.bw.bstk{padding:0;background:none;border:0}
+.bstks{flex:1;min-height:0;display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;border-radius:var(--r)}
+.bstks::-webkit-scrollbar{display:none}
+.bstks>.bw{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;box-shadow:none}
+.bstkd{position:absolute;left:0;right:0;bottom:4px;display:flex;justify-content:center;gap:5px;pointer-events:none}
+.bstkd i{width:5px;height:5px;border-radius:50%;background:var(--line-2)}.bstkd i.on{background:var(--muted)}
+.bstki{flex:none;display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 6px;color:var(--muted)}.bstki>.i{width:20px;height:20px}.bstki>.ptile.ai{width:22px;height:22px;margin:0;border-radius:6px}
+.bl.bstkn{white-space:normal;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.board.bedit .bw.bstke>*{opacity:1}
+.bsk{position:absolute;right:8px;bottom:8px;z-index:1;display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--fg);cursor:pointer}
+.bsk::after{content:"";position:absolute;inset:-7px}.bsk .i{width:15px;height:15px}.bsk[hidden]{display:none}
+.board.bedit .bw>.bsk{opacity:1}
+.board.bpicking .bw{cursor:default}.board.bpicking .bw.bpno{opacity:.35}
+.board.bpicking .bw.bpk{outline-style:solid;cursor:pointer}.board.bpicking .bw.bpsrc{outline:2px solid var(--fg)}
+.board.bpicking .bx,.board.bpicking .bsz,.board.bpicking .bcfg,.board.bpicking .bsk{visibility:hidden}
+.bstats{flex:none;display:flex;gap:18px;margin:8px 0 0}.bstats .bst b{font-size:22px}.bst b.vmu{color:var(--muted)}
+.brow.bbad>.i{color:var(--bad)}
 /* «Плитки на «Главной»» (docs/specs/home-tiles.md): the header's button beside the bell, a tile whose module is off grey. */
 .bell[hidden]{display:none}
 .row.htoff .lead,.row.htoff .tx .t{opacity:.5}
@@ -1017,6 +1039,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-grip-vertical" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
 <symbol id="i-layout-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
 <symbol id="i-battery-charging" viewBox="0 0 24 24"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></symbol>
+<symbol id="i-gallery-horizontal-end" viewBox="0 0 24 24"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></symbol>
+<symbol id="i-ungroup" viewBox="0 0 24 24"><rect width="8" height="6" x="5" y="4" rx="1"/><rect width="8" height="6" x="11" y="14" rx="1"/></symbol>
+<symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1571,13 +1596,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     ['parcels', 'Посылки', 'package', 'sm', 'dela'], ['gtoday', 'Genshin сегодня', 'book-open', 'sm', 'genshin'],
     ['countdown', 'Обратный отсчёт', 'timer', 's'],
     // 27.10.2026, the third batch: the resin counted on live, his volleyball booking and the open games on his days.
-    ['resin', 'Смола, поручения, экспедиции', 'battery-charging', 'sm', 'genshin'], ['volley', 'Волейбол: запись и игры', 'ball', 'sml', 'vb']];
+    ['resin', 'Смола, поручения, экспедиции', 'battery-charging', 'sm', 'genshin'], ['volley', 'Волейбол: запись и игры', 'ball', 'sml', 'vb'],
+    // 27.10.2026, the fourth batch: today's mail in numbers, the system's pulse (both from home's answer).
+    ['mail', 'Почта сегодня', 'mail', 'sm'], ['health', 'Система', 'heart-pulse', 'sm']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
-    ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin']],
+    ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
     ['Отдых', ['vb', 'volley', 'cinema', 'series']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
@@ -1585,19 +1612,44 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return l && Array.from(l).length <= 24 && typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d + 'T12:00:00Z')) &&
       new Date(d + 'T12:00:00Z').toISOString().slice(0, 10) === d ? { label: l, date: d } : null;
   }
-  // His board as the server keeps it: the known widgets in a size each comes in, ids once each, 24 at most.
+  // A widget of the board or of a stack in the size s, {w, cfg?} (the countdown's cfg); null when it is not one.
+  function boardKid(c, s) {
+    if (!c || !BOARD_BY[c.w] || BOARD_BY[c.w][3].indexOf(s) < 0) return null;
+    var o = { w: c.w }, f = c.w === 'countdown' && boardCfg(c.cfg);
+    if (f) o.cfg = f;
+    return o;
+  }
+  function boardItem(id, k, s) {
+    var o = { id: id, w: k.w, s: s };
+    if (k.cfg) o.cfg = k.cfg;
+    return o;
+  }
+  // His board as the server keeps it: the known widgets in a size each comes in, ids once each, 24 at most. A stack (the
+  // fourth batch) {id, w: 'stack', s, items: [{w, cfg?}]} holds 2–5 widgets of its size; read back, its unknown widgets
+  // drop out and one left is a plain widget, as the server reads it back.
+  var STACK_MAX = 5;
   function boardIn(v) {
-    var ids = {};
-    return Array.isArray(v) ? v.filter(function (b) {
-      var ok = b && typeof b.id === 'string' && /^[a-z0-9]{1,12}$/.test(b.id) && !ids[b.id] && BOARD_BY[b.w] && typeof b.s === 'string' &&
-        b.s.length === 1 && BOARD_BY[b.w][3].indexOf(b.s) >= 0;
-      if (ok) ids[b.id] = 1;
-      return ok;
-    }).slice(0, 24).map(function (b) {
-      var o = { id: b.id, w: b.w, s: b.s }, c = b.w === 'countdown' && boardCfg(b.cfg);
-      if (c) o.cfg = c;
-      return o;
-    }) : [];
+    var ids = {}, out = [];
+    (Array.isArray(v) ? v : []).forEach(function (b) {
+      if (!(b && typeof b.id === 'string' && /^[a-z0-9]{1,12}$/.test(b.id) && !ids[b.id] && typeof b.s === 'string' && b.s.length === 1 &&
+        'sml'.indexOf(b.s) >= 0)) return;
+      var o = null, k;
+      if (b.w === 'stack') {
+        k = (Array.isArray(b.items) ? b.items : []).map(function (c) { return boardKid(c, b.s); }).filter(Boolean).slice(0, STACK_MAX);
+        o = k.length > 1 ? { id: b.id, w: 'stack', s: b.s, items: k } : k.length ? boardItem(b.id, k[0], b.s) : null;
+      } else if ((k = boardKid(b, b.s))) o = boardItem(b.id, k, b.s);
+      if (o) { ids[b.id] = 1; out.push(o); }
+    });
+    return out.slice(0, 24);
+  }
+  // The boards by the time of day (the fourth batch): Warsaw's morning 05–11, day 11–17, evening 17–05 — key, name, hours.
+  // prefs.boards {morning, day, evening}, each a board; null — one board all day. A period left out shows the one board.
+  var BOARD_PERIODS = [['morning', 'Утро', '05–11'], ['day', 'День', '11–17'], ['evening', 'Вечер', '17–05']];
+  function boardsIn(v) {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+    var o = {}, any = false;
+    BOARD_PERIODS.forEach(function (q) { if (Array.isArray(v[q[0]])) { o[q[0]] = boardIn(v[q[0]]); any = true; } });
+    return any ? o : null;
   }
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
@@ -1625,13 +1677,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return { home: { hidden: keysIn(h.hidden, HOME_KEYS), order: keysIn(h.order, HOME_KEYS), fold: foldIn(h.fold, HOME_KEYS),
       folded: keysIn(h.folded, HOME_KEYS) },
       money: { hidden: keysIn(mo.hidden, MONEY_CARD_KEYS), order: keysIn(mo.order, MONEY_CARD_KEYS), fold: foldIn(mo.fold, MONEY_CARD_KEYS),
-        folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles), board: boardIn(p && p.board) };
+        folded: keysIn(mo.folded, MONEY_CARD_KEYS) }, tiles: tilesIn(p && p.tiles), board: boardIn(p && p.board),
+      boards: boardsIn(p && p.boards) };
   }
   function normPrefs(p) {
     var t = (p && p.tabs) || {}, m = p && p.muted, v = viewIn(p), w = p && p.views && p.views.wide;
     return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: v.home,
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
-      money: v.money, tiles: v.tiles, board: v.board, board_now: !(p && p.board_now === false),
+      money: v.money, tiles: v.tiles, board: v.board, boards: v.boards, board_now: !(p && p.board_now === false),
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full' };
   }
@@ -1644,12 +1697,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // The view on screen (docs/specs/device-views.md, his ask of 25.10.2026: folded on the phone, open on the Mac): the
   // phone's (wide() false) is prefs itself; the wide layout's — by the window's width, so an iPad across counts and a
   // narrow Mac window does not — is prefs.views.wide once he changed something there, till then the phone's order,
-  // hidden cards, tiles and board with nothing folded. s: 'home', 'money', 'tiles' or 'board'. Every read of those goes
-  // through here.
+  // hidden cards, tiles and board with nothing folded. s: 'home', 'money', 'tiles', 'board' or 'boards'. Every read of
+  // those goes through here.
   function viewPrefs(s) {
     if (!wide()) return prefs[s];
     if (prefs.views.wide) return prefs.views.wide[s];
-    return s === 'tiles' || s === 'board' ? prefs[s] : Object.assign({}, prefs[s], { fold: {}, folded: [] });
+    return s === 'tiles' || s === 'board' || s === 'boards' ? prefs[s] : Object.assign({}, prefs[s], { fold: {}, folded: [] });
   }
   var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
   function tabShown(k) { return k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
@@ -1865,7 +1918,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // while he goes straight to «Деньги»), so there the last tab wins over the hash; a push tap (#notif) still goes.
     var pwa = navigator.standalone || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
     var lastOk = last && isView(canon(last)) && tabShown(canon(last));
-    show(n ? 'notif' : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : homeTab());
+    // A t.me link with startapp=<tab> (the iPhone widget's tap, docs/specs/widget-sizes.md) opens the Mini App on that tab.
+    var sp = !browser && tg.initDataUnsafe && tg.initDataUnsafe.start_param, spOk = typeof sp === 'string' && isView(canon(sp));
+    show(n ? 'notif' : spOk ? sp : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : homeTab());
     // The bell's count when the first screen does not bring it (home and «Уведомления» do); the answer is the
     // center's cached copy too.
     if (current !== 'home' && current !== 'notif') {
@@ -2459,12 +2514,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // unless a save of his is on its way or came after the request left).
   function homeFetch() {
     var gen = prefsGen;
-    return api('miniapp', { action: 'home' }, 30000, true).then(function (j) {
-      if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
-      if (j) setModules(j.modules);
-      if (j && typeof j.notif_unread === 'number') setUnread(j.notif_unread);
-      return j;
-    });
+    return api('miniapp', { action: 'home' }, 30000, true).then(function (j) { return homeTake(j, gen); });
+  }
+  // gen: prefsGen when the request left.
+  function homeTake(j, gen) {
+    if (j && j.prefs && !marks.prefs && gen === prefsGen) setPrefs(normPrefs(j.prefs), null, true);
+    if (j) setModules(j.modules);
+    if (j && typeof j.notif_unread === 'number') setUnread(j.notif_unread);
+    return j;
   }
   // «Главная» hidden (26.10.2026): its calendar feed over the task list of «Задачи» — today's timed tasks, events, games
   // and shows, then tomorrow's as «Завтра» lists them, from home's answer. One card that folds, and hides, as
@@ -2518,6 +2575,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
       events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela') }[w] || false;
+  }
+  // The widget keys of a board, a stack's own among them.
+  function boardKinds(bl) {
+    var o = [];
+    bl.forEach(function (b) { if (b.w === 'stack') b.items.forEach(function (c) { o.push(c.w); }); else o.push(b.w); });
+    return o;
+  }
+  // The board by the time of day (the fourth batch): the period of Warsaw's hour now; the board on screen — that period's
+  // when he made boards by the time of day, else the one board.
+  function periodNow() {
+    var hr = Number(wp(Date.now()).hour);
+    return hr >= 5 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : 'evening';
+  }
+  function boardNow() { var bs = viewPrefs('boards'); return (bs && bs[periodNow()]) || viewPrefs('board'); }
+  // A change of the board on screen outside editing: saved into the period's board when there are boards, else the one.
+  function boardSave(bl) {
+    var bs = viewPrefs('boards');
+    if (!bs) return editPrefs({ board: bl });
+    var o = Object.assign({}, bs);
+    o[periodNow()] = bl;
+    editPrefs({ boards: o });
   }
   // A widget's icon: a Lucide name, or 'acct:<key>' for an account's logo.
   function boardIcon(ic) { return ic.indexOf('acct:') === 0 ? moneyAcctTile(ic.slice(5), 'ai') : icon(ic); }
@@ -2586,6 +2664,27 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var c = BSRC[k], m = bsrcMem[k], hit = c && cacheGet(c[0]);
     if (hit && (!m || m.fail || hit.t >= m.t)) return hit.j;
     return m ? (m.fail ? null : m.j) : undefined;
+  }
+  // «Главная»'s sources in one request (the fourth batch): miniapp ?action=board with home and the given keys (BSRC's,
+  // the weather never — it is Open-Meteo's, from here) → its sources, home's answer always among them. When it fails, home
+  // and the sources are asked one by one as before ({home, back: true}: the sources' answers land by boardAsk). The same
+  // set again within 3 s gets the same answer (the wide layout builds «Главная» twice on start).
+  var boardReq = null;
+  function boardOne(ks) {
+    var key = ks.join(','), now = Date.now();
+    if (boardReq && boardReq.key === key && now - boardReq.t < 3000) return boardReq.p;
+    var gen = prefsGen;
+    var p = api('miniapp', { action: 'board' }, 30000, true, { sources: ['home'].concat(ks) }).then(function (j) {
+      if (!j || !j.sources || !j.sources.home) throw new Error('board');
+      homeTake(j.sources.home, gen);
+      return j.sources;
+    }).catch(function (e) {
+      if (e && e.login) throw e;
+      ks.forEach(boardAsk);
+      return homeFetch().then(function (h) { return { home: h, back: true }; });
+    });
+    boardReq = { key: key, t: now, p: p };
+    return p;
   }
   // Asks a source; the live board is drawn again (boardRedraw) when what its widgets draw changed. Not again within 15 s
   // (the wide layout builds «Главная» twice on start: the answer goes to the view on screen, not the one that asked) and,
@@ -2926,11 +3025,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         big(u > 99 ? '99+' : String(u), u ? '' : 'vmu');
         note(u ? plural(u, ['непрочитанное', 'непрочитанных', 'непрочитанных']) : 'всё прочитано');
       },
-      // Today's post and how far it got.
+      // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
+      // when it is planned.
       linkedin: function () {
-        var li = j.linkedin, q = li && li.today;
-        if (!q) return quiet(li === null ? 'недоступно' : li ? 'сегодня поста нет' : 'нет данных');
+        var li = j.linkedin, q = li && li.today, nx = li && li.next;
+        if (!q && !nx) return quiet(li === null ? 'недоступно' : li ? 'сегодня поста нет' : 'нет данных');
         r.go = tab('li');
+        if (!q) {
+          var on = nx.planned_on ? WEEK[wd(nx.planned_on)] + ' ' + dm(nx.planned_on) : 'без даты';
+          line((s === 's' ? 'дальше · ' : 'сегодня поста нет · дальше ') + on, 'mu');
+          line(nx.idea, 'bt b2');
+          return note(nx.status === 'ready' ? 'готов' : nx.status === 'draft' ? 'черновик' : 'идея');
+        }
         var st = q.status === 'ready' ? ['готов', 'good'] : q.status === 'posted' ? ['опубликован', 'acc'] : [q.status === 'draft' ? 'черновик' : 'черновика нет', 'warn'];
         if (s === 's') {
           big(st[0], 'vs ' + (st[1] === 'acc' ? '' : st[1]));
@@ -2938,6 +3044,40 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         }
         line(q.idea, 'bt b2');
         note(add(el('span'), pill(st[0], st[1]), document.createTextNode(' ' + String(q.lang || 'pl').toUpperCase())));
+      },
+      // Today's mail as the triage decided it, in numbers only (the fourth batch): the reply drafts and the invoice
+      // forwards it made today for him to send from Gmail, all it decided and the tasks among them. Never a subject.
+      mail: function () {
+        var ml = j.mail;
+        if (!ml) return quiet(lost(ml));
+        var wait = ml.drafts + ml.invoices;
+        if (s === 's') {
+          big(String(wait), wait ? '' : 'vmu');
+          return note((wait ? plural(wait, ['черновик', 'черновика', 'черновиков']) : 'черновиков нет') + ' · разобрано ' + ml.decided);
+        }
+        var box = el('div', 'bstats');
+        [['Ответы', ml.drafts], ['Фактуры', ml.invoices], ['Разобрано', ml.decided]].forEach(function (x) {
+          box.appendChild(add(el('div', 'bst'), el('span', 'mu', x[0]), el('b', x[1] ? '' : 'vmu', String(x[1]))));
+        });
+        n.appendChild(box);
+        note(ml.decided ? 'черновики ответов и фактур — в Gmail' + (ml.tasks ? ' · задач: ' + ml.tasks : '') : 'сегодня писем не разбирали');
+      },
+      // The Mac jobs and the mail bridge (home's pulse, as /pulse in the bot): red with the silent ones when one went
+      // quiet past its threshold, else a quiet «всё работает». «сейчас» while one is silent.
+      health: function () {
+        var ps = j.pulse && j.pulse.parts;
+        if (!Array.isArray(ps)) return quiet(lost(j.pulse));
+        var bad = ps.filter(function (x) { return x.stale; });
+        r.now = bad.length > 0;
+        if (!bad.length) return quiet('всё работает');
+        if (s === 's') {
+          big(String(bad.length), 'bad');
+          return note(plural(bad.length, ['молчит', 'молчат', 'молчат']) + ': ' + bad.map(function (x) { return x.label; }).join(', '));
+        }
+        line(plural(bad.length, ['молчит дольше порога', 'молчат дольше порога', 'молчат дольше порога']), 'mu');
+        bad.slice(0, cap).forEach(function (x) {
+          row('triangle-alert', x.label, x.last_ok_at ? dayTime(Date.parse(x.last_ok_at)) : null, null, 'bbad');
+        });
       },
       // Now at his home with its sky, today's max and min, «дождь с 15:00» when it comes within 12 hours; wide — the next
       // six hours. «сейчас» — rain within two hours.
@@ -3389,41 +3529,119 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var boardReload = noop;
   // The countdown's sheet (label and day) for the widget b — set by homeView.
   var boardCfgEdit = noop;
+  // A stack (the fourth batch, like iOS's Smart Stack): its widgets side by side in a strip that snaps one at a time,
+  // small dots under them; each widget taps through as on the board. r.kids — the widgets; r.now — one of them is current
+  // and r.hot its name. Shown first: the one he swiped to since «Главная» opened (boardStackAt), else the current one
+  // (the badges on), else the one he left it on on this device (localStorage bstk:<id>). place() puts the strip there
+  // once it is on the page.
+  var boardStackAt = {};
+  function boardStack(b, j) {
+    var n = el('div', 'bw bw-' + b.s + ' bstk'), sc = el('div', 'bstks'), dots = el('div', 'bstkd'), kids = [], hot = -1;
+    b.items.forEach(function (c, k) {
+      var x = boardWidget(Object.assign({ id: b.id + '_' + k, s: b.s, sid: b.id, k: k }, c), j, false);
+      if (hot < 0 && x.r.now && prefs.board_now) hot = k;
+      kids.push(x);
+      sc.appendChild(x);
+      dots.appendChild(el('i'));
+    });
+    var at = boardStackAt[b.id] != null ? boardStackAt[b.id] : hot >= 0 ? hot : Number(store('bstk:' + b.id)) || 0;
+    if (!(at >= 0 && at < kids.length)) at = 0;
+    dots.setAttribute('aria-hidden', 'true');
+    n.setAttribute('role', 'group');
+    n.setAttribute('aria-label', 'Стопка: ' + kids.map(function (x) { return x.querySelector('.bn').textContent; }).join(', '));
+    add(n, sc, dots);
+    n.bid = b.id;
+    n.bw = 'stack';
+    n.r = { go: null, now: hot >= 0, hot: hot >= 0 ? kids[hot].querySelector('.bn').textContent : '', kids: kids };
+    function step() { return sc.clientWidth + (parseFloat(getComputedStyle(sc).columnGap) || 0); }
+    function seen(i) { [].forEach.call(dots.children, function (d, k) { d.className = k === i ? 'on' : ''; }); }
+    seen(at);
+    // Only his own swipe is remembered, not the strip put in its place.
+    var user = false, t = 0;
+    ['pointerdown', 'touchstart', 'wheel'].forEach(function (e) { sc.addEventListener(e, function () { user = true; }, { passive: true }); });
+    sc.addEventListener('scroll', function () {
+      var i = Math.max(0, Math.min(kids.length - 1, Math.round(sc.scrollLeft / step())));
+      seen(i);
+      clearTimeout(t);
+      t = setTimeout(function () {
+        if (!user) return;
+        boardStackAt[b.id] = i;
+        store('bstk:' + b.id, String(i));
+      }, 150);
+    }, { passive: true });
+    n.place = function () { sc.scrollLeft = at * step(); };
+    return n;
+  }
+  // A stack in editing: a card with its widgets' icons and names (the strip does not swipe there).
+  function boardStackCard(b) {
+    var n = el('div', 'bw bw-' + b.s + ' bstke'), ics = el('div', 'bstki');
+    b.items.forEach(function (c) { ics.appendChild(boardIcon(BOARD_BY[c.w][2])); });
+    add(n, add(el('div', 'bh'), icon('gallery-horizontal-end'), el('span', 'bn', 'Стопка · ' + b.items.length)), ics,
+      el('div', 'bl mu bstkn', b.items.map(function (c) { return c.cfg ? c.cfg.label : BOARD_BY[c.w][1]; }).join(' · ')));
+    n.setAttribute('aria-label', 'Стопка: ' + b.items.length);
+    n.bid = b.id;
+    n.bw = 'stack';
+    n.r = { go: null, now: false };
+    return n;
+  }
 
   function homeView() {
     boardTicked = {};
+    boardStackAt = {};
     // last: home's answer on screen; draft: the board being edited (null — not editing); nodes: id → its widget.
     var hint = el('div', 'bhint'), wrap = el('div', 'bwrap'), grid = null, last = null, draft = null, nodes = {}, lp = null, drag = null;
+    // Editing by the time of day (the fourth batch): dper — the period whose board is in draft (null: the one board), dbs
+    // — the three boards while editing them, one — the one board, kept while there are periods; pick — the id of the
+    // widget waiting for a partner of its size to stack with; perShown — the period of the board on screen.
+    var dper = null, dbs = null, one = null, pick = null, perShown = null;
     var again = label(el('button', 'btn ghost wide bagain'), 'refresh', 'Обновить');
     again.type = 'button';
     again.onclick = function () { window.scrollTo(0, 0); load(); };
     add(main, hint, wrap, again);
-    function list() { return draft || viewPrefs('board'); }
+    function list() { return draft || boardNow(); }
     function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
     // The board's line: what is current now, or in editing what to do; nothing else.
     function paintHint() {
       clear(hint);
       hdr.classList.toggle('bediting', !!draft);
+      hint.classList.toggle('bhed', !!draft && !pick);
+      if (draft && pick) {
+        var no = label(el('button', 'btn ghost'), 'x', 'Отмена');
+        no.type = 'button';
+        no.onclick = function () { pick = null; draw(); };
+        add(hint, el('span', 'tx', 'Выбери виджет того же размера — встанут в стопку'), no);
+        return;
+      }
       if (draft) {
-        var add1 = label(el('button', 'btn ghost'), 'plus', 'Добавить');
+        var add1 = label(el('button', 'btn ghost'), 'plus', 'Добавить'), seg = el('div', 'seg bper'), pq = null;
         add1.type = 'button';
         add1.onclick = function () { boardCatalog(add1); };
-        add(hint, el('span', 'tx', 'Перетащи, выбери размер, ✕ — убрать'), add1);
+        seg.setAttribute('role', 'group');
+        seg.setAttribute('aria-label', 'Доска по времени суток');
+        [[null, 'Одна']].concat(BOARD_PERIODS).forEach(function (q) {
+          var on = dper === q[0], b = el('button', on ? 'on' : '', q[1]);
+          if (on) pq = q;
+          b.type = 'button';
+          b.setAttribute('aria-pressed', String(on));
+          b.onclick = function () { period(q[0]); };
+          seg.appendChild(b);
+        });
+        add(hint, seg, el('span', 'tx', pq ? pq[1] + ' ' + pq[2] + ' · перетащи, ✕ — убрать' : 'Перетащи, выбери размер, ✕ — убрать'), add1);
         return;
       }
       if (!prefs.board_now || !grid) return;
       var hot = [];
       [].forEach.call(grid.children, function (x) {
-        var t = x.r && x.r.now && x.querySelector('.bn').textContent;
+        var t = x.r && x.r.now && (x.r.hot || x.querySelector('.bn').textContent);
         if (t && hot.indexOf(t) < 0) hot.push(t);
       });
       if (hot.length) hint.appendChild(el('span', 'tx', 'Сейчас: ' + hot.slice(0, 3).join(' · ') + (hot.length > 3 ? ' и ещё ' + (hot.length - 3) : '')));
     }
     // The ✕ and the size chips of a widget being edited (only the sizes it comes in, none for a one-size widget).
     function chrome(node, b) {
-      var x = add(el('button', 'bx'), icon('x'));
+      var x = add(el('button', 'bx'), icon('x')), stack = b.w === 'stack', nm = stack ? 'Стопка' : BOARD_BY[b.w][1];
       x.type = 'button';
-      x.setAttribute('aria-label', 'Убрать: ' + BOARD_BY[b.w][1]);
+      x.setAttribute('aria-label', 'Убрать: ' + nm);
       x.onclick = function () {
         draft = draft.filter(function (o) { return o.id !== b.id; });
         haptic();
@@ -3433,6 +3651,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       head.insertBefore(x, head.firstChild);
       // A field inside a widget (＋ Задача) takes no typing while the board is edited.
       [].forEach.call(node.querySelectorAll('input,button:not(.bx)'), function (f) { f.disabled = true; });
+      // At the foot: «В стопку» (when another widget of its size can take it), or a stack's own sheet.
+      var sk = add(el('button', 'bsk'), icon('gallery-horizontal-end'));
+      sk.type = 'button';
+      sk.setAttribute('aria-label', stack ? 'Стопка: виджеты в ней' : 'В стопку: ' + nm);
+      sk.hidden = !stack && !mates(b).length;
+      sk.onclick = function () {
+        haptic();
+        if (stack) return stackSheet(b, sk);
+        pick = b.id;
+        draw();
+      };
+      node.appendChild(sk);
       if (b.w === 'countdown') {
         var pen = add(el('button', 'bcfg'), icon('pen-line'));
         pen.type = 'button';
@@ -3440,13 +3670,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         pen.onclick = function () { boardCfgEdit(b, node); };
         head.appendChild(pen);
       }
-      var sizes = BOARD_BY[b.w][3];
+      var sizes = stack ? 'sml'.split('').filter(function (z) {
+        return b.items.every(function (c) { return BOARD_BY[c.w][3].indexOf(z) >= 0; });
+      }).join('') : BOARD_BY[b.w][3];
       if (sizes.length < 2) return;
       var box = el('div', 'bsz');
       sizes.split('').forEach(function (z) {
         var c = add(el('button', z === b.s ? 'on' : ''), boardSizeIc(z));
         c.type = 'button';
-        c.setAttribute('aria-label', BOARD_BY[b.w][1] + ': ' + BOARD_SIZE[z]);
+        c.setAttribute('aria-label', nm + ': ' + BOARD_SIZE[z]);
         c.setAttribute('aria-pressed', String(z === b.s));
         c.onclick = function () {
           if (z === b.s) return;
@@ -3458,6 +3690,69 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       });
       head.appendChild(box);
     }
+    // Stacking (the fourth batch). How many widgets an item is; the widgets of its size it can stack with (five at most
+    // together); merge: the one waiting (a) goes into the one picked (d) — the stack takes d's place, d's widgets first.
+    function count(o) { return o.w === 'stack' ? o.items.length : 1; }
+    function mates(a) {
+      return draft.filter(function (o) { return o.id !== a.id && o.s === a.s && count(o) + count(a) <= STACK_MAX; });
+    }
+    function kidsOf(o) { return o.w === 'stack' ? o.items : [o.cfg ? { w: o.w, cfg: o.cfg } : { w: o.w }]; }
+    function byId(id) { return draft.filter(function (o) { return o.id === id; })[0]; }
+    function merge(a, d) {
+      var A = byId(a), D = byId(d);
+      pick = null;
+      if (A && D) {
+        var st = { id: D.w === 'stack' ? D.id : A.w === 'stack' ? A.id : boardId(draft), w: 'stack', s: D.s,
+          items: kidsOf(D).concat(kidsOf(A)).slice(0, STACK_MAX) };
+        draft = draft.filter(function (o) { return o.id !== A.id; }).map(function (o) { return o.id === D.id ? st : o; });
+        haptic();
+      }
+      draw();
+    }
+    // A stack's sheet in editing: its widgets with ✕ (of two, the one left stays a plain widget), «Добавить с доски» (the
+    // same picking as «В стопку»), «Разобрать» — its widgets in its place one by one.
+    function stackSheet(b, from) {
+      var close = noop, rows = el('div', 'bstl');
+      function put(next) {
+        draft = draft.reduce(function (o, x) { return o.concat(x.id === b.id ? next : [x]); }, []);
+        close();
+        haptic();
+        draw();
+      }
+      b.items.forEach(function (c, k) {
+        var nm = c.cfg ? c.cfg.label : BOARD_BY[c.w][1];
+        rows.appendChild(add(lead(el('div', 'row'), BOARD_BY[c.w][2].indexOf('acct:') === 0 ? 'wallet' : BOARD_BY[c.w][2]), el('span', 'tx t', nm),
+          rowBtn('x', { label: 'Убрать из стопки: ' + nm }, 'x', false, function () {
+            var left = b.items.filter(function (y, i) { return i !== k; });
+            put([left.length > 1 ? Object.assign({}, b, { items: left }) : boardItem(b.id, left[0], b.s)]);
+          })));
+      });
+      var more = label(el('button', 'btn ghost'), 'plus', 'Добавить с доски'), un = label(el('button', 'btn ghost'), 'ungroup', 'Разобрать');
+      more.type = un.type = 'button';
+      more.disabled = !mates(b).length;
+      more.onclick = function () { close(); pick = b.id; draw(); };
+      un.onclick = function () {
+        if (draft.length - 1 + b.items.length > 24) return toast('На «Главной» не больше 24 виджетов');
+        var out = [];
+        b.items.forEach(function (c, k) { out.push(boardItem(k ? boardId(draft.concat(out)) : b.id, c, b.s)); });
+        put(out);
+      };
+      close = legalSheet('Стопка', [el('div', 'sub bcsub', 'Листается вбок; первым — виджет с «сейчас»'), rows, add(el('div', 'bar mact'), more, un)],
+        from);
+    }
+    // The period switch while editing: the draft goes back to its board and the chosen one comes in; the first period
+    // chosen starts all three from the board in draft.
+    function period(q) {
+      if (q === dper) return;
+      if (dper) dbs[dper] = draft;
+      else one = draft;
+      if (q && !dbs) dbs = { morning: draft.slice(), day: draft.slice(), evening: draft.slice() };
+      dper = q;
+      pick = null;
+      draft = (q ? dbs[q] : one).slice();
+      haptic();
+      draw();
+    }
     // The amounts that do not fit their widget get smaller, never cut; a list's last rows that would run past the
     // widget's foot (a narrow phone, a long day) are left out, the first always stays.
     function fit() {
@@ -3467,7 +3762,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         var fs = parseFloat(getComputedStyle(v).fontSize);
         while (v.scrollWidth > v.clientWidth + 1 && fs > 15) { fs -= 2; v.style.fontSize = fs + 'px'; }
       });
-      [].forEach.call(grid.children, function (w) {
+      [].forEach.call(grid.querySelectorAll('.bw:not(.bstk)'), function (w) {
         var foot = w.getBoundingClientRect().bottom - 8, rows = w.querySelectorAll(':scope>.brow,:scope>.bl.bday,:scope>.bl.mu,:scope>.bgl');
         for (var k = rows.length - 1; k > 0 && rows[k].getBoundingClientRect().bottom > foot; k--) rows[k].remove();
       });
@@ -3475,8 +3770,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // The sources the board's widgets read beside home's answer, each asked for once per load (asked is reset there).
     var asked = {};
     function ask(bl) {
-      bl.forEach(function (b) {
-        var k = BOARD_BY[b.w][4];
+      boardKinds(bl).forEach(function (w) {
+        var k = BOARD_BY[w][4];
         if (!k || asked[k]) return;
         asked[k] = 1;
         boardAsk(k);
@@ -3496,6 +3791,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function draw() {
       var j = last || {}, bl = list();
       held = false;
+      perShown = periodNow();
       ask(bl);
       clear(wrap);
       nodes = {};
@@ -3511,25 +3807,35 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         paintHint();
         return;
       }
-      grid = el('div', 'board' + (draft ? ' bedit' : ''));
+      grid = el('div', 'board' + (draft ? ' bedit' : '') + (draft && pick ? ' bpicking' : ''));
+      var src = pick && byId(pick), ok = src ? mates(src).map(function (o) { return o.id; }) : [];
+      if (!src) pick = null;
       bl.forEach(function (b) {
-        var node = boardWidget(b, j, false);
+        var st = b.w === 'stack', node = st ? (draft ? boardStackCard(b) : boardStack(b, j)) : boardWidget(b, j, false);
         nodes[b.id] = node;
         if (draft) chrome(node, b);
-        else if (node.r.go) {
-          node.tabIndex = 0;
-          node.setAttribute('role', 'button');
-          node.classList.add('tap');
-        }
-        node.onkeydown = function (ev) {
-          if (!draft && node.r.go && ev.target === node && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); node.r.go(node); }
-        };
-        node.onclick = function () { if (!draft && node.r.go) node.r.go(node); };
+        if (pick) node.classList.add(b.id === pick ? 'bpsrc' : ok.indexOf(b.id) >= 0 ? 'bpk' : 'bpno');
+        // A stack's widgets tap through one by one, as the board's do.
+        (st && !draft ? node.r.kids : [node]).forEach(function (x) {
+          if (!draft && x.r.go) {
+            x.tabIndex = 0;
+            x.setAttribute('role', 'button');
+            x.classList.add('tap');
+          }
+          x.onkeydown = function (ev) {
+            if (!draft && x.r.go && ev.target === x && (ev.key === 'Enter' || ev.key === ' ')) { ev.preventDefault(); x.r.go(x); }
+          };
+          x.onclick = function () { if (!draft && x.r.go) x.r.go(x); };
+        });
         grid.appendChild(node);
       });
       wrap.appendChild(grid);
+      bl.forEach(function (b) { if (nodes[b.id].place) nodes[b.id].place(); });
       paintHint();
+      // Fitted at once (no frame shows a cut figure) and again in the next frame, and once more when the web font lands.
+      fit();
       requestAnimationFrame(fit);
+      if (document.fonts && document.fonts.status !== 'loaded') document.fonts.ready.then(function () { requestAnimationFrame(fit); });
     }
     function render(j) {
       last = j;
@@ -3540,21 +3846,57 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (typing()) held = true;
       else draw();
     }
+    // home's answer and the sources of the board on screen in one request (the fourth batch), each source kept under its
+    // own cache key as its own request keeps it, so the board draws from the cache at once as before. A source that came
+    // back null is asked on its own; a failed request falls back to home and the sources one by one.
     function load() {
       asked = {};
+      var ks = [];
+      boardKinds(list()).forEach(function (w) {
+        var k = BOARD_BY[w][4];
+        if (k && k !== 'weather' && ks.indexOf(k) < 0) ks.push(k);
+      });
+      ks.forEach(function (k) { asked[k] = 1; });
       swr({ key: 'home', box: wrap, n: 2, live: function () { return current === 'home'; },
-        fetch: homeFetch, render: render, retry: load });
+        fetch: function () { return boardFetch(ks); }, render: render, retry: load });
+    }
+    function boardFetch(ks) {
+      return boardOne(ks).then(function (sr) {
+        var changed = false;
+        if (sr.back) return sr.home;
+        ks.forEach(function (k) {
+          if (sr[k] == null) return boardAsk(k);
+          var str = JSON.stringify(sr[k]), hit = cacheGet(BSRC[k][0]);
+          cacheSet(BSRC[k][0], str);
+          bsrcMem[k] = { t: Date.now(), j: sr[k] };
+          bsrcAt[k] = Date.now();
+          if (!hit || hit.s !== str) changed = true;
+        });
+        if (changed) redraw();
+        return sr.home;
+      });
     }
     boardReload = load;
     boardRedraw = redraw;
     // Editing: a draft of the board; «Готово» saves it when it changed (one prefs_set) and leaves.
     function edit() {
       if (draft) return;
+      var bs = viewPrefs('boards');
+      one = viewPrefs('board');
+      dbs = bs ? { morning: (bs.morning || one).slice(), day: (bs.day || one).slice(), evening: (bs.evening || one).slice() } : null;
+      dper = bs ? periodNow() : null;
+      pick = null;
       draft = list().slice();
       if (grid) {
         grid.classList.add('bedit');
         list().forEach(function (b) {
           var node = nodes[b.id];
+          // A stack is a card in editing: the strip goes, the widget being lifted is the card from here on.
+          if (b.w === 'stack') {
+            var c = boardStackCard(b);
+            grid.replaceChild(c, node);
+            nodes[b.id] = node = c;
+          }
           node.classList.remove('tap');
           node.removeAttribute('role');
           node.removeAttribute('tabindex');
@@ -3564,14 +3906,22 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       paintHint();
       boardLeave = done;
     }
+    // With periods the board in draft goes back to its period and all three are saved, the one board as it was; «Одна»
+    // drops the periods (with «Вернуть»).
     function done() {
       boardLeave = null;
-      var d = draft;
-      draft = null;
+      var d = draft, was = { board: viewPrefs('board'), boards: viewPrefs('boards') }, next = null;
+      if (d && dper) {
+        dbs[dper] = d;
+        next = { board: one, boards: dbs };
+      } else if (d) next = { board: d, boards: null };
+      draft = pick = dper = dbs = one = null;
       dragEnd(false);
       hdr.classList.remove('bediting');
-      if (d && !same(d, viewPrefs('board'))) editPrefs({ board: d });
-      else if (current === 'home') draw();
+      if (next && !same(next, was)) {
+        editPrefs(next);
+        if (was.boards && !next.boards) backToast('Одна доска на весь день', function () { editPrefs(was); });
+      } else if (current === 'home') draw();
     }
     boardDone.onclick = done;
     // The countdown's label and day: in editing into the draft («Готово» saves it with the rest), else saved at once.
@@ -3590,9 +3940,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         if (!cfg) return toast(lab.value.trim() ? 'Нужна дата' : 'Нужно название, до 24 знаков');
         close();
         haptic();
-        var put = function (o) { return o.id === b.id ? Object.assign({}, o, { cfg: cfg }) : o; };
+        // A countdown in a stack (b.sid, b.k) is its stack's k-th widget.
+        var put = function (o) {
+          if (o.id === b.id) return Object.assign({}, o, { cfg: cfg });
+          if (o.id !== b.sid) return o;
+          return Object.assign({}, o, { items: o.items.map(function (x, k) { return k === b.k ? Object.assign({}, x, { cfg: cfg }) : x; }) });
+        };
         if (draft) { draft = draft.map(put); draw(); }
-        else editPrefs({ board: list().map(put) });
+        else boardSave(list().map(put));
       };
       close = legalSheet('Обратный отсчёт', [add(el('div', 'bar'), add(el('label', 'field'), icon('timer'), lab)),
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), day)), add(el('div', 'bar mact'), ok)], from);
@@ -3602,7 +3957,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var bl = list(), b = { id: boardId(bl), w: w, s: s };
       if (bl.length >= 24) return toast('На «Главной» не больше 24 виджетов');
       if (draft) { draft = draft.concat([b]); draw(); }
-      else editPrefs({ board: bl.concat([b]) });
+      else boardSave(bl.concat([b]));
       var nd = nodes[b.id];
       if (nd) { nd.classList.add('bnew'); nd.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
     }
@@ -3654,8 +4009,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           close();
           var was = list(), seed = boardSeed();
           if (draft) { draft = seed; draw(); return; }
-          editPrefs({ board: seed });
-          if (was.length) backToast('Заполнено как раньше', function () { editPrefs({ board: was }); });
+          boardSave(seed);
+          if (was.length) backToast('Заполнено как раньше', function () { boardSave(was); });
         }));
       close = legalSheet('Главная', [vl, box], from);
     };
@@ -3668,9 +4023,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // others ease to theirs (FLIP); near the screen's top or bottom the page scrolls. The drop saves nothing — «Готово» does.
     function pt(ev) { return { x: ev.clientX, y: ev.clientY }; }
     function down(ev) {
-      if (ev.button > 0 || drag || !grid) return;
-      var w = ev.target.closest('.bw');
-      if (!w || w.parentNode !== grid || ev.target.closest('.bx,.bsz,.bcfg')) return;
+      if (ev.button > 0 || drag || !grid || pick) return;
+      var w = ev.target.closest('.board>.bw');
+      if (!w || w.parentNode !== grid || ev.target.closest('.bx,.bsz,.bcfg,.bsk')) return;
       // A press in a widget's own field or button (＋ Задача) is its own, not the board's long press.
       if (!draft && ev.target.closest('input,button,form')) return;
       var q = pt(ev);
@@ -3684,7 +4039,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         lp = null;
         if (!n || !n.isConnected) return;
         edit();
-        dragStart(n, q);
+        dragStart(nodes[n.bid] || n, q);
       }, 500) };
     }
     function dragStart(w, q) {
@@ -3767,17 +4122,36 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     wrap.addEventListener('pointerdown', down);
     // In editing nothing inside a widget opens anything: only its ✕ and its sizes answer.
-    wrap.addEventListener('click', function (ev) { if (draft && !ev.target.closest('.bx,.bsz,.bcfg')) ev.stopPropagation(); }, true);
+    // While a widget waits for its stack partner a tap on a widget that can take it stacks them; nothing else answers.
+    wrap.addEventListener('click', function (ev) {
+      if (!draft) return;
+      if (pick) {
+        ev.stopPropagation();
+        var w = ev.target.closest('.board>.bw.bpk');
+        if (w) merge(pick, w.bid);
+        return;
+      }
+      if (!ev.target.closest('.bx,.bsz,.bcfg,.bsk')) ev.stopPropagation();
+    }, true);
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', dragEnd);
     window.addEventListener('pointercancel', dragEnd);
     // The page does not scroll under a lifted widget, and a held press does not call up the system's menu.
     wrap.addEventListener('touchmove', function (ev) { if (drag) ev.preventDefault(); }, { passive: false });
     wrap.addEventListener('contextmenu', function (ev) { if (ev.target.closest('.bw')) ev.preventDefault(); });
+    // The board by the time of day changes by itself at a period's border while «Главная» is open (not in editing):
+    // checked every 30 s and when the app comes back to the front.
+    function perTick() {
+      if (wrap.isConnected && !draft && !drag && viewPrefs('boards') && periodNow() !== perShown) redraw();
+    }
+    var perT = setInterval(perTick, 30000);
+    document.addEventListener('visibilitychange', perTick);
     // The listeners on window go with the view: the next show() clears main and they would answer for nothing.
     var unhook = new MutationObserver(function () {
       if (wrap.isConnected) return;
       unhook.disconnect();
+      clearInterval(perT);
+      document.removeEventListener('visibilitychange', perTick);
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', dragEnd);
       window.removeEventListener('pointercancel', dragEnd);
@@ -11704,11 +12078,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // (docs/specs/device-views.md): on the wide layout they go to views.wide, made from that view the first time;
   // next.views replaces them all («Как на телефоне»: {}).
   function editPrefs(next, focus, quiet) {
-    var view = !!(next.home || next.money || next.tiles || next.board), w = view && wide(), h = viewPrefs('home'), mo = viewPrefs('money');
+    var view = !!(next.home || next.money || next.tiles || next.board || next.boards !== undefined), w = view && wide(), h = viewPrefs('home'),
+      mo = viewPrefs('money');
     var v = { home: next.home ? Object.assign({}, h, next.home) : h, money: next.money ? Object.assign({}, mo, next.money) : mo,
-      tiles: next.tiles || viewPrefs('tiles'), board: next.board || viewPrefs('board') };
+      tiles: next.tiles || viewPrefs('tiles'), board: next.board || viewPrefs('board'),
+      boards: next.boards !== undefined ? next.boards : viewPrefs('boards') };
     next = { tabs: next.tabs || prefs.tabs, home: view && !w ? v.home : prefs.home, muted: next.muted || prefs.muted,
       money: view && !w ? v.money : prefs.money, tiles: view && !w ? v.tiles : prefs.tiles, board: view && !w ? v.board : prefs.board,
+      boards: view && !w ? v.boards : prefs.boards,
       board_now: next.board_now !== undefined ? next.board_now : prefs.board_now,
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
       telegram: next.telegram || prefs.telegram };
