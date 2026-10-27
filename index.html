@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 12:12">
+<meta name="published" content="2026-10-27 19:06">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -415,6 +415,31 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .fsr{padding:0 14px 10px}.fsl .pill{margin-left:8px}.fsr .hs{margin:0 -14px;padding:8px 14px 0}.fsr .hs .pill{height:44px}
 .fsr select{flex:none;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 @media (min-width:900px){.fsr .hs .pill,.fsr select{height:32px}.fsr select{font-size:13px}}
+/* A season's episodes with his likes (docs/specs/series-widget-episodes.md): a row each, the number, the name, the thumb. */
+.feps{margin-top:10px;border-top:1px solid var(--line)}
+.fesh{display:flex;align-items:center;gap:12px;padding:10px 0 4px;font-size:13px}.fesh .ii .i{width:15px;height:15px;margin-right:4px}
+.fep{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:6px 0;border:0;border-top:1px solid var(--line);background:none;color:var(--fg);font:inherit;font-size:14px;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.fesh+.fep{border-top:0}
+.fen{flex:none;width:22px;color:var(--muted);font:500 13px/1 var(--font-num);font-variant-numeric:tabular-nums;text-align:right}
+.fep .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.fep .t{overflow-wrap:anywhere}
+.fep .mu{font-size:12px;overflow-wrap:anywhere}.fep.later .t{color:var(--muted)}
+.fep .fev{flex:none;width:18px;height:18px}.fev.up{color:var(--good)}.fev.dn{color:var(--bad)}
+.fevs .pill{height:44px;padding:0 16px;gap:6px;font-size:14px}.fevs .pill .i{width:18px;height:18px}
+.fevs .pill.acc .i{color:inherit}
+/* The like strip after ✓: the episode, two thumbs and «заметка», each 44 px. */
+#toast.tev{display:flex;align-items:center;gap:2px;padding:0 6px 0 16px;text-align:left}
+#toast.tev .tet{flex:1;font-weight:600}
+#toast .tevb{display:inline-flex;align-items:center;justify-content:center;min-width:44px;margin:0;padding:0 8px}
+#toast .tevb .i{width:20px;height:20px}
+/* The series widget's pick sheet and its series sheet over the board. */
+.bspk{display:flex;flex-direction:column}
+.bspr{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.bspr:first-child{border-top:0}.bspr .fp{width:32px;height:48px}.bspr .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.bspr .t{font-weight:500;overflow-wrap:anywhere}.bspr .mu{font-size:12.5px}
+.bspa{display:grid;place-items:center;color:var(--accent)}.bspa .i{width:18px;height:18px}
+.bspr .bspk-on{flex:none;width:20px;height:20px;color:var(--accent)}
+.bsser .fsr{padding:0}.bsser .fsr .hs{margin:0 -16px;padding:8px 16px 0}
+.bsop{cursor:pointer}
 .hs{position:relative;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;scrollbar-width:none}.hs::-webkit-scrollbar{display:none}
 .hs .pill{flex:none;height:44px;padding:0 14px;font-size:13px}.ch+.hs{padding-top:0}
 /* The rating strip: equal circles, red at 1 through amber at 3 to green at 5 (--rc set per chip). */
@@ -1000,6 +1025,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-train-front" viewBox="0 0 24 24"><path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/></symbol>
 <symbol id="i-fuel" viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></symbol>
 <symbol id="i-tv" viewBox="0 0 24 24"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></symbol>
+<symbol id="i-thumbs-up" viewBox="0 0 24 24"><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/><path d="M7 10v12"/></symbol>
+<symbol id="i-thumbs-down" viewBox="0 0 24 24"><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/><path d="M17 14V2"/></symbol>
 <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
@@ -1612,10 +1639,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return l && Array.from(l).length <= 24 && typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d + 'T12:00:00Z')) &&
       new Date(d + 'T12:00:00Z').toISOString().slice(0, 10) === d ? { label: l, date: d } : null;
   }
-  // A widget of the board or of a stack in the size s, {w, cfg?} (the countdown's cfg); null when it is not one.
+  // The series widget's cfg {tmdb_id} (docs/specs/series-widget-episodes.md): a whole number above 0; null otherwise.
+  function seriesCfg(c) {
+    var id = c && c.tmdb_id;
+    return typeof id === 'number' && id > 0 && id % 1 === 0 && id < 2147483648 ? { tmdb_id: id } : null;
+  }
+  // A widget of the board or of a stack in the size s, {w, cfg?} (the countdown's and the series' cfg); null when it is
+  // not one.
   function boardKid(c, s) {
     if (!c || !BOARD_BY[c.w] || BOARD_BY[c.w][3].indexOf(s) < 0) return null;
-    var o = { w: c.w }, f = c.w === 'countdown' && boardCfg(c.cfg);
+    var o = { w: c.w }, f = c.w === 'countdown' ? boardCfg(c.cfg) : c.w === 'series' && seriesCfg(c.cfg);
     if (f) o.cfg = f;
     return o;
   }
@@ -3228,7 +3261,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         add(n, add(f, add(el('label', 'field'), inp), go), st);
       },
       // The series he watches: what comes next for each, a fresh episode first; «сейчас» — one out in the last three days
-      // that he has not seen.
+      // that he has not seen. cfg {tmdb_id} — his pick: the only one in s, the first in m (the rest as before); once it is
+      // no longer among «Смотрю» the widget is «Авто» again, the cfg kept. A tap on a series' line (not its ✓) opens its
+      // sheet: the episode, the season's episodes and likes (docs/specs/series-widget-episodes.md).
       series: function () {
         var fl = src('films');
         if (!fl) return wait(fl);
@@ -3244,7 +3279,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           return (fresh(f) ? 'вышла ' : 'дальше ') + 'S' + nx[0] + 'E' + nx[1];
         }
         list.sort(function (x, y) { return rank(x) - rank(y); });
-        r.now = list.some(fresh);
+        var pid = b.cfg && b.cfg.tmdb_id, mine = pid && list.filter(function (f) { return f.tmdb_id === pid; })[0];
+        if (mine) list = [mine].concat(list.filter(function (f) { return f !== mine; }));
+        // s shows one series: «сейчас» only when that one is fresh.
+        r.now = (s === 's' ? list.slice(0, 1) : list).some(fresh);
+        function sheet(x, f) {
+          if (preview) return;
+          x.classList.add('bsop');
+          x.onclick = function (ev) {
+            ev.stopPropagation();
+            if (!n.closest('.bedit')) boardSeries(f, x);
+          };
+        }
         // «✓ посмотрел» (series_next, as «+1 серия» in «Фильмы»): the next episode at once, the answer's position after it,
         // the old one back on a failure; none while he waits for an episode, none once the series is seen.
         function seen(f, box, paint) {
@@ -3272,6 +3318,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
                 f.progress = Object.assign({}, j.progress, { aired_on: j.progress.waiting ? null : was.aired_on });
                 f.status = j.status;
                 if (j.status === 'seen') toast('Досмотрел — поставь оценку в «Фильмах»', 'star');
+                else if (j.moved) episodeAsk(f, j.progress, { redraw: noop });
                 bsrcPut('films', function (a) {
                   (a.watching || []).forEach(function (o) { if (o.tmdb_id === f.tmdb_id) { o.progress = f.progress; o.status = f.status; } });
                 });
@@ -3297,10 +3344,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
               ? add(el('span'), pill('новая серия', 'acc'), document.createTextNode(' ' + next(f0).replace('вышла ', ''))) : document.createTextNode(next(f0))));
             seen(f0, foot, paint0);
           };
+          sheet(foot, f0);
           return paint0();
         }
         list.slice(0, cap).forEach(function (f) {
           var x = row(null, f.title, null, null, 'bckr');
+          sheet(x, f);
           var paint = function () {
             while (x.childNodes.length > 1) x.removeChild(x.lastChild);
             var v = say(f);
@@ -3529,6 +3578,26 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var boardReload = noop;
   // The countdown's sheet (label and day) for the widget b — set by homeView.
   var boardCfgEdit = noop;
+  // The series widget's pick sheet for the widget b — set by homeView.
+  var boardSeriesPick = noop;
+  // The board's series sheet: «Фильмы»' series block (seriesBlock) over the board, for a copy of the series (its loads
+  // stay off the source); a move goes into the films source and the board is drawn again.
+  function boardSeries(f0, from) {
+    var f = Object.assign({}, f0), box = el('div', 'bsser'), h = {
+      seen: 'Досмотрел — поставь оценку в «Фильмах»',
+      redraw: function () { add(clear(box), seriesBlock(f, h)); },
+      moved: function (j) {
+        f.status = j.status;
+        bsrcPut('films', function (a) {
+          (a.watching || []).forEach(function (o) { if (o.tmdb_id === f.tmdb_id) { o.progress = f.progress; o.status = f.status; } });
+        });
+        h.redraw();
+        boardRedraw();
+      }
+    };
+    h.redraw();
+    legalSheet(f.title, [box], from);
+  }
   // A stack (the fourth batch, like iOS's Smart Stack): its widgets side by side in a strip that snaps one at a time,
   // small dots under them; each widget taps through as on the board. r.kids — the widgets; r.now — one of them is current
   // and r.hot its name. Shown first: the one he swiped to since «Главная» opened (boardStackAt), else the current one
@@ -3663,11 +3732,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         draw();
       };
       node.appendChild(sk);
-      if (b.w === 'countdown') {
+      if (b.w === 'countdown' || b.w === 'series') {
         var pen = add(el('button', 'bcfg'), icon('pen-line'));
         pen.type = 'button';
-        pen.setAttribute('aria-label', 'Название и дата: ' + BOARD_BY[b.w][1]);
-        pen.onclick = function () { boardCfgEdit(b, node); };
+        pen.setAttribute('aria-label', (b.w === 'series' ? 'Какой сериал: ' : 'Название и дата: ') + BOARD_BY[b.w][1]);
+        pen.onclick = function () { if (b.w === 'series') boardSeriesPick(b, pen); else boardCfgEdit(b, node); };
         head.appendChild(pen);
       }
       var sizes = stack ? 'sml'.split('').filter(function (z) {
@@ -3940,17 +4009,52 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         if (!cfg) return toast(lab.value.trim() ? 'Нужна дата' : 'Нужно название, до 24 знаков');
         close();
         haptic();
-        // A countdown in a stack (b.sid, b.k) is its stack's k-th widget.
-        var put = function (o) {
-          if (o.id === b.id) return Object.assign({}, o, { cfg: cfg });
-          if (o.id !== b.sid) return o;
-          return Object.assign({}, o, { items: o.items.map(function (x, k) { return k === b.k ? Object.assign({}, x, { cfg: cfg }) : x; }) });
-        };
-        if (draft) { draft = draft.map(put); draw(); }
-        else boardSave(list().map(put));
+        putCfg(b, cfg);
       };
       close = legalSheet('Обратный отсчёт', [add(el('div', 'bar'), add(el('label', 'field'), icon('timer'), lab)),
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), day)), add(el('div', 'bar mact'), ok)], from);
+    };
+    // A widget's cfg (null takes it off): in editing into the draft, else saved at once. A widget in a stack (b.sid, b.k)
+    // is its stack's k-th widget.
+    function putCfg(b, cfg) {
+      var set = function (x) {
+        var y = Object.assign({}, x);
+        if (cfg) y.cfg = cfg;
+        else delete y.cfg;
+        return y;
+      };
+      var put = function (o) {
+        if (o.id === b.id) return set(o);
+        if (o.id !== b.sid) return o;
+        return Object.assign({}, o, { items: o.items.map(function (x, k) { return k === b.k ? set(x) : x; }) });
+      };
+      if (draft) { draft = draft.map(put); draw(); }
+      else boardSave(list().map(put));
+    }
+    // The series widget's series (docs/specs/series-widget-episodes.md): «Авто» or one of «Смотрю» — poster, name, what
+    // comes next.
+    boardSeriesPick = function (b, from) {
+      var fl = boardSrc('films'), box = el('div', 'bspk'), cur = b.cfg && b.cfg.tmdb_id, close = noop;
+      var all = ((fl && fl.watching) || []).filter(function (f) { return f.kind === 'tv' && f.progress; });
+      function item(lead, t, sub, on, fn) {
+        var x = add(el('button', 'bspr'), lead, add(el('span', 'tx'), el('span', 't', t), el('span', 'mu', sub)), on ? icon('check', 'bspk-on') : null);
+        x.type = 'button';
+        x.setAttribute('aria-pressed', String(on));
+        x.onclick = function () {
+          close();
+          haptic();
+          fn();
+        };
+        return box.appendChild(x);
+      }
+      item(add(el('span', 'fp bspa'), icon('sparkles')), 'Авто', 'свежая серия первой', !cur || !all.some(function (f) { return f.tmdb_id === cur; }),
+        function () { putCfg(b, null); });
+      all.forEach(function (f) {
+        var q = f.progress;
+        item(filmPoster(f), f.title, q.waiting ? waitText(q) : epAt(upNext(q)) + ' дальше', cur === f.tmdb_id, function () { putCfg(b, { tmdb_id: f.tmdb_id }); });
+      });
+      if (!all.length) box.appendChild(el('p', 'mu', fl === undefined ? 'Загружаю сериалы…' : 'В «Смотрю» сериалов нет'));
+      close = legalSheet('Какой сериал', [box], from);
     };
     // Adds a widget at the end: to the draft while editing, else saved at once and brought into view.
     function addWidget(w, s) {
@@ -7174,6 +7278,234 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       : /^(movie|tv|anime)$/.test(p.type) && PICK_GENRES[p.type].some(function (g) { return g[0] === p.genre; }));
     return ok ? { type: p.type, genre: p.genre, random: p.random === true } : { type: 'movie', genre: 35, random: false };
   }
+  // A film's poster (the «Фильмы» rows, the board's series sheet); a grey box when there is none or it fails.
+  function filmPoster(f, big) {
+    var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls), u = String(f.poster || '');
+    ph.setAttribute('aria-hidden', 'true');
+    if (!imgOk(u)) return ph;
+    var img = el('img', cls);
+    img.alt = '';
+    img.loading = 'lazy';
+    img.referrerPolicy = 'no-referrer';
+    img.src = u;
+    img.onerror = function () { img.replaceWith(ph); };
+    return img;
+  }
+  // A series' block (docs/specs/series-progress.md, series-widget-episodes.md), one for «Фильмы»' open series and the
+  // board's series sheet: the progress, its bar, «+1 серия», the season and episode pickers, the next episode, and the
+  // season's episodes with his likes. What it loads stays on the series f (seasons, eps {season, list, marks},
+  // seasonsAt). h.redraw() draws the block again where it stands; h.moved(j) takes series_next / series_set's answer;
+  // h.seen — the toast once the series is seen. «S2 · серия 5 из 10», «жду S3E5 · 24.10».
+  function epAt(e) { return 'S' + e.season + 'E' + e.episode; }
+  function progText(p) { return 'S' + p.season + ' · ' + (p.episode ? 'серия ' + p.episode + (p.of ? ' из ' + p.of : '') : 'не начат'); }
+  function waitText(p) {
+    var n = p.next_air;
+    return n ? 'жду ' + epAt(n) + (n.date ? ' · ' + dm(n.date) : '') : 'жду новый сезон';
+  }
+  // The episode after his position, as the board says it: «S1E9», the next season's first after a season's last.
+  function upNext(p) { return p.of != null && p.episode >= p.of ? { season: p.season + 1, episode: 1 } : { season: p.season, episode: p.episode + 1 }; }
+  function meter(p) {
+    var m = el('div', 'meter'), i = add(m, el('i')).firstChild;
+    i.style.width = (p.of ? Math.min(100, Math.round(p.episode / p.of * 100)) : 0) + '%';
+    m.setAttribute('aria-hidden', 'true');
+    return m;
+  }
+  // A position from the server into f; the board's aired_on («вышла новая серия») kept unless he now waits.
+  function seriesTake(f, q) {
+    f.progress = f.progress && f.progress.aired_on !== undefined ? Object.assign({}, q, { aired_on: q.waiting ? null : f.progress.aired_on }) : q;
+  }
+  // series_get once per open: the seasons for the pickers, his season's episodes and likes.
+  function seriesLoad(f, h) {
+    if (f.seasonsAt === 'busy') return;
+    f.seasonsAt = 'busy';
+    api('miniapp', { action: 'series_get' }, 15000, true, { tmdb_id: f.tmdb_id }).then(function (j) {
+      f.seasons = j.meta.seasons || [];
+      seriesTake(f, j.progress);
+      f.eps = { season: j.season, list: j.episodes || [], marks: j.marks || [] };
+      f.seasonsAt = Date.now();
+      h.redraw();
+    }, function () {
+      f.seasonsAt = 'err';
+      h.redraw();
+    });
+  }
+  // series_next / series_set move him; another season's episodes come with the next draw. A move by one episode asks for
+  // a like (episodeAsk), unless the series is now seen — then the series' own rating is asked for.
+  function seriesMove(f, action, body, b, h) {
+    if (f.moving) return;
+    f.moving = true;
+    if (b) b.disabled = true;
+    haptic();
+    api('miniapp', { action: action }, 15000, false, Object.assign({ tmdb_id: f.tmdb_id }, body)).then(function (j) {
+      f.moving = false;
+      seriesTake(f, j.progress);
+      if (j.meta) f.seasons = j.meta.seasons || f.seasons;
+      if (f.eps && f.eps.season !== j.progress.season) f.seasonsAt = 0;
+      if (j.status === 'seen') toast(h.seen, 'star');
+      else if (action === 'series_next' && !j.moved) toast(j.progress.waiting ? 'Всё вышедшее посмотрено' : 'Дальше серий нет');
+      else if (action === 'series_next') episodeAsk(f, j.progress, h);
+      h.moved(j);
+    }, function () {
+      f.moving = false;
+      if (b) b.disabled = false;
+    });
+  }
+  function plusOne(f, cls, h) {
+    var b = label(el('button', cls), 'plus', cls.indexOf('fpl') >= 0 ? '1' : '1 серия');
+    b.type = 'button';
+    b.onclick = function (ev) {
+      if (ev) ev.stopPropagation();
+      seriesMove(f, 'series_next', {}, b, h);
+    };
+    b.setAttribute('aria-label', '+1 серия');
+    return b;
+  }
+  function seriesBlock(f, h) {
+    var p = f.progress, box = el('div', 'fsr');
+    if (!f.seasonsAt || (f.seasonsAt !== 'busy' && f.seasonsAt !== 'err' && Date.now() - f.seasonsAt > 600000)) seriesLoad(f, h);
+    if (!p) return add(box, el('div', 'mu', f.seasonsAt === 'err' ? 'Серии не загрузились' : 'Загружаю серии…'));
+    var line = add(el('div', 'fsl'), el('b', '', progText(p)));
+    if (p.waiting) line.appendChild(pill(waitText(p), 'acc'));
+    else if (p.next_air) line.appendChild(el('span', 'mu', ' · выйдет ' + epAt(p.next_air) + (p.next_air.date ? ' · ' + dm(p.next_air.date) : '')));
+    add(box, line, meter(p));
+    var row = el('div', 'hs');
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', 'Серии');
+    if (!p.waiting) row.appendChild(plusOne(f, 'pill acc', h));
+    var ss = f.seasons || [];
+    if (ss.length) {
+      var sel = el('select'), eps = el('select'), cur = ss.filter(function (x) { return x.n === p.season; })[0];
+      sel.setAttribute('aria-label', 'Сезон');
+      eps.setAttribute('aria-label', 'Последняя просмотренная серия');
+      ss.forEach(function (x) {
+        var o = el('option', '', 'Сезон ' + x.n);
+        o.value = x.n;
+        sel.appendChild(o);
+      });
+      for (var k = 0; k <= (cur ? cur.episodes : 0); k++) {
+        var o = el('option', '', k ? 'серия ' + k : 'не начат');
+        o.value = k;
+        eps.appendChild(o);
+      }
+      sel.value = String(p.season);
+      eps.value = String(p.episode);
+      sel.onchange = function () { seriesMove(f, 'series_set', { season: Number(sel.value), episode: 0 }, null, h); };
+      eps.onchange = function () { seriesMove(f, 'series_set', { season: p.season, episode: Number(eps.value) }, null, h); };
+      add(row, sel, eps);
+    }
+    add(box, row);
+    if (f.eps && f.eps.season === p.season && f.eps.list.length) box.appendChild(episodeList(f, h));
+    return box;
+  }
+  // The season's episodes: number, TMDB's name, his like or dislike (or nothing), his note grey; the ones after his
+  // position muted, one not out yet with its day. «Сезон N» with the likes and dislikes counted, once he marked one.
+  function episodeList(f, h) {
+    var ep = f.eps, p = f.progress, by = {}, up = 0, dn = 0, box = el('div', 'feps'), q = wp(Date.now()), today = q.year + '-' + q.month + '-' + q.day;
+    ep.marks.forEach(function (m) {
+      by[m.episode] = m;
+      if (m.vote === 1) up++;
+      else if (m.vote === -1) dn++;
+    });
+    var head = add(el('div', 'fesh'), el('b', '', 'Сезон ' + ep.season));
+    if (up) head.appendChild(ict('thumbs-up', String(up)));
+    if (dn) head.appendChild(ict('thumbs-down', String(dn)));
+    if (up || dn) head.setAttribute('aria-label', 'Сезон ' + ep.season + ': нравится ' + up + ', не нравится ' + dn);
+    box.appendChild(head);
+    ep.list.forEach(function (x) {
+      var m = by[x.n], later = ep.season === p.season && x.n > p.episode, soon = x.air_date && x.air_date > today;
+      var b = el('button', 'fep' + (later ? ' later' : '')), sub = m && m.note ? m.note : soon ? 'выйдет ' + dm(x.air_date) : '';
+      b.type = 'button';
+      add(b, el('span', 'fen', String(x.n)), add(el('span', 'tx'), el('span', 't', x.name || 'Серия ' + x.n), sub ? el('span', 'mu', sub) : null),
+        m && m.vote ? icon(m.vote > 0 ? 'thumbs-up' : 'thumbs-down', 'fev ' + (m.vote > 0 ? 'up' : 'dn')) : null);
+      b.setAttribute('aria-label', 'Серия ' + x.n + (x.name ? ' «' + x.name + '»' : '') + (m && m.vote ? (m.vote > 0 ? ', нравится' : ', не нравится') : '') +
+        (m && m.note ? ', заметка: ' + m.note : ''));
+      b.onclick = function (ev) {
+        ev.stopPropagation();
+        episodeSheet(f, ep.season, x.n, b, h);
+      };
+      box.appendChild(b);
+    });
+    return box;
+  }
+  // episode_mark: drawn at once into f's episodes (when that season is loaded), back on a failure with a toast. patch is
+  // {vote} or {note}: the other stays as the server has it.
+  function episodeSave(f, season, n, patch, h) {
+    var ep = f.eps && f.eps.season === season ? f.eps : null, was = ep && ep.marks;
+    if (ep) {
+      var old = ep.marks.filter(function (m) { return m.episode === n; })[0] || { season: season, episode: n, vote: null, note: null }, now = Object.assign({}, old, patch);
+      ep.marks = ep.marks.filter(function (m) { return m.episode !== n; });
+      if (now.vote != null || now.note) ep.marks = ep.marks.concat([now]).sort(function (a, b) { return a.episode - b.episode; });
+      h.redraw();
+    }
+    haptic();
+    return api('miniapp', { action: 'episode_mark' }, 15000, true, Object.assign({ tmdb_id: f.tmdb_id, season: season, episode: n }, patch)).catch(function (e) {
+      if (ep) {
+        ep.marks = was;
+        h.redraw();
+      }
+      if (!e.login) toast(SAVE_FAILED);
+      throw e;
+    });
+  }
+  // After «✓ посмотрел» (the board's ✓, «+1 серия»): «S1E9» with a like, a dislike and «заметка» for 6 s at the bottom.
+  // Left alone it goes and nothing is written — the usual way, not a miss.
+  function episodeAsk(f, at, h) {
+    var season = at.season, n = at.episode;
+    if (!(n >= 1)) return;
+    function bt(ic, s, aria, fn) {
+      var b = add(el('button', 'tl tevb'), ic ? icon(ic) : null, s ? document.createTextNode(s) : null);
+      b.type = 'button';
+      b.setAttribute('aria-label', aria);
+      b.onclick = function () {
+        clearTimeout(toastTimer);
+        toastEl.className = '';
+        fn();
+      };
+      return b;
+    }
+    function vote(v) { return function () { episodeSave(f, season, n, { vote: v }, h).catch(noop); }; }
+    add(clear(toastEl), el('span', 'tet', epAt(at)), bt('thumbs-up', null, 'Нравится: ' + epAt(at), vote(1)),
+      bt('thumbs-down', null, 'Не нравится: ' + epAt(at), vote(-1)), bt(null, 'заметка', 'Заметка к ' + epAt(at), function () { episodeSheet(f, season, n, null, h); }));
+    toastEl.className = 'on act tev';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.className = ''; }, 6000);
+  }
+  // One episode's sheet: a like and a dislike (the same one again takes it off), saved at once; a note up to 280
+  // characters with «Сохранить».
+  function episodeSheet(f, season, n, from, h) {
+    var ep = f.eps && f.eps.season === season ? f.eps : null, x = ep && ep.list.filter(function (e) { return e.n === n; })[0];
+    var m = (ep && ep.marks.filter(function (k) { return k.episode === n; })[0]) || {}, vote = m.vote || null, close = noop;
+    var row = el('div', 'hs fevs'), note = el('input'), ok = label(el('button', 'btn'), 'check', 'Сохранить заметку');
+    var up = el('button'), dn = el('button');
+    function paintV() {
+      [[up, 1, 'thumbs-up', 'Нравится'], [dn, -1, 'thumbs-down', 'Не нравится']].forEach(function (c) {
+        label(c[0], c[2], c[3]).className = 'pill' + (vote === c[1] ? ' acc' : '');
+        c[0].setAttribute('aria-pressed', String(vote === c[1]));
+      });
+    }
+    [[up, 1], [dn, -1]].forEach(function (c) {
+      c[0].type = 'button';
+      c[0].onclick = function () {
+        var was = vote;
+        vote = vote === c[1] ? null : c[1];
+        paintV();
+        episodeSave(f, season, n, { vote: vote }, h).catch(function () { vote = was; paintV(); });
+      };
+      row.appendChild(c[0]);
+    });
+    paintV();
+    note.maxLength = 280;
+    note.value = m.note || '';
+    note.placeholder = 'Заметка к серии';
+    note.setAttribute('aria-label', 'Заметка к серии');
+    ok.type = 'button';
+    ok.onclick = function () {
+      close();
+      episodeSave(f, season, n, { note: note.value.trim() || null }, h).catch(noop);
+    };
+    close = legalSheet(epAt({ season: season, episode: n }) + (x && x.name ? ' · ' + x.name : ''), [row,
+      add(el('div', 'bar'), add(el('label', 'field'), icon('pen-line'), note)), add(el('div', 'bar mact'), ok)], from);
+  }
   function filmsView() {
     var byId = {}, lists = null, picks = null, opened = null, seq = 0, pseq = 0, timer = null, moreB = null, recsAt = null, recsOnly = store('recsOnly');
     if (!RECS_ONLY.some(function (o) { return o[0] === recsOnly; })) recsOnly = 'all';
@@ -7214,94 +7546,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     add(lbox, watchCard, wantCard, seenCard, dropCard, skipCard, statsBox);
 
     function enc(s, r) { return (s || '') + ':' + (s === 'seen' && r != null ? Number(r) : ''); }
-    // A series' progress (docs/specs/series-progress.md): «S2 · серия 5 из 10», «жду S3E5 · 24.10».
-    function epAt(e) { return 'S' + e.season + 'E' + e.episode; }
-    function progText(p) { return 'S' + p.season + ' · ' + (p.episode ? 'серия ' + p.episode + (p.of ? ' из ' + p.of : '') : 'не начат'); }
-    function waitText(p) {
-      var n = p.next_air;
-      return n ? 'жду ' + epAt(n) + (n.date ? ' · ' + dm(n.date) : '') : 'жду новый сезон';
-    }
-    function meter(p) {
-      var m = el('div', 'meter'), i = add(m, el('i')).firstChild;
-      i.style.width = (p.of ? Math.min(100, Math.round(p.episode / p.of * 100)) : 0) + '%';
-      m.setAttribute('aria-hidden', 'true');
-      return m;
-    }
     function series(f) { return f.kind === 'tv' && f.status === 'watching'; }
-    // series_get once per open (the seasons for the pickers); series_next / series_set move him, the answer repainted.
-    function seriesLoad(f) {
-      if (f.seasonsAt === 'busy') return;
-      f.seasonsAt = 'busy';
-      api('miniapp', { action: 'series_get' }, 15000, true, { tmdb_id: f.tmdb_id }).then(function (j) {
-        f.seasons = j.meta.seasons || [];
-        f.progress = j.progress;
-        f.seasonsAt = Date.now();
-        if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
-      }, function () {
-        f.seasonsAt = 'err';
-        if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true);
+    // The series block's hooks here: the open row drawn again, a move's answer through apply().
+    function hooks(f) {
+      return f.sh || (f.sh = {
+        seen: 'Досмотрел — поставь оценку',
+        redraw: function () { if (opened && opened.f === f) paint(opened.wrap, f, opened.sec, true); },
+        moved: function (j) { apply(f, enc(j.status, j.status === 'seen' ? f.rating : null)); }
       });
-    }
-    function seriesMove(f, action, body, b) {
-      if (f.moving) return;
-      f.moving = true;
-      if (b) b.disabled = true;
-      haptic();
-      api('miniapp', { action: action }, 15000, false, Object.assign({ tmdb_id: f.tmdb_id }, body)).then(function (j) {
-        f.moving = false;
-        f.progress = j.progress;
-        if (j.meta) f.seasons = j.meta.seasons || f.seasons;
-        if (j.status === 'seen') toast('Досмотрел — поставь оценку', 'star');
-        else if (action === 'series_next' && !j.moved) toast(j.progress.waiting ? 'Всё вышедшее посмотрено' : 'Дальше серий нет');
-        apply(f, enc(j.status, j.status === 'seen' ? f.rating : null));
-      }, function () {
-        f.moving = false;
-        if (b) b.disabled = false;
-      });
-    }
-    function plusOne(f, cls) {
-      var b = button(cls, 'plus', cls.indexOf('fpl') >= 0 ? '1' : '1 серия', function (ev) {
-        if (ev) ev.stopPropagation();
-        seriesMove(f, 'series_next', {}, b);
-      });
-      b.setAttribute('aria-label', '+1 серия');
-      return b;
-    }
-    // The open series' block: the progress, its bar, «+1 серия», the season and episode pickers, the next episode.
-    function seriesBlock(f) {
-      var p = f.progress, box = el('div', 'fsr');
-      if (!f.seasonsAt || (f.seasonsAt !== 'busy' && f.seasonsAt !== 'err' && Date.now() - f.seasonsAt > 600000)) seriesLoad(f);
-      if (!p) return add(box, el('div', 'mu', f.seasonsAt === 'err' ? 'Серии не загрузились' : 'Загружаю серии…'));
-      var line = add(el('div', 'fsl'), el('b', '', progText(p)));
-      if (p.waiting) line.appendChild(pill(waitText(p), 'acc'));
-      else if (p.next_air) line.appendChild(el('span', 'mu', ' · выйдет ' + epAt(p.next_air) + (p.next_air.date ? ' · ' + dm(p.next_air.date) : '')));
-      add(box, line, meter(p));
-      var row = el('div', 'hs');
-      row.setAttribute('role', 'group');
-      row.setAttribute('aria-label', 'Серии');
-      if (!p.waiting) row.appendChild(plusOne(f, 'pill acc'));
-      var ss = f.seasons || [];
-      if (ss.length) {
-        var sel = el('select'), eps = el('select'), cur = ss.filter(function (x) { return x.n === p.season; })[0];
-        sel.setAttribute('aria-label', 'Сезон');
-        eps.setAttribute('aria-label', 'Последняя просмотренная серия');
-        ss.forEach(function (x) {
-          var o = el('option', '', 'Сезон ' + x.n);
-          o.value = x.n;
-          sel.appendChild(o);
-        });
-        for (var k = 0; k <= (cur ? cur.episodes : 0); k++) {
-          var o = el('option', '', k ? 'серия ' + k : 'не начат');
-          o.value = k;
-          eps.appendChild(o);
-        }
-        sel.value = String(p.season);
-        eps.value = String(p.episode);
-        sel.onchange = function () { seriesMove(f, 'series_set', { season: Number(sel.value), episode: 0 }); };
-        eps.onchange = function () { seriesMove(f, 'series_set', { season: p.season, episode: Number(eps.value) }); };
-        add(row, sel, eps);
-      }
-      return add(box, row);
     }
     function dec(v) { var p = v.split(':'); return { status: p[0] || null, rating: p[1] ? Number(p[1]) : null }; }
     // One object per film across the tab, so a mark shows wherever the film is; a mark still on its way wins.
@@ -7352,18 +7604,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (moved || f.status) drawLists();
     }
 
-    function poster(f, big) {
-      var cls = 'fp' + (big ? ' big' : ''), ph = el('span', cls), u = String(f.poster || '');
-      ph.setAttribute('aria-hidden', 'true');
-      if (!imgOk(u)) return ph;
-      var img = el('img', cls);
-      img.alt = '';
-      img.loading = 'lazy';
-      img.referrerPolicy = 'no-referrer';
-      img.src = u;
-      img.onerror = function () { img.replaceWith(ph); };
-      return img;
-    }
+    var poster = filmPoster;
     function button(cls, ic, s, fn) {
       var b = label(el('button', cls), ic, s);
       b.type = 'button';
@@ -7380,7 +7621,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var sp = series(f) && f.progress, tx = add(el('div', 'tx'), t, (f.genres || []).length ? el('div', 'mu', f.genres.join(', ')) : null,
         sp ? el('div', 'mu', progText(sp)) : null, sp ? meter(sp) : null, sp && sp.waiting ? el('div', 'mu fwt', waitText(sp)) : null,
         Number(f.vote) > 0 && !sp ? el('div', 'mu', ict('star', rateText(Number(f.vote).toFixed(1)))) : null, inCinema(f.cinema));
-      add(clear(wrap), add(r, poster(f), tx, sp ? (sp.waiting ? null : plusOne(f, 'pill acc fpl'))
+      add(clear(wrap), add(r, poster(f), tx, sp ? (sp.waiting ? null : plusOne(f, 'pill acc fpl', hooks(f)))
         : f.status === 'seen' ? pill('Видел' + (f.rating != null ? ' · ' + rateText(f.rating) : ''), 'acc')
         : said ? pill(said[1], f.status === 'watching' ? 'acc' : '') : null, icon('chevron-down', 'go')));
       r.setAttribute('aria-expanded', String(open));
@@ -7399,7 +7640,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           if (sec === 'p' && f.status === 'skip') shut();
         }));
       });
-      add(wrap, add(el('div', 'det fd'), rates, sts, series(f) ? seriesBlock(f) : null,
+      add(wrap, add(el('div', 'det fd'), rates, sts, series(f) ? seriesBlock(f, hooks(f)) : null,
         f.status ? add(el('div', 'acts'), button('btn ghost', 'x', 'Убрать', function () { setMark(f, null, null); })) : null,
       f.overview ? el('div', 'tip', String(f.overview).slice(0, 300)) : null));
     }
