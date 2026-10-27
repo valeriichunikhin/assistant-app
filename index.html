@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-26 23:38">
+<meta name="published" content="2026-10-27 09:06">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -796,6 +796,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .bpv{position:relative;flex:none;width:88px;height:64px;overflow:hidden;border-radius:10px}
 .bpvi{position:absolute;top:0;left:12px;width:170px;height:170px;transform-origin:0 0;pointer-events:none}
 .bpv.wide .bpvi{left:0;top:11px;width:352px}
+/* The widgets of 27.10.2026: the catalog's group headers, the weather, the goals' bars, the ＋ widgets, the countdown's pen. */
+.bcat .bcg{padding:16px 0 4px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}
+.bcat .bcg:first-child{padding-top:2px}
+.bv.bwx{display:flex;align-items:center;gap:8px}.bv.bwx .i{flex:none;width:30px;height:30px;stroke-width:1.75}
+.bsplit .bcol .bv.bwx{margin:0}.bcol>.mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bhrs{flex:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;width:58%}
+.bhr{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;font:500 12.5px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.bhr .i{width:18px;height:18px;color:var(--muted)}.bhr .mu{color:var(--muted);font-size:11.5px}
+.brow>.bem{flex:none;width:18px;text-align:center;font-size:15px;line-height:1}
+.brow.b2l .tx{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.brow .pr .pill{vertical-align:middle}
+.bgl{flex:none;display:flex;flex-direction:column;gap:4px;padding:6px 0 2px}.bh+.bgl{margin-top:4px}
+.bgt{display:flex;align-items:baseline;gap:8px;font-size:13.5px;line-height:1.3}.bgt .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bgt .pr{flex:none;color:var(--muted);font:500 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
+.bgl .mbar{margin:0}
+.bplus{flex:1;display:grid;place-items:center;min-height:0}
+.bplus .i{width:44px;height:44px;padding:10px;border-radius:50%;background:var(--accent);color:var(--accent-ink);box-sizing:content-box}
+.bta{flex:none;display:flex;gap:8px;margin:auto 0 0}.bta .field{min-height:44px}
+.bta .field input{font-size:16px;-webkit-user-select:text;user-select:text}.bta .btn{flex:none;padding:0 12px}
+.bwet{color:var(--warn)}
+.bnt.bts{flex:none;margin-top:6px;padding-top:0;min-height:2.7em;-webkit-line-clamp:2}.bnt.bts.ok{color:var(--good)}
+.bcfg{flex:none;display:grid;place-items:center;width:30px;height:30px;margin-left:auto;padding:0;border:1px solid var(--line-2);border-radius:8px;background:none;color:var(--fg);cursor:pointer}
+.bcfg .i{width:15px;height:15px}
 .tsum .sub.bcsub,.tsum .sub.vline{padding:0 0 10px;color:var(--muted);font-size:13px}
 .btn.bdone{display:none;flex:none;min-height:36px;padding:0 14px}
 .hdr.bediting .btn.bdone{display:inline-flex}.hdr.bediting .date,.hdr.bediting .bell{display:none}
@@ -940,6 +963,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-fuel" viewBox="0 0 24 24"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></symbol>
 <symbol id="i-tv" viewBox="0 0 24 24"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></symbol>
 <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+<symbol id="i-cloud-sun" viewBox="0 0 24 24"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
+<symbol id="i-cloud-moon" viewBox="0 0 24 24"><path d="M13 16a3 3 0 0 1 0 6H7a5 5 0 1 1 4.9-6z"/><path d="M18.376 14.512a6 6 0 0 0 3.461-4.127c.148-.625-.659-.97-1.248-.714a4 4 0 0 1-5.259-5.26c.255-.589-.09-1.395-.716-1.248a6 6 0 0 0-4.594 5.36"/></symbol>
+<symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></symbol>
+<symbol id="i-cloud-drizzle" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v1"/><path d="M8 14v1"/><path d="M16 19v1"/><path d="M16 14v1"/><path d="M12 21v1"/><path d="M12 16v1"/></symbol>
+<symbol id="i-cloud-snow" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 15h.01"/><path d="M8 19h.01"/><path d="M12 17h.01"/><path d="M12 21h.01"/><path d="M16 15h.01"/><path d="M16 19h.01"/></symbol>
+<symbol id="i-cloud-lightning" viewBox="0 0 24 24"><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></symbol>
+<symbol id="i-cloud-fog" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 17H7"/><path d="M17 21H9"/></symbol>
+<symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+<symbol id="i-party-popper" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></symbol>
 <symbol id="i-flower-2" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1"/><circle cx="12" cy="8" r="2"/><path d="M12 10v12"/><path d="M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z"/><path d="M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z"/></symbol>
 <symbol id="i-hand-heart" viewBox="0 0 24 24"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></symbol>
 <symbol id="i-drama" viewBox="0 0 24 24"><path d="M10 11h.01"/><path d="M14 6h.01"/><path d="M18 6h.01"/><path d="M6.5 13.1h.01"/><path d="M22 5c0 9-4 12-6 12s-6-3-6-12c0-2 2-3 6-3s6 1 6 3"/><path d="M17.4 9.9c-.8.8-2 .8-2.8 0"/><path d="M10.1 7.1C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7"/><path d="M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4"/></symbol>
@@ -1509,9 +1544,28 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     ['card_debt', 'Долг по картам', 'trending-down', 'sm'], ['accounts', 'Счета', 'landmark', 'ml'], ['tasks', 'Задачи', 'check-square', 'sml'],
     ['days', 'Сегодня и завтра', 'calendar', 'ml'], ['vb', 'Волейбол', 'ball', 'sm'], ['cinema', 'Кино', 'film', 'sm'],
     ['genshin', 'Genshin · смола', 'game', 'sm'], ['review', 'Разбор месяца', 'calendar-check', 'ml'], ['notif', 'Уведомления', 'bell', 's'],
-    ['linkedin', 'LinkedIn', 'linkedin', 'sm']];
+    ['linkedin', 'LinkedIn', 'linkedin', 'sm'],
+    // 27.10.2026, the second batch; the fifth field is the source it reads beside home's answer (BSRC).
+    ['weather', 'Погода', 'cloud-sun', 'sm', 'weather'], ['shoplist', 'Список покупок', 'cart', 'sml', 'list'],
+    ['payments', 'Ближайшие платежи', 'calendar-sync', 'ml'], ['goals', 'Цели', 'target', 'sm', 'state'],
+    ['spend', '＋ Трата', 'plus', 's'], ['addtask', '＋ Задача', 'plus', 'm'], ['series', 'Сериалы', 'tv', 'sm', 'films'],
+    ['wish', 'Вишлист', 'gift', 'ml', 'wish'], ['deals', 'Акции на мои товары', 'tag', 'ml', 'picks'],
+    ['events', 'События сегодня', 'party-popper', 'ml', 'events'], ['news', 'Новости дня', 'news', 'ml', 'news'],
+    ['parcels', 'Посылки', 'package', 'sm', 'dela'], ['gtoday', 'Genshin сегодня', 'book-open', 'sm', 'genshin'],
+    ['countdown', 'Обратный отсчёт', 'timer', 's']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
+  // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
+  var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
+    ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
+    ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin']],
+    ['Отдых', ['vb', 'cinema', 'series']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'gtoday']]];
+  // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
+  function boardCfg(c) {
+    var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
+    return l && Array.from(l).length <= 24 && typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d + 'T12:00:00Z')) &&
+      new Date(d + 'T12:00:00Z').toISOString().slice(0, 10) === d ? { label: l, date: d } : null;
+  }
   // His board as the server keeps it: the known widgets in a size each comes in, ids once each, 24 at most.
   function boardIn(v) {
     var ids = {};
@@ -1520,7 +1574,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         b.s.length === 1 && BOARD_BY[b.w][3].indexOf(b.s) >= 0;
       if (ok) ids[b.id] = 1;
       return ok;
-    }).slice(0, 24).map(function (b) { return { id: b.id, w: b.w, s: b.s }; }) : [];
+    }).slice(0, 24).map(function (b) {
+      var o = { id: b.id, w: b.w, s: b.s }, c = b.w === 'countdown' && boardCfg(b.cfg);
+      if (c) o.cfg = c;
+      return o;
+    }) : [];
   }
   // The «Деньги» tab's cards under the month's header (docs/specs/money-11.md §8), in their default order: key, name,
   // icon; MONEY_CARD_KEYS of supabase/functions/miniapp/index.ts — edit both together.
@@ -2436,8 +2494,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function on(env, tab) { return prefs.muted.indexOf(env) < 0 && tabShown(tab); }
     var money = !on('money', 'money');
     return { daily: money, revolut: money, payday: money, month: money, debts: money, card_debt: money, accounts: money, review: money,
-      tasks: !tabShown('tasks'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
-      cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li') }[w] || false;
+      payments: money, goals: money, spend: money,
+      tasks: !tabShown('tasks'), addtask: !tabShown('tasks'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
+      gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
+      shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
+      events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela') }[w] || false;
   }
   // A widget's icon: a Lucide name, or 'acct:<key>' for an account's logo.
   function boardIcon(ic) { return ic.indexOf('acct:') === 0 ? moneyAcctTile(ic.slice(5), 'ai') : icon(ic); }
@@ -2474,6 +2535,75 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return b;
   }
   var BOARD_SIZE = { s: 'квадрат', m: 'широкий', l: 'большой' };
+  // The board's sources beside home's answer (27.10.2026): BOARD's fifth field → [the cache key, the request]. A tab that
+  // reads the same answer has the same key, so a fresh answer of either serves both. Each is asked for once per load of
+  // «Главная» and only while a widget on the board reads it (boardAsk); in between it is drawn from the cache.
+  // Open-Meteo: free, no key, CORS open; the weather at his home, asked again after 30 minutes.
+  var METEO = 'https://api.open-meteo.com/v1/forecast?latitude=52.2455&longitude=20.9648&timezone=Europe%2FWarsaw&forecast_days=2' +
+    '&current=temperature_2m,weather_code,is_day,precipitation&hourly=temperature_2m,weather_code,precipitation,is_day' +
+    '&daily=temperature_2m_max,temperature_2m_min';
+  function weatherFetch() {
+    var o = {};
+    if (window.AbortSignal && AbortSignal.timeout) o.signal = AbortSignal.timeout(10000);
+    return fetch(METEO, o).then(function (r) { return r.ok ? r.json() : Promise.reject(new Error(String(r.status))); }).then(function (j) {
+      if (!j || !j.current || !j.hourly || !j.daily || !Array.isArray(j.hourly.time)) throw new Error('weather');
+      return { current: j.current, hourly: j.hourly, daily: j.daily };
+    });
+  }
+  function bsrcApi(fn, action, ms, more) {
+    return function () { return api(fn, Object.assign({ action: action }, more), ms, true); };
+  }
+  var BSRC = { weather: ['weather', weatherFetch], list: ['list', bsrcApi('telegram-webhook', 'items')],
+    state: ['money:state', bsrcApi('miniapp', 'money_state')], films: ['films:lists', bsrcApi('miniapp', 'films_lists', 15000)],
+    wish: ['wish', bsrcApi('telegram-webhook', 'wish')], picks: ['picks:batches', bsrcApi('telegram-webhook', 'picks')],
+    events: ['feed:events', bsrcApi('miniapp', 'events')], news: ['feed:all', bsrcApi('miniapp', 'news', undefined, { stream: 'all' })],
+    dela: ['dela', bsrcApi('telegram-webhook', 'dela')], genshin: ['genshin', bsrcApi('miniapp', 'genshin', 25000)] };
+  // k → {t, j}, the source's last answer here (kept beside the cache, which refuses a big one), or {fail} when the
+  // request failed with nothing cached.
+  var bsrcMem = {};
+  // What a source's widgets draw: the newer of the cached answer and the last one here; undefined — none yet, null — failed.
+  function boardSrc(k) {
+    var c = BSRC[k], m = bsrcMem[k], hit = c && cacheGet(c[0]);
+    if (hit && (!m || m.fail || hit.t >= m.t)) return hit.j;
+    return m ? (m.fail ? null : m.j) : undefined;
+  }
+  // Asks a source; the live board is drawn again (boardRedraw) when what its widgets draw changed. Not again within 15 s
+  // (the wide layout builds «Главная» twice on start: the answer goes to the view on screen, not the one that asked) and,
+  // for the weather, not within 30 minutes of the cached answer.
+  var bsrcAt = {}, boardRedraw = noop;
+  function boardAsk(k) {
+    var c = BSRC[k], hit = cacheGet(c[0]);
+    if ((k === 'weather' && hit && Date.now() - hit.t < 1800000) || Date.now() - (bsrcAt[k] || 0) < 15000) return;
+    bsrcAt[k] = Date.now();
+    c[1]().then(function (j) {
+      var str = JSON.stringify(j), m = bsrcMem[k];
+      cacheSet(c[0], str);
+      bsrcMem[k] = { t: Date.now(), j: j };
+      if (!hit || hit.s !== str || (m && m.fail)) boardRedraw();
+    }, function (e) {
+      if (e && e.login) return;
+      if (!hit && !(bsrcMem[k] && bsrcMem[k].j)) { bsrcMem[k] = { fail: true }; boardRedraw(); }
+    });
+  }
+  // WMO weather codes (Open-Meteo) → [icon, words]; a clear or partly cloudy night gets the moon.
+  function wmo(c, day) {
+    return c === 0 ? [day ? 'sun' : 'moon', 'ясно'] : c <= 2 ? [day ? 'cloud-sun' : 'cloud-moon', 'малооблачно'] : c === 3 ? ['cloud', 'пасмурно'] :
+      c <= 48 ? ['cloud-fog', 'туман'] : c <= 57 ? ['cloud-drizzle', 'морось'] : c <= 67 || (c >= 80 && c <= 82) ? ['cloud-rain', 'дождь'] :
+      c <= 77 || c === 85 || c === 86 ? ['cloud-snow', 'снег'] : c >= 95 ? ['cloud-lightning', 'гроза'] : ['cloud', ''];
+  }
+  // The ＋ Задача widget's typed text and its last «добавлено» line ({s, t}), kept across the board's redraws.
+  var boardTaskDraft = '', boardTaskSaid = null;
+  // ＋ Трата: «Деньги»'s add sheet over the board. Its account chips come from «Деньги»'s cached month, else from home's
+  // accounts; a saved spend reloads the board.
+  function boardSpend(from, j) {
+    if (!MONEY.accounts.length) {
+      var hit = cacheGet('money:' + monthNow());
+      if (hit && hit.j && hit.j.accounts) MONEY.accounts = hit.j.accounts;
+      if (hit && hit.j && hit.j.people && !MONEY.people.length) MONEY.people = hit.j.people.slice();
+      if (!MONEY.accounts.length && j.accounts) MONEY.accounts = j.accounts;
+    }
+    moneySheet(null, function () { cacheDrop('home'); boardReload(); }, from);
+  }
 
   // One widget of the board: the node (.bw .bw-<s>) with its head and body; r.go — what a tap does, r.now — «сейчас».
   // j: home's answer (or {} before one); preview: drawn in the catalog, no taps.
@@ -2491,13 +2621,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function tab(t) { return function () { show(t); }; }
     // A row of a list widget: a lead (an icon or a node), the text, the right column; tap → fn.
     function row(lead, t, right, fn, cls) {
-      var x = add(el('div', 'brow' + (cls ? ' ' + cls : '')), lead ? (lead.nodeType ? lead : icon(lead)) : null, el('span', 'tx', t),
+      var x = add(el('div', 'brow' + (cls ? ' ' + cls : '')), lead ? (lead.nodeType ? lead : icon(lead)) : null, t && t.nodeType ? t : el('span', 'tx', t),
         right == null ? null : right.nodeType ? right : el('span', 'pr', right));
       if (fn && !preview) x.onclick = function (ev) { ev.stopPropagation(); fn(); };
       return n.appendChild(x);
     }
     function dayTime(ts) { var q = wp(ts); return WEEK[wd(q.year + '-' + q.month + '-' + q.day)] + ' ' + q.hour + ':' + q.minute; }
     function soon(from, to) { return Date.parse(from) - now <= 3 * 3600000 && Date.parse(to || from) > now; }
+    // A source beside home's answer (BSRC); before its first answer «загружаю…», after a failure «нет данных».
+    function src(k) { return boardSrc(k); }
+    function wait(v) { quiet(v === null || preview ? 'нет данных' : 'загружаю…'); }
+    var cap = s === 'l' ? 8 : 3;
+    // A list row's text: a title, and on a large widget a muted second line under it.
+    function two(t, sub) { return s === 'l' && sub ? add(el('span', 'tx'), el('div', 't', t), el('div', 'mu', sub)) : el('span', 'tx', t); }
     var draw = {
       // The day's amount (red over it, amber «только необходимое»), the period's days as squares — gone ones faded,
       // today's in the state's colour — and the payday's step or the days to it, «с лимитом карт» when the cards count.
@@ -2727,6 +2863,283 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         }
         line(q.idea, 'bt b2');
         note(add(el('span'), pill(st[0], st[1]), document.createTextNode(' ' + String(q.lang || 'pl').toUpperCase())));
+      },
+      // Now at his home with its sky, today's max and min, «дождь с 15:00» when it comes within 12 hours; wide — the next
+      // six hours. «сейчас» — rain within two hours.
+      weather: function () {
+        var w = src('weather');
+        if (!w) return wait(w);
+        var c = w.current, h = w.hourly, dl = w.daily, hk = today + 'T' + p.hour + ':00', i0 = h.time.indexOf(hk);
+        var fresh = String(c.time || '').slice(0, 13) === hk.slice(0, 13);
+        var t = fresh || i0 < 0 ? c.temperature_2m : h.temperature_2m[i0], code = fresh || i0 < 0 ? c.weather_code : h.weather_code[i0];
+        var day = fresh || i0 < 0 ? c.is_day : h.is_day[i0], ic = wmo(code, day), di = dl.time.indexOf(today), rain = '';
+        function wet(k) { var x = h.weather_code[k]; return (x >= 51 && x <= 67) || (x >= 71 && x <= 86) || x >= 95 || h.precipitation[k] >= 0.2; }
+        if (i0 >= 0) {
+          for (var k = i0; k < Math.min(h.time.length, i0 + 13); k++) {
+            if (!wet(k)) continue;
+            var snow = h.weather_code[k] >= 71 && h.weather_code[k] <= 86;
+            rain = (snow ? 'снег' : 'дождь') + (k === i0 ? ' сейчас' : ' с ' + h.time[k].slice(11, 16));
+            r.now = k - i0 <= 2;
+            break;
+          }
+        }
+        var deg = function (v) { return Math.round(v) + '°'; }, mm = di >= 0 ? '↑' + deg(dl.temperature_2m_max[di]) + ' ↓' + deg(dl.temperature_2m_min[di]) : '';
+        var head = add(el('div', 'bv bwx'), icon(ic[0]), document.createTextNode(deg(t)));
+        head.setAttribute('aria-label', deg(t) + ', ' + ic[1]);
+        if (s === 's') {
+          n.appendChild(head);
+          if (ic[1]) line(ic[1], 'mu');
+          return note(rain ? add(el('span'), document.createTextNode(mm + ' · '), el('span', 'bwet', rain)) : mm);
+        }
+        var left = add(el('div', 'bcol'), head, el('div', 'mu', [ic[1], mm].filter(Boolean).join(' · ')), rain ? el('div', 'mu warn', rain) : null);
+        var hrs = el('div', 'bhrs');
+        for (var q = 1; i0 >= 0 && q <= 6 && i0 + q < h.time.length; q++) {
+          add(hrs, add(el('div', 'bhr'), el('span', 'mu', h.time[i0 + q].slice(11, 13)), icon(wmo(h.weather_code[i0 + q], h.is_day[i0 + q])[0]),
+            el('b', '', deg(h.temperature_2m[i0 + q]))));
+        }
+        add(n, add(el('div', 'bsplit'), left, hrs.firstChild ? hrs : null));
+      },
+      // What is left to buy: the count, wide and large — the first ones; a tap opens the list.
+      shoplist: function () {
+        var l = src('list');
+        if (!l) return wait(l);
+        var open = (l.items || []).filter(function (i) { return !i.done; });
+        r.go = tab('list');
+        name.textContent = 'Купить';
+        if (!open.length) return quiet('список пуст');
+        if (s === 's') {
+          big(grouped(open.length));
+          return note(open.slice(0, 4).map(function (i) { return i.text; }).join(', '));
+        }
+        line(open.length + ' ' + plural(open.length, ['позиция', 'позиции', 'позиций']), 'mu');
+        open.slice(0, cap).forEach(function (i) { row(i.emoji ? el('span', 'bem', i.emoji) : 'square', i.text, i.qty > 1 ? '×' + i.qty : null); });
+        if (open.length > cap) line('+' + (open.length - cap) + ' ещё', 'mu');
+      },
+      // What is paid before payday (money's daily obligations): their sum, then each with its day and amount.
+      payments: function () {
+        if (!dd) return quiet(lost(j.money));
+        var ob = (dd.obligations || []).slice().sort(function (x, y) { return String(x.on).localeCompare(String(y.on)); });
+        r.go = tab('money');
+        if (!ob.length) return quiet('до зарплаты платежей нет');
+        var sum = ob.reduce(function (a, o) { return a + Number(o.amount || 0); }, 0);
+        line('до ' + dm(dd.payday) + ' · ' + ob.length + '\u00a0' + plural(ob.length, ['платёж', 'платежа', 'платежей']) + ' · ' + mtZl(sum), 'mu');
+        ob.slice(0, cap).forEach(function (o) {
+          var d = o.on ? (o.on === today ? 'сегодня' : o.on === addDays(today, 1) ? 'завтра' : WEEK[wd(o.on)] + ' ' + dm(o.on)) : '';
+          row(null, s === 'l' ? two(o.label, d) : el('span', 'tx', o.label + (d ? ' · ' + d : '')), mtZl(o.amount));
+        });
+        if (ob.length > cap) line('+' + (ob.length - cap) + ' ещё', 'mu');
+      },
+      // His goals: square — the first one's share with its bar; wide — up to three bars.
+      goals: function () {
+        var st = src('state');
+        if (!st) return wait(st);
+        var gs = st.goals || [];
+        r.go = tab('money');
+        if (!gs.length) return quiet('целей пока нет');
+        function pc(g) { return g.target ? g.saved / g.target : 0; }
+        if (s === 's') {
+          var g = gs[0];
+          name.textContent = g.name;
+          big(Math.min(999, Math.round(pc(g) * 100)) + '\u00a0%', pc(g) >= 1 ? 'good' : '');
+          n.appendChild(moneyBar(pc(g), pc(g) >= 1 ? 'done' : ''));
+          return note(mtInt(g.saved) + ' из ' + mtZl(g.target));
+        }
+        gs.slice(0, 3).forEach(function (g) {
+          n.appendChild(add(el('div', 'bgl'), add(el('div', 'bgt'), el('span', 'tx', g.name),
+            el('span', 'pr', g.left ? mtInt(g.saved) + ' / ' + mtZl(g.target) : 'собрано')), moneyBar(pc(g), pc(g) >= 1 ? 'done' : '')));
+        });
+        if (gs.length > 3) line('+' + (gs.length - 3) + ' ещё', 'mu');
+      },
+      // A tap opens «Деньги»'s add sheet right here.
+      spend: function () {
+        name.textContent = 'Трата';
+        r.go = function (node) { boardSpend(node, j); };
+        n.appendChild(add(el('div', 'bplus'), icon('plus')));
+        note('записать трату');
+      },
+      // A field: Enter adds the task as «Задачи» does (the tail «завтра», «до пт», «в 15:00», #fba understood), then
+      // a short «добавлено». No tap-through: the widget is the field.
+      addtask: function () {
+        name.textContent = 'Задача';
+        var f = el('form', 'bta'), inp = el('input'), go = add(el('button', 'btn'), icon('plus'));
+        var said = boardTaskSaid && Date.now() - boardTaskSaid.t < 6000 ? boardTaskSaid.s : '';
+        var st = el('div', 'bnt bts' + (said ? ' ok' : ''), said || 'завтра · до пт · в 15:00 · #fba');
+        inp.placeholder = 'Новая задача…';
+        inp.maxLength = 300;
+        inp.enterKeyHint = 'done';
+        inp.value = boardTaskDraft;
+        inp.setAttribute('aria-label', 'Новая задача');
+        inp.oninput = function () { boardTaskDraft = inp.value; };
+        go.type = 'submit';
+        go.setAttribute('aria-label', 'Добавить задачу');
+        if (preview) inp.disabled = go.disabled = true;
+        f.onclick = function (ev) { ev.stopPropagation(); };
+        f.onsubmit = function (ev) {
+          ev.preventDefault();
+          var v = inp.value.trim();
+          if (!v || go.disabled) return;
+          go.disabled = true;
+          haptic();
+          api('miniapp', { action: 'tasks_add' }, 15000, true, { text: v }).then(function (a) {
+            go.disabled = false;
+            boardTaskDraft = inp.value = '';
+            var tk = (a && a.task) || a || {}, pd = (a && a.parsed) || tk;
+            var tail = [pd.due_date ? 'до ' + WEEK[wd(pd.due_date)] + ' ' + dm(pd.due_date) : '', pd.due_time ? String(pd.due_time).slice(0, 5) : '',
+              areaName(pd.area)].filter(Boolean).join(' · ');
+            boardTaskSaid = { s: 'Добавлено: ' + (tk.title || v) + (tail ? ' · ' + tail : ''), t: Date.now() };
+            text(st, boardTaskSaid.s);
+            st.classList.add('ok');
+            cacheDrop('tasks');
+            cacheDrop('home');
+            boardReload();
+          }, function (e) {
+            go.disabled = false;
+            if (!e.login) toast(e.code === 'bad request' ? 'Нужно название, до 200 знаков' : ERRORS[e.code]);
+          });
+        };
+        add(n, add(f, add(el('label', 'field'), inp), go), st);
+      },
+      // The series he watches: what comes next for each, a fresh episode first; «сейчас» — one out in the last three days
+      // that he has not seen.
+      series: function () {
+        var fl = src('films');
+        if (!fl) return wait(fl);
+        var list = (fl.watching || []).filter(function (f) { return f.kind === 'tv' && f.progress; });
+        r.go = tab('films');
+        if (!list.length) return quiet('сериалов нет');
+        function fresh(f) { var a = f.progress.aired_on; return !f.progress.waiting && !!a && a <= today && days(a, today) <= 2; }
+        function rank(f) { return fresh(f) ? 0 : f.progress.waiting ? 2 : 1; }
+        function next(f) {
+          var q = f.progress, nx = q.of != null && q.episode >= q.of ? [q.season + 1, 1] : [q.season, q.episode + 1];
+          if (q.waiting) return q.next_air ? 'жду S' + q.next_air.season + 'E' + q.next_air.episode + (q.next_air.date ? ' · ' + dm(q.next_air.date) : '') : 'жду новый сезон';
+          return (fresh(f) ? 'вышла ' : 'дальше ') + 'S' + nx[0] + 'E' + nx[1];
+        }
+        list.sort(function (x, y) { return rank(x) - rank(y); });
+        r.now = list.some(fresh);
+        if (s === 's') {
+          line(list[0].title, 'bt b2');
+          return note(fresh(list[0]) ? add(el('span'), pill('новая серия', 'acc'), document.createTextNode(' ' + next(list[0]).replace('вышла ', ''))) : next(list[0]));
+        }
+        list.slice(0, cap).forEach(function (f) { row(null, f.title, fresh(f) ? pill(next(f), 'acc') : next(f)); });
+      },
+      // His wishlist: an item back in stock first, then those at their target, then the nearest to it; «сейчас» — one
+      // back in stock within two days.
+      wish: function () {
+        var w = src('wish');
+        if (!w) return wait(w);
+        var rows = (w.rows || []).slice();
+        r.go = tab('wish');
+        if (!rows.length) return quiet('вишлист пуст');
+        function back(x) { return x.in_stock === true && !!x.stock_changed_at && now - Date.parse(x.stock_changed_at) < 2 * 86400000; }
+        function gap(x) { return x.last_price > 0 && x.target > 0 ? x.last_price / x.target : 99; }
+        function rank(x) { return back(x) ? 0 : x.status === 'reached' ? 1 : 2; }
+        rows.sort(function (x, y) { return rank(x) - rank(y) || gap(x) - gap(y); });
+        r.now = rows.some(back);
+        var nb = rows.filter(back).length, nh = rows.filter(function (x) { return x.status === 'reached'; }).length;
+        line([nb ? 'в наличии ' + nb : '', nh ? 'по цели ' + nh : '', 'слежу за ' + rows.length].filter(Boolean).join(' · '), 'mu');
+        rows.slice(0, cap).forEach(function (x) {
+          var pr = x.last_price != null ? zl(x.last_price) + '\u00a0zł' : '—', g = gap(x);
+          var right = back(x) ? pill('в наличии', 'good') : x.status === 'reached' ? pill(pr, 'good') : x.in_stock === false ? pill('нет в наличии', '') : pr;
+          var sub = 'сейчас ' + pr + ' · цель ' + zl(x.target) + '\u00a0zł' + (g > 1 && g < 99 ? ' · +' + Math.round((g - 1) * 100) + '\u00a0%' : '');
+          row(null, two((x.person === 'tetyana' ? 'Тетяне: ' : '') + (x.title || x.host), sub), right);
+        });
+      },
+      // The open deal batches' offers still on: his own products (the ⭐ of «Жду акцию») first, then the deepest cut.
+      deals: function () {
+        var pk = src('picks');
+        if (!pk) return wait(pk);
+        var all = [];
+        (pk.batches || []).forEach(function (b) {
+          (b.candidates || []).forEach(function (c) { if (!c.valid_to || c.valid_to >= today) all.push({ c: c, d: dealParts(c) }); });
+        });
+        all = all.filter(function (x) { return !x.d.warn; });
+        r.go = tab('picks');
+        if (!all.length) return quiet('акций пока нет');
+        function off(c) { return c.old_price > c.price && c.price > 0 ? Math.round((1 - c.price / c.old_price) * 100) : 0; }
+        all.sort(function (x, y) { return (y.d.star - x.d.star) || off(y.c) - off(x.c); });
+        var mine = all.filter(function (x) { return x.d.star; }).length;
+        line((mine ? 'на мои ' + mine + ' · ' : '') + all.length + ' ' + plural(all.length, ['акция', 'акции', 'акций']), 'mu');
+        all.slice(0, cap).forEach(function (x) {
+          var o = off(x.c), lead = x.d.star ? 'target' : x.c.emoji ? el('span', 'bem', x.c.emoji) : 'tag';
+          row(lead, two(x.d.name, x.d.note.replace(/^[−-]\d+%( · )?/, '')), (o ? '−' + o + '% · ' : '') + (x.c.price != null ? zl(x.c.price) + '\u00a0zł' : ''));
+        });
+      },
+      // Warsaw's events today (the events digest), by time; «сейчас» — one starting within three hours.
+      events: function () {
+        var ev = src('events');
+        if (!ev) return wait(ev);
+        var up = (ev.upcoming || []).filter(function (x) {
+          if (!x.starts_at) return false;
+          var q = wp(x.starts_at);
+          return q.year + '-' + q.month + '-' + q.day === today && Date.parse(x.starts_at) > now - 2 * 3600000;
+        }).sort(function (x, y) { return Date.parse(x.starts_at) - Date.parse(y.starts_at); });
+        r.go = function () { store('stream', 'events'); show('feed'); };
+        if (!up.length) return quiet(ev.upcoming ? 'сегодня событий нет' : 'нет данных');
+        r.now = up.some(function (x) { var d = Date.parse(x.starts_at) - now; return d > 0 && d <= 3 * 3600000; });
+        line(up.length + ' ' + plural(up.length, ['событие', 'события', 'событий']) + ' сегодня', 'mu');
+        up.slice(0, cap).forEach(function (x) {
+          var q = wp(x.starts_at), hm = q.hour + q.minute === '0000' ? 'день' : q.hour + ':' + q.minute;
+          row(el('span', 'htm', hm), two(x.title, x.place), null, null, 'htr');
+        });
+      },
+      // The morning digest's lines (else the latest headlines).
+      news: function () {
+        var nw = src('news');
+        if (!nw) return wait(nw);
+        var d = nw.digest, picks = (d && d.picks) || [];
+        r.go = function () { store('stream', 'all'); show('feed'); };
+        var items = picks.length ? picks.map(function (x) { return x.line; }) : (nw.rows || []).map(function (x) { return x.title; });
+        if (!items.length) return quiet('новостей пока нет');
+        line(picks.length ? 'выжимка · ' + dm(d.day) : 'последние новости', 'mu');
+        items.slice(0, s === 'l' ? 6 : 3).forEach(function (t) { row(null, t, null, null, s === 'l' ? 'b2l' : ''); });
+      },
+      // The parcels waiting at a pickup point («Дела»): how many and the nearest «забрать до».
+      parcels: function () {
+        var dl = src('dela');
+        if (!dl) return wait(dl);
+        var ps = (dl.items || []).filter(function (x) { return x.kind === 'pk'; }).sort(function (x, y) { return x.due.localeCompare(y.due); });
+        r.go = tab('dela');
+        if (!ps.length) return quiet('посылок нет');
+        var by = function (x) { return x.due === today ? 'сегодня' : x.due === addDays(today, 1) ? 'завтра' : WEEK[wd(x.due)] + ' ' + dm(x.due); };
+        if (s === 's') {
+          big(grouped(ps.length));
+          return note('забрать до ' + by(ps[0]));
+        }
+        line(ps.length + ' ' + plural(ps.length, ['посылка ждёт', 'посылки ждут', 'посылок ждут']), 'mu');
+        ps.slice(0, cap).forEach(function (x) { row(null, x.title + (x.sub ? ' · ' + x.sub : ''), 'до ' + by(x)); });
+      },
+      // Genshin today: the talent books and weapon materials open (the Mac's morning snapshot) and the working codes.
+      gtoday: function () {
+        var g = src('genshin');
+        if (!g) return wait(g);
+        var t = (g.state && g.state.today) || {}, on = t.date === today, codes = (g.codes || []).length, sun = wd(today) === 6;
+        r.go = tab('genshin');
+        name.textContent = 'Genshin сегодня';
+        if (!on && !codes) return quiet('утренний снимок ещё не пришёл');
+        var books = on ? t.books || (sun ? 'всё открыто' : '') : '', weap = on ? t.weapons || '' : '';
+        var cd = codes ? codes + '\u00a0' + plural(codes, ['код', 'кода', 'кодов']) : 'кодов нет';
+        if (s === 's') {
+          line(books || 'книг сегодня нет', 'bt b2');
+          return note([weap, cd].filter(Boolean).join(' · '));
+        }
+        row(null, 'Книги · ' + (books || (on ? 'нет' : '—')), null);
+        row(null, 'Оружие · ' + (weap || (on ? 'нет' : '—')), null);
+        row(null, 'Коды', cd);
+      },
+      // Days to his day (cfg); «сейчас» from three days before it to the day itself. A tap sets the label and the day.
+      countdown: function () {
+        var c = b.cfg;
+        if (!preview) r.go = function (node) { boardCfgEdit(b, node); };
+        if (!c) {
+          name.textContent = 'Отсчёт';
+          return quiet(preview ? 'задай название и дату' : 'нажми, чтобы задать дату');
+        }
+        var dn = days(today, c.date);
+        name.textContent = c.label;
+        r.now = dn >= 0 && dn <= 3;
+        big(dn === 0 ? 'сегодня' : grouped(Math.abs(dn)), dn === 0 ? 'vs' : '');
+        note((dn ? (dn > 0 ? plural(dn, ['день', 'дня', 'дней']) : plural(-dn, ['день', 'дня', 'дней']) + ' назад') + ' · ' : '') + WEEK[wd(c.date)] + ' ' + dm(c.date) +
+          (c.date.slice(0, 4) !== today.slice(0, 4) ? '.' + c.date.slice(0, 4) : ''));
       }
     };
     try {
@@ -2748,6 +3161,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // The live home view's reload, for a sheet opened from a widget (the review) — set by homeView.
   var boardReload = noop;
+  // The countdown's sheet (label and day) for the widget b — set by homeView.
+  var boardCfgEdit = noop;
 
   function homeView() {
     // last: home's answer on screen; draft: the board being edited (null — not editing); nodes: id → its widget.
@@ -2789,6 +3204,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       };
       var head = node.querySelector('.bh');
       head.insertBefore(x, head.firstChild);
+      // A field inside a widget (＋ Задача) takes no typing while the board is edited.
+      [].forEach.call(node.querySelectorAll('input,button:not(.bx)'), function (f) { f.disabled = true; });
+      if (b.w === 'countdown') {
+        var pen = add(el('button', 'bcfg'), icon('pen-line'));
+        pen.type = 'button';
+        pen.setAttribute('aria-label', 'Название и дата: ' + BOARD_BY[b.w][1]);
+        pen.onclick = function () { boardCfgEdit(b, node); };
+        head.appendChild(pen);
+      }
       var sizes = BOARD_BY[b.w][3];
       if (sizes.length < 2) return;
       var box = el('div', 'bsz');
@@ -2799,7 +3223,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         c.setAttribute('aria-pressed', String(z === b.s));
         c.onclick = function () {
           if (z === b.s) return;
-          draft = draft.map(function (o) { return o.id === b.id ? { id: o.id, w: o.w, s: z } : o; });
+          draft = draft.map(function (o) { return o.id === b.id ? Object.assign({}, o, { s: z }) : o; });
           haptic();
           draw();
         };
@@ -2817,12 +3241,35 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         while (v.scrollWidth > v.clientWidth + 1 && fs > 15) { fs -= 2; v.style.fontSize = fs + 'px'; }
       });
       [].forEach.call(grid.children, function (w) {
-        var foot = w.getBoundingClientRect().bottom - 8, rows = w.querySelectorAll(':scope>.brow,:scope>.bl.bday,:scope>.bl.mu');
+        var foot = w.getBoundingClientRect().bottom - 8, rows = w.querySelectorAll(':scope>.brow,:scope>.bl.bday,:scope>.bl.mu,:scope>.bgl');
         for (var k = rows.length - 1; k > 0 && rows[k].getBoundingClientRect().bottom > foot; k--) rows[k].remove();
       });
     }
+    // The sources the board's widgets read beside home's answer, each asked for once per load (asked is reset there).
+    var asked = {};
+    function ask(bl) {
+      bl.forEach(function (b) {
+        var k = BOARD_BY[b.w][4];
+        if (!k || asked[k]) return;
+        asked[k] = 1;
+        boardAsk(k);
+      });
+    }
+    // A field being typed in (＋ Задача) is not swept away by a redraw: that waits until it loses the focus.
+    var held = false;
+    function typing() { var a = document.activeElement; return !!(a && a.tagName === 'INPUT' && wrap.contains(a)); }
+    function redraw() {
+      if (drag) return;
+      if (typing()) { held = true; return; }
+      inFrame('board', function () { if (wrap.isConnected && !drag && !typing()) draw(); });
+    }
+    wrap.addEventListener('focusout', function () {
+      setTimeout(function () { if (held && !typing() && wrap.isConnected) { held = false; redraw(); } }, 0);
+    });
     function draw() {
       var j = last || {}, bl = list();
+      held = false;
+      ask(bl);
       clear(wrap);
       nodes = {};
       grid = null;
@@ -2862,13 +3309,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (j.tasks) {
         setTaskBadge((j.tasks.overdue || 0) + (j.tasks.today_count != null ? j.tasks.today_count : (j.tasks.today || []).length));
       }
-      if (!drag) draw();
+      if (drag) return;
+      if (typing()) held = true;
+      else draw();
     }
     function load() {
+      asked = {};
       swr({ key: 'home', box: wrap, n: 2, live: function () { return current === 'home'; },
         fetch: homeFetch, render: render, retry: load });
     }
     boardReload = load;
+    boardRedraw = redraw;
     // Editing: a draft of the board; «Готово» saves it when it changed (one prefs_set) and leaves.
     function edit() {
       if (draft) return;
@@ -2896,6 +3347,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       else if (current === 'home') draw();
     }
     boardDone.onclick = done;
+    // The countdown's label and day: in editing into the draft («Готово» saves it with the rest), else saved at once.
+    boardCfgEdit = function (b, from) {
+      var close = noop, c = b.cfg || {}, lab = el('input'), day = el('input'), ok = label(el('button', 'btn'), 'check', 'Сохранить');
+      lab.placeholder = 'Например: ДР Тетяны';
+      lab.maxLength = 24;
+      lab.value = c.label || '';
+      lab.setAttribute('aria-label', 'Название');
+      day.type = 'date';
+      day.value = c.date || '';
+      day.setAttribute('aria-label', 'Дата');
+      ok.type = 'button';
+      ok.onclick = function () {
+        var cfg = boardCfg({ label: lab.value, date: day.value });
+        if (!cfg) return toast(lab.value.trim() ? 'Нужна дата' : 'Нужно название, до 24 знаков');
+        close();
+        haptic();
+        var put = function (o) { return o.id === b.id ? Object.assign({}, o, { cfg: cfg }) : o; };
+        if (draft) { draft = draft.map(put); draw(); }
+        else editPrefs({ board: list().map(put) });
+      };
+      close = legalSheet('Обратный отсчёт', [add(el('div', 'bar'), add(el('label', 'field'), icon('timer'), lab)),
+        add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), day)), add(el('div', 'bar mact'), ok)], from);
+    };
     // Adds a widget at the end: to the draft while editing, else saved at once and brought into view.
     function addWidget(w, s) {
       var bl = list(), b = { id: boardId(bl), w: w, s: s };
@@ -2908,7 +3382,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // The catalog: a row per widget with a small live preview, its name and the sizes it comes in; a size adds it.
     function boardCatalog(from) {
       var box = el('div', 'bcat'), close = noop;
-      BOARD.forEach(function (c) {
+      BOARD_GROUPS.forEach(function (g) {
+        box.appendChild(el('div', 'bcg', g[0]));
+        g[1].forEach(function (k) { item(BOARD_BY[k]); });
+      });
+      function item(c) {
         var low = c[3][0], pv = el('div', 'bpv'), inner = boardWidget({ id: 'pv', w: c[0], s: low }, last || {}, true), sc = low === 's' ? 64 / 170 : 88 / 352;
         inner.classList.add('bpvi');
         inner.style.transform = 'scale(' + sc.toFixed(3) + ')';
@@ -2928,7 +3406,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         var off = boardOff(c[0]);
         box.appendChild(add(el('div', 'row bcr' + (off ? ' htoff' : '')), pv,
           add(el('span', 'tx'), el('div', 't', c[1]), off ? el('div', 'mu', 'модуль выключен') : null), chips));
-      });
+      }
       close = legalSheet('Добавить виджет', [el('div', 'sub bcsub', 'Нажми размер — виджет встанет в конец'), box], from);
     }
     // The ⋯ menu: add, edit, the «сейчас» switch, the board from the tiles and cards of before; whose view it is.
@@ -2965,7 +3443,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function down(ev) {
       if (ev.button > 0 || drag || !grid) return;
       var w = ev.target.closest('.bw');
-      if (!w || w.parentNode !== grid || ev.target.closest('.bx,.bsz')) return;
+      if (!w || w.parentNode !== grid || ev.target.closest('.bx,.bsz,.bcfg')) return;
+      // A press in a widget's own field or button (＋ Задача) is its own, not the board's long press.
+      if (!draft && ev.target.closest('input,button,form')) return;
       var q = pt(ev);
       if (draft) {
         if (ev.pointerType === 'mouse') ev.preventDefault();
@@ -3060,7 +3540,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     wrap.addEventListener('pointerdown', down);
     // In editing nothing inside a widget opens anything: only its ✕ and its sizes answer.
-    wrap.addEventListener('click', function (ev) { if (draft && !ev.target.closest('.bx,.bsz')) ev.stopPropagation(); }, true);
+    wrap.addEventListener('click', function (ev) { if (draft && !ev.target.closest('.bx,.bsz,.bcfg')) ev.stopPropagation(); }, true);
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', dragEnd);
     window.addEventListener('pointercancel', dragEnd);
