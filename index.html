@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 18:12">
+<meta name="published" content="2026-10-28 19:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -951,6 +951,47 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .wday{margin:0 0 16px;padding:12px 0 0;border-top:1px solid var(--line)}.wday:first-child{border-top:0;padding-top:0}
 .wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
+/* «Тело» (docs/specs/health-v2.md): the rings in Bevel's colours (validated for both themes, each ring named under it),
+   «Монитор» tiles with a vertical track and the norm's band, «Фитнес» — the week's strip, the gauges with the green
+   target, the freshness dots; «Биология» — a sparkline a row. Quiet marks: no axes, no grid. */
+:root{--hl-load:#c08a00;--hl-rec:#22a872;--hl-sleep:#4f8ff0}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--hl-load:#b35f00;--hl-rec:#0a7f5a;--hl-sleep:#3a64e8}}
+:root[data-theme="light"]{--hl-load:#b35f00;--hl-rec:#0a7f5a;--hl-sleep:#3a64e8}
+.hring{display:block;overflow:visible}.hring .tr{fill:none;stroke:var(--track)}.hring .arc{fill:none;stroke-linecap:round}
+.hring.hl-load .arc{stroke:var(--hl-load)}.hring.hl-rec .arc{stroke:var(--hl-rec)}.hring.hl-sleep .arc{stroke:var(--hl-sleep)}
+.hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}.hring .rv.mu{fill:var(--muted)}
+.hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.hrl{font-size:12px;color:var(--muted);white-space:nowrap}
+.hbody{padding:2px 14px 14px;border-radius:var(--r-b)}.hadv{margin-top:12px;font-weight:600;text-align:center}
+.bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}
+.hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
+.hxh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}.hxh .pr{font:800 17px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.row.hxr{padding-left:0;padding-right:0;min-height:44px}.row.hxr .pr{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
+.hmon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 14px 14px}
+@media (min-width:900px){.hmon{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.hmt{display:flex;gap:8px;align-items:center;min-width:0;padding:10px 8px;border:1px solid var(--line);border-radius:var(--r-s)}
+.hmx{display:flex;flex-direction:column;gap:3px;min-width:0}.hml{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hmv{font:800 17px/1.15 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.hmv small{font:500 11px var(--font);color:var(--muted)}
+.hmt .pill{align-self:flex-start;height:18px;padding:0 6px;font-size:11px}.hmn{font-size:11px}
+.htrk{flex:none;overflow:visible}.htrk .tr{fill:var(--track)}.htrk .band{fill:color-mix(in srgb,var(--good) 35%,transparent)}
+.htrk .dot{fill:var(--fg);stroke:var(--solid);stroke-width:2}.htrk .dot.above,.htrk .dot.below{fill:var(--warn)}
+.hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:0 14px 12px}
+.hwd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;border-radius:var(--r-s)}.hwd .mu{font-size:12px}
+.hwd.on{background:var(--accent-soft)}.hwi .i{width:20px;height:20px}.hwr{width:8px;height:8px;margin:6px 0;border-radius:50%;background:var(--track)}
+.hgs{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 14px}
+.hgh{display:flex;justify-content:space-between;font-weight:600;margin:0 0 6px}.hgh .pr{font-variant-numeric:tabular-nums}
+.hgb{position:relative;height:8px;border-radius:4px;background:var(--track);margin:0 0 6px}
+.hgb .zone{position:absolute;top:-3px;bottom:-3px;border-radius:4px;background:color-mix(in srgb,var(--good) 22%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent)}
+.hgb .val{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--mark)}
+.hgg>.mu{font-size:12px}
+.hfr{padding:0 14px 12px}.hfh{font-weight:600;margin:0 0 6px}.hfr1{display:flex;align-items:center;gap:10px;min-height:32px}
+.hfr1 .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hfr1 .pr{flex:none;width:40px;text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hfd{flex:none;display:flex;gap:3px}.hfd i{width:6px;height:6px;border-radius:50%;background:var(--track)}
+.hfd.good i.on{background:var(--good)}.hfd.warn i.on{background:var(--warn)}.hfd.bad i.on{background:var(--bad)}
+.row.hbr{gap:10px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .pr{flex:none;min-width:72px;text-align:right;font-variant-numeric:tabular-nums}
+.row.hbr .pr b{white-space:nowrap}.hspk{flex:none;overflow:visible}.hspk .ln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.hspk .dot{fill:var(--mark);stroke:var(--solid);stroke-width:2}.hbn{flex:none;font-size:12px}
+.hset{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
@@ -1604,7 +1645,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'utensils', 'Еда'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Тело'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'shop', 'tasks', 'films'], MORE = [];
@@ -1683,14 +1724,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // 27.10.2026, docs/specs/widget-posters.md: the films and series marked «видел» last, as posters (the films source).
     ['recent', 'Последние отметки', 'star', 'ml', 'films'],
     // 28.10.2026, docs/specs/food.md: today's kcal and what is left of the norm (home's answer).
-    ['food', 'Еда сегодня', 'utensils', 'sm']];
+    ['food', 'Еда сегодня', 'utensils', 'sm'],
+    // 28.10.2026, docs/specs/health-v2.md: the three rings «Нагрузка · Восст. · Сон», the advice on m (home's health).
+    ['body', 'Здоровье', 'activity', 'sm']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
-    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -2672,7 +2715,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
       events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela'),
-      food: !tabShown('food') }[w] || false;
+      food: !tabShown('food'), body: !tabShown('food') }[w] || false;
   }
   // The widget keys of a board, a stack's own among them.
   function boardKinds(bl) {
@@ -3146,6 +3189,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
           n.appendChild(bar);
         }
         if (sub) note(sub, left != null && left < 0 ? 'warn' : '');
+      },
+      // «Здоровье» (docs/specs/health-v2.md): the three rings of today (yesterday's until the night is in); m — the advice
+      // under them. No health row — «нет данных»; a tap opens «Тело».
+      body: function () {
+        var h = j.health;
+        r.go = tab('food');
+        if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
+        if (h.date !== today) name.textContent = 'Здоровье · вчера';
+        n.appendChild(hlRings(h, s === 'm' ? 52 : 44));
+        if (s === 'm') note(h.advice || 'мало данных для совета', h.advice ? '' : 'mu');
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
       // when it is planned.
@@ -13442,8 +13495,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function foodView() {
     var today = foodToday();
     if (!FOOD.date || FOOD.date > today) FOOD.date = today;
-    var date = FOOD.date, nav = el('div', 'mnav fnav'), body = el('div'), stats = el('div');
-    add(main, nav, body, stats);
+    // «Тело» (docs/specs/health-v2.md): the health cards over the day (top), «Фитнес» after its workouts (fit),
+    // «Биология» under «Неделя и месяц» (bio).
+    var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div'), bio = el('div');
+    add(main, nav, top, body, fit, stats, bio);
     function fresh() { cacheDrop('food'); cacheDrop('home'); }
     function go(n) {
       var d = n === 0 ? foodToday() : addDays(FOOD.date, n);
@@ -13552,7 +13607,22 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         fetch: function () { return api('miniapp', { action: 'food_stats' }, 15000, true, { days: 30 }); },
         render: function (j) { add(clear(stats), foodStatsCard(j, stats)); } });
     }
+    // The day's health: «Здоровье» and «Монитор» on top, «Фитнес» after the workouts; no health row in the 30 days —
+    // the one line to set it up instead (and «Фитнес» still, from the workouts, when there are any).
+    function loadHealth() {
+      swr({ key: 'body:' + date, box: top, n: 1, live: function () { return current === 'food' && FOOD.date === date; },
+        fetch: function () { return api('miniapp', { action: 'health_day' }, 15000, true, { date: date }); },
+        render: function (j) {
+          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+          var f = hlFitness(j);
+          add(clear(fit), f);
+        } });
+      swr({ key: 'body:bio', box: bio, n: 0, live: function () { return current === 'food'; },
+        fetch: function () { return api('miniapp', { action: 'health_stats' }, 15000, true, { days: 30 }); },
+        render: function (j) { add(clear(bio), hlBio(j, bio)); } });
+    }
     load();
+    loadHealth();
     loadStats();
   }
   // «Неделя и месяц»: the weight's line over the window (the box's width at drawing), the kcal a day over 7 and 30
@@ -13812,6 +13882,209 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     });
     close = legalSheet(FOOD_RU[e.meal] + ', ' + foodTime(e.at), [seg, add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)), lines, more, sums,
       add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)), add(el('div', 'bar mact mstick'), save, del)], from);
+  }
+
+  // --- «Тело»: health from the iPhone (docs/specs/health-v2.md, 28.10.2026) ---
+  // Over the day of «Тело» (the «Еда» tab, renamed): «Здоровье» — three rings «Нагрузка · Восст. · Сон» and the day's
+  // advice, a tap opens «Из чего» (every score with its parts and their shares, health_day's explain); «Монитор» — six
+  // tiles against his own 30 days (a vertical track, the norm's band ±1 σ in it, a dot for the day, «норма/выше/ниже»).
+  // After the day's workouts «Фитнес»: the week as a strip of icons, «Кардио» and «Мышцы» against the green 20–49 %,
+  // «Свежесть мышц» as 10 dots a group. Under «Неделя и месяц» «Биология» (health_stats): weight, fat, HRV, resting HR,
+  // VO2max as 30-day sparklines with the last value and the change. Without any health row the cards fold into one line
+  // that opens the setup (docs/shortcuts.md, «Здоровье»). The charts are inline SVG on CSS variables (light and dark).
+  var HL_RINGS = [['load', 'Нагрузка', 'hl-load'], ['recovery', 'Восст.', 'hl-rec'], ['sleep', 'Сон', 'hl-sleep']];
+  var HL_NAMES = { load: 'Нагрузка', recovery: 'Восстановление', sleep: 'Сон', muscle: 'Мышцы', stress: 'Стресс' };
+  var HL_MON = { resp_rate: ['Дыхание', '/мин'], resting_hr: ['Пульс', 'уд/мин'], hrv: ['ВСР', 'мс'], spo2: ['SpO2', '%'],
+    wrist_temp: ['Темп.', '°C'], sleep_min: ['Сон', ''] };
+  var HL_STATUS = { norm: ['норма', 'good'], above: ['выше', 'warn'], below: ['ниже', 'warn'] };
+  // «7 ч 40», «48», «96,8», «+0,2»: a value of a tile or a line.
+  function hlVal(key, v) {
+    if (v == null) return '—';
+    if (key === 'sleep_min') return Math.floor(v / 60) + ' ч ' + ('0' + Math.round(v % 60)).slice(-2);
+    if (key === 'wrist_temp') return (v > 0 ? '+' : v < 0 ? '−' : '') + (Math.round(Math.abs(v) * 10) / 10).toFixed(1).replace('.', ',');
+    return woNum(v);
+  }
+  // A ring: the track, the arc of v (0–100) in the ring's own colour from 12 o'clock, the number in the middle.
+  function hlRing(v, cls, size) {
+    var sw = size >= 60 ? 7 : 5, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
+    var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hring ' + cls, 'aria-hidden': 'true' });
+    box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
+    if (v != null && v > 0) {
+      box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw, 'stroke-dasharray': (c * Math.min(100, v) / 100).toFixed(1) + ' ' + c.toFixed(1),
+        transform: 'rotate(-90 ' + h + ' ' + h + ')' }));
+    }
+    box.appendChild(svg('text', { x: h, y: h, 'class': 'rv' + (v == null ? ' mu' : ''), 'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'font-size': size >= 60 ? 17 : 12 }, v == null ? '—' : String(v)));
+    return box;
+  }
+  // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls.
+  function hlRings(vs, size) {
+    var row = el('div', 'hrings');
+    HL_RINGS.forEach(function (k) {
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size), el('div', 'hrl', k[1]));
+      cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %'));
+      cell.setAttribute('role', 'img');
+      row.appendChild(cell);
+    });
+    return row;
+  }
+  // The one line instead of the cards while the iPhone sends nothing; a tap — the setup.
+  function hlEmpty() {
+    var c = mkCard('activity', 'Здоровье');
+    var r = add(el('div', 'row frow'), add(el('span', 'lead'), icon('watch')),
+      add(el('span', 'tx'), el('div', 't', 'Данные с iPhone ещё не приходят — настроить'),
+        el('div', 'mu', 'Две автоматизации в «Быстрых командах»: ночь в 07:30 и день в 23:30.')), icon('chevron-right'));
+    r.setAttribute('aria-label', 'Данные с iPhone ещё не приходят — настроить');
+    c.appendChild(tap(r, function () { hlSetupSheet(r); }));
+    return c;
+  }
+  // «Здоровье»: the rings, the advice; a tap on the rings — «Из чего».
+  function hlCard(j) {
+    var c = mkCard('activity', 'Здоровье'), sc = j.scores || {};
+    var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
+    var rings = hlRings(vs, 72), wrap = add(el('div', 'hbody'), rings);
+    wrap.appendChild(el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice || (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.')));
+    var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlExplainSheet(j, b); });
+    b.setAttribute('aria-label', 'Из чего считаются кольца');
+    c.firstChild.appendChild(b);
+    c.appendChild(tap(wrap, function () { hlExplainSheet(j, wrap); }));
+    wrap.setAttribute('aria-label', 'Кольца: ' + HL_RINGS.map(function (k) { return k[1] + ' ' + (vs[k[0]] == null ? 'нет данных' : vs[k[0]] + ' %'); }).join(', ') + ' — из чего');
+    return c;
+  }
+  // «Из чего»: each score, its value and the parts — what, how much, its share and what it gave.
+  function hlExplainSheet(j, from) {
+    var sc = j.scores || {}, nodes = [];
+    ['load', 'recovery', 'sleep', 'muscle', 'stress'].forEach(function (k) {
+      var s = sc[k], sec = add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', HL_NAMES[k]), el('span', 'pr', s ? s.value + ' %' : '—')));
+      if (!s) {
+        sec.appendChild(el('div', 'mu', k === 'recovery' || k === 'stress' ? 'Нужны ВСР и пульс покоя хотя бы за 5 дней.' :
+          k === 'sleep' ? 'Сна за этот день нет.' : 'За 28 дней тренировок нет.'));
+      } else {
+        s.explain.forEach(function (p) {
+          sec.appendChild(add(el('div', 'row hxr'), add(el('span', 'tx'), el('div', 't', p.label), el('div', 'mu', p.value)),
+            el('span', 'pr mu', p.weight ? Math.round(p.weight * 100) + ' % веса · ' + p.score : '')));
+        });
+      }
+      nodes.push(sec);
+    });
+    nodes.push(el('div', 'mu msrc', 'Сон: 70 % — длительность к 8 ч, 30 % — глубокий и REM к 40 % сна. Восстановление: ВСР к своей норме за 30 дней ' +
+      '(50 %), пульс покоя — ниже лучше (30 %), сон (20 %); в норме часть даёт 75, на σ лучше — 100. Нагрузка: 7 дней минут × зона пульса ' +
+      '(без зон — по виду тренировки) к средней неделе за 28 дней; 35 % — как обычно, цель 20–49 %. Мышцы — так же по подходам. ' +
+      'Стресс: 50 в норме, ВСР ниже и пульс выше нормы поднимают.'));
+    var close = noop;
+    nodes.push(add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); })));
+    close = legalSheet('Из чего', nodes, from);
+  }
+  // A tile's track: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it.
+  function hlTrack(t) {
+    var H = 56, W = 10, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htrk', 'aria-hidden': 'true' });
+    box.appendChild(svg('rect', { x: 3, y: 0, width: 4, height: H, rx: 2, 'class': 'tr' }));
+    if (!t.base) return box;
+    var span = 2.5;
+    function y(z) { return (H - 6) * (1 - (Math.max(-span, Math.min(span, z)) + span) / (2 * span)) + 3; }
+    box.appendChild(svg('rect', { x: 3, y: y(1), width: 4, height: y(-1) - y(1), rx: 2, 'class': 'band' }));
+    if (t.value != null) box.appendChild(svg('circle', { cx: 5, cy: y((t.value - t.base.mean) / t.base.sd).toFixed(1), r: 4, 'class': 'dot ' + (t.status || '') }));
+    return box;
+  }
+  // «Монитор»: six tiles, three across.
+  function hlMonitor(ms) {
+    var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
+    ms.forEach(function (t) {
+      var n = HL_MON[t.key], st = HL_STATUS[t.status];
+      var tile = add(el('div', 'hmt'), hlTrack(t), add(el('div', 'hmx'), el('div', 'mu hml', n[0]),
+        add(el('div', 'hmv'), document.createTextNode(hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
+        st ? pill(st[0], st[1]) : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')));
+      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st[0] : '')));
+      g.appendChild(tile);
+    });
+    c.appendChild(g);
+    return c;
+  }
+  // A load gauge: 0–100 with the target band in green, the value as a filled bar, the words.
+  function hlGauge(name, s, tgt) {
+    var row = el('div', 'hgg'), v = s ? s.value : null;
+    // The value under the target band, so the band's outline stays in sight.
+    var zone = el('i', 'zone'), val = v != null ? el('i', 'val') : null, bar = add(el('div', 'hgb'), val, zone);
+    zone.style.left = tgt[0] + '%';
+    zone.style.width = tgt[1] - tgt[0] + '%';
+    if (val) val.style.width = Math.max(2, v) + '%';
+    var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели';
+    add(row, add(el('div', 'hgh'), el('span', '', name), el('span', 'pr', v == null ? '—' : v + ' %')), bar,
+      el('div', 'mu', where + ' · цель ' + tgt[0] + '–' + tgt[1] + ' %'));
+    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + where));
+    return row;
+  }
+  // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout, a dot for rest), the two gauges, the
+  // muscles' freshness. Nothing to show (no workout in 28 days, every group fresh) — null.
+  function hlFitness(j) {
+    var sc = j.scores || {}, fr = j.freshness || [], week = j.week || [];
+    var any = sc.load || sc.muscle || week.some(function (d) { return d.kinds.length; }) || fr.some(function (g) { return g.value < 10; });
+    if (!any) return null;
+    var c = mkCard('flame', 'Фитнес'), strip = el('div', 'hwk');
+    week.forEach(function (d) {
+      var k = d.kinds[0], cell = add(el('div', 'hwd' + (d.day === j.date ? ' on' : '')), el('div', 'mu', WEEK[wd(d.day)]),
+        k ? add(el('span', 'hwi'), icon(WO_IC[k] || 'medal')) : el('span', 'hwr'));
+      cell.setAttribute('aria-label', WEEK[wd(d.day)] + ' ' + dm(d.day) + ': ' + (d.kinds.length ? d.kinds.map(function (x) { return WO_RU[x] || x; }).join(', ') : 'отдых'));
+      strip.appendChild(cell);
+    });
+    c.appendChild(strip);
+    var tgt = j.load_target || [20, 49];
+    add(c, add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt), hlGauge('Мышцы', sc.muscle, tgt)));
+    if (fr.length) {
+      var f = add(el('div', 'hfr'), el('div', 'hfh', 'Свежесть мышц'));
+      fr.forEach(function (g) {
+        var dots = el('span', 'hfd ' + (g.value >= 7 ? 'good' : g.value >= 4 ? 'warn' : 'bad'));
+        for (var i = 0; i < 10; i++) dots.appendChild(el('i', i < g.value ? 'on' : ''));
+        var r = add(el('div', 'hfr1'), el('span', 'tx', g.label), dots, el('span', 'pr', g.value + '/10'));
+        r.setAttribute('aria-label', g.label + ': свежесть ' + g.value + ' из 10');
+        f.appendChild(r);
+      });
+      c.appendChild(f);
+    }
+    return c;
+  }
+  // A sparkline: the points of the window as one quiet line, the last one a dot; no axes, no grid.
+  function hlSpark(pts, from, to, W) {
+    var H = 32, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hspk', 'aria-hidden': 'true' });
+    var t0 = Date.parse(from + 'T12:00:00Z'), t1 = Date.parse(to + 'T12:00:00Z'), vs = pts.map(function (p) { return p.v; });
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs);
+    if (hi === lo) { hi += 1; lo -= 1; }
+    function x(d) { return 4 + (Date.parse(d + 'T12:00:00Z') - t0) / Math.max(1, t1 - t0) * (W - 8); }
+    function y(v) { return 4 + (hi - v) / (hi - lo) * (H - 8); }
+    if (pts.length > 1) box.appendChild(svg('polyline', { 'class': 'ln', points: pts.map(function (p) { return x(p.day).toFixed(1) + ',' + y(p.v).toFixed(1); }).join(' ') }));
+    var l = pts[pts.length - 1];
+    box.appendChild(svg('circle', { cx: x(l.day).toFixed(1), cy: y(l.v).toFixed(1), r: 3, 'class': 'dot' }));
+    return box;
+  }
+  // «Биология»: a row a measure — its name, the 30 days as a sparkline, the last value and its change.
+  function hlBio(j, box) {
+    var c = mkCard('trending', 'Биология', 'за 30 дней'), s = j.series || {}, any = false;
+    var W = Math.max(60, Math.min(160, ((box && box.clientWidth) || 360) - 230));
+    [['weight', 'Вес', 'кг', 1], ['body_fat', 'Жир', '%', 1], ['hrv', 'ВСР', 'мс', 1], ['resting_hr', 'Пульс покоя', 'уд/мин', -1], ['vo2max', 'VO2max', '', 1]].forEach(function (m) {
+      var x = s[m[0]] || { points: [] }, p = x.points || [], last = p.length ? p[p.length - 1].v : null;
+      if (p.length) any = true;
+      var d = x.delta, dv = d == null || d === 0 ? '' : (d > 0 ? '+' : '−') + woNum(Math.abs(d));
+      var r = add(el('div', 'row hbr'), add(el('span', 'tx'), el('div', 't', m[1])), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'),
+        add(el('span', 'pr'), el('b', '', last == null ? '—' : woNum(last) + (m[2] ? ' ' + m[2] : '')), dv ? el('div', 'mu', dv) : null));
+      r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (dv ? ', за 30 дней ' + dv : '')));
+      c.appendChild(r);
+    });
+    return any ? c : null;
+  }
+  // The setup, step by step (docs/shortcuts.md, «Здоровье» — the full text with every field is there).
+  function hlSetupSheet(from) {
+    var steps = [
+      'Быстрые команды → Автоматизация → Время суток 07:30, ежедневно, «Запускать сразу», без уведомления.',
+      'Внутри: «Найти образцы здоровья» (группировать по дню) → «Вычислить статистику» для ночи: сон по фазам (Глубокий, REM, Основной, Бодрствование, В кровати — суммы в минутах), ВСР и пульс покоя (среднее), SpO2 и дыхание (среднее), температура запястья, вес, жир, VO2 max (последнее).',
+      '«Словарь» с ключами sleep_min, sleep_deep_min, sleep_rem_min, sleep_core_min, sleep_awake_min, in_bed_min, hrv, resting_hr, spo2, resp_rate, wrist_temp, weight, body_fat, lean_kg, vo2max.',
+      '«Получить содержимое URL»: адрес бота с ?action=health, POST, заголовок x-shortcut-secret, тело — словарь.',
+      'Вторая автоматизация в 23:30 — день: шаги, активная энергия, минуты упражнений, максимум пульса, пульсовые зоны (z1…z5), «Найти тренировки» (тип, минуты, ккал, начало, дистанция, средний пульс) — тем же POST.',
+      'Телефон в это время должен быть разблокирован: на заблокированном «Здоровье» закрыто. Пустая отправка ничего не стирает.'];
+    var ol = el('ol', 'hset');
+    steps.forEach(function (s) { ol.appendChild(el('li', '', s)); });
+    var close = noop;
+    close = legalSheet('Здоровье с iPhone', [ol, el('div', 'mu msrc', 'Полная инструкция с каждым полем — docs/shortcuts.md, раздел «Здоровье».'),
+      add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
   }
 
   // --- «Спорт», «Зал», «План» (docs/specs/workouts.md, 28.10.2026) ---
