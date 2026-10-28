@@ -562,8 +562,8 @@
   var lastTab = null;
   function onTab() {
     var p = A.shopIs('prices');
-    // Genshin has nothing to search for in shops (19.10.2026): the field is hidden there too.
-    box.classList.toggle('off', p || A.current === 'genshin');
+    // The field is for shopping only: «Покупки» (not «Цены», which has its own) and «Вишлист»; hidden on every other tab.
+    box.classList.toggle('off', p || (A.current !== 'shop' && A.current !== 'wish'));
     if (!p && lastTab === 'prices') { clearTimeout(timer); input.value = ''; }
     lastTab = p ? 'prices' : A.current;
   }

@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 19:57">
+<meta name="published" content="2026-10-28 21:41">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -109,11 +109,11 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .out{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:none;color:var(--muted);font-size:13px;transition:background .12s}
 .out .i{width:16px;height:16px}
 .main{padding:12px 16px calc(var(--bar) + 28px + env(safe-area-inset-bottom))}
-.main.in{animation:fade .5s var(--ease)}
+.main.in{animation:fade .26s cubic-bezier(.23,1,.32,1)}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}}
 /* gestures (docs/specs/gestures.md): a tab to the right comes in from the right, to the left from the left; a sideways
    swipe nudges the page before its segment switches */
-.main.in-r{animation:in-r .6s var(--ease)}.main.in-l{animation:in-l .6s var(--ease)}
+.main.in-r{animation:in-r .26s cubic-bezier(.23,1,.32,1)}.main.in-l{animation:in-l .26s cubic-bezier(.23,1,.32,1)}
 @keyframes in-r{from{transform:translateX(36px);opacity:0}}
 @keyframes in-l{from{transform:translateX(-36px);opacity:0}}
 .main.swipe-l,.main.swipe-r{opacity:.6;transition:transform .32s var(--ease),opacity .32s}.main.swipe-l{transform:translateX(-16px)}.main.swipe-r{transform:translateX(16px)}
@@ -136,7 +136,7 @@ html.pwa,html.pwa body{overscroll-behavior-y:none}
 .scrim{position:fixed;inset:0;z-index:6;background:var(--scrim);opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility 0s .3s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:7;padding:6px 12px calc(14px + env(safe-area-inset-bottom));background:var(--solid);border:1px solid var(--card-line);border-bottom:0;border-radius:var(--r) var(--r) 0 0;box-shadow:var(--shadow),0 24px 0 var(--solid);transform:translateY(105%);visibility:hidden;transition:transform .35s var(--ease),visibility 0s .35s}
 .more .scrim{opacity:1;visibility:visible;transition:opacity .4s}
-.more .sheet{transform:none;visibility:visible;transition:transform .5s var(--ease)}
+.more .sheet{transform:none;visibility:visible;transition:transform .26s cubic-bezier(.23,1,.32,1)}
 .grab{width:36px;height:4px;margin:4px auto 10px;border-radius:2px;background:var(--line)}
 .sheet button,.rail>button{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0 12px;border:0;border-radius:var(--r-b);background:none;color:var(--fg);font:500 15px/1.2 var(--font);text-align:left;transition:background .12s}
 .sheet .ic,.rail .ic{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:var(--r-s);color:var(--muted)}
@@ -222,7 +222,7 @@ button.pill:active,.pg:active,.tb:active{transform:scale(.97)}
 .field input{flex:1;min-width:0;height:42px;padding:0;border:0;background:none;outline:none;-webkit-appearance:none;appearance:none}
 .field input::placeholder{color:var(--muted-2)}
 .seg{display:flex;gap:2px;margin:0 0 16px;padding:2px;border:1px solid var(--line);border-radius:var(--r-b)}
-.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .4s,background .4s,box-shadow .4s}
+.seg button{flex:1;min-width:0;min-height:40px;padding:0 8px;border:0;border-radius:var(--r-s);background:none;color:var(--muted);font:500 13px/1 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .15s,background .15s,box-shadow .15s}
 .seg.fit{overflow-x:auto;scrollbar-width:none}
 .seg.fit button{flex:1 0 auto}
 .seg button.on{background:var(--surface-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
@@ -492,7 +492,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 /* It opens as «Ещё» does: the scrim fades in, the panel comes up from below; closing (.out) is quicker, then it is removed.
    The panel's shadow copy 24 px under it fills the gap an upward drag (with friction) would open. */
 .tsum::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--scrim);animation:scrim-in .4s var(--ease)}
-.tsum>div{animation:sheet-up .5s var(--ease)}
+.tsum>div{animation:sheet-up .26s cubic-bezier(.23,1,.32,1)}
 .tsum.out{pointer-events:none}.tsum.out::before{opacity:0;transition:opacity .3s var(--ease)}
 .tsum.out>div{animation:none;transform:translateY(100%);transition:transform .35s var(--ease)}
 @keyframes scrim-in{from{opacity:0}}@keyframes sheet-up{from{transform:translateY(100%)}}
@@ -1664,7 +1664,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function todayLabel() {
     try {
       return (todayLabel.f || (todayLabel.f = new Intl.DateTimeFormat('ru-RU', { timeZone: 'Europe/Warsaw', weekday: 'short', day: 'numeric', month: 'long' })))
-        .format(new Date());
+        .format(new Date()).replace(/^./, function (c) { return c.toUpperCase(); });
     } catch (e) { return ''; }
   }
 
@@ -2058,18 +2058,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   boardDone.type = 'button';
   hdr.insertBefore(tilesBtn, bell);
   hdr.insertBefore(boardDone, tilesBtn);
-  if (browser) {
-    var out = label(el('button', 'out'), 'logout', 'выйти');
-    out.type = 'button';
-    out.onclick = function () { logout(); };
-    hdr.appendChild(out);
-  }
-  // From 900 px the date and «выйти» sit at the foot of the rail, not in the header.
+  // «Выйти» is the last row of «Что нового» (with a confirm step); from 900 px it also sits at the foot of the rail.
   var rfoot = add(rail, add(el('div', 'rfoot'), rDate)).lastChild;
   if (browser) {
     var out2 = label(el('button', 'out'), 'logout', 'выйти');
     out2.type = 'button';
-    out2.onclick = out.onclick;
+    out2.onclick = function () { logout(); };
     rfoot.appendChild(out2);
   }
   add(shell, rail, add(col, hdr, main), tabbar, scrim, sheet);
@@ -2549,7 +2543,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // The entry of main (.main.in / .in-r / .in-l, the same keyframes) by animate(): taking the class off and on again
   // restarted it only through a forced layout. Without animate() the class as before.
   // EASE: the CSS --ease, for the motion set from the script. Reduced motion: the tab only fades in, 0.2 s.
-  var ENTRY = { in: ['translateY(6px)', 500], 'in-r': ['translateX(36px)', 600], 'in-l': ['translateX(-36px)', 600] };
+  var ENTRY = { in: ['translateY(6px)', 260], 'in-r': ['translateX(36px)', 260], 'in-l': ['translateX(-36px)', 260] };
   var EASE = 'cubic-bezier(.4,0,.2,1)';
   function moveIn(kind) {
     if (!main.animate) {
@@ -2559,7 +2553,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     try {
       main.animate(still ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: ENTRY[kind][0] }, { opacity: 1, transform: 'none' }],
-        { duration: still ? 200 : ENTRY[kind][1], easing: EASE });
+        { duration: still ? 200 : ENTRY[kind][1], easing: 'cubic-bezier(.23,1,.32,1)' });
     } catch (e) {}
   }
   function show(tab) {
@@ -4586,12 +4580,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     bar.onsubmit = function (ev) {
       ev.preventDefault();
       var s = input.value.trim();
-      if (!s) return;
+      if (!s || plus.disabled) return;
+      plus.disabled = true;
       api('telegram-webhook', { action: 'add', text: s }).then(function () {
+        plus.disabled = false;
         draft = '';
         input.value = '';
         load();
-      }, noop);
+      }, function () { plus.disabled = false; });
     };
     var body = el('div');
     add(main, head, add(bar, add(el('label', 'field'), icon('cart'), input), plus), body);
@@ -5307,6 +5303,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var rc = add(el('div', 'hs'), el('span', 'mu', 'Повтор')), rv = null;
       rc.setAttribute('role', 'group');
       rc.setAttribute('aria-label', 'Повтор');
+      rc.style.flexWrap = 'wrap';
+      rc.style.overflowX = 'visible';
       [[null, 'нет'], ['daily', 'день'], ['weekly', 'неделя'], ['monthly', 'месяц'], ['yearly', 'год']].forEach(function (o) {
         rc.appendChild(chip(o[1], (t.repeat || null) === o[0], null, function () {
           if ((t.repeat || null) === o[0]) return;
@@ -5420,7 +5418,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       [['over', 'alert', 'Просрочено'], ['today', 'clock', 'Сегодня'], ['soon', 'calendar', 'Скоро'], ['later', 'layers', 'Позже'],
         ['none', 'bookmark', 'Без срока']].forEach(function (k) {
         var rows = g[k[0]].sort(byDue);
-        if (!rows.length && !board) return;
+        if (!rows.length && (!board || k[0] === 'later')) return;
         if (rows.length) any = true;
         var c = mkCard(k[1], k[2]), box = rowsBox(c);
         c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
@@ -5827,7 +5825,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       if (current !== 'legal') return;
       var cases = ((data && data.cases) || []).filter(function (x) { return x && x.case; }), today = warsawToday();
       clear(body);
-      if (!cases.length) return body.appendChild(state('stamp', 'Дел пока нет'));
+      if (!cases.length) {
+        var st0 = state('stamp', 'Дел пока нет');
+        st0.appendChild(el('p', '', 'Дело заводит помощник в сессии — скажи ему номер и ужонд'));
+        return body.appendChild(st0);
+      }
       // With several cases the second and third cards name their case.
       cases.forEach(function (x) {
         var sub = cases.length > 1 ? x.case.title : null;
@@ -6654,11 +6656,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       buy.type = wb.type = 'button';
       function mark() { add(label(wb, 'target', 'Жду акцию'), w ? icon('check', 'sx') : null); if (pr) price(pr, r); }
       buy.onclick = function () {
+        if (buy.disabled) return;
+        buy.disabled = true;
         api('telegram-webhook', { action: 'add', text: sized(r, ' '), one: 1 }).then(function (j) {
+          buy.disabled = false;
           toast('Добавил: ' + j.added.join(', '));
-        }, noop);
+        }, function () { buy.disabled = false; });
       };
       wb.onclick = function () {
+        if (wb.disabled) return;
+        wb.disabled = true;
         var was = w;
         (was ? api('telegram-webhook', { action: 'watch_remove', id: was.id })
           : api('telegram-webhook', { action: 'watch_add', chain: r.chain, key: r.product_key, name: r.product_name, size: r.size || '' }))
@@ -6667,8 +6674,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
             w = was ? null : { id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name };
             if (w) watch.push(w);
             mark();
+            wb.disabled = false;
             toast(w ? 'Жду акцию — отмечу в подборках' : 'Больше не жду', w ? 'target' : null);
-          }, function (e) { if (e.code === 'no such item') loadWatch().then(function () { w = watchOf(r); mark(); }); });
+          }, function (e) {
+            wb.disabled = false;
+            if (e.code === 'no such item') loadWatch().then(function () { w = watchOf(r); mark(); });
+          });
       };
       add(foot, buy, wb);
       mark();
@@ -8631,6 +8642,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var weekly = (b && Array.isArray(b.weekly) && b.weekly) || [], daily = (b && Array.isArray(b.daily) && b.daily) || [];
       if (!weekly.length && !daily.length) return;
       var box = card('award', 'Боевой пропуск', []), wrap = box.appendChild(el('div'));
+      box.insertBefore(el('div', 'row small mu', 'на этом устройстве'), wrap);
       var reset = label(el('button', 'btn ghost'), null, 'Сбросить');
       reset.type = 'button';
       reset.onclick = function () {
@@ -12274,7 +12286,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function render(rows) {
       if (current !== 'inbox') return;
       clear(body);
-      if (!rows.length) return add(body, state('inbox', 'Инбокс пуст'));
+      if (!rows.length) {
+        var st1 = state('inbox', 'Инбокс пуст');
+        st1.appendChild(el('p', '', 'Сюда попадает всё, что ты кидаешь в тему Claude или в личку боту'));
+        return add(body, st1);
+      }
       var c = mkCard('inbox', 'Новые');
       c.firstChild.appendChild(pill(String(rows.length)));
       rows.forEach(function (r) { c.appendChild(row(r)); });
@@ -12544,7 +12560,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // save waits 600 ms, so a run of taps is one request. home, money and tiles are the view on screen's
   // (docs/specs/device-views.md): on the wide layout they go to views.wide, made from that view the first time;
   // next.views replaces them all («Как на телефоне»: {}).
+  // prefsLoaded: one prefs_get has been answered by the server in this page load; before that an edit would save the
+  // cached (or default) settings over the real ones.
+  var prefsLoaded = false;
   function editPrefs(next, focus, quiet) {
+    if (!prefsLoaded) return toast('Настройки ещё не загрузились');
     var view = !!(next.home || next.money || next.tiles || next.board || next.boards !== undefined), w = view && wide(), h = viewPrefs('home'),
       mo = viewPrefs('money');
     var v = { home: next.home ? Object.assign({}, h, next.home) : h, money: next.money ? Object.assign({}, mo, next.money) : mo,
@@ -12582,6 +12602,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       fetch: function () {
         var gen = prefsGen;
         return api('miniapp', { action: 'prefs_get' }, 15000, true).then(function (j) {
+          prefsLoaded = true;
           return gen === prefsGen ? j : { prefs: prefs, modules: (j && j.modules) || modules };
         }, function (e) { if (e.login) throw e; return { prefs: prefs, modules: modules }; });
       },
@@ -13325,17 +13346,34 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), bc = barCard(), mo = moneyCardsCard();
+    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard();
     prefsHook = { tab: 'news', fn: function (focus) {
-      tc.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); bc.paint();
+      tc.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); if (bc) bc.paint();
     },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
       body.className = 'cols';
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, mo, bc), body, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, mo), body, note);
     } else add(main, browser ? pushCard() : null, tc, mc, tgc, mo, bc, body, note);
+    // «Выйти»: the last row of the settings, two taps — the second («Точно выйти») within 5 s, else it reverts.
+    if (browser) {
+      var lo = label(el('button', 'btn ghost'), 'logout', 'Выйти'), loT = null;
+      lo.type = 'button';
+      lo.onclick = function () {
+        if (loT) {
+          clearTimeout(loT);
+          loT = null;
+          return logout();
+        }
+        label(lo, 'logout', 'Точно выйти');
+        loT = setTimeout(function () { loT = null; label(lo, 'logout', 'Выйти'); }, 5000);
+      };
+      var lrow = el('div');
+      lrow.style.margin = '4px 0 16px';
+      main.insertBefore(add(lrow, lo), body);
+    }
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();

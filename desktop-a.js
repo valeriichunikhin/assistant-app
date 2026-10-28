@@ -92,7 +92,10 @@
     function refresh() { marks.forEach(function (f) { f(); }); detailMark(); }
     // The toggle the phone's product page has, from any row: watch_add / watch_remove, then every mark in step. Under a
     // keyword watch it adds this product's own watch and leaves the keyword one alone.
+    var toggling = false;
     function toggle(r) {
+      if (toggling) return;
+      toggling = true;
       var w = watchOf(r), was = own(w) ? w : null;
       A.haptic();
       (was ? api('telegram-webhook', { action: 'watch_remove', id: was.id })
@@ -100,9 +103,10 @@
         .then(function (j) {
           watch = watch.filter(function (x) { return x !== was; });
           if (!was) watch.push({ id: j.id, chain: r.chain, product_key: r.product_key, product_name: r.product_name });
+          toggling = false;
           refresh();
           A.toast(was ? 'Больше не жду' : 'Жду акцию — отмечу в подборках', was ? null : 'target');
-        }, function (e) { if (e.code === 'no such item') loadWatch(true).then(refresh); });
+        }, function (e) { toggling = false; if (e.code === 'no such item') loadWatch(true).then(refresh); });
     }
     function eye(r) {
       var b = add(btn('da-eye', null, function (ev) { ev.stopPropagation(); toggle(r); }), icon('target'));
@@ -180,9 +184,12 @@
       var foot = el('div', 'foot'), buy = A.label(el('button', 'btn ghost'), 'cart', 'В список'), wb = el('button', 'btn ghost');
       buy.type = wb.type = 'button';
       buy.onclick = function () {
+        if (buy.disabled) return;
+        buy.disabled = true;
         api('telegram-webhook', { action: 'add', text: r.product_name + (r.size ? ' ' + r.size : ''), one: 1 }).then(function (j) {
+          buy.disabled = false;
           A.toast('Добавил: ' + j.added.join(', '));
-        }, noop);
+        }, function () { buy.disabled = false; });
       };
       wb.onclick = function () { toggle(r); };
       detailMark = function () {
