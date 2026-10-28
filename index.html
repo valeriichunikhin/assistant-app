@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 16:39">
+<meta name="published" content="2026-10-28 17:28">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -934,6 +934,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .fline .bar{margin:0 0 8px}.fnums{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:6px}
 .fnf{gap:4px;padding:0 8px}.fnf>.mu{flex:none;font-size:12px}.fnf input.fn{width:100%;min-width:0;text-align:right;font-variant-numeric:tabular-nums}
 .tsum .btn.wide{margin:0 0 10px}.fsums{margin:0 0 12px}
+/* The weight (addendum «вес»): its pill beside the norm's in the day's head; «Неделя и месяц» — the 30 days' weight as a
+   quiet line (no axes, no grid: a dot a day, the last one priced), the averages under it. */
+.ch .mtoday+.mtoday{margin-left:6px}.ch .mtoday.fw{color:var(--fg)}
+.fstat{padding:0 14px 12px}.fstat .chart{padding:4px 0 0;overflow:visible}.fstat .chart .ln{stroke:var(--mark);stroke-width:2}
+.fstat .chart .dot{stroke-width:2}.fstat>.mu{margin-top:6px}.fstat>.mu.fe{margin-top:0}
+.fwin{width:100%;font:700 28px/1.2 var(--font-num);text-align:center;font-variant-numeric:tabular-nums}
+.bl.bkg{display:flex;align-items:center;gap:4px}.bl.bkg .i{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -1004,6 +1011,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
 <symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
 <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+<symbol id="i-weight" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></symbol>
+<symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
 <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M16 19h6"/><path d="M16 2v4"/><path d="M19 16v6"/><path d="M21 12.598V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8.5"/><path d="M3 10h18"/><path d="M8 2v4"/></symbol>
 <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol>
 <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></symbol>
@@ -3111,6 +3120,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         r.go = tab('food');
         var k = Math.round((f.today && f.today.kcal) || 0), norm = prefs.food || f.norm, last = f.last;
         big((k ? foodK(k) : '0') + ' ккал', 'vs' + (k ? '' : ' vmu'));
+        if (s === 'm' && f.weight_today) add(line('', 'bkg'), icon('weight'), document.createTextNode(foodKg(f.weight_today) + ' кг'));
         var left = norm ? norm.kcal - k : null;
         var sub = left == null ? (k ? '' : 'сегодня записей нет') : left >= 0 ? 'осталось ' + foodK(left) : 'сверх нормы ' + foodK(-left);
         if (s === 'm' && last) line(FOOD_RU[last.meal] + ', ' + foodTime(last.at) + ' · ' + foodK(last.kcal) + ' ккал', 'mu');
@@ -13364,7 +13374,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // order, a tap opens one's sheet (names, amounts, kcal and grams, the time, the meal, «Убрать»). «＋ Записать» sends a
   // text to the same model on the Mac (food_add: the entry comes in 1–3 minutes, «разбираю…» until then); «Текст для
   // Bevel» is the day as one text to copy, as /food in the bot. «Норма» on the day's card: kcal and protein a day
-  // (prefs.food), empty — no bar.
+  // (prefs.food), empty — no bar. Beside it the day's weight (the addendum «вес»): «82,4 кг», or «вес» with a plus when
+  // there is none; a tap opens its sheet (weight_set). Under the day «Неделя и месяц» (food_stats, the same for every
+  // day): the weight of the last 30 days as a line and the kcal a day over 7 and 30 finished days.
   var FOOD = { date: null };
   var FOOD_MEALS = [['breakfast', 'Завтрак'], ['lunch', 'Обед'], ['dinner', 'Ужин'], ['snack', 'Перекус']];
   var FOOD_RU = { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус' };
@@ -13372,6 +13384,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «9:00», as he writes the time and as the Bevel text has it.
   function foodTime(ts) { var p = wp(ts); return Number(p.hour) + ':' + p.minute; }
   function foodK(v) { return '~' + grouped(Math.round(Number(v) || 0)); }
+  // «82,4»: the weight to 0.1 with a comma; «−0,3» / «+0,5» / «0,0» a change.
+  function foodKg(v) { return (Math.round(Number(v) * 10) / 10).toFixed(1).replace('.', ','); }
+  function foodDelta(d) { d = Math.round(d * 10) / 10; return d === 0 ? '0,0' : (d > 0 ? '+' : '\u2212') + foodKg(Math.abs(d)); }
   function foodSums(t) {
     return foodK(t.kcal) + ' ккал · Б ' + Math.round(t.protein || 0) + ' · У ' + Math.round(t.carbs || 0) + ' · Ж ' + Math.round(t.fat || 0);
   }
@@ -13411,8 +13426,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function foodView() {
     var today = foodToday();
     if (!FOOD.date || FOOD.date > today) FOOD.date = today;
-    var date = FOOD.date, nav = el('div', 'mnav fnav'), body = el('div');
-    add(main, nav, body);
+    var date = FOOD.date, nav = el('div', 'mnav fnav'), body = el('div'), stats = el('div');
+    add(main, nav, body, stats);
     function fresh() { cacheDrop('food'); cacheDrop('home'); }
     function go(n) {
       var d = n === 0 ? foodToday() : addDays(FOOD.date, n);
@@ -13473,9 +13488,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function render(j) {
       var es = j.entries || [], t = j.totals || { kcal: 0, protein: 0, carbs: 0, fat: 0 }, norm = prefs.food, k = Math.round(t.kcal || 0);
       var day = mkCard('utensils', 'За день'), out = [day];
+      var w = j.weight, wb = foodBtn('mtoday' + (w ? ' fw' : ''), w ? 'weight' : 'plus', w ? foodKg(w.kg) + ' кг' : 'вес', function () {
+        foodWeightSheet(date, w, wb, function () { fresh(); load(); loadStats(); });
+      });
+      wb.setAttribute('aria-label', w ? 'Вес ' + foodKg(w.kg) + ' кг — поправить' : 'Записать вес');
       var nb = foodBtn('mtoday', 'target', norm ? foodK(norm.kcal) : 'Норма', function () { foodNormSheet(nb, render.bind(null, j)); });
       nb.setAttribute('aria-label', norm ? 'Норма в день: ' + norm.kcal + ' ккал' : 'Задать норму в день');
-      day.firstChild.appendChild(nb);
+      add(day.firstChild, wb, nb);
       var sum = add(el('div', 'fsum'), el('div', 'fk' + (k ? '' : ' mu'), (k ? foodK(k) : '0') + ' ккал'),
         el('div', 'mu', 'белки ' + Math.round(t.protein || 0) + ' г · углеводы ' + Math.round(t.carbs || 0) + ' г · жиры ' + Math.round(t.fat || 0) + ' г'));
       day.appendChild(sum);
@@ -13509,7 +13528,86 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       }
       add.apply(null, [clear(body)].concat(out));
     }
+    function loadStats() {
+      swr({ key: 'food:stats', box: stats, n: 1, live: function () { return current === 'food'; },
+        fetch: function () { return api('miniapp', { action: 'food_stats' }, 15000, true, { days: 30 }); },
+        render: function (j) { add(clear(stats), foodStatsCard(j, stats)); } });
+    }
     load();
+    loadStats();
+  }
+  // «Неделя и месяц»: the weight's line over the window (the box's width at drawing), the kcal a day over 7 and 30
+  // finished days, the weight's change over the 30; «вес пока не записан» with none.
+  function foodStatsCard(j, box) {
+    var c = mkCard('chart-line', 'Неделя и месяц'), b = el('div', 'fstat'), ws = j.weights || [];
+    c.appendChild(b);
+    if (ws.length) b.appendChild(foodWeightChart(ws, j.from, j.to, (box.clientWidth || 360) - 28));
+    else b.appendChild(el('div', 'mu fe', 'вес пока не записан'));
+    var a7 = j.avg_kcal_7, a30 = j.avg_kcal_30;
+    if (a7 != null || a30 != null) {
+      // A line breaks only between its parts (no lone «дн.» on the next one).
+      b.appendChild(el('div', 'mu', 'в среднем ' + [a7 != null ? foodK(a7) + ' ккал/день за 7 дн.' : null,
+        a30 != null ? (a7 != null ? grouped(a30) : foodK(a30) + ' ккал/день') + ' за 30 дн.' : null].filter(Boolean)
+        .map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ')));
+    }
+    if (j.delta_30 != null) b.appendChild(el('div', 'mu', 'вес ' + foodDelta(j.delta_30) + '\u00a0кг за\u00a030\u00a0дн.'));
+    return c;
+  }
+  // The weight a day: one quiet line of --mark through a dot a day (a day missing is bridged), no axes and no grid;
+  // the last dot priced, the window's first and last dates under it. W: the drawing's width in px. Each dot names its
+  // day and weight (hover, a screen reader).
+  function foodWeightChart(ws, from, to, W) {
+    W = W > 0 ? W : 320;
+    var H = 128, L = 6, R = 34, T = 20, B = 20;
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'class': 'chart',
+      'aria-label': 'Вес за 30 дней: ' + ws.map(function (w) { return dm(w.day) + ' ' + foodKg(w.kg); }).join(', ') });
+    var t0 = Date.parse(from + 'T12:00:00Z'), t1 = Date.parse(to + 'T12:00:00Z');
+    var ks = ws.map(function (w) { return Number(w.kg); });
+    var lo = Math.min.apply(null, ks), hi = Math.max.apply(null, ks), pad = Math.max((hi - lo) * 0.15, 0.5);
+    lo -= pad;
+    hi += pad;
+    function x(d) { return t1 === t0 ? W / 2 : L + (Date.parse(d + 'T12:00:00Z') - t0) / (t1 - t0) * (W - L - R); }
+    function y(k) { return T + (hi - k) / (hi - lo) * (H - T - B); }
+    if (ws.length > 1) {
+      add(box, svg('polyline', { 'class': 'ln', points: ws.map(function (w, i) { return x(w.day).toFixed(1) + ',' + y(ks[i]).toFixed(1); }).join(' ') }));
+    }
+    var n = ws.length - 1;
+    ws.forEach(function (w, i) {
+      var c = svg('circle', { cx: x(w.day).toFixed(1), cy: y(ks[i]).toFixed(1), r: i === n ? 4.5 : 3, 'class': 'dot' });
+      c.appendChild(svg('title', {}, dm(w.day) + ' · ' + foodKg(w.kg) + ' кг'));
+      box.appendChild(c);
+    });
+    var lx = x(ws[n].day), ly = y(ks[n]);
+    add(box, svg('text', { x: Math.min(lx + 8, W - 2), y: ly + 4, 'class': 'tk strong', 'text-anchor': 'start' }, foodKg(ks[n])),
+      svg('text', { x: L, y: H - 4, 'class': 'tk', 'text-anchor': 'start' }, dm(from)),
+      svg('text', { x: W - R, y: H - 4, 'class': 'tk', 'text-anchor': 'end' }, 'сегодня'));
+    return box;
+  }
+  // The day's weight: one number (a comma or a dot), 30–250 kg; «Убрать» removes the day's (weight_set kg null).
+  function foodWeightSheet(date, w, from, done) {
+    var kg = el('input', 'fwin'), close = noop;
+    kg.inputMode = 'decimal';
+    kg.placeholder = '82,4';
+    kg.setAttribute('aria-label', 'Вес, кг');
+    kg.value = w ? foodKg(w.kg) : '';
+    function send(v, btn) {
+      btn.disabled = true;
+      haptic();
+      api('miniapp', { action: 'weight_set' }, 15000, false, { day: date, kg: v }).then(function () {
+        close();
+        toast(v == null ? 'Убрал вес' : 'Записал ' + foodKg(v) + ' кг', 'weight');
+        done();
+      }, function () { btn.disabled = false; });
+    }
+    var ok = foodBtn('btn', 'check', 'Сохранить', function () {
+      var v = foodNum(kg.value);
+      if (!kg.value.trim() || !(v >= 30 && v <= 250)) { toast('Вес — число от 30 до 250 кг'); kg.focus(); return; }
+      send(Math.round(v * 10) / 10, ok);
+    });
+    var del = w ? foodBtn('btn ghost', 'trash', 'Убрать', function () { send(null, del); }) : null;
+    close = legalSheet('Вес' + (date === foodToday() ? ' сегодня' : ', ' + dm(date)), [add(el('div', 'bar'), add(el('label', 'field'), icon('weight'), kg, el('span', 'mu', 'кг'))),
+      el('div', 'mu msrc', w && w.delta_week != null ? 'За неделю ' + foodDelta(w.delta_week) + ' кг.' : 'Один вес в день: новый заменяет прежний. Можно и в бот: «вес 82,4».'),
+      add(el('div', 'bar mact mstick'), ok, del)], from);
   }
   // «＋ Записать»: a text for the Mac's model (food_add), the time on that day — now on today, else 13:00 to change.
   function foodAddSheet(date, from, done) {
