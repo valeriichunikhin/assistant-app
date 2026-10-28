@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-27 19:51">
+<meta name="published" content="2026-10-28 14:05">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -9009,9 +9009,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // The subcategory (docs/specs/money-10.md): undefined — not said (the server finds it), null — «Без подкатегории».
     var sub0 = r && kind === 'expense' && moneySub(r.category, r.subcategory);
     var sub = sub0 ? sub0[0] : r && kind === 'expense' ? null : undefined;
-    // The account (docs/specs/money-3.md): an edit starts on the row's own, a new one on the last one used here.
+    // The account (docs/specs/money-3.md): an edit starts on the row's own, a new transfer on the last one used here,
+    // anything else new on Revolut — he pays everything from it (his default, 28.10.2026).
     var accts = MONEY.accounts.filter(function (a) { return !a.hidden || (r && (a.key === r.account || a.key === r.to_account)); });
-    var acct = r ? r.account || null : store('moneyAcct'), toAcct = r ? r.to_account || null : store('moneyToAcct');
+    var acct = r ? r.account || null : kind === 'transfer' ? store('moneyAcct') : 'revolut', toAcct = r ? r.to_account || null : store('moneyToAcct');
     if (isNew && !moneyAcct(acct)) acct = moneyAcct('cash') ? 'cash' : accts.length ? accts[0].key : null;
     var people = MONEY.people.filter(function (p) { return !p.archived || (r && p.id === r.share_person_id); });
     var share = r && r.share ? Number(r.share) : null, sharePerson = r ? r.share_person_id || null : null;
