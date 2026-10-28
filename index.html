@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 19:44">
+<meta name="published" content="2026-10-28 19:57">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -952,51 +952,80 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 .row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
-/* «Здоровье» (docs/specs/health-v2.md): the rings in Bevel's colours (validated for both themes, each ring named under it),
-   «Монитор» tiles with a vertical track and the norm's band, «Фитнес» — the week's strip, the gauges with the green
-   target, the freshness dots; «Биология» — a sparkline a row. Quiet marks: no axes, no grid. */
-:root{--hl-load:#c08a00;--hl-rec:#22a872;--hl-sleep:#4f8ff0}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--hl-load:#b35f00;--hl-rec:#0a7f5a;--hl-sleep:#3a64e8}}
-:root[data-theme="light"]{--hl-load:#b35f00;--hl-rec:#0a7f5a;--hl-sleep:#3a64e8}
-.hring{display:block;overflow:visible}.hring .tr{fill:none;stroke:var(--track)}.hring .arc{fill:none;stroke-linecap:round}
-.hring.hl-load .arc{stroke:var(--hl-load)}.hring.hl-rec .arc{stroke:var(--hl-rec)}.hring.hl-sleep .arc{stroke:var(--hl-sleep)}
-.hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}.hring .rv.mu{fill:var(--muted)}
-.hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
-.hrl{font-size:12px;color:var(--muted);white-space:nowrap}
-.hbody{padding:2px 14px 14px;border-radius:var(--r-b)}.hadv{margin-top:12px;font-weight:600;text-align:center}
-.bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}
+/* «Здоровье» (docs/specs/health-v2.md, the look — docs/specs/health-look.md): Bevel's soft gradients. The rings — thick,
+   a gradient down the arc (#g-ring-* in the sprite) and a soft glow (#g-glow, stronger in the dark), each ring on its own
+   tinted track; the main stops validated by dataviz for both themes (the light top stops are decoration, every ring is
+   named under it). «Монитор» — two across, a vertical scale with the ±1 σ band and a glowing dot in the status colour,
+   pastel pills (норма — green, выше — sky, ниже — orange). «Фитнес» under a peach tint: the week as circles, the
+   gauges as half rings with the green target and a marker; «Биология» under a teal tint: a sparkline a row on the right. */
+:root{--ring-load:#d47a00;--ring-load-2:#ffc23d;--ring-recovery:#10a370;--ring-recovery-2:#8ee05a;--ring-sleep:#887bff;--ring-sleep-2:#5fb4ff;
+  --hl-sky:#3399d8;--hl-bio:#14a898;--hl-peach:#ff9a62;--hl-teal:#2ec4b6;--hl-tint:12%;--hl-tint2:18%;--hl-glow:url(#g-glow-d);
+  --ring-load-soft:color-mix(in srgb,var(--ring-load) 22%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 22%,transparent);
+  --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 22%,transparent)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
+  --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}}
+:root[data-theme="light"]{--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
+  --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}
+.hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:round;filter:var(--hl-glow)}
+.hring.hl-load .tr{stroke:var(--ring-load-soft)}.hring.hl-rec .tr{stroke:var(--ring-recovery-soft)}.hring.hl-sleep .tr{stroke:var(--ring-sleep-soft)}
+.hring.hl-load .arc{stroke:url(#g-ring-load)}.hring.hl-rec .arc{stroke:url(#g-ring-rec)}.hring.hl-sleep .arc{stroke:url(#g-ring-sleep)}
+.hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.hring .rv.mu{fill:var(--muted)}
+.hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.hrl{font-size:13px;color:var(--muted);white-space:nowrap}
+.card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
+.hbody{padding:6px 14px 16px;border-radius:var(--r-b)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
+.bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 .hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
 .hxh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}.hxh .pr{font:800 17px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .row.hxr{padding-left:0;padding-right:0;min-height:44px}.row.hxr .pr{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
-.hmon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0 14px 14px}
-@media (min-width:900px){.hmon{grid-template-columns:repeat(6,minmax(0,1fr))}}
-.hmt{display:flex;gap:8px;align-items:center;min-width:0;padding:10px 8px;border:1px solid var(--line);border-radius:var(--r-s)}
-.hmx{display:flex;flex-direction:column;gap:3px;min-width:0}.hml{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hmv{font:800 17px/1.15 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.hmv small{font:500 11px var(--font);color:var(--muted)}
-.hmt .pill{align-self:flex-start;height:18px;padding:0 6px;font-size:11px}.hmn{font-size:11px}
-.htrk{flex:none;overflow:visible}.htrk .tr{fill:var(--track)}.htrk .band{fill:color-mix(in srgb,var(--good) 35%,transparent)}
-.htrk .dot{fill:var(--fg);stroke:var(--solid);stroke-width:2}.htrk .dot.above,.htrk .dot.below{fill:var(--warn)}
-.hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;padding:0 14px 12px}
-.hwd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px 0;border-radius:var(--r-s)}.hwd .mu{font-size:12px}
-.hwd.on{background:var(--accent-soft)}.hwi .i{width:20px;height:20px}.hwr{width:8px;height:8px;margin:6px 0;border-radius:50%;background:var(--track)}
+.hmon{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 14px 14px}
+@media (min-width:900px){.hmon{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.hmt{--st:var(--muted);display:flex;gap:10px;align-items:center;min-width:0;padding:10px 12px 10px 8px;border-radius:var(--r-b);background:var(--surface-2)}
+.hmt.hs-norm{--st:var(--ring-recovery)}.hmt.hs-above{--st:var(--hl-sky)}.hmt.hs-below{--st:var(--ring-load)}
+.hmx{display:flex;flex-direction:column;gap:4px;min-width:0}.hml{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hmv{font:800 22px/1.1 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}.hmv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
+.hmt .pill{align-self:flex-start;height:20px;padding:0 8px;font-size:11px}.hmn{font-size:11px}
+.pill.hst{border-color:transparent;background:color-mix(in srgb,var(--st) 16%,transparent);color:color-mix(in srgb,var(--st) 68%,var(--fg));font-weight:600}
+.htrk{flex:none;overflow:visible}.htrk .tr{fill:var(--track)}.htrk .band{fill:color-mix(in srgb,var(--st) 55%,transparent)}
+.htrk .halo{fill:color-mix(in srgb,var(--st) 28%,transparent)}.htrk .dot{fill:var(--st);stroke:var(--solid);stroke-width:2}
+.card.hfit{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-peach) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
+.card.hbio{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-teal) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
+.hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:2px 14px 14px}
+.hwd{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}.hwd>.mu{font-size:12px}.hwd.on>.mu{color:var(--fg);font-weight:700}
+.hwc{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--surface-2);color:var(--muted)}.hwc .i{width:18px;height:18px}
+.hwc.wo{background:color-mix(in srgb,var(--ring-load) 16%,transparent);color:var(--ring-load)}
+.hwd.on .hwc{box-shadow:0 0 0 2px var(--ring-load),0 0 12px color-mix(in srgb,var(--ring-load) 40%,transparent)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 14px}
-.hgh{display:flex;justify-content:space-between;font-weight:600;margin:0 0 6px}.hgh .pr{font-variant-numeric:tabular-nums}
-.hgb{position:relative;height:8px;border-radius:4px;background:var(--track);margin:0 0 6px}
-.hgb .zone{position:absolute;top:-3px;bottom:-3px;border-radius:4px;background:color-mix(in srgb,var(--good) 22%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--good) 55%,transparent)}
-.hgb .val{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--mark)}
+.hgg{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center}.hgh{font-weight:600;margin:0 0 2px}
+.hgv{display:block;width:100%;max-width:168px;height:auto;overflow:visible}.hgv .tr,.hgv .zone{fill:none;stroke-linecap:round}
+.hgv .tr{stroke:var(--track)}.hgv .zone{stroke:var(--ring-recovery);filter:var(--hl-glow)}
+.hgv .ptr{stroke:var(--fg);stroke-width:3;stroke-linecap:round}.hgv .ptr.pth{stroke:var(--solid);stroke-width:7}
+.hgv .gv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}.hgv .gu{fill:var(--muted);font-weight:500}
 .hgg>.mu{font-size:12px}
 .hfr{padding:0 14px 12px}.hfh{font-weight:600;margin:0 0 6px}.hfr1{display:flex;align-items:center;gap:10px;min-height:32px}
 .hfr1 .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hfr1 .pr{flex:none;width:40px;text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-.hfd{flex:none;display:flex;gap:3px}.hfd i{width:6px;height:6px;border-radius:50%;background:var(--track)}
-.hfd.good i.on{background:var(--good)}.hfd.warn i.on{background:var(--warn)}.hfd.bad i.on{background:var(--bad)}
-.row.hbr{gap:10px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .pr{flex:none;min-width:72px;text-align:right;font-variant-numeric:tabular-nums}
-.row.hbr .pr b{white-space:nowrap}.hspk{flex:none;overflow:visible}.hspk .ln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.hspk .dot{fill:var(--mark);stroke:var(--solid);stroke-width:2}.hbn{flex:none;font-size:12px}
+.hfd{flex:none;display:flex;gap:4px}.hfd i{width:7px;height:7px;border-radius:50%;background:var(--track)}
+.row.hbr{gap:12px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .tx .mu{font-size:12px}.hbv{font:800 19px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
+.hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
+.hspk{flex:none;overflow:visible}.hspk .ln{fill:none;stroke:var(--hl-bio);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hspk .ar{fill:url(#g-bio-area)}
+.hspk .halo{fill:color-mix(in srgb,var(--hl-bio) 25%,transparent)}.hspk .dot{fill:var(--hl-bio);stroke:var(--solid);stroke-width:2}.hbn{flex:none;font-size:12px}
 .hset{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs><!-- «Здоровье» (docs/specs/health-look.md): the rings' gradients (the ring is rotated −90°, so x here runs top to bottom on
+  screen), the bio sparklines' area, the glow — soft in the light theme, stronger in the dark (picked by --hl-glow) -->
+<linearGradient id="g-ring-load" x1="1" y1="0" x2="0" y2="0"><stop offset="0" style="stop-color:var(--ring-load-2)"/><stop offset="1" style="stop-color:var(--ring-load)"/></linearGradient>
+<linearGradient id="g-ring-rec" x1="1" y1="0" x2="0" y2="0"><stop offset="0" style="stop-color:var(--ring-recovery-2)"/><stop offset="1" style="stop-color:var(--ring-recovery)"/></linearGradient>
+<linearGradient id="g-ring-sleep" x1="1" y1="0" x2="0" y2="0"><stop offset="0" style="stop-color:var(--ring-sleep-2)"/><stop offset="1" style="stop-color:var(--ring-sleep)"/></linearGradient>
+<linearGradient id="g-bio-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hl-bio);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--hl-bio);stop-opacity:0"/></linearGradient>
+<filter id="g-glow" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".4"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="g-glow-d" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".7"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
 <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
@@ -3208,7 +3237,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
         if (h.date !== today) name.textContent = 'Здоровье · вчера';
         n.appendChild(hlRings(h, s === 'm' ? 52 : 44));
-        if (s === 'm') note(h.advice || 'мало данных для совета', h.advice ? '' : 'mu');
+        if (s === 'm') note(h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice ? '' : 'mu');
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
       // when it is planned.
@@ -13922,7 +13951,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var HL_NAMES = { load: 'Нагрузка', recovery: 'Восстановление', sleep: 'Сон', muscle: 'Мышцы', stress: 'Стресс' };
   var HL_MON = { resp_rate: ['Дыхание', '/мин'], resting_hr: ['Пульс', 'уд/мин'], hrv: ['ВСР', 'мс'], spo2: ['SpO2', '%'],
     wrist_temp: ['Темп.', '°C'], sleep_min: ['Сон', ''] };
-  var HL_STATUS = { norm: ['норма', 'good'], above: ['выше', 'warn'], below: ['ниже', 'warn'] };
+  var HL_STATUS = { norm: 'норма', above: 'выше', below: 'ниже' };
+  // The advice as Bevel writes it: the sport's emoji first (the volleyball it names, else today's first workout),
+  // a capital letter.
+  var HL_EMOJI = { volleyball: '🏐', gym: '🏋️', run: '🏃', bike: '🚴', swim: '🏊' };
+  function hlAdvice(a, kinds) {
+    var k = /волейбол/i.test(a) ? 'volleyball' : (kinds || []).filter(function (x) { return HL_EMOJI[x]; })[0];
+    return (k ? HL_EMOJI[k] + ' ' : '') + a.charAt(0).toUpperCase() + a.slice(1);
+  }
   // «7 ч 40», «48», «96,8», «+0,2»: a value of a tile or a line.
   function hlVal(key, v) {
     if (v == null) return '—';
@@ -13930,9 +13966,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     if (key === 'wrist_temp') return (v > 0 ? '+' : v < 0 ? '−' : '') + (Math.round(Math.abs(v) * 10) / 10).toFixed(1).replace('.', ',');
     return woNum(v);
   }
-  // A ring: the track, the arc of v (0–100) in the ring's own colour from 12 o'clock, the number in the middle.
+  // A ring: its tinted track, the arc of v (0–100) from 12 o'clock in the ring's gradient with a glow (the CSS), the
+  // number in the middle; the stroke 13 % of the size (11 px at 84).
   function hlRing(v, cls, size) {
-    var sw = size >= 60 ? 7 : 5, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
+    var sw = Math.round(size * 0.13), r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
     var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hring ' + cls, 'aria-hidden': 'true' });
     box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
     if (v != null && v > 0) {
@@ -13940,7 +13977,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         transform: 'rotate(-90 ' + h + ' ' + h + ')' }));
     }
     box.appendChild(svg('text', { x: h, y: h, 'class': 'rv' + (v == null ? ' mu' : ''), 'text-anchor': 'middle', 'dominant-baseline': 'central',
-      'font-size': size >= 60 ? 17 : 12 }, v == null ? '—' : String(v)));
+      'font-size': size >= 60 ? 22 : 13 }, v == null ? '—' : String(v)));
     return box;
   }
   // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls.
@@ -13968,8 +14005,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function hlCard(j) {
     var c = mkCard('activity', 'Здоровье'), sc = j.scores || {};
     var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
-    var rings = hlRings(vs, 72), wrap = add(el('div', 'hbody'), rings);
-    wrap.appendChild(el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice || (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.')));
+    var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
+    var rings = hlRings(vs, 84), wrap = add(el('div', 'hbody'), rings);
+    c.className += ' hcard';
+    wrap.appendChild(el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice ? hlAdvice(j.advice, today && today.kinds) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.')));
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlExplainSheet(j, b); });
     b.setAttribute('aria-label', 'Из чего считаются кольца');
     c.firstChild.appendChild(b);
@@ -14001,42 +14040,57 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     nodes.push(add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); })));
     close = legalSheet('Из чего', nodes, from);
   }
-  // A tile's track: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it.
+  // A tile's scale: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it with a halo; both in the
+  // status colour of the tile (--st).
   function hlTrack(t) {
-    var H = 56, W = 10, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htrk', 'aria-hidden': 'true' });
-    box.appendChild(svg('rect', { x: 3, y: 0, width: 4, height: H, rx: 2, 'class': 'tr' }));
+    var H = 64, W = 16, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htrk', 'aria-hidden': 'true' });
+    box.appendChild(svg('rect', { x: 6, y: 0, width: 4, height: H, rx: 2, 'class': 'tr' }));
     if (!t.base) return box;
     var span = 2.5;
-    function y(z) { return (H - 6) * (1 - (Math.max(-span, Math.min(span, z)) + span) / (2 * span)) + 3; }
-    box.appendChild(svg('rect', { x: 3, y: y(1), width: 4, height: y(-1) - y(1), rx: 2, 'class': 'band' }));
-    if (t.value != null) box.appendChild(svg('circle', { cx: 5, cy: y((t.value - t.base.mean) / t.base.sd).toFixed(1), r: 4, 'class': 'dot ' + (t.status || '') }));
+    function y(z) { return (H - 14) * (1 - (Math.max(-span, Math.min(span, z)) + span) / (2 * span)) + 7; }
+    box.appendChild(svg('rect', { x: 6, y: y(1), width: 4, height: y(-1) - y(1), rx: 2, 'class': 'band' }));
+    if (t.value != null) {
+      var cy = y((t.value - t.base.mean) / t.base.sd).toFixed(1);
+      box.appendChild(svg('circle', { cx: 8, cy: cy, r: 7, 'class': 'halo' }));
+      box.appendChild(svg('circle', { cx: 8, cy: cy, r: 4, 'class': 'dot' }));
+    }
     return box;
   }
-  // «Монитор»: six tiles, three across.
+  // «Монитор»: six tiles, two across (three from 900 px).
   function hlMonitor(ms) {
     var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
     ms.forEach(function (t) {
       var n = HL_MON[t.key], st = HL_STATUS[t.status];
-      var tile = add(el('div', 'hmt'), hlTrack(t), add(el('div', 'hmx'), el('div', 'mu hml', n[0]),
+      var tile = add(el('div', 'hmt' + (st ? ' hs-' + t.status : '')), hlTrack(t), add(el('div', 'hmx'), el('div', 'mu hml', n[0]),
         add(el('div', 'hmv'), document.createTextNode(hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
-        st ? pill(st[0], st[1]) : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')));
-      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st[0] : '')));
+        st ? pill(st, 'hst') : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')));
+      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')));
       g.appendChild(tile);
     });
     c.appendChild(g);
     return c;
   }
-  // A load gauge: 0–100 with the target band in green, the value as a filled bar, the words.
+  // A load gauge as Bevel's: a half ring 0–100 %, the target in green, a marker at the value, the number in the middle,
+  // the words under it.
   function hlGauge(name, s, tgt) {
     var row = el('div', 'hgg'), v = s ? s.value : null;
-    // The value under the target band, so the band's outline stays in sight.
-    var zone = el('i', 'zone'), val = v != null ? el('i', 'val') : null, bar = add(el('div', 'hgb'), val, zone);
-    zone.style.left = tgt[0] + '%';
-    zone.style.width = tgt[1] - tgt[0] + '%';
-    if (val) val.style.width = Math.max(2, v) + '%';
+    var W = 140, H = 84, cx = 70, cy = 72, r = 58, sw = 10;
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
+    function pt(f, rad) { var a = Math.PI * (1 - Math.max(0, Math.min(1, f))); return [cx + rad * Math.cos(a), cy - rad * Math.sin(a)]; }
+    function arc(f0, f1) { var a = pt(f0, r), b = pt(f1, r); return 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + 'A' + r + ' ' + r + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1); }
+    box.appendChild(svg('path', { d: arc(0, 1), 'class': 'tr', 'stroke-width': sw }));
+    box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100), 'class': 'zone', 'stroke-width': sw }));
+    if (v != null) {
+      // The marker across the ring: a halo line in the card's colour under the line itself.
+      var a = pt(v / 100, r - 9), b = pt(v / 100, r + 9), ln = { x1: a[0].toFixed(1), y1: a[1].toFixed(1), x2: b[0].toFixed(1), y2: b[1].toFixed(1) };
+      box.appendChild(svg('line', Object.assign({ 'class': 'ptr pth' }, ln)));
+      box.appendChild(svg('line', Object.assign({ 'class': 'ptr' }, ln)));
+    }
+    var t = svg('text', { x: cx, y: cy - 8, 'class': 'gv', 'text-anchor': 'middle', 'font-size': 26 }, v == null ? '—' : String(v));
+    if (v != null) t.appendChild(svg('tspan', { 'class': 'gu', 'font-size': 13, dx: 2 }, '%'));
+    box.appendChild(t);
     var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели';
-    add(row, add(el('div', 'hgh'), el('span', '', name), el('span', 'pr', v == null ? '—' : v + ' %')), bar,
-      el('div', 'mu', where + ' · цель ' + tgt[0] + '–' + tgt[1] + ' %'));
+    add(row, el('div', 'hgh', name), box, el('div', 'mu', where + ' · цель ' + tgt[0] + '–' + tgt[1] + ' %'));
     row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + where));
     return row;
   }
@@ -14047,9 +14101,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var any = sc.load || sc.muscle || week.some(function (d) { return d.kinds.length; }) || fr.some(function (g) { return g.value < 10; });
     if (!any) return null;
     var c = mkCard('flame', 'Фитнес'), strip = el('div', 'hwk');
+    c.className += ' hfit';
     week.forEach(function (d) {
       var k = d.kinds[0], cell = add(el('div', 'hwd' + (d.day === j.date ? ' on' : '')), el('div', 'mu', WEEK[wd(d.day)]),
-        k ? add(el('span', 'hwi'), icon(WO_IC[k] || 'medal')) : el('span', 'hwr'));
+        add(el('span', 'hwc' + (k ? ' wo' : '')), icon(k ? WO_IC[k] || 'medal' : 'moon')));
       cell.setAttribute('aria-label', WEEK[wd(d.day)] + ' ' + dm(d.day) + ': ' + (d.kinds.length ? d.kinds.map(function (x) { return WO_RU[x] || x; }).join(', ') : 'отдых'));
       strip.appendChild(cell);
     });
@@ -14059,8 +14114,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     if (fr.length) {
       var f = add(el('div', 'hfr'), el('div', 'hfh', 'Свежесть мышц'));
       fr.forEach(function (g) {
-        var dots = el('span', 'hfd ' + (g.value >= 7 ? 'good' : g.value >= 4 ? 'warn' : 'bad'));
-        for (var i = 0; i < 10; i++) dots.appendChild(el('i', i < g.value ? 'on' : ''));
+        // The lit dots run from grey to green, so a fresh group ends green.
+        var dots = el('span', 'hfd');
+        for (var i = 0; i < 10; i++) {
+          var dot = dots.appendChild(el('i'));
+          if (i < g.value) dot.style.background = 'color-mix(in srgb,var(--ring-recovery) ' + (25 + i * 75 / 9).toFixed(0) + '%,var(--muted))';
+        }
         var r = add(el('div', 'hfr1'), el('span', 'tx', g.label), dots, el('span', 'pr', g.value + '/10'));
         r.setAttribute('aria-label', g.label + ': свежесть ' + g.value + ' из 10');
         f.appendChild(r);
@@ -14069,29 +14128,39 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     return c;
   }
-  // A sparkline: the points of the window as one quiet line, the last one a dot; no axes, no grid.
+  // A sparkline: the points of the window as one quiet line over a fading area, the last one a dot with a halo; no
+  // axes, no grid.
   function hlSpark(pts, from, to, W) {
-    var H = 32, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hspk', 'aria-hidden': 'true' });
+    var H = 36, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hspk', 'aria-hidden': 'true' });
     var t0 = Date.parse(from + 'T12:00:00Z'), t1 = Date.parse(to + 'T12:00:00Z'), vs = pts.map(function (p) { return p.v; });
     var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs);
     if (hi === lo) { hi += 1; lo -= 1; }
     function x(d) { return 4 + (Date.parse(d + 'T12:00:00Z') - t0) / Math.max(1, t1 - t0) * (W - 8); }
     function y(v) { return 4 + (hi - v) / (hi - lo) * (H - 8); }
-    if (pts.length > 1) box.appendChild(svg('polyline', { 'class': 'ln', points: pts.map(function (p) { return x(p.day).toFixed(1) + ',' + y(p.v).toFixed(1); }).join(' ') }));
+    var line = pts.map(function (p) { return x(p.day).toFixed(1) + ',' + y(p.v).toFixed(1); }).join(' ');
+    if (pts.length > 1) {
+      box.appendChild(svg('polygon', { 'class': 'ar', points: x(pts[0].day).toFixed(1) + ',' + H + ' ' + line + ' ' + x(pts[pts.length - 1].day).toFixed(1) + ',' + H }));
+      box.appendChild(svg('polyline', { 'class': 'ln', points: line }));
+    }
     var l = pts[pts.length - 1];
-    box.appendChild(svg('circle', { cx: x(l.day).toFixed(1), cy: y(l.v).toFixed(1), r: 3, 'class': 'dot' }));
+    box.appendChild(svg('circle', { cx: x(l.day).toFixed(1), cy: y(l.v).toFixed(1), r: 7, 'class': 'halo' }));
+    box.appendChild(svg('circle', { cx: x(l.day).toFixed(1), cy: y(l.v).toFixed(1), r: 3.5, 'class': 'dot' }));
     return box;
   }
-  // «Биология»: a row a measure — its name, the 30 days as a sparkline, the last value and its change.
+  // «Биология»: a row a measure — its name, the last value large, the change with an arrow and a word; the 30 days as
+  // a sparkline on the right.
   function hlBio(j, box) {
     var c = mkCard('trending', 'Биология', 'за 30 дней'), s = j.series || {}, any = false;
-    var W = Math.max(60, Math.min(160, ((box && box.clientWidth) || 360) - 230));
+    c.className += ' hbio';
+    var W = Math.max(80, Math.min(200, ((box && box.clientWidth) || 360) - 190));
     [['weight', 'Вес', 'кг', 1], ['body_fat', 'Жир', '%', 1], ['hrv', 'ВСР', 'мс', 1], ['resting_hr', 'Пульс покоя', 'уд/мин', -1], ['vo2max', 'VO2max', '', 1]].forEach(function (m) {
       var x = s[m[0]] || { points: [] }, p = x.points || [], last = p.length ? p[p.length - 1].v : null;
       if (p.length) any = true;
       var d = x.delta, dv = d == null || d === 0 ? '' : (d > 0 ? '+' : '−') + woNum(Math.abs(d));
-      var r = add(el('div', 'row hbr'), add(el('span', 'tx'), el('div', 't', m[1])), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'),
-        add(el('span', 'pr'), el('b', '', last == null ? '—' : woNum(last) + (m[2] ? ' ' + m[2] : '')), dv ? el('div', 'mu', dv) : null));
+      var tr = d == null || !p.length ? '' : d > 0 ? '↑ ' + dv + ' · растёт' : d < 0 ? '↓ ' + dv + ' · снижается' : '→ ровно';
+      var r = add(el('div', 'row hbr'), add(el('span', 'tx'), el('div', 'mu', m[1]),
+        add(el('div', 'hbv'), document.createTextNode(last == null ? '—' : woNum(last)), last != null && m[2] ? el('small', '', ' ' + m[2]) : null),
+        tr ? el('div', 'mu', tr) : null), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'));
       r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (dv ? ', за 30 дней ' + dv : '')));
       c.appendChild(r);
     });
