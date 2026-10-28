@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 19:39">
+<meta name="published" content="2026-10-28 19:44">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -951,7 +951,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .wday{margin:0 0 16px;padding:12px 0 0;border-top:1px solid var(--line)}.wday:first-child{border-top:0;padding-top:0}
 .wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
-/* «Тело» (docs/specs/health-v2.md): the rings in Bevel's colours (validated for both themes, each ring named under it),
+.row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
+/* «Здоровье» (docs/specs/health-v2.md): the rings in Bevel's colours (validated for both themes, each ring named under it),
    «Монитор» tiles with a vertical track and the norm's band, «Фитнес» — the week's strip, the gauges with the green
    target, the freshness dots; «Биология» — a sparkline a row. Quiet marks: no axes, no grid. */
 :root{--hl-load:#c08a00;--hl-rec:#22a872;--hl-sleep:#4f8ff0}
@@ -1645,10 +1646,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Тело'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Здоровье'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
-  var BAR = ['home', 'shop', 'tasks', 'films'], MORE = [];
+  var BAR = ['food', 'home', 'shop', 'tasks'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow). Each of these has a desktop view (desktop-a/b.js), so the cap
   // holds only until those scripts land; «Фильмы», «Задачи», «LinkedIn» and «Что нового» use the full width with their cards
   // in columns (20.10.2026, «сделай респонсивность под все»).
@@ -1820,7 +1821,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
       money: v.money, tiles: v.tiles, board: v.board, boards: v.boards, board_now: !(p && p.board_now === false),
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
-      cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food) };
+      cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
+      start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null };
   }
   // «Еда»'s norm a day (docs/specs/food.md) as the server keeps it: {kcal 500–6000, protein 0–400 or none}; null — none.
   function foodNormIn(v) {
@@ -1938,6 +1940,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var keys = !Array.isArray(v) ? null : v.filter(function (k, i) {
       return typeof k === 'string' && Object.prototype.hasOwnProperty.call(NAMES, k) && v.indexOf(k) === i;
     });
+    // One-time (28.10.2026): a bar chosen before «Здоровье» became the first button gets it prepended, the last one dropped.
+    if (keys && keys.indexOf('food') < 0 && store('tabBarV') !== '2') {
+      keys = ['food'].concat(keys).slice(0, 4);
+      store('tabBar', JSON.stringify(keys));
+      store('tabBarV', '2');
+    }
     var base = !keys ? BAR.slice() : keys.map(canon).filter(function (k, i, a) { return a.indexOf(k) === i; }).slice(0, 4);
     // The slots are counted before the segment keys fold into one, so a bar that held two of them keeps its size.
     var want = keys ? Math.min(4, keys.length) : base.length;
@@ -2060,7 +2068,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var lastOk = last && isView(canon(last)) && tabShown(canon(last));
     // A t.me link with startapp=<tab> (the iPhone widget's tap, docs/specs/widget-sizes.md) opens the Mini App on that tab.
     var sp = !browser && tg.initDataUnsafe && tg.initDataUnsafe.start_param, spOk = typeof sp === 'string' && isView(canon(sp));
-    show(n ? 'notif' : spOk ? sp : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : homeTab());
+    // His chosen start tab (prefs.start, 28.10.2026) wins over the remembered tab and the stale hash, not over a push tap or a widget link.
+    var st = prefs.start && tabShown(canon(prefs.start)) ? prefs.start : null;
+    show(n ? 'notif' : spOk ? sp : st ? st : pwa && lastOk ? last : isView(canon(h)) ? h : lastOk ? last : homeTab());
     // The bell's count when the first screen does not bring it (home and «Уведомления» do); the answer is the
     // center's cached copy too.
     if (current !== 'home' && current !== 'notif') {
@@ -3191,7 +3201,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         if (sub) note(sub, left != null && left < 0 ? 'warn' : '');
       },
       // «Здоровье» (docs/specs/health-v2.md): the three rings of today (yesterday's until the night is in); m — the advice
-      // under them. No health row — «нет данных»; a tap opens «Тело».
+      // under them. No health row — «нет данных»; a tap opens «Здоровье».
       body: function () {
         var h = j.health;
         r.go = tab('food');
@@ -12516,7 +12526,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       boards: view && !w ? v.boards : prefs.boards,
       board_now: next.board_now !== undefined ? next.board_now : prefs.board_now,
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
-      telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food };
+      telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food,
+      start: next.start !== undefined ? next.start : prefs.start };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -12576,10 +12587,23 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // «Вкладки»: every tab with a toggle; «Что нового» (the settings) always stays.
   function tabsCard() {
-    var card = mkCard('more', 'Вкладки'), rows = el('div');
-    card.appendChild(rows);
+    var card = mkCard('more', 'Вкладки'), rows = el('div'), startRow = el('div', 'row'), startSel = el('select', 'wkind');
+    add(startRow, el('span', 'tx t', 'Открывать при запуске'), startSel);
+    startSel.setAttribute('aria-label', 'Открывать при запуске');
+    startSel.onchange = function () { editPrefs({ start: startSel.value || null }, ['tab', 'start']); };
+    add(card, startRow, rows);
     card.paint = function (focus) {
       var hid = prefs.tabs.hidden;
+      clear(startSel);
+      var o0 = el('option', '', 'последняя открытая');
+      o0.value = '';
+      startSel.appendChild(o0);
+      visibleTabs().forEach(function (t) {
+        var o = el('option', '', t[2]);
+        o.value = t[0];
+        startSel.appendChild(o);
+      });
+      startSel.value = prefs.start && tabShown(prefs.start) ? prefs.start : '';
       clear(rows);
       TABS.forEach(function (t) {
         var k = t[0], row = add(lead(el('div', 'row'), t[1]), el('span', 'tx t', t[2]));
@@ -13221,6 +13245,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     reset.onclick = function () {
       haptic();
       store('tabBar', '');
+      store('tabBarV', '2');
       drawBar();
       paint('reset');
     };
@@ -13233,6 +13258,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     function save(keys, focus) {
       haptic();
       store('tabBar', JSON.stringify(keys));
+      store('tabBarV', '2');
       drawBar();
       paint(focus);
     }
@@ -13495,7 +13521,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function foodView() {
     var today = foodToday();
     if (!FOOD.date || FOOD.date > today) FOOD.date = today;
-    // «Тело» (docs/specs/health-v2.md): the health cards over the day (top), «Фитнес» after its workouts (fit),
+    // «Здоровье» (docs/specs/health-v2.md): the health cards over the day (top), «Фитнес» after its workouts (fit),
     // «Биология» under «Неделя и месяц» (bio).
     var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div'), bio = el('div');
     add(main, nav, top, body, fit, stats, bio);
@@ -13884,8 +13910,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)), add(el('div', 'bar mact mstick'), save, del)], from);
   }
 
-  // --- «Тело»: health from the iPhone (docs/specs/health-v2.md, 28.10.2026) ---
-  // Over the day of «Тело» (the «Еда» tab, renamed): «Здоровье» — three rings «Нагрузка · Восст. · Сон» and the day's
+  // --- «Здоровье»: health from the iPhone (docs/specs/health-v2.md, 28.10.2026) ---
+  // Over the day of «Здоровье» (the «Еда» tab, renamed): — three rings «Нагрузка · Восст. · Сон» and the day's
   // advice, a tap opens «Из чего» (every score with its parts and their shares, health_day's explain); «Монитор» — six
   // tiles against his own 30 days (a vertical track, the norm's band ±1 σ in it, a dot for the day, «норма/выше/ниже»).
   // After the day's workouts «Фитнес»: the week as a strip of icons, «Кардио» and «Мышцы» against the green 20–49 %,
