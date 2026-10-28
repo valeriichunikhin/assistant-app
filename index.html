@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 14:05">
+<meta name="published" content="2026-10-28 16:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -922,6 +922,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 @media (min-width:900px){.row.nt>.pg{margin-top:0}}
 /* «Уведомления»: the day header's check (reads that day) keeps the header's 44 px, the count sits before it. */
 .ch>.pg{min-height:32px;padding:0 10px}.ch>.mu+.pg{margin-left:-2px}
+/* «Еда» (docs/specs/food.md): ‹ день › over the day's card, its sums and the norm's bar, the entries; the entry's sheet
+   with a block per line (name, amount, then kcal and grams four across). */
+.mnav.fnav{margin:0 -8px 8px}.fnav .mmon{flex:1;min-width:0;text-align:center;font:700 15px/1.3 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsum{padding:0 14px 12px}.fsum .fk{margin:0 0 2px;font:800 28px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.fsum .mbar{margin:10px 0 6px}.fsum .fover{color:var(--warn)}
+.row.frow .tx{display:flex;flex-direction:column;gap:2px}.row.frow .fnote{font-style:italic}.row.frow .pr{align-self:flex-start;white-space:nowrap}
+.row.fpend .t{color:var(--muted)}.row.fpend .pr{align-self:flex-start}
+.lta.fta{min-height:110px;margin:0 0 10px}
+.fline{margin:0 0 12px;padding:12px 0 0;border-top:1px solid var(--line)}.fline:first-child{border-top:0;padding-top:0}
+.fline .bar{margin:0 0 8px}.fnums{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:6px}
+.fnf{gap:4px;padding:0 8px}.fnf>.mu{flex:none;font-size:12px}.fnf input.fn{width:100%;min-width:0;text-align:right;font-variant-numeric:tabular-nums}
+.tsum .btn.wide{margin:0 0 10px}.fsums{margin:0 0 12px}
 </style>
 </head>
 <body>
@@ -1570,14 +1582,14 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'utensils', 'Еда'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
   var BAR = ['home', 'shop', 'tasks', 'films'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow). Each of these has a desktop view (desktop-a/b.js), so the cap
   // holds only until those scripts land; «Фильмы», «Задачи», «LinkedIn» and «Что нового» use the full width with their cards
   // in columns (20.10.2026, «сделай респонсивность под все»).
-  var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed'];
+  var NARROW = ['list', 'prices', 'wish', 'inbox', 'feed', 'food'];
   var NAMES = {};
   // «Покупки» (docs/specs/shop-tab.md): «Список», «Акции» and «Цены» are its segments, and their old tab keys its
   // aliases — show() turns #picks, a stored tab, a push or a widget's show('prices') into «Покупки» on that segment.
@@ -1593,7 +1605,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
+  var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'food', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
@@ -1647,14 +1659,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     // 27.10.2026, the fourth batch: today's mail in numbers, the system's pulse (both from home's answer).
     ['mail', 'Почта сегодня', 'mail', 'sm'], ['health', 'Система', 'heart-pulse', 'sm'],
     // 27.10.2026, docs/specs/widget-posters.md: the films and series marked «видел» last, as posters (the films source).
-    ['recent', 'Последние отметки', 'star', 'ml', 'films']];
+    ['recent', 'Последние отметки', 'star', 'ml', 'films'],
+    // 28.10.2026, docs/specs/food.md: today's kcal and what is left of the norm (home's answer).
+    ['food', 'Еда сегодня', 'utensils', 'sm']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
-    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -1741,7 +1755,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
       money: v.money, tiles: v.tiles, board: v.board, boards: v.boards, board_now: !(p && p.board_now === false),
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
-      cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full' };
+      cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food) };
+  }
+  // «Еда»'s norm a day (docs/specs/food.md) as the server keeps it: {kcal 500–6000, protein 0–400 or none}; null — none.
+  function foodNormIn(v) {
+    function whole(x, lo, hi) { return typeof x === 'number' && x % 1 === 0 && x >= lo && x <= hi; }
+    if (!v || typeof v !== 'object' || !whole(v.kcal, 500, 6000)) return null;
+    return whole(v.protein, 0, 400) ? { kcal: v.kcal, protein: v.protein } : { kcal: v.kcal };
   }
   // The switchable modules [{env, name}] as the server last listed them.
   function normModules(v) {
@@ -2629,7 +2649,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       tasks: !tabShown('tasks'), addtask: !tabShown('tasks'), vb: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), genshin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'),
       gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
-      events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela') }[w] || false;
+      events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela'),
+      food: !tabShown('food') }[w] || false;
   }
   // The widget keys of a board, a stack's own among them.
   function boardKinds(bl) {
@@ -3082,6 +3103,23 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         r.now = u > 0;
         big(u > 99 ? '99+' : String(u), u ? '' : 'vmu');
         note(u ? plural(u, ['непрочитанное', 'непрочитанных', 'непрочитанных']) : 'всё прочитано');
+      },
+      // «Еда сегодня» (docs/specs/food.md §4): today's kcal and, with a norm, what is left of it; wide — the last meal too.
+      food: function () {
+        var f = j.food;
+        if (!f) return quiet(lost(f));
+        r.go = tab('food');
+        var k = Math.round((f.today && f.today.kcal) || 0), norm = prefs.food || f.norm, last = f.last;
+        big((k ? foodK(k) : '0') + ' ккал', 'vs' + (k ? '' : ' vmu'));
+        var left = norm ? norm.kcal - k : null;
+        var sub = left == null ? (k ? '' : 'сегодня записей нет') : left >= 0 ? 'осталось ' + foodK(left) : 'сверх нормы ' + foodK(-left);
+        if (s === 'm' && last) line(FOOD_RU[last.meal] + ', ' + foodTime(last.at) + ' · ' + foodK(last.kcal) + ' ккал', 'mu');
+        if (norm) {
+          var bar = add(el('div', 'mbar'), el('i', left < 0 ? 'over' : ''));
+          bar.firstChild.style.width = Math.min(100, Math.round(k / norm.kcal * 100)) + '%';
+          n.appendChild(bar);
+        }
+        if (sub) note(sub, left != null && left < 0 ? 'warn' : '');
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
       // when it is planned.
@@ -12399,7 +12437,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       boards: view && !w ? v.boards : prefs.boards,
       board_now: next.board_now !== undefined ? next.board_now : prefs.board_now,
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
-      telegram: next.telegram || prefs.telegram };
+      telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -13320,10 +13358,340 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function isView(t) { return Object.prototype.hasOwnProperty.call(VIEWS, t); }
   // list, picks and prices stay as the segments «Покупки» draws (shopView, DESKTOP.views.shop); show() never draws
   // them as tabs, it turns their keys into shop first.
+  // --- «Еда» (docs/specs/food.md, 28.10.2026) ---
+  // A day of the diary the Mac's model fills from his photos, texts and voices: ‹ день › on top (a sideways swipe on the
+  // day's card steps it, never past today), the day's sums and, with a norm, what is left of it; the entries in time
+  // order, a tap opens one's sheet (names, amounts, kcal and grams, the time, the meal, «Убрать»). «＋ Записать» sends a
+  // text to the same model on the Mac (food_add: the entry comes in 1–3 minutes, «разбираю…» until then); «Текст для
+  // Bevel» is the day as one text to copy, as /food in the bot. «Норма» on the day's card: kcal and protein a day
+  // (prefs.food), empty — no bar.
+  var FOOD = { date: null };
+  var FOOD_MEALS = [['breakfast', 'Завтрак'], ['lunch', 'Обед'], ['dinner', 'Ужин'], ['snack', 'Перекус']];
+  var FOOD_RU = { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус' };
+  function foodToday() { var p = wp(Date.now()); return p.year + '-' + p.month + '-' + p.day; }
+  // «9:00», as he writes the time and as the Bevel text has it.
+  function foodTime(ts) { var p = wp(ts); return Number(p.hour) + ':' + p.minute; }
+  function foodK(v) { return '~' + grouped(Math.round(Number(v) || 0)); }
+  function foodSums(t) {
+    return foodK(t.kcal) + ' ккал · Б ' + Math.round(t.protein || 0) + ' · У ' + Math.round(t.carbs || 0) + ' · Ж ' + Math.round(t.fat || 0);
+  }
+  // The moment of HH:MM on a Warsaw day, as an ISO string (the phone's own zone may be another).
+  function foodIso(date, hm) {
+    var t = Date.parse(date + 'T' + hm + ':00Z'), p = wp(t);
+    return new Date(t - (Date.parse(p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute + ':00Z') - t)).toISOString();
+  }
+  function foodDay(ts) { var p = wp(ts); return p.year + '-' + p.month + '-' + p.day; }
+  // A number typed with a comma or a dot; NaN for anything else, 0 for empty.
+  function foodNum(v) { var x = String(v || '').replace(/\s/g, '').replace(',', '.'); return x === '' ? 0 : /^\d+(\.\d+)?$/.test(x) ? Number(x) : NaN; }
+  // «Скопировать» as the tasks summary copies: the Clipboard API, else a hidden textarea.
+  function foodCopy(cp, s) {
+    function done() {
+      label(cp, 'check', 'скопировано');
+      setTimeout(function () { label(cp, 'copy', 'Скопировать'); }, 1500);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea'), ok = false;
+      ta.value = s;
+      ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      ta.remove();
+      cp.focus();
+      if (ok) done(); else toast('Не скопировалось');
+    }
+    (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(done, fallback);
+  }
+  function foodBtn(cls, ic, s, fn) {
+    var b = label(el('button', cls), ic, s);
+    b.type = 'button';
+    b.onclick = fn;
+    return b;
+  }
+  function foodView() {
+    var today = foodToday();
+    if (!FOOD.date || FOOD.date > today) FOOD.date = today;
+    var date = FOOD.date, nav = el('div', 'mnav fnav'), body = el('div');
+    add(main, nav, body);
+    function fresh() { cacheDrop('food'); cacheDrop('home'); }
+    function go(n) {
+      var d = n === 0 ? foodToday() : addDays(FOOD.date, n);
+      if (d > foodToday() || d === FOOD.date) return;
+      FOOD.date = d;
+      haptic();
+      clear(main);
+      foodView();
+    }
+    function dayName(d) {
+      var t = foodToday();
+      return (d === t ? 'Сегодня' : d === addDays(t, -1) ? 'Вчера' : WEEK[wd(d)]) + ', ' + Number(d.slice(8, 10)) + ' ' +
+        MONTHS_G[Number(d.slice(5, 7)) - 1];
+    }
+    [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
+      if (!x[0]) return nav.appendChild(el('div', 'mmon', dayName(date)));
+      var b = add(el('button'), icon(x[1]));
+      b.type = 'button';
+      b.setAttribute('aria-label', x[2]);
+      b.disabled = x[0] > 0 && date >= today;
+      b.onclick = function () { go(x[0]); };
+      nav.appendChild(b);
+    });
+    if (date !== today) {
+      var back = foodBtn('mtoday', 'calendar', 'Сегодня', function () { go(0); });
+      back.setAttribute('aria-label', 'К сегодняшнему дню');
+      nav.appendChild(back);
+    }
+    function load() {
+      swr({ key: 'food:' + date, box: body, n: 2, live: function () { return current === 'food' && FOOD.date === date; },
+        fetch: function () { return api('miniapp', { action: 'food_day' }, 15000, true, { date: date }); },
+        render: render, retry: load });
+    }
+    // A sideways swipe on the day's card: to the right the day before, to the left the next, never past today — there
+    // the card bounces. More sideways than down and longer than 40 px, as the month's in «Деньги».
+    function swipe(node) {
+      node.classList.add('mswipe');
+      var x0 = null, y0 = 0;
+      node.addEventListener('touchstart', function (e) {
+        x0 = e.touches.length === 1 ? e.touches[0].clientX : null;
+        if (x0 !== null) y0 = e.touches[0].clientY;
+      }, { passive: true });
+      node.addEventListener('touchend', function (e) {
+        if (x0 === null || !e.changedTouches.length) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        x0 = null;
+        if (Math.abs(dx) <= 40 || Math.abs(dx) <= Math.abs(dy)) return;
+        if (dx < 0 && FOOD.date >= foodToday()) {
+          node.classList.remove('mbounce-l', 'mbounce-r');
+          void node.offsetWidth;
+          node.classList.add('mbounce-l');
+          return;
+        }
+        go(dx < 0 ? 1 : -1);
+      }, { passive: true });
+      node.addEventListener('touchcancel', function () { x0 = null; }, { passive: true });
+    }
+    function render(j) {
+      var es = j.entries || [], t = j.totals || { kcal: 0, protein: 0, carbs: 0, fat: 0 }, norm = prefs.food, k = Math.round(t.kcal || 0);
+      var day = mkCard('utensils', 'За день'), out = [day];
+      var nb = foodBtn('mtoday', 'target', norm ? foodK(norm.kcal) : 'Норма', function () { foodNormSheet(nb, render.bind(null, j)); });
+      nb.setAttribute('aria-label', norm ? 'Норма в день: ' + norm.kcal + ' ккал' : 'Задать норму в день');
+      day.firstChild.appendChild(nb);
+      var sum = add(el('div', 'fsum'), el('div', 'fk' + (k ? '' : ' mu'), (k ? foodK(k) : '0') + ' ккал'),
+        el('div', 'mu', 'белки ' + Math.round(t.protein || 0) + ' г · углеводы ' + Math.round(t.carbs || 0) + ' г · жиры ' + Math.round(t.fat || 0) + ' г'));
+      day.appendChild(sum);
+      if (norm) {
+        var left = norm.kcal - k, bar = add(el('div', 'mbar'), el('i', left < 0 ? 'over' : ''));
+        bar.firstChild.style.width = Math.min(100, Math.round(k / norm.kcal * 100)) + '%';
+        add(sum, bar, el('div', 'mu' + (left < 0 ? ' fover' : ''), (left >= 0 ? 'осталось ' + foodK(left) : 'сверх нормы ' + foodK(-left)) + ' ккал' +
+          (norm.protein ? ' · белки ' + Math.round(t.protein || 0) + ' из ' + norm.protein + ' г' : '')));
+      }
+      add(day, add(el('div', 'foot'), foodBtn('btn', 'plus', 'Записать', function (ev) { foodAddSheet(date, ev.currentTarget, load); }),
+        foodBtn('btn ghost', 'copy', 'Текст для Bevel', function (ev) { foodTextSheet(date, ev.currentTarget); })));
+      swipe(day);
+      var pend = j.pending || [];
+      if (pend.length || es.length) {
+        var list = el('div', 'card');
+        pend.forEach(function (p) {
+          list.appendChild(add(el('div', 'row fpend'), add(el('span', 'lead'), icon('clock')),
+            add(el('span', 'tx'), el('div', 't', 'разбираю…'), el('div', 'mu clip', '«' + p.text + '»')), el('span', 'pr mu', foodTime(p.at))));
+        });
+        es.forEach(function (e) {
+          var r = add(el('div', 'row frow'), add(el('span', 'tx'), el('div', 't', FOOD_RU[e.meal] + ' · ' + foodTime(e.at)),
+            el('div', 'mu', e.items.map(function (i) { return i.name + (i.amount ? ', ' + i.amount : ''); }).join(' · ')),
+            e.note ? el('div', 'mu fnote', e.note) : null), el('span', 'pr', foodK(e.kcal) + ' ккал'));
+          r.setAttribute('aria-label', FOOD_RU[e.meal] + ', ' + foodTime(e.at) + ', ' + foodK(e.kcal) + ' ккал — поправить');
+          list.appendChild(tap(r, function () { foodSheet(e, r, function () { fresh(); load(); }); }));
+        });
+        out.push(list);
+      } else {
+        out.push(state('utensils', date === today ? 'Сегодня записей нет. Пришли фото, текст или голосовое в тему Claude — или нажми «Записать».'
+          : 'В этот день записей нет.'));
+      }
+      add.apply(null, [clear(body)].concat(out));
+    }
+    load();
+  }
+  // «＋ Записать»: a text for the Mac's model (food_add), the time on that day — now on today, else 13:00 to change.
+  function foodAddSheet(date, from, done) {
+    var ta = el('textarea', 'lta fta'), tm = el('input'), today = date === foodToday(), p = wp(Date.now());
+    ta.placeholder = 'латте и 4 конфеты';
+    ta.maxLength = 500;
+    ta.setAttribute('aria-label', 'Что съел');
+    tm.type = 'time';
+    tm.value = today ? p.hour + ':' + p.minute : '13:00';
+    tm.setAttribute('aria-label', 'Время');
+    var ok = foodBtn('btn', 'send', 'Записать', null), close = noop;
+    ok.onclick = function () {
+      var s = ta.value.trim();
+      if (!s) { ta.focus(); return; }
+      if (!/^\d\d:\d\d$/.test(tm.value)) { toast('Время — ЧЧ:ММ'); return; }
+      var at = foodIso(date, tm.value);
+      if (Date.parse(at) > Date.now() + 300000) { toast('Это время ещё не наступило'); return; }
+      ok.disabled = true;
+      haptic();
+      api('miniapp', { action: 'food_add' }, 15000, false, { text: s, at: at }).then(function () {
+        close();
+        cacheDrop('food');
+        toast('Записал — разберу за пару минут', 'utensils');
+        done();
+      }, function () { ok.disabled = false; });
+    };
+    close = legalSheet('Записать еду', [ta, add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)),
+      el('div', 'mu msrc', 'Модель на Mac разберёт текст за 1–3 минуты: продукты, порции, калории. Фото — через Telegram.'),
+      add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  // «Текст для Bevel»: the day (food_text) to copy.
+  function foodTextSheet(date, from) {
+    from.disabled = true;
+    api('miniapp', { action: 'food_text' }, 15000, false, { date: date }).then(function (j) {
+      from.disabled = false;
+      var s = String((j && j.text) || '');
+      if (!s) return toast('За этот день записей нет');
+      var cp = foodBtn('btn', 'copy', 'Скопировать', function () { foodCopy(cp, s); }), close = noop;
+      close = legalSheet('Текст для Bevel', [el('pre', 'code', s), add(el('div', 'bar mact mstick'), cp,
+        foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    }, function () { from.disabled = false; });
+  }
+  // «Норма»: kcal a day and, if he wants, protein; empty kcal — no norm (prefs.food null).
+  function foodNormSheet(from, done) {
+    var n = prefs.food, kc = el('input'), pr = el('input'), close = noop;
+    kc.inputMode = pr.inputMode = 'numeric';
+    kc.placeholder = 'ккал в день, например 2200';
+    pr.placeholder = 'белки, г — можно пусто';
+    kc.setAttribute('aria-label', 'Ккал в день');
+    pr.setAttribute('aria-label', 'Белки в день, г');
+    kc.value = n ? String(n.kcal) : '';
+    pr.value = n && n.protein != null ? String(n.protein) : '';
+    var ok = foodBtn('btn', 'check', 'Сохранить', function () {
+      var a = kc.value.trim(), b = pr.value.trim(), v = null;
+      if (a) {
+        var k = foodNum(a), q = b ? foodNum(b) : null;
+        if (!(k % 1 === 0 && k >= 500 && k <= 6000)) { toast('Ккал — целое число от 500 до 6000'); return; }
+        if (q !== null && !(q % 1 === 0 && q >= 0 && q <= 400)) { toast('Белки — целое число до 400'); return; }
+        v = q !== null ? { kcal: k, protein: q } : { kcal: k };
+      }
+      close();
+      editPrefs({ food: v });
+      cacheDrop('home');
+      done();
+    });
+    close = legalSheet('Норма в день', [add(el('div', 'bar'), add(el('label', 'field'), icon('target'), kc)),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('dumbbell'), pr)),
+      el('div', 'mu msrc', 'Пустые ккал — без нормы и без полосы.'), add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  // An entry's sheet: the meal, the time on its day, each line (name, amount, kcal, protein, carbs, fat; ✕ takes it
+  // away, «＋ Строка» adds one), the note; «Сохранить» (food_edit, the sums the server's) and «Убрать» on two taps.
+  function foodSheet(e, from, done) {
+    var meal = e.meal, day = foodDay(e.at), items = e.items.map(function (i) { return Object.assign({}, i); }), close = noop;
+    var seg = el('div', 'seg'), tm = el('input'), note = el('input'), lines = el('div', 'flines'), sums = el('div', 'mu fsums');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Приём пищи');
+    FOOD_MEALS.forEach(function (m) {
+      var b = el('button', m[0] === meal ? 'on' : '', m[1]);
+      b.type = 'button';
+      b.onclick = function () {
+        meal = m[0];
+        [].forEach.call(seg.children, function (x) { x.classList.toggle('on', x === b); });
+        haptic();
+      };
+      seg.appendChild(b);
+    });
+    var p = wp(e.at);
+    tm.type = 'time';
+    tm.value = p.hour + ':' + p.minute;
+    tm.setAttribute('aria-label', 'Время');
+    note.placeholder = 'Заметка';
+    note.maxLength = 500;
+    note.value = e.note || '';
+    note.setAttribute('aria-label', 'Заметка');
+    function inp(v, ph, cls, num) {
+      var i = el('input', cls || '');
+      i.value = v == null ? '' : String(v);
+      i.placeholder = ph;
+      i.setAttribute('aria-label', ph);
+      if (num) i.inputMode = 'decimal';
+      return i;
+    }
+    function paint() {
+      var t = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
+      items.forEach(function (i) { ['kcal', 'protein', 'carbs', 'fat'].forEach(function (k) { t[k] += foodNum(i[k]) || 0; }); });
+      text(sums, 'Итого: ' + foodSums(t));
+    }
+    function draw() {
+      clear(lines);
+      items.forEach(function (i, n) {
+        var name = inp(i.name, 'Что', '', false), amt = inp(i.amount, '~200 г', '', false);
+        name.maxLength = 120;
+        amt.maxLength = 60;
+        name.oninput = function () { i.name = name.value; };
+        amt.oninput = function () { i.amount = amt.value; };
+        var x = foodBtn('btn ghost x', 'x', '', function () { items.splice(n, 1); draw(); });
+        x.setAttribute('aria-label', 'Убрать строку');
+        x.disabled = items.length === 1;
+        var nums = el('div', 'fnums');
+        [['kcal', 'ккал'], ['protein', 'Б'], ['carbs', 'У'], ['fat', 'Ж']].forEach(function (q) {
+          var f = inp(i[q[0]], q[1] === 'ккал' ? 'ккал' : q[1] + ', г', 'fn', true);
+          f.oninput = function () { i[q[0]] = f.value; paint(); };
+          nums.appendChild(add(el('label', 'field fnf'), el('span', 'mu', q[1]), f));
+        });
+        lines.appendChild(add(el('div', 'fline'), add(el('div', 'bar'), add(el('label', 'field'), name), x),
+          add(el('div', 'bar'), add(el('label', 'field'), amt)), nums));
+      });
+      paint();
+    }
+    draw();
+    var more = foodBtn('btn ghost wide', 'plus', 'Строка', function () {
+      if (items.length >= 30) return;
+      items.push({ name: '', amount: '', kcal: 0, protein: 0, carbs: 0, fat: 0 });
+      draw();
+      var f = lines.lastChild && lines.lastChild.querySelector('input');
+      if (f) f.focus();
+    });
+    var save = foodBtn('btn', 'check', 'Сохранить', function () {
+      var out = [], bad = '';
+      items.forEach(function (i) {
+        var o = { name: String(i.name || '').trim(), amount: String(i.amount || '').trim(), kcal: foodNum(i.kcal), protein: foodNum(i.protein),
+          carbs: foodNum(i.carbs), fat: foodNum(i.fat) };
+        if (!o.name && !o.amount && !o.kcal) return;  // an empty line left as it was added
+        if (!o.name) bad = 'У каждой строки нужно название';
+        else if (!(o.kcal % 1 === 0 && o.kcal >= 0 && o.kcal <= 5000)) bad = 'Ккал — целое число до 5000';
+        else if (!['protein', 'carbs', 'fat'].every(function (k) { return o[k] >= 0 && o[k] <= 500; })) bad = 'Б, У, Ж — граммы до 500';
+        out.push(o);
+      });
+      if (!out.length) bad = 'Нужна хотя бы одна строка';
+      if (!/^\d\d:\d\d$/.test(tm.value)) bad = 'Время — ЧЧ:ММ';
+      if (bad) return toast(bad);
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: 'food_edit' }, 15000, false, { id: e.id, meal: meal, at: foodIso(day, tm.value), items: out, note: note.value.trim() || null })
+        .then(function () { close(); done(); }, function (x) {
+          save.disabled = false;
+          if (x.code === 'not found') { close(); done(); }
+        });
+    });
+    var armT = null, del = foodBtn('btn ghost', 'trash', 'Убрать', function () {
+      if (!armT) {
+        label(del, null, 'Точно?');
+        del.className = 'btn warn';
+        armT = setTimeout(function () { armT = null; label(del, 'trash', 'Убрать'); del.className = 'btn ghost'; }, 3000);
+        return;
+      }
+      clearTimeout(armT);
+      haptic();
+      api('miniapp', { action: 'food_delete' }, 15000, false, { id: e.id }).then(function () {
+        close();
+        toast('Убрал', 'trash');
+        done();
+      }, function (x) { if (x.code === 'not found') { close(); done(); } });
+    });
+    close = legalSheet(FOOD_RU[e.meal] + ', ' + foodTime(e.at), [seg, add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)), lines, more, sums,
+      add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)), add(el('div', 'bar mact mstick'), save, del)], from);
+  }
+
   var VIEWS = {
     home: homeView, shop: shopView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
     cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
-    genshin: genshinView, notif: notifView
+    genshin: genshinView, notif: notifView, food: foodView
   };
   // --- desktop (≥ 900 px) ---
   // app/desktop.css and app/desktop*.js are loaded only on a wide screen; they draw the tabs for a big
