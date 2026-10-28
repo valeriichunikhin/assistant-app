@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 21:41">
+<meta name="published" content="2026-10-28 22:48">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1851,7 +1851,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       money: v.money, tiles: v.tiles, board: v.board, boards: v.boards, board_now: !(p && p.board_now === false),
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
-      start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null };
+      start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null, genshin: genshinIn(p && p.genshin) };
+  }
+  // prefs.genshin.bp (29.10.2026): the Battle Pass ticks, {week: {id: true}, day: {id: true}, week_at, day_at} (ISO stamps
+  // of the last write to each group, ≤ 40 ids each). Absent — undefined, so a save without it sends no genshin key.
+  function genshinIn(g) {
+    var b = g && g.bp;
+    if (!b || typeof b !== 'object') return undefined;
+    function ids(o) {
+      var r = {};
+      if (o && typeof o === 'object' && !Array.isArray(o)) Object.keys(o).filter(function (k) { return o[k] === true && /^[A-Za-z0-9_-]{1,40}$/.test(k); })
+        .slice(0, 40).forEach(function (k) { r[k] = true; });
+      return r;
+    }
+    function at(v) { return typeof v === 'string' && !isNaN(Date.parse(v)) ? v : null; }
+    return { bp: { week: ids(b.week), day: ids(b.day), week_at: at(b.week_at), day_at: at(b.day_at) } };
   }
   // «Еда»'s norm a day (docs/specs/food.md) as the server keeps it: {kcal 500–6000, protein 0–400 or none}; null — none.
   function foodNormIn(v) {
@@ -8615,7 +8629,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     // The game resets at 03:00 UTC (04:00 or 05:00 in Warsaw): the Battle Pass
     // day and week are read off the UTC date three hours back.
-    function bpDate() { return new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10); }
+    function bpDate(ms) { return new Date((ms == null ? Date.now() : ms) - 3 * 3600000).toISOString().slice(0, 10); }
     // The Warsaw hour of the reset, for the label.
     function bpHour() { return wp(Date.parse(new Date().toISOString().slice(0, 10) + 'T03:00:00Z')).hour; }
     // 'YYYY-Www', the ISO week of a date: its Thursday names the year.
@@ -8625,15 +8639,29 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var y = d.getUTCFullYear(), n = Math.floor((d - Date.UTC(y, 0, 1)) / 86400000);
       return y + '-W' + ('0' + (Math.floor(n / 7) + 1)).slice(-2);
     }
-    // His ticks in localStorage ({week|date, done}); another week or day starts empty.
-    function ticks(k, key, val) {
+    // His ticks live in prefs.genshin.bp (the server, every device); localStorage only keeps a copy for the first paint
+    // and the ticks made before the server had them. A group counts only inside its own week or day by its stamp
+    // (week_at / day_at): another week or day reads empty. When prefs hold a bp, it wins over localStorage.
+    function localTicks(k, key, val) {
       var o = null;
       try { o = JSON.parse(store(k)); } catch (e) {}
-      if (!o || o[key] !== val || !o.done || typeof o.done !== 'object') {
-        o = { done: {} };
-        o[key] = val;
-      }
-      return o;
+      return o && o[key] === val && o.done && typeof o.done === 'object' ? o.done : {};
+    }
+    function bpState() {
+      var g = prefs.genshin && prefs.genshin.bp, wkNow = isoWeek(bpDate()), dyNow = bpDate();
+      if (!g) return { week: localTicks('bpWeek', 'week', wkNow), day: localTicks('bpDay', 'date', dyNow) };
+      var wa = g.week_at ? Date.parse(g.week_at) : NaN, da = g.day_at ? Date.parse(g.day_at) : NaN;
+      return { week: !isNaN(wa) && isoWeek(bpDate(wa)) === wkNow ? g.week : {}, day: !isNaN(da) && bpDate(da) === dyNow ? g.day : {} };
+    }
+    // Writes the ticks through the one prefs path (it refuses before prefs were loaded, so the cached ones never overwrite
+    // the server's); localStorage is updated only after it took.
+    function bpSave(week, day) {
+      if (!prefsLoaded) return toast('Настройки ещё не загрузились');
+      var now = new Date().toISOString();
+      // A group read as empty because its stamp is old is written empty with a fresh stamp: the same week or day, nothing revived.
+      editPrefs({ genshin: { bp: { week: week, day: day, week_at: now, day_at: now } } }, null, true);
+      store('bpWeek', JSON.stringify({ week: isoWeek(bpDate()), done: week }));
+      store('bpDay', JSON.stringify({ date: bpDate(), done: day }));
     }
     // «Боевой пропуск» after «Сегодня»: the week's tasks with checkboxes and
     // points, the day's as chips. Older snapshots have no bp: no card. The
@@ -8642,12 +8670,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var weekly = (b && Array.isArray(b.weekly) && b.weekly) || [], daily = (b && Array.isArray(b.daily) && b.daily) || [];
       if (!weekly.length && !daily.length) return;
       var box = card('award', 'Боевой пропуск', []), wrap = box.appendChild(el('div'));
-      box.insertBefore(el('div', 'row small mu', 'на этом устройстве'), wrap);
       var reset = label(el('button', 'btn ghost'), null, 'Сбросить');
       reset.type = 'button';
       reset.onclick = function () {
-        store('bpWeek', JSON.stringify({ week: isoWeek(bpDate()), done: {} }));
-        store('bpDay', JSON.stringify({ date: bpDate(), done: {} }));
+        bpSave({}, {});
         draw();
       };
       box.appendChild(add(el('div', 'foot'), reset));
@@ -8661,15 +8687,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         return live && t.auto === true;
       }
       function flip(day, t) {
-        var k = day ? 'bpDay' : 'bpWeek', o = day ? ticks(k, 'date', bpDate()) : ticks(k, 'week', isoWeek(bpDate()));
-        if (o.done[id(t)]) delete o.done[id(t)];
-        else o.done[id(t)] = 1;
-        store(k, JSON.stringify(o));
-        haptic();
+        var st = bpState(), o = Object.assign({}, day ? st.day : st.week);
+        if (o[id(t)]) delete o[id(t)];
+        else o[id(t)] = true;
+        if (!prefsLoaded) return toast('Настройки ещё не загрузились');
+        if (day) bpSave(Object.assign({}, st.week), o);
+        else bpSave(o, Object.assign({}, st.day));
         draw();
       }
       function draw() {
-        var wk = ticks('bpWeek', 'week', isoWeek(bpDate())).done, dy = ticks('bpDay', 'date', bpDate()).done, got = 0, all = 0;
+        var st = bpState(), wk = st.week, dy = st.day, got = 0, all = 0;
         var rows = weekly.map(function (t) {
           var a = auto(t), on = a || !!wk[id(t)], r = hrow(t.label || t.title || id(t), a ? 'авто' : null, grouped(pts(t)));
           all += pts(t);
@@ -12576,7 +12603,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       board_now: next.board_now !== undefined ? next.board_now : prefs.board_now,
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
       telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food,
-      start: next.start !== undefined ? next.start : prefs.start };
+      start: next.start !== undefined ? next.start : prefs.start, genshin: next.genshin !== undefined ? next.genshin : prefs.genshin };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -12737,42 +12764,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     line.appendChild(b);
     return line;
   }
-  // «Карточки на «Сегодня»»: a toggle, the name with how the card opens under it (docs/specs/money-13.md §3) and a
-  // grip to drag it by (docs/specs/drag-sort.md) per card, in the order «Сегодня» draws them; «Сбросить» brings back every card in the default order, open as he
-  // leaves it. The morning brief's own «недоступно» stub has no row and keeps its place after «План недели».
-  function homeCard() {
-    var card = mkCard('house', 'Карточки на «Главной»'), rows = el('div'), foot = el('div', 'foot'), vl = el('div', 'sub vline');
-    var reset = el('button', 'btn ghost', 'Сбросить');
-    reset.type = 'button';
-    reset.onclick = function () { editPrefs({ tabs: prefs.tabs, home: { hidden: [], order: [], fold: {}, folded: [] } }, ['home', 'reset']); };
-    foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Под названием — как карточка открывается'), vl, rows);
-    card.paint = function (focus) {
-      viewLine(vl, 'home');
-      var hid = viewPrefs('home').hidden, tiled = tiledCards(), keys = homeOrder().filter(function (k) { return k !== 'morning' && (wide() || tiled.indexOf(k) < 0); });
-      clear(rows);
-      keys.forEach(function (k) {
-        var on = hid.indexOf(k) < 0, name = HOME_NAMES[k], row = el('div', 'row');
-        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' на «Главной»', on: on }, 'tog', false, function () {
-          editPrefs({ tabs: prefs.tabs, home: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }),
-            order: viewPrefs('home').order } }, ['home', k, 'tog']);
-        }), add(el('span', 'tx'), el('div', 't', name), foldSeg('home', k, name)), dragGrip(name));
-        row.k = k;
-        rows.appendChild(row);
-      });
-      if (hid.length || viewPrefs('home').order.length || Object.keys(viewPrefs('home').fold).length) card.appendChild(foot);
-      else if (foot.parentNode) card.removeChild(foot);
-      refocus(rows, focus, 'home');
-    };
-    // A drop: the morning brief's stub goes back after «План недели», as it stood.
-    dragSort(rows, function () { return [].slice.call(rows.children); }, function (o, k) {
-      o.splice(o.indexOf('plan') + 1, 0, 'morning');
-      editPrefs({ tabs: prefs.tabs, home: { hidden: viewPrefs('home').hidden, order: o } }, ['home', k, 'grip']);
-    });
-    card.paint();
-    return card;
-  }
-
   // «Деньги»'s cards in his order (docs/specs/money-11.md §8): the keys he placed, then the others in MONEY_CARDS order;
   // moneyCardOn(k) is false for a card he switched off.
   function moneyCardOrder() {
@@ -12796,13 +12787,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // as he left it, viewPrefs(s).folded, saved quietly. A long press (500 ms) or «⋯» opens the card's sheet.
   // FOLD[s]: st — where the section keeps foldTmp, foldNodes (each card's node or box on screen), cardSheet,
   // cardSheetFocus and cardsCard; name(k); order() — his order of every key; on(k) — not switched off; all(from) — the
-  // sheet of every card; hid — the toast after «Скрыть».
+  // sheet of every card (money only); hid — the toast after «Скрыть».
   var HOMEF = { foldTmp: {}, foldNodes: {} };
   var FOLD = {
     money: { st: MONEY, name: function (k) { return MONEY_CARDS[MONEY_CARD_KEYS.indexOf(k)][1]; }, order: moneyCardOrder, on: moneyCardOn,
       all: moneyCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Порядок карточек' },
     home: { st: HOMEF, name: function (k) { return k === 'morning' ? 'Утренняя сводка' : HOME_NAMES[k]; }, order: homeOrder,
-      on: function (k) { return viewPrefs('home').hidden.indexOf(k) < 0; }, all: homeCardsSheet, hid: 'Карточка скрыта — вернуть: ⋯ → Все карточки…' }
+      on: function (k) { return viewPrefs('home').hidden.indexOf(k) < 0; }, hid: 'Карточка скрыта' }
   };
   // An edit of section s only: its fields left out stay as they are.
   function foldEdit(s, patch, focus, quiet) {
@@ -12967,7 +12958,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         close();
         foldEdit(s, { hidden: viewPrefs(s).hidden.concat([key]) }, [s, key, 'tog']);
         toast(F.hid);
-      }), item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }));
+      }), F.all ? item('arrow-up-down', 'Все карточки…', function () { close(); F.all(from); }) : null);
       // The keyboard stays on the step he took, or the one beside it at the end of the order.
       var f = box.querySelector('button:focus') ? null : F.st.cardSheetFocus;
       if (f) { var b = [].filter.call(box.children, function (x) { return x.textContent === f && !x.disabled; })[0]; if (b) b.focus(); }
@@ -13180,7 +13171,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   function reorderStart(s, from) {
     var nodes = reorderCards(s);
-    if (wide() || nodes.length < 2) return FOLD[s].all(from);
+    if (wide() || nodes.length < 2) return FOLD[s].all && FOLD[s].all(from);
     var list = nodes[0].parentNode, done = label(el('button', 'btn'), 'check', 'Готово');
     done.type = 'button';
     done.onclick = reorderEnd;
@@ -13279,11 +13270,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     paint();
     card.appendChild(add(el('div', 'mmenus'), b));
     return card;
-  }
-  // «Все карточки…» from a «Сегодня» card's sheet: «Карточки на «Сегодня»», as on «Что нового».
-  function homeCardsSheet(from) {
-    HOMEF.cardsCard = homeCard();
-    legalSheet('Карточки на «Главной»', [HOMEF.cardsCard], from);
   }
   // --- bottom bar ---
   // «Кнопки внизу»: the four tabs of the phone's bottom bar and their order, kept on this device (store tabBar,
