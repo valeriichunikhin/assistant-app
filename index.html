@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-28 17:28">
+<meta name="published" content="2026-10-28 18:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -941,6 +941,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .fstat .chart .dot{stroke-width:2}.fstat>.mu{margin-top:6px}.fstat>.mu.fe{margin-top:0}
 .fwin{width:100%;font:700 28px/1.2 var(--font-num);text-align:center;font-variant-numeric:tabular-nums}
 .bl.bkg{display:flex;align-items:center;gap:4px}.bl.bkg .i{width:14px;height:14px}
+/* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
+   last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
+.wempty{padding:0 14px 12px}.row.frow .wl{display:block}
+.row.wnx .pr .pill{height:24px;padding:0 9px;font-size:13px;font-variant-numeric:tabular-nums}
+.gnote{padding:0 14px 12px}.wsets{display:flex;flex-direction:column;gap:6px;margin:0 0 8px}
+.wset{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}.wrow2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 8px}
+.wplan{display:grid;grid-template-columns:1fr 1.2fr auto;gap:6px}.wplan .seg{margin:0}.wplan .seg button{flex:none;padding:0 10px}
+.wday{margin:0 0 16px;padding:12px 0 0;border-top:1px solid var(--line)}.wday:first-child{border-top:0;padding-top:0}
+.wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
+.tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 </style>
 </head>
 <body>
@@ -1021,6 +1031,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0Z"/><path d="M20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0Z"/><path d="M16 17h4"/><path d="M4 13h4"/></symbol>
 <symbol id="i-bike" viewBox="0 0 24 24"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></symbol>
 <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829z"/><path d="m2.5 21.5 1.4-1.4"/><path d="m20.1 3.9 1.4-1.4"/><path d="M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829z"/><path d="m9.6 14.4 4.8-4.8"/></symbol>
+<symbol id="i-waves" viewBox="0 0 24 24"><path d="M2 12q2.5 2 5 0t5 0 5 0 5 0"/><path d="M2 19q2.5 2 5 0t5 0 5 0 5 0"/><path d="M2 5q2.5 2 5 0t5 0 5 0 5 0"/></symbol>
+<symbol id="i-biceps-flexed" viewBox="0 0 24 24"><path d="M12.409 13.017A5 5 0 0 1 22 15c0 3.866-4 7-9 7-4.077 0-8.153-.82-10.371-2.462-.426-.316-.631-.832-.62-1.362C2.118 12.723 2.627 2 10 2a3 3 0 0 1 3 3 2 2 0 0 1-2 2c-1.105 0-1.64-.444-2-1"/><path d="M15 14a5 5 0 0 0-7.584 2"/><path d="M9.964 6.825C8.019 7.977 9.5 13 8 15"/></symbol>
+<symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol>
 <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
 <symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></symbol>
 <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
@@ -3121,6 +3134,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         var k = Math.round((f.today && f.today.kcal) || 0), norm = prefs.food || f.norm, last = f.last;
         big((k ? foodK(k) : '0') + ' ккал', 'vs' + (k ? '' : ' vmu'));
         if (s === 'm' && f.weight_today) add(line('', 'bkg'), icon('weight'), document.createTextNode(foodKg(f.weight_today) + ' кг'));
+        // Today's last workout (docs/specs/workouts.md §5): «Зал · 55 мин».
+        var wt = f.workout_today;
+        if (s === 'm' && wt) add(line('', 'bkg'), icon(WO_IC[wt.kind] || 'medal'), document.createTextNode(woLabel(wt) + (wt.minutes ? ' · ' + woDur(wt.minutes) : '')));
         var left = norm ? norm.kcal - k : null;
         var sub = left == null ? (k ? '' : 'сегодня записей нет') : left >= 0 ? 'осталось ' + foodK(left) : 'сверх нормы ' + foodK(-left);
         if (s === 'm' && last) line(FOOD_RU[last.meal] + ', ' + foodTime(last.at) + ' · ' + foodK(last.kcal) + ' ккал', 'mu');
@@ -13526,6 +13542,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         out.push(state('utensils', date === today ? 'Сегодня записей нет. Пришли фото, текст или голосовое в тему Claude — или нажми «Записать».'
           : 'В этот день записей нет.'));
       }
+      // The day's workouts under its meals, then «Зал» (the next gym session by the plan, the same for every day).
+      out.push(woCard(j.workouts || [], date, function () { fresh(); load(); loadStats(); }, load));
+      if (j.plan_next) out.push(gymCard(j.plan_next, function () { fresh(); load(); }));
       add.apply(null, [clear(body)].concat(out));
     }
     function loadStats() {
@@ -13551,6 +13570,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         .map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ')));
     }
     if (j.delta_30 != null) b.appendChild(el('div', 'mu', 'вес ' + foodDelta(j.delta_30) + '\u00a0кг за\u00a030\u00a0дн.'));
+    // «тренировок: 3 за 7 дн. · 11 за 30 (зал 2, волейбол 1)» — the brackets are the 7 days' kinds.
+    var wo = j.workouts;
+    if (wo && wo.d30) {
+      var by = WO_KINDS.filter(function (k) { return wo.by7 && wo.by7[k[0]]; }).map(function (k) {
+        return k[1].toLowerCase() + '\u00a0' + wo.by7[k[0]];
+      });
+      b.appendChild(el('div', 'mu', 'тренировок: ' + wo.d7 + '\u00a0за\u00a07\u00a0дн. · ' + wo.d30 + '\u00a0за\u00a030' +
+        (by.length ? ' (' + by.join(', ') + ')' : '')));
+    }
     return c;
   }
   // The weight a day: one quiet line of --mark through a dot a day (a day missing is bridged), no axes and no grid;
@@ -13784,6 +13812,317 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     });
     close = legalSheet(FOOD_RU[e.meal] + ', ' + foodTime(e.at), [seg, add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)), lines, more, sums,
       add(el('div', 'bar'), add(el('label', 'field'), icon('sticky-note'), note)), add(el('div', 'bar mact mstick'), save, del)], from);
+  }
+
+  // --- «Спорт», «Зал», «План» (docs/specs/workouts.md, 28.10.2026) ---
+  // Under the day's meals its workouts (the gym with its exercises, a run, his PNH volleyball written by itself); a tap
+  // opens one's sheet (the kind, the time, the minutes, the exercises and their sets, or the km, «Убрать» on two taps).
+  // «＋ Тренировка» sends a text to the same model on the Mac (workout_add, as «Записать» does). «Зал»: the next gym
+  // session by the plan (plan_next) with last time's weights and «↑ 62,5» where an increase is due; «План» on it opens
+  // the plan's sheet (plan_get / plan_set). The texts here are twins of _shared/workouts.ts (setsText, parts): edit
+  // both together.
+  var WO_KINDS = [['gym', 'Зал', 'dumbbell'], ['volleyball', 'Волейбол', 'ball'], ['run', 'Бег', 'activity'],
+    ['bike', 'Велосипед', 'bike'], ['swim', 'Плавание', 'waves'], ['other', 'Другое', 'medal']];
+  var WO_RU = {}, WO_IC = {};
+  WO_KINDS.forEach(function (k) { WO_RU[k[0]] = k[1]; WO_IC[k[0]] = k[2]; });
+  var WO_DIST = ['run', 'bike', 'swim'];
+  function woNum(v) { v = Math.round(Number(v) * 10) / 10; return v % 1 ? v.toFixed(1).replace('.', ',') : String(v); }
+  function woDur(m) { return m <= 60 ? m + ' мин' : Math.floor(m / 60) + ' ч' + (m % 60 ? ' ' + m % 60 + ' мин' : ''); }
+  function woLabel(w) { return w.kind === 'other' ? w.title || 'Тренировка' : WO_RU[w.kind] || 'Тренировка'; }
+  function woEx(i) { return typeof i.exercise === 'string'; }
+  // «4×8 · 60 кг», «3×10», «60 кг»; equal sets in a row grouped: «2×8 · 60 кг, 2×6 · 62,5 кг».
+  function woSets(sets) {
+    var g = [];
+    (sets || []).forEach(function (x) {
+      var l = g[g.length - 1];
+      if (l && l.s.reps === x.reps && l.s.kg === x.kg) l.n++;
+      else g.push({ n: 1, s: x });
+    });
+    return g.map(function (q) {
+      var r = q.s.reps != null ? q.n + '×' + q.s.reps : q.n > 1 ? q.n + '×' : '', k = q.s.kg ? woNum(q.s.kg) + ' кг' : '';
+      return r && k ? r + ' · ' + k : r || k;
+    }).filter(Boolean).join(', ');
+  }
+  function woLine(e) { var t = woSets(e.sets); return t ? e.exercise + ' ' + t : e.exercise; }
+  // «5 км», «28 мин»: the distance and the length (the distance's minutes when the workout has none).
+  function woParts(w) {
+    var out = [], m = w.minutes;
+    if (WO_DIST.indexOf(w.kind) >= 0) {
+      var ds = (w.items || []).filter(function (i) { return !woEx(i); }), km = 0, dm2 = 0;
+      ds.forEach(function (d) { km += Number(d.km) || 0; dm2 += Number(d.minutes) || 0; });
+      if (km) out.push(woNum(km) + ' км');
+      if (m == null && dm2) m = dm2;
+    }
+    if (m) out.push(woDur(m));
+    return out;
+  }
+  // «Спорт»: the day's workouts, a row each, and «＋ Тренировка».
+  function woCard(ws, date, done, added) {
+    var c = mkCard('biceps-flexed', 'Спорт');
+    ws.forEach(function (w) {
+      var es = (w.items || []).filter(woEx), tx = add(el('span', 'tx'), el('div', 't', woLabel(w) + ' · ' + foodTime(w.at)));
+      es.forEach(function (e) { tx.appendChild(el('div', 'mu wl', woLine(e))); });
+      if (w.note) tx.appendChild(el('div', 'mu fnote', w.note));
+      var r = add(el('div', 'row frow'), add(el('span', 'lead'), icon(WO_IC[w.kind] || 'medal')), tx, el('span', 'pr', woParts(w).join(' · ')));
+      r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — поправить');
+      c.appendChild(tap(r, function () { woSheet(w, r, done); }));
+    });
+    if (!ws.length) {
+      c.appendChild(el('div', 'mu wempty', date === foodToday() ? 'Сегодня тренировок нет. Напиши боту «зал: жим лёжа 4×8 60, 55 минут» — или нажми «Тренировка». Волейбол PNH запишется сам.'
+        : 'В этот день тренировок нет.'));
+    }
+    c.appendChild(add(el('div', 'foot'), foodBtn('btn ghost', 'plus', 'Тренировка', function (ev) { woAddSheet(date, ev.currentTarget, added); })));
+    return c;
+  }
+  // «Зал»: «Следующая: B · прошлый раз пт 24.10», its exercises with last time's weight (or best reps for his own
+  // weight) and «↑ 62,5» where all the sets reached the top of the reps; a tap — the plan.
+  function gymCard(n, done) {
+    var c = mkCard('dumbbell', 'Зал'), pb = foodBtn('mtoday', 'clipboard-list', 'План', function () { planSheet(pb, done); });
+    pb.setAttribute('aria-label', 'План тренировок');
+    c.firstChild.appendChild(pb);
+    var d = n.last_at ? foodDay(n.last_at) : null;
+    c.appendChild(el('div', 'sub', 'Следующая: ' + n.name + ' · ' + (d ? 'прошлый раз ' + WEEK[wd(d)] + ' ' + dm(d) : 'ещё не было')));
+    var any = false;
+    (n.items || []).forEach(function (i) {
+      var reps = (i.last || []).map(function (x) { return Number(x.reps) || 0; });
+      var was = i.kg != null ? woNum(i.kg) + ' кг' : i.unit === 'bw' && Math.max.apply(null, reps.concat(0)) ? 'было ' + Math.max.apply(null, reps) : i.last ? '' : 'впервые';
+      var r = add(el('div', 'row frow wnx'), add(el('span', 'tx'), el('div', 't', i.exercise),
+        el('div', 'mu', i.sets + '×' + i.reps + (was ? ' · ' + was : ''))), add(el('span', 'pr'), i.up != null ? pill('↑ ' + woNum(i.up), 'good') : null));
+      if (i.up != null) { any = true; r.setAttribute('aria-label', i.exercise + ': в этот раз ' + woNum(i.up) + (i.unit === 'kg' ? ' кг' : ' повторов')); }
+      c.appendChild(tap(r, function () { planSheet(r, done); }));
+    });
+    if (any) c.appendChild(el('div', 'mu gnote', '↑ — прибавь: в прошлый раз все подходы с нужными повторами сделаны.'));
+    return c;
+  }
+  // «＋ Тренировка»: a text for the Mac's model (workout_add), the time on that day — now on today, else 18:00.
+  function woAddSheet(date, from, done) {
+    var ta = el('textarea', 'lta fta'), tm = el('input'), p = wp(Date.now());
+    ta.placeholder = 'зал: жим лёжа 4×8 60, присед 3×10 70, 55 минут';
+    ta.maxLength = 500;
+    ta.setAttribute('aria-label', 'Что делал');
+    tm.type = 'time';
+    tm.value = date === foodToday() ? p.hour + ':' + p.minute : '18:00';
+    tm.setAttribute('aria-label', 'Время');
+    var ok = foodBtn('btn', 'send', 'Записать', null), close = noop;
+    ok.onclick = function () {
+      var t = ta.value.trim();
+      if (!t) { ta.focus(); return; }
+      if (!/^\d\d:\d\d$/.test(tm.value)) { toast('Время — ЧЧ:ММ'); return; }
+      var at = foodIso(date, tm.value);
+      if (Date.parse(at) > Date.now() + 300000) { toast('Это время ещё не наступило'); return; }
+      ok.disabled = true;
+      haptic();
+      api('miniapp', { action: 'workout_add' }, 15000, false, { text: t, at: at }).then(function () {
+        close();
+        cacheDrop('food');
+        toast('Записал — разберу за пару минут', 'dumbbell');
+        done();
+      }, function () { ok.disabled = false; });
+    };
+    close = legalSheet('Записать тренировку', [ta, add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)),
+      el('div', 'mu msrc', 'Модель на Mac разберёт текст за 1–3 минуты: «4×8 60» — четыре подхода по 8 с 60 кг. Бег — «5 км за 28 минут».'),
+      add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  // An input in a field with a short caption before it («повт.», «кг»).
+  function woInp(v, cap, ph, num) {
+    var i = el('input', num ? 'fn' : '');
+    i.value = v == null ? '' : String(v).replace('.', ',');
+    i.placeholder = ph;
+    i.setAttribute('aria-label', ph);
+    if (num) i.inputMode = num;
+    return { input: i, field: add(el('label', 'field' + (cap ? ' fnf' : '')), cap ? el('span', 'mu', cap) : null, i) };
+  }
+  // A workout's sheet: the kind (a list), the time and the minutes; for the gym its exercises — the name, a row of reps
+  // and kg a set (✕ takes one, «＋ Подход» repeats the last), «＋ Упражнение»; a run, a ride, a swim — km and minutes;
+  // another kind — its name. «Сохранить» (workout_edit) and «Убрать» on two taps (workout_delete).
+  function woSheet(w, from, done) {
+    var kind = w.kind, day = foodDay(w.at), close = noop, p = wp(w.at);
+    var es = (w.items || []).filter(woEx).map(function (e) { return { exercise: e.exercise, sets: (e.sets || []).map(function (x) { return { reps: x.reps, kg: x.kg }; }) }; });
+    var dist = (w.items || []).filter(function (i) { return !woEx(i); })[0] || { km: null, minutes: null };
+    var sel = el('select', 'wkind'), tm = el('input'), mins = woInp(w.minutes, 'мин', 'Минуты', 'numeric'), body = el('div');
+    sel.setAttribute('aria-label', 'Вид');
+    WO_KINDS.forEach(function (k) { var o = el('option', '', k[1]); o.value = k[0]; sel.appendChild(o); });
+    sel.value = kind;
+    tm.type = 'time';
+    tm.value = p.hour + ':' + p.minute;
+    tm.setAttribute('aria-label', 'Время');
+    var title = woInp(w.title, '', 'Что за тренировка: йога, теннис…'), km = woInp(dist.km, 'км', 'Километры', 'decimal'),
+      dmin = woInp(dist.minutes, 'мин', 'Минуты дистанции', 'numeric'), note = woInp(w.note, '', 'Заметка');
+    title.input.maxLength = 60;
+    note.input.maxLength = 500;
+    function exDraw() {
+      clear(body);
+      if (kind === 'other') body.appendChild(add(el('div', 'bar'), title.field));
+      if (WO_DIST.indexOf(kind) >= 0) return body.appendChild(add(el('div', 'wrow2'), km.field, dmin.field));
+      if (kind === 'volleyball') return;
+      es.forEach(function (e, n) {
+        var name = woInp(e.exercise, '', 'Упражнение'), sets = el('div', 'wsets');
+        name.input.maxLength = 80;
+        name.input.oninput = function () { e.exercise = name.input.value; };
+        var x = foodBtn('btn ghost x', 'x', '', function () { es.splice(n, 1); exDraw(); });
+        x.setAttribute('aria-label', 'Убрать упражнение');
+        e.sets.forEach(function (st, k) {
+          var r = woInp(st.reps, 'повт.', 'Повторы', 'numeric'), g = woInp(st.kg, 'кг', 'Вес, кг', 'decimal');
+          r.input.oninput = function () { st.reps = r.input.value; };
+          g.input.oninput = function () { st.kg = g.input.value; };
+          var sx = foodBtn('btn ghost x', 'x', '', function () { e.sets.splice(k, 1); exDraw(); });
+          sx.setAttribute('aria-label', 'Убрать подход');
+          sets.appendChild(add(el('div', 'wset'), r.field, g.field, sx));
+        });
+        var more = foodBtn('btn ghost', 'plus', 'Подход', function () {
+          if (e.sets.length >= 20) return;
+          var l = e.sets[e.sets.length - 1];
+          e.sets.push(l ? { reps: l.reps, kg: l.kg } : { reps: '', kg: '' });
+          exDraw();
+        });
+        body.appendChild(add(el('div', 'fline'), add(el('div', 'bar'), name.field, x), sets, more));
+      });
+      body.appendChild(foodBtn('btn ghost wide', 'plus', 'Упражнение', function () {
+        if (es.length >= 30) return;
+        es.push({ exercise: '', sets: [{ reps: '', kg: '' }] });
+        exDraw();
+        var f = body.querySelectorAll('.fline');
+        f = f.length && f[f.length - 1].querySelector('input');
+        if (f) f.focus();
+      }));
+    }
+    sel.onchange = function () { kind = sel.value; haptic(); exDraw(); };
+    exDraw();
+    // A number typed with a comma or a dot; null for empty, NaN for junk.
+    function nv(v) { v = String(v == null ? '' : v).trim(); return v === '' ? null : foodNum(v); }
+    var save = foodBtn('btn', 'check', 'Сохранить', function () {
+      var bad = '', m = nv(mins.input.value), items = [];
+      if (m !== null && !(m % 1 === 0 && m >= 0 && m <= 1440)) bad = 'Минуты — целое число до 1440';
+      if (WO_DIST.indexOf(kind) >= 0) {
+        var k = nv(km.input.value), q = nv(dmin.input.value);
+        if (k !== null && !(k >= 0 && k <= 500)) bad = 'Километры — число до 500';
+        else if (q !== null && !(q % 1 === 0 && q >= 0 && q <= 1440)) bad = 'Минуты — целое число до 1440';
+        else if (k !== null || q !== null) items.push({ km: k, minutes: q });
+      } else if (kind !== 'volleyball') {
+        es.forEach(function (e) {
+          var name = String(e.exercise || '').trim(), ss = [];
+          e.sets.forEach(function (st) {
+            var r = nv(st.reps), g = nv(st.kg);
+            if (r === null && g === null) return;
+            if (r !== null && !(r % 1 === 0 && r >= 0 && r <= 500)) bad = 'Повторы — целое число до 500';
+            else if (g !== null && !(g >= 0 && g <= 500)) bad = 'Вес — число до 500 кг';
+            ss.push({ reps: r, kg: g });
+          });
+          if (!name && !ss.length) return;
+          if (!name) bad = 'У каждого упражнения нужно название';
+          items.push({ exercise: name, sets: ss });
+        });
+      }
+      if (!/^\d\d:\d\d$/.test(tm.value)) bad = 'Время — ЧЧ:ММ';
+      if (bad) return toast(bad);
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: 'workout_edit' }, 15000, false, { id: w.id, kind: kind, at: foodIso(day, tm.value), minutes: m, items: items,
+        title: kind === 'other' ? title.input.value.trim() || null : null, note: note.input.value.trim() || null })
+        .then(function () { close(); done(); }, function (x) {
+          save.disabled = false;
+          if (x.code === 'not found') { close(); done(); }
+        });
+    });
+    var armT = null, del = foodBtn('btn ghost', 'trash', 'Убрать', function () {
+      if (!armT) {
+        label(del, null, 'Точно?');
+        del.className = 'btn warn';
+        armT = setTimeout(function () { armT = null; label(del, 'trash', 'Убрать'); del.className = 'btn ghost'; }, 3000);
+        return;
+      }
+      clearTimeout(armT);
+      haptic();
+      api('miniapp', { action: 'workout_delete' }, 15000, false, { id: w.id }).then(function () {
+        close();
+        toast('Убрал', 'trash');
+        done();
+      }, function (x) { if (x.code === 'not found') { close(); done(); } });
+    });
+    close = legalSheet(woLabel(w) + ', ' + foodTime(w.at), [add(el('div', 'bar'), sel), add(el('div', 'wrow2'), add(el('label', 'field'), icon('clock'), tm), mins.field),
+      body, add(el('div', 'bar'), note.field), w.ref ? el('div', 'mu msrc', 'Записано само по игре PNH. «Убрать» — если не играл: игра уйдёт и из «моих игр».') : null,
+      add(el('div', 'bar mact mstick'), save, del)], from);
+  }
+  // «План»: the plan's days (plan_get), each with its name and exercises — the name, sets × reps («8–10») and kg or own
+  // weight, ▲▼ to move, ✕ to take away, «＋ Упражнение»; «Сохранить» replaces the plan (plan_set).
+  function planSheet(from, done) {
+    from.disabled = true;
+    api('miniapp', { action: 'plan_get' }, 15000, false, {}).then(function (j) {
+      from.disabled = false;
+      var days = (j.plan || []).map(function (d) {
+        return { id: d.id, name: d.name, items: (d.items || []).map(function (i) { return Object.assign({}, i); }) };
+      });
+      var box = el('div'), close = noop;
+      function move(list, n, by) {
+        var k = n + by;
+        if (k < 0 || k >= list.length) return;
+        list.splice(k, 0, list.splice(n, 1)[0]);
+        haptic();
+        draw();
+      }
+      function draw() {
+        clear(box);
+        days.forEach(function (d) {
+          var nm = woInp(d.name, '', 'Название'), sec = add(el('div', 'wday'), add(el('div', 'bar'), add(el('label', 'field'), icon('dumbbell'), nm.input)));
+          nm.input.maxLength = 20;
+          nm.input.oninput = function () { d.name = nm.input.value; };
+          d.items.forEach(function (i, n) {
+            var ex = woInp(i.exercise, '', 'Упражнение'), st = woInp(i.sets, 'подх.', 'Подходы', 'numeric'), rp = woInp(i.reps, 'повт.', 'Повторы: 8–10 или 10');
+            ex.input.maxLength = 80;
+            ex.input.oninput = function () { i.exercise = ex.input.value; };
+            st.input.oninput = function () { i.sets = st.input.value; };
+            rp.input.oninput = function () { i.reps = rp.input.value; };
+            var up = foodBtn('btn ghost x', 'chevron-up', '', function () { move(d.items, n, -1); });
+            var dn = foodBtn('btn ghost x', 'chevron-down', '', function () { move(d.items, n, 1); });
+            var x = foodBtn('btn ghost x', 'x', '', function () { d.items.splice(n, 1); draw(); });
+            up.setAttribute('aria-label', 'Выше');
+            dn.setAttribute('aria-label', 'Ниже');
+            x.setAttribute('aria-label', 'Убрать упражнение');
+            up.disabled = n === 0;
+            dn.disabled = n === d.items.length - 1;
+            var seg = el('div', 'seg');
+            seg.setAttribute('role', 'group');
+            seg.setAttribute('aria-label', 'С весом или со своим');
+            [['kg', 'кг'], ['bw', 'свой']].forEach(function (u) {
+              var b = el('button', i.unit === u[0] ? 'on' : '', u[1]);
+              b.type = 'button';
+              b.onclick = function () { i.unit = u[0]; [].forEach.call(seg.children, function (y) { y.classList.toggle('on', y === b); }); haptic(); };
+              seg.appendChild(b);
+            });
+            sec.appendChild(add(el('div', 'fline'), add(el('div', 'bar'), ex.field, up, dn, x), add(el('div', 'wplan'), st.field, rp.field, seg)));
+          });
+          sec.appendChild(foodBtn('btn ghost wide', 'plus', 'Упражнение', function () {
+            if (d.items.length >= 20) return;
+            d.items.push({ exercise: '', sets: 3, reps: '8–10', unit: 'kg' });
+            draw();
+          }));
+          box.appendChild(sec);
+        });
+      }
+      draw();
+      var save = foodBtn('btn', 'check', 'Сохранить', function () {
+        var bad = '', out = days.map(function (d) {
+          var items = d.items.filter(function (i) { return String(i.exercise || '').trim(); }).map(function (i) {
+            var n = foodNum(i.sets), r = String(i.reps || '').trim().replace(/\s*[-–]\s*/, '–');
+            if (!(n % 1 === 0 && n >= 1 && n <= 10)) bad = 'Подходы — от 1 до 10';
+            else if (!/^\d{1,3}(–\d{1,3})?$/.test(r)) bad = 'Повторы — число или «8–10»';
+            return { exercise: String(i.exercise).trim(), sets: n, reps: r, unit: i.unit === 'bw' ? 'bw' : 'kg' };
+          });
+          if (!String(d.name || '').trim()) bad = 'У тренировки нужно название';
+          return { id: d.id, name: String(d.name || '').trim(), items: items };
+        });
+        if (bad) return toast(bad);
+        save.disabled = true;
+        haptic();
+        api('miniapp', { action: 'plan_set' }, 15000, false, { days: out }).then(function () {
+          close();
+          toast('План сохранён', 'clipboard-list');
+          done();
+        }, function () { save.disabled = false; });
+      });
+      close = legalSheet('План', [el('div', 'mu msrc', 'Тренировки идут по очереди. Все подходы с верхним числом повторов — в следующий раз +2,5 кг (со своим весом — +1 повтор).'),
+        box, add(el('div', 'bar mact mstick'), save)], from);
+    }, function () { from.disabled = false; });
   }
 
   var VIEWS = {
