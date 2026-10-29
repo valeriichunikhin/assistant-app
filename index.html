@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 20:54">
+<meta name="published" content="2026-10-29 21:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1264,7 +1264,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .bas-x{position:absolute;right:-4px;top:-38px;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--fg)}
 .bas-x .i{width:18px;height:18px}
 .bas-d{margin:-2px 0 0;text-align:center;font-size:15px}
-.bas-gz{max-width:400px;margin:4px auto 0}.bas-g{display:block;width:100%;height:auto;overflow:visible}
+.bas-gz{max-width:400px;margin:4px auto 0}.bas-g{display:block;width:100%;height:auto;overflow:hidden}
 .bas-disc{fill:color-mix(in srgb,var(--fg) 3%,transparent)}.bas-band{fill:none;stroke:color-mix(in srgb,var(--fg) 5%,transparent);stroke-width:18}
 .bas-tk{stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:1}.bas-tk.maj{stroke:color-mix(in srgb,var(--fg) 40%,transparent);stroke-width:1.5}
 .bas-gl{fill:var(--muted);font:600 12px var(--font-num)}.bas-cl{fill:var(--fg);font:700 15px var(--font-num)}
@@ -15660,19 +15660,26 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // the ends labelled along the arc; the segment from the biological to the calendar age in the accent with a dot on
   // each end, the calendar's value under its dot.
   function bioGauge(bio, age, crop) {
-    var W = 360, H = 372, cx = 180, cy = 176, R = 158, lo = Math.round(Math.max(18, age - 10) * 10) / 10, hi = Math.round((age + 10) * 10) / 10;
+    // The ring is wider than the view, so it runs off both sides (docs/bevel/bioage-screen.jpg), and a mask fades it
+    // toward the open bottom: full at the top, gone past the arc's ends (his «уходит за экран, прозрачность», 30.10.2026).
+    var W = 360, H = 372, cx = 180, cy = 190, R = 206, lo = Math.round(Math.max(18, age - 10) * 10) / 10, hi = Math.round((age + 10) * 10) / 10;
     var box = svg('svg', { viewBox: '0 ' + (crop || 0) + ' ' + W + ' ' + (H - (crop || 0)), 'class': 'bas-g' + (crop ? ' crop' : ''), role: 'img',
       'aria-label': 'Шкала от ' + woNum(lo) + ' до ' + woNum(hi) + ': биологический ' + (bio == null ? 'нет' : woNum(bio)) + ', календарный ' + woNum(age) });
     function ang(t) { return (140 - (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * 100) * Math.PI / 180; }
     function pt(t, r) { var a = ang(t); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
-    box.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-disc' }));
-    box.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-band' }));
+    var mid = 'basm' + Math.random().toString(36).slice(2, 7), defs = svg('defs', {}), mask = svg('mask', { id: mid, maskUnits: 'userSpaceOnUse', x: cx - R - 20, y: cy - R - 20, width: 2 * R + 40, height: 2 * R + 40 }),
+      mg = svg('linearGradient', { id: mid + 'g', gradientUnits: 'userSpaceOnUse', x1: 0, y1: cy - R, x2: 0, y2: cy + R * 0.55 });
+    [[0, 1], [0.55, 1], [1, 0]].forEach(function (st) { mg.appendChild(svg('stop', { offset: st[0], 'stop-color': '#fff', 'stop-opacity': st[1] })); });
+    defs.appendChild(mg); mask.appendChild(svg('rect', { x: cx - R - 20, y: cy - R - 20, width: 2 * R + 40, height: 2 * R + 40, fill: 'url(#' + mid + 'g)' })); defs.appendChild(mask); box.appendChild(defs);
+    var ring = svg('g', { mask: 'url(#' + mid + ')' }); box.appendChild(ring);
+    ring.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-disc' }));
+    ring.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-band' }));
     for (var t = Math.ceil(lo * 2) / 2; t <= hi + 1e-9; t += 0.5) {
       var a1 = pt(t, R - 7), a2 = pt(t, R + 7);
-      box.appendChild(svg('line', { x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1), 'class': 'bas-tk' + (t % 5 ? '' : ' maj') }));
+      ring.appendChild(svg('line', { x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1), 'class': 'bas-tk' + (t % 5 ? '' : ' maj') }));
     }
     [lo, hi].forEach(function (v) {
-      var p = pt(v, R - 24), deg = ang(v) * 180 / Math.PI - 90;
+      var p = pt(v, R - 30), deg = ang(v) * 180 / Math.PI - 90;
       box.appendChild(svg('text', { x: p[0].toFixed(1), y: p[1].toFixed(1), 'class': 'bas-gl', 'text-anchor': 'middle', 'dominant-baseline': 'middle',
         transform: 'rotate(' + deg.toFixed(1) + ' ' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ')' }, v.toFixed(1).replace('.', ',')));
     });
