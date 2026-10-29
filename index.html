@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 21:54">
+<meta name="published" content="2026-10-29 22:36">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1320,6 +1320,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    The sleep sheet's night: the pair and the phases, a colour a phase (sleep-phases.jpg: awake orange, REM light blue,
    core blue, deep violet). «Кардио» and «Сила»: tiles two across (four from 900 px), as «Монитор»'s. */
 .hadvr{display:flex;align-items:center;gap:12px;margin-top:14px}.hadvr .hadv{flex:1;min-width:0;margin:0;text-align:left;text-wrap:pretty}
+/* docs/specs/advice-context.md: the advice as Bevel's (home.jpg) — the title bold, the paragraph under it in three lines at most,
+   the chevron in the corner; a tap — the sheet with each sentence and its reason. */
+.hadv.htip{text-align:left;font-weight:400;border-radius:12px}.htip-h{display:flex;gap:8px;align-items:flex-start}
+.htip-t{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.35;text-wrap:pretty}.htip-h .i{flex:none;width:16px;height:16px;margin-top:2px;color:var(--muted)}
+.htip-p{margin-top:4px;font-size:14px;line-height:1.45;color:color-mix(in srgb,var(--fg) 72%,transparent);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
+.htips{display:flex;flex-direction:column;gap:8px}
 .hstr{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:92px;padding:8px 4px 10px;border-radius:var(--r-b);background:var(--surface-2)}
 .hstr-h{font-size:12px}.hstr-w{font-size:12px;font-weight:700;color:color-mix(in srgb,var(--st) 72%,var(--fg))}
 .hstg{display:block;overflow:visible}.hstg circle{fill:none;stroke-linecap:round}.hstg .tr{stroke:color-mix(in srgb,var(--st) 18%,transparent)}
@@ -14813,7 +14819,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
     var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
-    var adv = el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
+    var adv = j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
+      j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
     // The stress gauge beside the advice (docs/specs/bevel-gap.md, п. 2); a tap — its sheet.
     wrap.appendChild(sc.stress ? add(el('div', 'hadvr'), adv, hlStressTile(sc.stress, function (t) { hlRingSheet('stress', j, t); })) : adv);
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
@@ -14821,6 +14828,29 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     c.firstChild.appendChild(b);
     c.appendChild(wrap);
     return c;
+  }
+  // The day's advice with its context (docs/specs/advice-context.md) in Bevel's form (home.jpg): the title bold with the
+  // sport's emoji, the paragraph under it (three lines at most), the chevron; a tap — hlTipSheet.
+  function hlTip(t, kinds) {
+    var b = add(el('div', 'hadv htip'), add(el('div', 'htip-h'), el('div', 'htip-t', hlNb(hlAdvice(t.title, kinds))), icon('chevron-right')),
+      t.text ? el('div', 'htip-p', hlNb(t.text)) : null);
+    b.setAttribute('aria-label', 'Совет дня: ' + t.title + (t.text ? '. ' + t.text : '') + ' — почему');
+    return tap(b, function () { hlTipSheet(t, b); });
+  }
+  // Each sentence of the advice with its reason, as «Из чего» rows: the rule's icon, the sentence bold, the reason under it.
+  var HL_TIP_IC = { 1: 'bed', 2: 'ball', 3: 'calendar-clock', 4: 'gauge', 5: 'check-square', 6: 'coffee', 7: 'utensils', 8: 'activity', 9: 'heart' };
+  function hlTipSheet(t, from) {
+    var body = el('div', 'hsh'), list = el('div', 'htips'), close = noop;
+    (t.lines || []).forEach(function (l) {
+      var r = add(el('div', 'hins'), add(el('span', 'hins-i'), icon(HL_TIP_IC[l.rule] || 'lightbulb')),
+        add(el('div', 'tx'), el('div', 'hins-t', hlNb(l.text.charAt(0).toUpperCase() + l.text.slice(1))), el('div', 'mu', hlNb(l.why))));
+      r.setAttribute('role', 'group');
+      r.setAttribute('aria-label', l.text + '. Почему: ' + l.why);
+      list.appendChild(r);
+    });
+    add(body, list, el('div', 'mu hsec-n', 'Считается кодом: сон и восстановление, календарь и игры, задачи, траты на кафе, еда. Не больше трёх фраз, по важности.'));
+    close = legalSheet('Совет дня', [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
   }
   // «1:35», «0:58»: minutes as hours and minutes (Bevel's, without the seconds).
   function hlHm(m) { m = Math.round(m || 0); return Math.floor(m / 60) + ':' + ('0' + m % 60).slice(-2); }
