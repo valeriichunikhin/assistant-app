@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 17:50">
+<meta name="published" content="2026-10-29 18:03">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1112,6 +1112,64 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .hspk{flex:none;overflow:visible}.hspk .ln{fill:none;stroke:var(--hl-bio);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hspk .ar{fill:url(#g-bio-area)}
 .hspk .halo{fill:color-mix(in srgb,var(--hl-bio) 25%,transparent)}.hspk .dot{fill:var(--hl-bio);stroke:var(--solid);stroke-width:2}.hbn{flex:none;font-size:12px}
 .hset{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+/* The metric and ring sheets (docs/specs/metric-sheets.md) in Bevel's look (docs/bevel/tour-2.jpg, tour-3.jpg, tour-7.jpg,
+   bioage-screen.jpg): the panel under a soft accent gradient with sparse star dots, the title centred; pills for the
+   siblings and the period (the chosen filled with the accent); the value large, the status pill on the right with its
+   range; the chart — the line and dots in --mark over the translucent band, a ring's dots in its zones' or statuses'
+   colours; «Анализ тенденций» as a rounded table; the parts as rounded rows with a small ring and its icon. */
+.tsum>div.hsheet{--star:color-mix(in srgb,var(--fg) 45%,transparent);background:radial-gradient(1.2px 1.2px at 11% 7%,var(--star) 50%,transparent 60%),
+  radial-gradient(1px 1px at 79% 4%,var(--star) 50%,transparent 60%),radial-gradient(1.6px 1.6px at 90% 17%,var(--star) 50%,transparent 60%),
+  radial-gradient(1px 1px at 33% 15%,var(--star) 50%,transparent 60%),radial-gradient(1.3px 1.3px at 58% 26%,var(--star) 50%,transparent 60%),
+  radial-gradient(1px 1px at 6% 31%,var(--star) 50%,transparent 60%),
+  linear-gradient(180deg,color-mix(in srgb,var(--accent) 13%,var(--solid)) 0,var(--solid) 460px) var(--solid);background-attachment:local}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .tsum>div.hsheet{--star:color-mix(in srgb,var(--fg) 16%,transparent)}}
+:root[data-theme="light"] .tsum>div.hsheet{--star:color-mix(in srgb,var(--fg) 16%,transparent)}
+@media (min-width:900px){.tsum>div.hsheet{max-width:760px}}
+.hsheet .lsh{text-align:center}
+.hpills{display:flex;gap:6px;margin:0 -16px 14px;padding:0 16px;overflow-x:auto;scrollbar-width:none}.hpills::-webkit-scrollbar{display:none}
+.hpills button{flex:none;height:34px;padding:0 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface-2);color:var(--muted);font:600 13px/1 var(--font);white-space:nowrap;transition:background .15s,color .15s}
+.hpills button.on{border-color:transparent;background:var(--accent);color:var(--accent-ink)}
+.hpills.hper{justify-content:center;margin:10px 0 16px;padding:0}.hpills.hper button{min-width:58px}
+.hsh{transition:opacity .2s}.hsh.busy{opacity:.55}.hsh-none{padding:22px 0;text-align:center}
+.hsh-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:0 0 6px}
+.hsh-v{min-width:0}.hsh-v .mu{font-size:13px;margin-top:4px}
+.hsh-big{font:800 40px/1.05 var(--font-num);letter-spacing:-.02em;white-space:nowrap}.hsh-big small{font:600 15px var(--font);color:var(--muted);letter-spacing:0}
+.hsh-st{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:52%;padding-top:6px;text-align:right}
+.hsh-st .pill{height:24px;padding:0 10px;font-size:12px;white-space:nowrap}.hsh-st .pill.hst{color:color-mix(in srgb,var(--st) 50%,var(--fg))}.hsh-st .mu{font-size:12px;font-variant-numeric:tabular-nums}
+.hz-st-good,.hz-good,.hl-productive,.hl-st-productive{--hs:var(--ring-recovery);--st:var(--ring-recovery)}
+.hz-st-mid,.hz-mid,.hl-fatigue,.hl-st-fatigue{--hs:var(--ring-load-2);--st:var(--ring-load-2)}
+.hz-st-bad,.hz-bad,.hl-overtrain,.hl-st-overtrain{--hs:var(--bad);--st:var(--bad)}
+.hl-low,.hl-st-low{--hs:var(--ring-load);--st:var(--ring-load)}.hl-maintain,.hl-st-maintain{--hs:var(--ring-sleep);--st:var(--ring-sleep)}
+.hl-calibration,.hl-st-calibration{--hs:var(--muted);--st:var(--muted)}.hs-same{--st:var(--muted)}
+.chart.hch{padding:0}.hch .hband{fill:color-mix(in srgb,var(--mark) 16%,transparent)}.hch rect.hz{fill:color-mix(in srgb,var(--hs) 13%,transparent)}
+.hch .hln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hch .hln.q{stroke:color-mix(in srgb,var(--fg) 32%,transparent)}
+.hch .hdt{fill:var(--hs,var(--mark));stroke:var(--solid);stroke-width:1.5}.hch .hdt.end{stroke-width:2}.hch .hstrip{fill:var(--hs)}
+.hch .hmp rect{fill:var(--solid);stroke:color-mix(in srgb,var(--mark) 55%,transparent);stroke-width:1}.hch .hmp text{fill:var(--fg);font:600 11px var(--font-num)}
+.hsec{margin:20px 0 0}.hsec-h{font:800 17px/1.3 var(--font);margin:0 0 2px}.hsec-s{font-size:12px;margin:0 0 10px}.hsec-n{font-size:11px;margin:8px 0 0;text-align:center}
+.htr{padding:2px 14px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.htr-h,.htr-r{display:grid;grid-template-columns:56px minmax(0,1fr) 72px;align-items:center;gap:8px;min-height:42px}
+.htr-h{min-height:32px;font-size:12px}.htr-r{border-top:1px solid var(--line)}.htr-h span:last-child{text-align:right}
+.htr-c{display:flex;align-items:center;gap:8px;min-width:0;font:600 14px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hdot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--st)}
+.htsp{justify-self:end;overflow:visible}.htsp polyline{fill:none;stroke:var(--st);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.hins{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.hins-i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--mark)}.hins-i .i{width:18px;height:18px}
+.hins .tx{min-width:0}.hins-t{font-weight:700;line-height:1.35}.hins .mu{margin-top:3px;font-size:13px}
+.hpr{display:flex;align-items:center;gap:12px;margin:0 0 8px;padding:10px 12px 10px 10px;border:1px solid var(--line);border-radius:22px;background:var(--surface-2)}
+.hmini{position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%}.hmini>svg.hring{position:absolute;inset:0}
+.hmini .i{width:18px;height:18px}.hgo .hmini{background:var(--accent-soft);color:var(--mark)}
+.hpr-m{flex:1;min-width:0}.hpr-t{display:flex;align-items:center;justify-content:space-between;gap:8px}.hpr-n{font-weight:700;min-width:0}
+.hpr-v{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-top:2px}.hpr-v b{font:800 16px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hpr-v .mu{font-size:12px;white-space:nowrap}.hpr-l{margin-top:4px;font-size:12px;line-height:1.35}.hgo .hpr-m .mu{font-size:12px}
+.hpr-go{flex:none;display:flex;color:var(--muted)}.hpr-go .i{width:18px;height:18px}
+.hnt{flex:none;overflow:visible}.hnt .tr{fill:var(--track)}.hnt .band{fill:color-mix(in srgb,var(--ring-recovery) 50%,transparent)}
+.hnt .dot{fill:var(--st,var(--muted));stroke:var(--solid);stroke-width:2}
+.hpimp{flex:none;display:inline-flex;align-items:center;gap:5px}.hpimp b{font:700 13px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.himp .mid{fill:var(--line-2)}.himp .pos{fill:var(--hl-sky)}.himp .neg{fill:var(--ring-load)}
+.hbd .htr-h,.hbd .htr-r{grid-template-columns:minmax(0,1.2fr) minmax(0,1.3fr) 40px}.hbd-n{font-size:13px;line-height:1.25}
+.hbd-d{display:flex;align-items:center;gap:8px;min-width:0}.hbd-d b{flex:none;width:34px;font:600 13px var(--font-num);font-variant-numeric:tabular-nums}
+.hbd-b{flex:1;height:6px;border-radius:3px;background:var(--track);overflow:hidden}.hbd-b i{display:block;height:100%;border-radius:3px;background:var(--hs)}
+.hbd-p{text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -14255,11 +14313,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 
   // --- «Здоровье»: health from the iPhone (docs/specs/health-v2.md, 28.10.2026) ---
   // Over the day of «Здоровье» (the «Еда» tab, renamed): — three rings «Нагрузка · Восст. · Сон» and the day's
-  // advice, a tap opens «Из чего» (every score with its parts and their shares, health_day's explain); «Монитор» — six
-  // tiles against his own 30 days (a vertical track, the norm's band ±1 σ in it, a dot for the day, «норма/выше/ниже»).
+  // advice, a tap on a ring opens its sheet (hlRingSheet: the 30 days and «Из чего», docs/specs/metric-sheets.md);
+  // «Монитор» — six tiles against his own 30 days (a vertical track, the norm's band ±1 σ in it, a dot for the day,
+  // «норма/выше/ниже»), a tap — the metric's sheet with its trends (hlSeriesSheet).
   // After the day's workouts «Фитнес»: the week as a strip of icons, «Кардио» and «Мышцы» against the green 20–49 %,
   // «Свежесть мышц» as 10 dots a group. Under «Неделя и месяц» «Биология» (health_stats): weight, fat, HRV, resting HR,
-  // VO2max as 30-day sparklines with the last value and the change. Without any health row the cards fold into one line
+  // VO2max as 30-day sparklines with the last value and the change, a tap — the sheet. Without any health row the cards fold into one line
   // that opens the setup (docs/shortcuts.md, «Здоровье»). The charts are inline SVG on CSS variables (light and dark).
   var HL_RINGS = [['load', 'Нагрузка', 'hl-load'], ['recovery', 'Восст.', 'hl-rec'], ['sleep', 'Сон', 'hl-sleep']];
   var HL_NAMES = { load: 'Нагрузка', recovery: 'Восстановление', sleep: 'Сон', muscle: 'Мышцы', stress: 'Стресс' };
@@ -14294,13 +14353,15 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       'font-size': size >= 60 ? 22 : 13 }, v == null ? '—' : String(v)));
     return box;
   }
-  // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls.
-  function hlRings(vs, size) {
+  // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls; onTap(key, cell) —
+  // a ring opens its sheet (left out on the board's widget).
+  function hlRings(vs, size, onTap) {
     var row = el('div', 'hrings');
     HL_RINGS.forEach(function (k) {
       var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size), el('div', 'hrl', k[1]));
-      cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %'));
-      cell.setAttribute('role', 'img');
+      if (onTap) tap(cell, function () { onTap(k[0], cell); });
+      else cell.setAttribute('role', 'img');
+      cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
       row.appendChild(cell);
     });
     return row;
@@ -14315,44 +14376,418 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     c.appendChild(tap(r, function () { hlSetupSheet(r); }));
     return c;
   }
-  // «Здоровье»: the rings, the advice; a tap on the rings — «Из чего».
+  // «Здоровье»: the rings, the advice; a tap on a ring — its sheet, «Из чего» — the recovery's.
   function hlCard(j) {
     var c = mkCard('activity', 'Здоровье'), sc = j.scores || {};
     var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
-    var rings = hlRings(vs, 84), wrap = add(el('div', 'hbody'), rings);
+    var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
     wrap.appendChild(el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice ? hlAdvice(j.advice, today && today.kinds) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.')));
-    var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlExplainSheet(j, b); });
+    var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
     b.setAttribute('aria-label', 'Из чего считаются кольца');
     c.firstChild.appendChild(b);
-    c.appendChild(tap(wrap, function () { hlExplainSheet(j, wrap); }));
-    wrap.setAttribute('aria-label', 'Кольца: ' + HL_RINGS.map(function (k) { return k[1] + ' ' + (vs[k[0]] == null ? 'нет данных' : vs[k[0]] + ' %'); }).join(', ') + ' — из чего');
+    c.appendChild(wrap);
     return c;
   }
-  // «Из чего»: each score, its value and the parts — what, how much, its share and what it gave.
-  function hlExplainSheet(j, from) {
-    var sc = j.scores || {}, nodes = [];
-    ['load', 'recovery', 'sleep', 'muscle', 'stress'].forEach(function (k) {
-      var s = sc[k], sec = add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', HL_NAMES[k]), el('span', 'pr', s ? s.value + ' %' : '—')));
-      if (!s) {
-        sec.appendChild(el('div', 'mu', k === 'recovery' || k === 'stress' ? 'Нужны ВСР и пульс покоя хотя бы за 5 дней.' :
-          k === 'sleep' ? 'Сна за этот день нет.' : 'За 28 дней тренировок нет.'));
-      } else {
-        s.explain.forEach(function (p) {
-          sec.appendChild(add(el('div', 'row hxr'), add(el('span', 'tx'), el('div', 't', p.label), el('div', 'mu', p.value)),
-            el('span', 'pr mu', p.weight ? Math.round(p.weight * 100) + ' % веса · ' + p.score : '')));
-        });
-      }
-      nodes.push(sec);
+  // --- The metric and ring sheets (docs/specs/metric-sheets.md, 29.10.2026) in Bevel's look: a metric as
+  // docs/bevel/tour-2.jpg and tour-3.jpg, the load as tour-7.jpg, the feel of bioage-screen.jpg. The sheet under a soft
+  // accent gradient with sparse star dots; the siblings as pills on top (the chosen one filled with the accent); the
+  // value large on the left, the status pill on the right with the range under it; one line in the accent with small
+  // dots (≤ 90 days) over the translucent norm band, the mean a pill on the band, a crosshair readout; the period as pills
+  // 30 Д · 3 М · 6 М · 1 Г; «Анализ тенденций» — Период · Изменение · Тенденция, a dot and a sparkline a row (better sky,
+  // worse orange, same grey); the two lines in a card with the metric's icon. A ring (tap on it in «Здоровье»): its 30
+  // days over its coloured zones, a dot a day in its zone's colour (the load's in its status's, a strip of statuses
+  // under it); «Из чего» — a rounded row a part: a small ring of what the part gave with its icon, the name and value,
+  // a short norm track with the dot where he is, the impact in points with a small column (up sky, down orange), the
+  // line; a part with a sheet of its own opens it (chevron). The load adds «Разбивка за 30 дней» — a bar a status.
+  var HL_SN = { resting_hr: 'Пульс покоя', hrv: 'ВСР', resp_rate: 'Дыхание', spo2: 'SpO2', wrist_temp: 'Температура', sleep_min: 'Сон',
+    steps: 'Шаги', active_kcal: 'Активные ккал', vo2max: 'VO2max', weight: 'Вес', body_fat: 'Жир', kcal: 'Еда' };
+  var HL_IC = { resting_hr: 'heart', hrv: 'audio-waveform', resp_rate: 'wind', spo2: 'droplet', wrist_temp: 'thermometer', sleep_min: 'moon',
+    steps: 'footprints', active_kcal: 'flame', vo2max: 'wind', weight: 'scale', body_fat: 'percent', kcal: 'utensils',
+    sleep: 'moon', recovery: 'activity', load: 'flame' };
+  var HL_MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
+  var HL_BIO_KEYS = ['weight', 'body_fat', 'hrv', 'resting_hr', 'vo2max', 'steps', 'active_kcal', 'kcal'];
+  var HL_PERIODS = [[30, '30 Д'], [90, '3 М'], [180, '6 М'], [365, '1 Г']];
+  // The part's icon by its label (the rings' parts).
+  var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer',
+    'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', '7 дней': 'flame',
+    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed' };
+  var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Норма', bad: 'Мало' } };
+  var HL_LOAD_RU = { calibration: 'Калибровка', low: 'Недостаток тренировки', maintain: 'Поддержание', productive: 'Результативность',
+    fatigue: 'Усталость', overtrain: 'Перетренировка' };
+  // «28 окт. 2026»: a sheet's date.
+  function hlDay(d) { return d ? +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1] + ' ' + d.slice(0, 4) : ''; }
+  function hlShort(d) { return +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1]; }
+  // A value of a series: the sleep as hours and minutes, the steps and kcal grouped, the wrist's deviation signed.
+  function hlFmt(key, v) {
+    if (v == null) return '—';
+    if (key === 'steps' || key === 'active_kcal' || key === 'kcal') return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    if (key === 'sleep_min') return v >= 60 ? Math.floor(v / 60) + ' ч ' + ('0' + Math.round(v % 60)).slice(-2) + ' мин' : Math.round(v) + ' мин';
+    return hlVal(key, v);
+  }
+  // A change: signed, in the key's own way («+25 мин», «−1,7 уд/мин»).
+  function hlDelta(key, d, unit) {
+    if (d == null) return '—';
+    var a = Math.abs(d), s = d > 0 ? '+' : d < 0 ? '−' : '';
+    if (key === 'sleep_min') return s + (a >= 60 ? Math.floor(a / 60) + ' ч ' : '') + Math.round(a % 60) + ' мин';
+    return s + (key === 'steps' || key === 'active_kcal' || key === 'kcal' ? hlFmt(key, a) : woNum(a)) + (unit ? ' ' + unit : '');
+  }
+  var HL_CACHE = {};
+  function hlSeries(key, days, date) {
+    var k = key + '|' + days + '|' + (date || '');
+    if (!HL_CACHE[k]) {
+      var b = { key: key, days: days };
+      if (date) b.date = date;
+      HL_CACHE[k] = api('miniapp', { action: 'health_series' }, 20000, true, b).then(function (j) {
+        if (!j || !j.ok) throw new Error('bad');
+        return j;
+      });
+      HL_CACHE[k].catch(function () { delete HL_CACHE[k]; });
+    }
+    return HL_CACHE[k];
+  }
+  // Pills in a row (scrolls sideways when they do not fit); the chosen one filled. pick(key) on a tap.
+  function hlPills(items, cur, pick, cls) {
+    var row = el('div', 'hpills' + (cls ? ' ' + cls : ''));
+    row.setAttribute('role', 'group');
+    items.forEach(function (it) {
+      var b = el('button', it[0] === cur ? 'on' : '', it[1]);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', it[0] === cur ? 'true' : 'false');
+      b.onclick = function () {
+        if (b.classList.contains('on')) return;
+        [].forEach.call(row.children, function (x) { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        haptic();
+        pick(it[0]);
+      };
+      row.appendChild(b);
     });
-    nodes.push(el('div', 'mu msrc', 'Сон: 70 % — длительность к 8 ч, 30 % — глубокий и REM к 40 % сна. Восстановление: ВСР к своей норме за 30 дней ' +
-      '(50 %), пульс покоя — ниже лучше (30 %), сон (20 %); в норме часть даёт 75, на σ лучше — 100. Нагрузка: 7 дней минут × зона пульса ' +
-      '(без зон — по виду тренировки) к средней неделе за 28 дней; 35 % — как обычно, цель 20–49 %. Мышцы — так же по подходам. ' +
-      'Стресс: 50 в норме, ВСР ниже и пульс выше нормы поднимают.'));
-    var close = noop;
-    nodes.push(add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); })));
-    close = legalSheet('Из чего', nodes, from);
+    setTimeout(function () {
+      var on = row.querySelector('.on');
+      if (!on || row.scrollWidth <= row.clientWidth) return;
+      var a = on.getBoundingClientRect(), r = row.getBoundingClientRect();
+      if (a.right > r.right - 16 || a.left < r.left + 16) row.scrollLeft += a.left - r.left - 16;
+    }, 0);
+    return row;
+  }
+  // The head: the value large with its unit, the date under it; on the right the status pill and its range.
+  function hlHead(big, unit, date, st, stCls, range, sub) {
+    return add(el('div', 'hsh-head'),
+      add(el('div', 'hsh-v'), add(el('div', 'hsh-big'), document.createTextNode(big), unit ? el('small', '', ' ' + unit) : null),
+        el('div', 'mu', date), sub ? el('div', 'mu', sub) : null),
+      st ? add(el('div', 'hsh-st ' + stCls), pill(st, 'hst'), range ? el('div', 'mu', range) : null) : null);
+  }
+  // The chart: o.from..o.to on x; a metric's band (o.band) or a ring's zones (o.zones, 0–100 fixed); the line in the
+  // accent (a ring's in a quiet ink), the dots when o.dots (a ring's in the class o.dotCls(p) gives), the mean as a
+  // pill (o.mean), the y ticks on the right at the band's or zones' edges, three or four dates under it; o.strip(p) —
+  // a status class a day for the strip under the plot. A crosshair snaps to the nearest day and reads its value.
+  function hlChart(pts, o) {
+    var W = o.W, H = 196 + (o.strip ? 10 : 0), L = 4, R = 38, T = 14, B = 22 + (o.strip ? 10 : 0);
+    var vs = pts.map(function (p) { return p.v; }), lo, hi;
+    // A ring's axis from the ten under its lowest day (its empty zones under it cut off), to 100 or o.hi.
+    if (o.zones) { lo = Math.max(0, Math.floor((Math.min.apply(null, vs) - 8) / 10) * 10); hi = o.hi || 100; }
+    else {
+      var ext = vs.concat(o.band ? [o.band.low, o.band.high] : []);
+      lo = Math.min.apply(null, ext); hi = Math.max.apply(null, ext);
+      var pad = (hi - lo) * 0.18 || Math.abs(hi) * 0.05 || 1;
+      lo -= pad; hi += pad;
+    }
+    var t0 = Date.parse(o.from + 'T12:00:00Z'), t1 = Date.parse(o.to + 'T12:00:00Z');
+    function x(d) { return L + (Date.parse(d + 'T12:00:00Z') - t0) / Math.max(1, t1 - t0) * (W - L - R); }
+    function y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
+    var wrap = el('div', 'mch hchw'), box = chartBox(W, H, o.label), tip = mtTip(wrap);
+    box.classList.add('mchart');
+    box.classList.add('hch');
+    wrap.appendChild(box);
+    var ticks = [];
+    (o.zones || []).forEach(function (z) {
+      var zl = Math.max(z.low, lo), zh = Math.min(z.high, hi);
+      if (zh <= zl) return;
+      add(box, svg('rect', { x: L, y: y(zh).toFixed(1), width: W - L - R, height: (y(zl) - y(zh)).toFixed(1), 'class': 'hz hz-' + z.kind }));
+      [z.low, z.high].forEach(function (t) { if (t > lo && t < hi && ticks.indexOf(t) < 0) ticks.push(t); });
+    });
+    if (o.band) {
+      add(box, svg('rect', { x: L, y: y(o.band.high).toFixed(1), width: W - L - R, height: Math.max(1, y(o.band.low) - y(o.band.high)).toFixed(1), rx: 3, 'class': 'hband' }));
+      ticks.push(o.band.low, o.band.high);
+    }
+    if (o.zones) ticks.push(lo, hi);
+    ticks.forEach(function (t) {
+      add(box, svg('text', { x: W - R + 6, y: (y(t) + 4).toFixed(1), 'class': 'tk' }, o.tick ? o.tick(t) : woNum(t)));
+    });
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
+    var n = o.days >= 180 ? 4 : 3;
+    for (var i = 0; i < n; i++) {
+      var tt = t0 + (t1 - t0) * i / (n - 1), dd = new Date(tt).toISOString().slice(0, 10);
+      add(box, svg('text', { x: x(dd).toFixed(1), y: H - 6, 'class': 'tk', 'text-anchor': i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle' },
+        o.days >= 180 ? MON[+dd.slice(5, 7) - 1] + (i === 0 || dd.slice(5, 7) === '01' ? ' ' + dd.slice(2, 4) : '') : hlShort(dd)));
+    }
+    if (o.strip) {
+      var sw = Math.max(2, (W - L - R) / Math.max(1, o.days) - 2);
+      pts.forEach(function (p) {
+        add(box, svg('rect', { x: (x(p.day) - sw / 2).toFixed(1), y: H - B + 4, width: sw.toFixed(1), height: 4, rx: 2, 'class': 'hstrip ' + o.strip(p) }));
+      });
+    }
+    if (pts.length > 1) add(box, svg('polyline', { 'class': 'hln' + (o.zones ? ' q' : ''), points: pts.map(function (p) { return x(p.day).toFixed(1) + ',' + y(p.v).toFixed(1); }).join(' ') }));
+    if (o.dots) pts.forEach(function (p) { add(box, svg('circle', { cx: x(p.day).toFixed(1), cy: y(p.v).toFixed(1), r: 3, 'class': 'hdt' + (o.dotCls ? ' ' + o.dotCls(p) : '') })); });
+    if (o.mean != null && pts.length) {
+      var ml = 'Ср. ' + (o.tick ? o.tick(o.mean) : woNum(o.mean)), mw = ml.length * 6.4 + 16, mx = L + (W - L - R) / 2, my = y(o.mean);
+      add(box, add(svg('g', { 'class': 'hmp' }), svg('rect', { x: (mx - mw / 2).toFixed(1), y: (my - 10).toFixed(1), width: mw.toFixed(1), height: 20, rx: 10 }),
+        svg('text', { x: mx.toFixed(1), y: (my + 4).toFixed(1), 'text-anchor': 'middle' }, ml)));
+    }
+    var last = pts[pts.length - 1];
+    if (last) add(box, svg('circle', { cx: x(last.day).toFixed(1), cy: y(last.v).toFixed(1), r: 5, 'class': 'hdt end' + (o.dotCls ? ' ' + o.dotCls(last) : '') }));
+    if (!pts.length) return wrap;
+    var xh = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, 'class': 'xh' });
+    xh.style.display = 'none';
+    var hit = svg('rect', { x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'hit', tabindex: '0', role: 'img',
+      'aria-label': o.label + ': ' + pts.length + ' дн., последнее ' + (o.tick ? o.tick(last.v) : woNum(last.v)) + ' за ' + hlShort(last.day) });
+    add(box, xh, hit);
+    var k = pts.length - 1;
+    function at(i) {
+      k = Math.min(Math.max(i, 0), pts.length - 1);
+      var p = pts[k];
+      xh.setAttribute('x1', x(p.day));
+      xh.setAttribute('x2', x(p.day));
+      xh.style.display = '';
+      tip.show(box, W, x(p.day), y(p.v), (o.tick ? o.tick(p.v) : woNum(p.v)) + (o.unit ? ' ' + o.unit : ''), hlDay(p.day) + (o.tipSub ? o.tipSub(p) : ''));
+    }
+    function fromEvent(e) {
+      var r = box.getBoundingClientRect(), t = t0 + ((e.clientX - r.left) * W / r.width - L) / (W - L - R) * (t1 - t0), best = 0;
+      pts.forEach(function (p, i) { if (Math.abs(Date.parse(p.day + 'T12:00:00Z') - t) < Math.abs(Date.parse(pts[best].day + 'T12:00:00Z') - t)) best = i; });
+      at(best);
+    }
+    function off() { xh.style.display = 'none'; tip.hide(); }
+    hit.addEventListener('pointermove', fromEvent);
+    hit.addEventListener('pointerdown', fromEvent);
+    hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') off(); });
+    hit.addEventListener('focus', function () { at(pts.length - 1); });
+    hit.addEventListener('blur', off);
+    hit.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); at(k + (e.key === 'ArrowLeft' ? -1 : 1)); }
+    });
+    return wrap;
+  }
+  // A trend's sparkline: the rolling means as one 2 px line in the direction's colour, no axes.
+  function hlTSpark(vs, cls) {
+    var W = 72, H = 22, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htsp ' + cls, 'aria-hidden': 'true' });
+    if (vs.length < 2) return box;
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs);
+    if (hi === lo) { hi += 1; lo -= 1; }
+    box.appendChild(svg('polyline', { points: vs.map(function (v, i) { return (2 + i / (vs.length - 1) * (W - 4)).toFixed(1) + ',' + (3 + (hi - v) / (hi - lo) * (H - 6)).toFixed(1); }).join(' ') }));
+    return box;
+  }
+  // «Анализ тенденций»: a row a period — its change with a dot and a sparkline, coloured by better / worse / same.
+  function hlTrends(j) {
+    var t = add(el('div', 'htr'), add(el('div', 'htr-h mu'), el('span', '', 'Период'), el('span', '', 'Изменение'), el('span', '', 'Тенденция')));
+    var DIR = { better: ['hs-above', 'лучше'], worse: ['hs-below', 'хуже'], same: ['hs-same', 'без изменений'] };
+    j.trends.forEach(function (tr) {
+      var d = DIR[tr.dir] || DIR.same, r = add(el('div', 'htr-r ' + d[0]), el('span', 'mu', tr.days + ' дн.'),
+        add(el('span', 'htr-c'), el('i', 'hdot'), document.createTextNode(hlDelta(j.key, tr.delta, j.unit))), hlTSpark(tr.spark, d[0]));
+      r.setAttribute('aria-label', 'За ' + tr.days + ' дн.: ' + (tr.delta == null ? 'мало данных' : hlDelta(j.key, tr.delta, j.unit) + ', ' + d[1]));
+      t.appendChild(r);
+    });
+    return add(el('div', 'hsec'), el('div', 'hsec-h', 'Анализ тенденций'),
+      el('div', 'mu hsec-s', j.last ? 'Последнее значение: ' + hlDay(j.last.day) : 'Данных пока нет'), t,
+      el('div', 'mu hsec-n', 'На основе скользящей 7-дневной средней за период.'));
+  }
+  // A number and its unit kept on one line.
+  function hlNb(s) { return String(s || '').replace(/(\d) (%|мс|уд\/мин|вд\/мин|°C|мин|кг|ккал|шагов|ед\.)/g, '$1\u00a0$2'); }
+  // The two lines in a card with the metric's icon: the first bold, the second under it.
+  function hlLines(key, lines) {
+    return add(el('div', 'hins'), add(el('span', 'hins-i'), icon(HL_IC[key] || 'activity')),
+      add(el('div', 'tx'), el('div', 'hins-t', hlNb(lines[0])), lines[1] ? el('div', 'mu', hlNb(lines[1])) : null));
+  }
+  // The sheet's frame: the soft gradient with its stars on the panel, wider from 900 px.
+  function hlFrame(body) {
+    var p = body.parentNode;
+    if (p) p.classList.add('hsheet');
+  }
+  // A metric's sheet (a «Монитор» tile, a «Биология» row, a part of a ring): the siblings of `group` as pills.
+  function hlSeriesSheet(key, group, from) {
+    HL_CACHE = {};
+    var cur = { key: key, days: +(store('hlDays') || 30) }, body = el('div', 'hsh'), close = noop, seq = 0;
+    if (!HL_PERIODS.some(function (p) { return p[0] === cur.days; })) cur.days = 30;
+    var pills = hlPills(group.map(function (k) { return [k, HL_SN[k]]; }), key, function (k) { cur.key = k; draw(); });
+    function draw() {
+      var n = ++seq;
+      body.classList.add('busy');
+      var h = body.parentNode && body.parentNode.querySelector('.lsh');
+      hlSeries(cur.key, cur.days).then(function (j) {
+        if (n !== seq) return;
+        if (h) h.textContent = j.name;
+        render(j);
+      }, function () {
+        if (n !== seq) return;
+        body.classList.remove('busy');
+        add(clear(body), state('alert', 'Не загрузилось', 'Ещё раз', draw));
+      });
+    }
+    function render(j) {
+      body.classList.remove('busy');
+      var b = j.band, last = j.last, st = null, cls = '';
+      if (b && last) {
+        st = last.v > b.high ? 'Выше нормы' : last.v < b.low ? 'Ниже нормы' : 'Нормальный диапазон';
+        cls = last.v > b.high ? 'hs-above' : last.v < b.low ? 'hs-below' : 'hs-norm';
+      }
+      var unit = cur.key === 'sleep_min' ? '' : j.unit;
+      var abs = cur.key === 'wrist_temp' && j.abs ? woNum(j.abs.v) + ' °C по запястью' : null;
+      var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
+      var per = hlPills(HL_PERIODS.map(function (p) { return [p[0], p[1]]; }), cur.days, function (d) { cur.days = d; store('hlDays', String(d)); draw(); }, 'hper');
+      add(clear(body),
+        hlHead(last ? hlFmt(cur.key, last.v) : '—', last ? unit : '', last ? hlDay(last.day) : 'нет данных', st, cls,
+          b ? '≡ ' + hlFmt(cur.key, b.low) + ' – ' + hlFmt(cur.key, b.high) + (unit ? ' ' + unit : '') : null, abs),
+        j.points.length ? hlChart(j.points, { W: W, from: j.from, to: j.to, days: j.days, band: b, mean: b && b.mean, dots: j.days <= 90,
+          label: j.name, unit: unit, tick: function (v) { return hlFmt(cur.key, v); } }) : el('div', 'mu hsh-none', 'За этот период данных нет.'),
+        per, hlLines(cur.key, j.lines), hlTrends(j));
+    }
+    close = legalSheet(HL_SN[key], [pills, body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
+    body.appendChild(el('div', 'mu hsh-none', 'загружаю…'));
+    draw();
+  }
+  // A small ring of what a part gave (0–100) with the part's icon in the middle.
+  function hlMini(v, cls, ic) {
+    var size = 40, sw = 4, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
+    var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hring ' + cls, 'aria-hidden': 'true' });
+    box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
+    if (v > 0) box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw,
+      'stroke-dasharray': (c * Math.min(100, v) / 100).toFixed(1) + ' ' + c.toFixed(1), transform: 'rotate(-90 ' + h + ' ' + h + ')' }));
+    return add(el('span', 'hmini'), box, icon(ic));
+  }
+  // A part's norm: a short track, the norm's band on it, a dot where he is (in the status colour).
+  function hlNormTrack(p) {
+    var W = 76, H = 12, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hnt', 'aria-hidden': 'true' });
+    var n = p.norm, v = p.value, lo = Math.min(n.low, v), hi = Math.max(n.high, v), pad = (hi - lo) * 0.25 || 1;
+    lo -= pad; hi += pad;
+    function x(t) { return 5 + (t - lo) / (hi - lo) * (W - 10); }
+    box.appendChild(svg('rect', { x: 1, y: 4, width: W - 2, height: 4, rx: 2, 'class': 'tr' }));
+    box.appendChild(svg('rect', { x: x(n.low).toFixed(1), y: 4, width: Math.max(2, x(n.high) - x(n.low)).toFixed(1), height: 4, rx: 2, 'class': 'band' }));
+    box.appendChild(svg('circle', { cx: x(v).toFixed(1), cy: 6, r: 4.5, 'class': 'dot' }));
+    return box;
+  }
+  // A part's impact: the points it moved the ring, a small column up (sky) or down (orange) from the middle.
+  function hlImpact(i) {
+    var box = svg('svg', { viewBox: '0 0 8 28', width: 8, height: 28, 'class': 'himp', 'aria-hidden': 'true' });
+    box.appendChild(svg('rect', { x: 0, y: 13.5, width: 8, height: 1, 'class': 'mid' }));
+    var h = Math.min(13, Math.abs(i) / 25 * 13);
+    if (i) box.appendChild(svg('rect', { x: 1, y: i > 0 ? 14 - h : 14, width: 6, height: Math.max(1.5, h), rx: 2, 'class': i > 0 ? 'pos' : 'neg' }));
+    return add(el('span', 'hpimp'), box, el('b', '', (i > 0 ? '+' : i < 0 ? '−' : '') + Math.abs(i) + ' %'));
+  }
+  // A norm in words: minutes as «8–9 ч» or «0–30 мин» when they allow, a negative low with «…».
+  function hlRange(n, f, mk) {
+    if (mk === 'sleep_min' && n.low % 60 === 0 && n.high % 60 === 0) return n.low / 60 + '–' + n.high / 60 + ' ч';
+    if (mk === 'sleep_min' && n.high < 60) return n.low + '–' + n.high + ' мин';
+    return f(n.low) + (n.low < 0 ? ' … ' : '–') + f(n.high);
+  }
+  var HL_PART_KEY = { hrv: 'hrv', resting_hr: 'resting_hr', resp_rate: 'resp_rate', wrist_temp: 'wrist_temp', sleep_min: 'sleep_min' };
+  // A part's row: the mini ring, the name and value, the norm track and its words, the impact, the line; a tap — the
+  // part's own sheet (a metric's, or the sleep ring's).
+  function hlPartRow(p, ring, j) {
+    var inNorm = p.norm && p.value != null && p.value >= p.norm.low && p.value <= p.norm.high;
+    var arc = p.impact == null ? (inNorm ? 100 : 50) : p.score;
+    var mk = p.key === 'sleep_min' || p.unit === 'мин' ? 'sleep_min' : p.key === 'wrist_temp' ? 'wrist_temp' : null;
+    var grp = /^(ед|подх)/.test(p.unit), f = function (v) { return mk ? hlFmt(mk, v) : grp ? hlFmt('steps', v) : woNum(v); };
+    var vtxt = p.value == null ? '—' : f(p.value);
+    var unit = p.unit === 'мин' ? '' : p.unit;
+    var stCls = !p.norm || p.value == null ? '' : inNorm ? 'hs-norm' : (p.impact != null && p.impact < 0) || p.value < p.norm.low ? 'hs-below' : 'hs-above';
+    var row = add(el('div', 'hpr ' + stCls), hlMini(arc, ring, HL_PART_IC[p.label] || 'circle-dot'),
+      add(el('div', 'hpr-m'),
+        add(el('div', 'hpr-t'), el('span', 'hpr-n', p.label), p.impact != null && p.weight !== 1 ? hlImpact(p.impact) : null),
+        add(el('div', 'hpr-v'), el('b', '', vtxt + (unit ? ' ' + unit : '')),
+          p.norm && p.value != null ? hlNormTrack(p) : null,
+          p.norm ? el('span', 'mu', (grp ? 'цель ' : 'норма ') + hlRange(p.norm, f, mk)) : null),
+        el('div', 'mu hpr-l', p.line ? hlNb(p.line.charAt(0).toUpperCase() + p.line.slice(1)) : '')));
+    row.setAttribute('aria-label', p.label + ': ' + vtxt + (unit ? ' ' + unit : '') + (p.line ? '. ' + p.line : ''));
+    var to = p.key === 'sleep' ? function () { hlRingSheet('sleep', j, row); } : HL_PART_KEY[p.key] ? function () {
+      hlSeriesSheet(HL_PART_KEY[p.key], HL_MON_KEYS.indexOf(p.key) >= 0 ? HL_MON_KEYS : [p.key], row);
+    } : null;
+    if (to) { row.appendChild(add(el('span', 'hpr-go'), icon('chevron-right'))); tap(row, to); }
+    else row.setAttribute('role', 'group');
+    return row;
+  }
+  // The days of each load status over 30 days, a coloured bar a status (tour-7.jpg).
+  function hlBreakdown(sts) {
+    var t = add(el('div', 'htr hbd'), add(el('div', 'htr-h mu'), el('span', '', 'Статус'), el('span', '', 'Дни'), el('span', '', '%')));
+    sts.forEach(function (s) {
+      var bar = add(el('span', 'hbd-b'), el('i', 'hl-' + s.status));
+      bar.firstChild.style.width = s.pct + '%';
+      var r = add(el('div', 'htr-r'), el('span', 'hbd-n', HL_LOAD_RU[s.status]), add(el('span', 'hbd-d'), el('b', '', s.days + ' д.'), bar), el('span', 'mu hbd-p', s.pct + ' %'));
+      r.setAttribute('aria-label', HL_LOAD_RU[s.status] + ': ' + s.days + ' дн., ' + s.pct + ' %');
+      t.appendChild(r);
+    });
+    return add(el('div', 'hsec'), el('div', 'hsec-h', 'Разбивка за 30 дней'), t);
+  }
+  var HL_RING_CLS = { load: 'hl-load', recovery: 'hl-rec', sleep: 'hl-sleep' };
+  // A ring's sheet: the three rings as pills, the value large with its zone or status, the line; the 30 days over the
+  // zones; «Из чего»; the load — the muscles and the statuses' breakdown, the sleep — a way to the hours of sleep.
+  function hlRingSheet(k, j, from) {
+    HL_CACHE = {};
+    var cur = k, body = el('div', 'hsh'), close = noop, seq = 0;
+    var pills = hlPills(HL_RINGS.map(function (r) { return [r[0], HL_NAMES[r[0]]]; }), k, function (x) { cur = x; draw(); });
+    function draw() {
+      var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
+      if (h) h.textContent = HL_NAMES[cur];
+      clear(body);
+      var tgt = cur === 'load' ? j.load_target || [20, 49] : null;
+      var zone = s && cur !== 'load' ? (s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
+      var st = !s ? null : cur === 'load' ? HL_LOAD_RU[s.status || 'calibration'] : HL_ZONE_RU[cur][zone];
+      var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.status || 'calibration') : 'hz-st-' + zone;
+      var range = cur === 'load' ? 'Оптимальная: ' + tgt[0] + '–' + tgt[1] + ' %' : cur === 'sleep' ? 'Отлично от 85 %' : 'Высокое от 67 %';
+      add(body, hlHead(s ? String(s.value) : '—', s ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line ? s.line.replace(/^\d+ % — /, '') : null));
+      var chart = add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
+      body.appendChild(chart);
+      var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
+        el('div', 'mu hsec-s', cur === 'recovery' ? 'Обычный день — 75 %; каждая часть сдвигает вверх или вниз.' :
+          cur === 'sleep' ? 'Цель — 100 %; каждая часть показывает, сколько отняла.' : '7 дней нагрузки против обычной недели за 28 дней.'));
+      if (!s) {
+        parts.appendChild(el('div', 'mu', cur === 'recovery' ? 'Нужны ВСР и пульс во сне хотя бы за 5 дней.' :
+          cur === 'sleep' ? 'Сна за этот день нет.' : 'Пока нет базы: нужна неделя тренировок.'));
+      } else {
+        s.explain.forEach(function (p) { parts.appendChild(hlPartRow(p, HL_RING_CLS[cur], j)); });
+      }
+      if (cur === 'load') {
+        var m = (j.scores || {}).muscle;
+        if (m) {
+          var mr = add(el('div', 'hpr'), hlMini(m.value, 'hl-load', 'biceps-flexed'), add(el('div', 'hpr-m'),
+            add(el('div', 'hpr-t'), el('span', 'hpr-n', 'Мышечная нагрузка')),
+            add(el('div', 'hpr-v'), el('b', '', m.value + ' %'), el('span', 'mu', HL_LOAD_RU[m.status || 'calibration'])),
+            el('div', 'mu hpr-l', m.explain[0] ? hlNb(m.explain[0].line.charAt(0).toUpperCase() + m.explain[0].line.slice(1)) : '')));
+          mr.setAttribute('role', 'group');
+          mr.setAttribute('aria-label', 'Мышечная нагрузка: ' + m.value + ' %');
+          parts.appendChild(mr);
+        }
+      }
+      body.appendChild(parts);
+      if (cur === 'sleep') {
+        var go = add(el('div', 'hpr hgo'), add(el('span', 'hmini'), icon('moon')), add(el('div', 'hpr-m'), el('span', 'hpr-n', 'Время сна по дням'),
+          el('div', 'mu', 'график за 30 дней — год, тенденции')), add(el('span', 'hpr-go'), icon('chevron-right')));
+        body.appendChild(tap(go, function () { hlSeriesSheet('sleep_min', HL_MON_KEYS, go); }));
+      }
+      var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32)), ring = cur;
+      hlSeries(cur, 30, j.date).then(function (sj) {
+        if (n !== seq) return;
+        // The load rarely nears 100: its axis to the next ten over the top (at least 60), the others 0–100.
+        var top = ring === 'load' ? Math.min(100, Math.max(60, Math.ceil((Math.max.apply(null, sj.points.map(function (p) { return p.v; }).concat([0])) + 8) / 10) * 10)) : 100;
+        add(clear(chart), sj.points.length ? hlChart(sj.points, { W: W, from: sj.from, to: sj.to, days: 30, zones: sj.zones, dots: true, hi: top,
+          label: HL_NAMES[ring] + ' за 30 дней', unit: '%', tick: function (v) { return String(Math.round(v)); },
+          dotCls: function (p) {
+            if (ring === 'load') return 'hl-' + (p.s || 'calibration');
+            var z = sj.zones.filter(function (q) { return p.v >= q.low && p.v <= q.high; }).pop();
+            return z ? 'hz-' + z.kind : '';
+          },
+          strip: ring === 'load' ? function (p) { return 'hl-' + (p.s || 'calibration'); } : null,
+          tipSub: ring === 'load' ? function (p) { return ' · ' + (HL_LOAD_RU[p.s] || '').toLowerCase(); } : null
+        }) : el('div', 'mu hsh-none', 'За 30 дней данных нет.'), hlLines(ring, sj.lines));
+        if (ring === 'load' && sj.statuses) body.appendChild(hlBreakdown(sj.statuses));
+      }, function () {
+        if (n !== seq) return;
+        add(clear(chart), el('div', 'mu hsh-none', 'График не загрузился.'));
+      });
+    }
+    close = legalSheet(HL_NAMES[k], [pills, body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
+    draw();
   }
   // A tile's scale: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it with a halo; both in the
   // status colour of the tile (--st).
@@ -14378,7 +14813,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var tile = add(el('div', 'hmt' + (st ? ' hs-' + t.status : '')), hlTrack(t), add(el('div', 'hmx'), el('div', 'mu hml', n[0]),
         add(el('div', 'hmv'), document.createTextNode(hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
         st ? pill(st, 'hst') : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')));
-      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')));
+      tap(tile, function () { hlSeriesSheet(t.key, HL_MON_KEYS, tile); });
+      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')) + ' — график');
       g.appendChild(tile);
     });
     c.appendChild(g);
@@ -14475,7 +14911,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var r = add(el('div', 'row hbr'), add(el('span', 'tx'), el('div', 'mu', m[1]),
         add(el('div', 'hbv'), document.createTextNode(last == null ? '—' : woNum(last)), last != null && m[2] ? el('small', '', ' ' + m[2]) : null),
         tr ? el('div', 'mu', tr) : null), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'));
-      r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (dv ? ', за 30 дней ' + dv : '')));
+      tap(r, function () { hlSeriesSheet(m[0], HL_BIO_KEYS, r); });
+      r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (dv ? ', за 30 дней ' + dv : '')) + ' — график');
       c.appendChild(r);
     });
     return any ? c : null;
