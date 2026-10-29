@@ -80,6 +80,7 @@
 .da-gv{min-width:0;font-weight:500;font-size:13px;overflow-wrap:anywhere}
 .da-g .mu{font-size:12px}
 .da-g .pill{margin-top:5px;height:18px;font-size:11px}
+.da-g .vbh{margin-top:5px;font-size:12px}
 /* «Фильмы» picks (the phone view's .fgrid): as many columns as fit; desktop-a.js trims the tail to whole rows. */
 .fgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .pgrid .da-rates{gap:3px}.pgrid .da-rates .pill{min-height:24px;padding:2px 5px;font-size:11px}.pgrid .da-rates.rate .pill{width:26px;height:26px;padding:0}

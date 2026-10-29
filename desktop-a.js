@@ -541,7 +541,9 @@
           add(el('div', 'da-gt'), add(el('span', 'da-gv', g.venue), g.verified_only ? icon('shield-check', 'sx') : null),
             g.max_players != null ? el('span', 'num', g.taken + '/' + g.max_players) : null),
           el('div', 'mu', [lv[g.lv] || g.lv, price].filter(Boolean).join(' · ')),
-          g.mine ? A.pill('ты записан', 'acc') : g.busy ? A.pill('у тебя игра') : null);
+          g.mine ? A.pill('ты записан', 'acc') : g.busy ? A.pill('у тебя игра') : null,
+          // Today's and tomorrow's: the health line (docs/specs/one-system.md, seam 2).
+          A.vbHint(j.hint, g.date, j.today));
         b.title = [g.venue, g.street].filter(Boolean).join(', ');
         if (g.url) A.tap(b, function () { A.openLink(g.url); });
         return b;

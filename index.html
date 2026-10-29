@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 22:36">
+<meta name="published" content="2026-10-29 23:02">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -407,6 +407,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .tboard>.card{margin:0}
 .tbl>.fi:first-child{border-top:1px solid var(--line)}
 .tboard .none{padding:4px 14px 12px;color:var(--muted)}
+.tdef{margin:0 0 12px}.tdef .pill{height:auto;min-height:32px;padding:6px 12px;font-size:13px;line-height:1.25;white-space:normal;text-align:left}
+.vbh{margin-top:2px;font-size:13px;line-height:1.35}.vbh.warn{color:var(--warn)}.vbh.good{color:var(--good)}.bl.vbh{white-space:normal}
 @media (min-width:1800px){
   .tboard{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,.8fr);margin:0}
   .main:has(>.tboard){max-width:none;padding-bottom:16px}
@@ -3050,6 +3052,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function capped(rows, n) {
     return rows.length > n ? rows.slice(0, n).concat([el('div', 'row small mu', '+' + (rows.length - n) + ' ещё')]) : rows;
   }
+  // The health line under a game of today or tomorrow (docs/specs/one-system.md, seam 2): h — volleyball's or home's
+  // healthHint {line, low, legs}; «лучше пропустить» and tired legs warn, «можно» good. null — nothing to say.
+  function vbHint(h, date, today, cls) {
+    if (!h || !h.line || (date !== today && date !== addDays(today, 1))) return null;
+    return el('div', (cls ? cls + ' ' : '') + 'vbh ' + (h.low || (h.legs != null && h.legs < 70) ? 'warn' : 'good'), h.line);
+  }
   // One of his own PNH games, on «Сегодня» and «Волейбол».
   function myGameRow(g) {
     var s = wp(g.starts_at), date = s.year + '-' + s.month + '-' + s.day, time = s.hour + ':' + s.minute;
@@ -3533,13 +3541,17 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           .sort(function (x, y) { return x.start_at.localeCompare(y.start_at); })[0];
         r.go = tab('vb');
         if (mine.length) {
+          var q0 = wp(mine[0].starts_at), hv = vbHint(j.vb_hint, q0.year + '-' + q0.month + '-' + q0.day, today, 'bl');
           r.now = soon(mine[0].starts_at, mine[0].ends_at);
           big(dayTime(mine[0].starts_at), 'vs');
           note([mine[0].venue, mine[0].status === 'paid' ? 'оплачено' : 'записан'].filter(Boolean).join(' · '));
+          if (hv) n.appendChild(hv);
           if (s === 'm' && mine[1]) line('дальше: ' + dayTime(mine[1].starts_at) + ' · ' + mine[1].venue, 'mu');
         } else if (free) {
           big(WEEK[wd(today)] + ' ' + free.start_at, 'vs');
           note([free.venue, free.max_players != null && free.free_spots != null ? (free.max_players - free.free_spots) + '/' + free.max_players : ''].filter(Boolean).join(' · '));
+          var hf = vbHint(j.vb_hint, today, today, 'bl');
+          if (hf) n.appendChild(hf);
         } else quiet(m.volleyball === null ? 'недоступно' : 'игр нет');
       },
       // His next screening (else the next premiere); «сейчас» within three hours. Its poster (widget-posters.md) on the
@@ -4152,11 +4164,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           }
           line(day(a0.d), 'mu');
           big(a0.t);
-          return note([g0.venue, tt(by[g0.activity_id])].filter(Boolean).join(' · '));
+          note([g0.venue, tt(by[g0.activity_id])].filter(Boolean).join(' · '));
+          var h0 = vbHint(v.hint, a0.d, today, 'bl');
+          return h0 && n.appendChild(h0);
         }
         if (g0) {
           big(day(a0.d) + ' · ' + a0.t, 'vs');
           line([g0.venue, g0.status === 'paid' ? 'оплачено' : 'записан', tt(by[g0.activity_id])].filter(Boolean).join(' · '), 'mu');
+          var h1 = vbHint(v.hint, a0.d, today, 'bl');
+          if (h1) n.appendChild(h1);
           if (s === 'l' && mine[1]) {
             var a1 = at(mine[1]);
             line('дальше: ' + day(a1.d) + ' · ' + a1.t + ' · ' + mine[1].venue, 'mu');
@@ -5269,7 +5285,43 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     chips.setAttribute('aria-label', 'Метка');
     // feed: «Главная»'s calendar while it is hidden (calFeedCard), between the field and the list.
     var feed = el('div'), feedLast = null;
-    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), feed, chips, body);
+    // From five overdue tasks: «Просрочено 23 · перенести всё на завтра» (docs/specs/one-system.md, seam 5), as the
+    // morning brief's button; a confirm sheet, then tasks_defer_overdue.
+    var defer = el('div', 'tdef');
+    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), feed, defer, chips, body);
+    function deferPaint(today) {
+      var late = tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date < today; });
+      clear(defer);
+      defer.hidden = late.length < 5;
+      if (defer.hidden) return;
+      var b = el('button', 'pill bad', 'Просрочено ' + late.length + ' · перенести всё на завтра');
+      b.type = 'button';
+      b.onclick = function () { deferSheet(late, today, b); };
+      defer.appendChild(b);
+    }
+    function deferSheet(late, today, from) {
+      var tm = addDays(today, 1), close;
+      var go = label(el('button', 'btn'), null, 'Перенести ' + late.length), no = label(el('button', 'btn ghost'), 'x', 'Отмена');
+      go.type = no.type = 'button';
+      no.onclick = function () { close(); };
+      go.onclick = function () {
+        go.disabled = true;
+        haptic();
+        api('miniapp', { action: 'tasks_defer_overdue' }, 15000, false, {}).then(function (j) {
+          close();
+          var n = (j && j.moved) || 0;
+          toast(n ? 'Перенёс на завтра: ' + n : 'Просроченных нет', 'check-square');
+          late.forEach(function (t) { if (t.due_date < today) t.due_date = tm; });
+          fresh();
+          render();
+          load();
+        }, function () { go.disabled = false; });
+      };
+      close = legalSheet('Перенести на завтра', [
+        el('div', 'sub bcsub', 'Просрочено ' + late.length + '. Все получат срок «завтра, ' + WEEK[wd(tm)] + ' ' + dm(tm) +
+          '» — время, шаги и заметки останутся.'),
+        add(el('div', 'bar mact'), no, go)], from);
+    }
     // What the server understood: « · до пт 24.10 · 15:00 · Pomoc».
     function parsedLine(p) {
       var s = [p.due_date ? 'до ' + WEEK[wd(p.due_date)] + ' ' + dm(p.due_date) : '', p.due_time ? String(p.due_time).slice(0, 5) : '',
@@ -5810,6 +5862,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (!areas.some(function (a) { return a[0] === area; })) area = '';
       drawChips();
       var today = warsawToday(), soon = addDays(today, 7), g = { over: [], today: [], soon: [], later: [], none: [], done: [] };
+      deferPaint(today);
       // The badge (docs/specs/home-dashboard.md) counts every area's overdue and today's, whatever the chip.
       setTaskBadge(tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date <= today; }).length);
       tasks.forEach(function (t) {
@@ -8671,9 +8724,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         chips(f.levels, 'levels', j.levels.map(function (l) { return [l.id, lv[l.id]]; })),
         add(chips(f.weekdays, 'weekdays', WEEK.map(function (w, i) { return [i, w]; })), sel)));
       clear(body);
+      // Today's and tomorrow's games: the health line under the hall.
+      function hinted(r, date) {
+        var h = vbHint(j.hint, date, j.today);
+        if (h) r.querySelector('.tx').appendChild(h);
+        return r;
+      }
       if (j.my_games.length) {
         var c = mkCard('ball', 'Мои игры');
-        j.my_games.forEach(function (g) { c.appendChild(goes(myGameRow(g))); });
+        j.my_games.forEach(function (g) {
+          var q = wp(g.starts_at);
+          c.appendChild(goes(hinted(myGameRow(g), q.year + '-' + q.month + '-' + q.day)));
+        });
         body.appendChild(c);
       }
       j.games.forEach(function (g) {
@@ -8690,7 +8752,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           : g.start_at + '–' + g.stop_at + ' · ' + g.venue,
           sub, g.mine ? pill('ты записан', 'acc') : g.busy ? pill('у тебя игра') : null, g.url);
         if (g.full) r.className += ' off';
-        days[g.date].appendChild(goes(r));
+        days[g.date].appendChild(goes(hinted(r, g.date)));
       });
       if (!j.games.length) body.appendChild(state('ball', 'Подходящих игр нет — переключи залы или уровни'));
     }
@@ -16709,7 +16771,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     api: api, store: store, zl: zl, dm: dm, dmt: dmt, plain: plain, dealParts: dealParts, whenW: whenW, wd: wd, wp: wp, days: days,
     addDays: addDays, plural: plural, grouped: grouped, openLink: openLink, svg: svg, chart: chart,
     drawProduct: drawProduct, weekChart: weekChart, rateText: rateText, rateStrip: rateStrip, hrow: hrow, capped: capped,
-    myGameRow: myGameRow, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, imgOk: imgOk, categoryOf: categoryOf,
+    myGameRow: myGameRow, vbHint: vbHint, sleepLine: sleepLine, receiptsLine: receiptsLine, prodPic: prodPic, imgOk: imgOk, categoryOf: categoryOf,
     todayLabel: todayLabel, show: show, views: VIEWS, markItem: markItem, keepItems: keepItems, dropMark: dropMark,
     itemKey: itemKey, markPick: markPick, keepPicks: keepPicks, flushBatch: flushBatch, pickSeg: pickSeg,
     pickAll: pickAll, dealsAll: dealsAll, shopIs: shopIs, shopSegs: shopSegs, names: NAMES, get tabs() { return visibleTabs(); }, main: main, hdr: hdr, rail: rail,
