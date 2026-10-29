@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 17:21">
+<meta name="published" content="2026-10-29 17:33">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -984,11 +984,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 /* A workout's detail sheet (docs/specs/workout-map.md): six tiles three across, the map 240 px tall (from 900 px beside
    the tiles, the sheet widened), the pulse on its zones' bands — one hue (--ring-load) deepening with the zone, the line
-   in --mark so both accents carry it; the tiles under a dark map inverted by the spec's filter, the route not. */
+   in --mark so both accents carry it; in the dark each tile inverted by the spec's filter (on the tile pane WebKit does
+   not draw it), the route not. */
 .tsum .sub.wdsub{padding:0 0 12px;color:var(--muted);font-size:13px}
 .wtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .wtile{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
 .wtile .mu{font-size:12px}.wtv{font:800 17px/1.25 var(--font-num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wtv.mu{font-weight:500}
+.wtv small{font:500 11px var(--font);color:var(--muted)}.wmain>:first-child{margin-top:14px}
 .wline{margin:8px 0 0;font-size:12px}.wchart{margin:14px 0 0}.wchart .hfh,.wex .hfh{margin:0 0 4px}.wex{margin:14px 0 0}.wex .wl{display:block}
 .wload{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:10px 12px;border-radius:var(--r-b);background:var(--accent-soft);font-weight:600;font-size:13px}
 .wload .i{flex:none;width:18px;height:18px;color:var(--mark)}
@@ -996,21 +998,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .wmap{position:relative;z-index:0;height:240px;border-radius:var(--r-b);overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
 .wmap.off{display:grid;place-items:center;padding:16px;color:var(--muted);font-size:13px;text-align:center}
 .wmap.leaflet-container{font:11px/1.4 var(--font);background:var(--surface-2)}
-.wmap .leaflet-control-attribution{background:color-mix(in srgb,var(--solid) 82%,transparent);color:var(--muted);font-size:10px}
+.wmap.leaflet-container .leaflet-control-attribution{background:color-mix(in srgb,var(--solid) 82%,transparent);color:var(--muted);font-size:10px}
 .wmap .leaflet-control-attribution a{color:var(--link)}
-.wmap .leaflet-bar a{background:var(--solid);color:var(--fg);border-color:var(--line)}
+.wmap.leaflet-container .leaflet-bar a{background:var(--solid);color:var(--fg);border-color:var(--line)}
 .wmap path.wrth{stroke:var(--solid);stroke-opacity:.9}.wmap path.wrt{stroke:var(--mark);stroke-opacity:1}
 .wmap path.wpt{stroke:var(--mark);fill:var(--solid);fill-opacity:1}.wmap path.wpt.wfin{fill:var(--mark);stroke:var(--solid)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9)}}
-:root[data-theme="dark"] .wmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wmap .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.9)}}
+:root[data-theme="dark"] .wmap .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.9)}
 .chart.whr .wz{fill:var(--ring-load)}.chart.whr .wz1{fill-opacity:.06}.chart.whr .wz2{fill-opacity:.1}.chart.whr .wz3{fill-opacity:.15}
 .chart.whr .wz4{fill-opacity:.21}.chart.whr .wz5{fill-opacity:.28}
 .chart.whr .wln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.chart.whr .war{fill:var(--mark);fill-opacity:.1}.chart.whr .wdot{fill:var(--mark);stroke:var(--solid);stroke-width:2}
-.chart.whr .hit{fill:transparent;outline:none}
+.chart.whr .war{fill:var(--mark);fill-opacity:.1}
 @media (min-width:900px){.tsum>div:has(.wdet.wmapd){max-width:1040px}
-  .wdet.wmapd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
-  .wdet.wmapd .wside{margin:0;position:sticky;top:0}.wdet.wmapd .wmap{height:420px}}
+  .wdet.wmapd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"t m" "b m";column-gap:16px;align-items:start}
+  .wdet.wmapd .wtop{grid-area:t}.wdet.wmapd .wmain{grid-area:b}
+  .wdet.wmapd .wside{grid-area:m;margin:0;position:sticky;top:0}.wdet.wmapd .wmap{height:440px}}
 /* «Здоровье» (docs/specs/health-v2.md, the look — docs/specs/health-look.md): Bevel's soft gradients. The rings — thick,
    a gradient down the arc (#g-ring-* in the sprite) and a soft glow (#g-glow, stronger in the dark), each ring on its own
    tinted track; the main stops validated by dataviz for both themes (the light top stops are decoration, every ring is
@@ -1502,8 +1504,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function pill(s, kind) { return el('span', 'pill' + (kind ? ' ' + kind : ''), s); }
   // The only <img> sources: TMDB posters, Cinema City's posters, the shops' product photos (Aldi's on scene7 and
   // an-pcm, Biedronka's image host), HoYoLAB icons and Enka's profile pictures (https, a host under hoyoverse.com or
-  // hoyolab.com); besides them only the app's own files (brands/*.png of «Деньги», set by moneyLogo) and a picked
-  // file's blob: in the receipt reader.
+  // hoyolab.com); besides them only the app's own files (brands/*.png of «Деньги», set by moneyLogo), a picked
+  // file's blob: in the receipt reader, and OpenStreetMap's tiles, which Leaflet sets on a workout's map (woMap).
   function imgOk(u) {
     return /^https:\/\/image\.tmdb\.org\//.test(u) || /^https:\/\/enka\.network\/ui\//.test(u)
       || /^https:\/\/www\.cinema-city\.pl\/xmedia/.test(u)
@@ -14811,21 +14813,23 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var km = x.distance_km != null ? Number(x.distance_km) : null, pace = x.pace_min_km != null ? Number(x.pace_min_km) : null;
       if (km == null) woParts(x).forEach(function (s) { if (/ км$/.test(s)) km = foodNum(s.replace(' км', '')); });
       if (pace == null && km >= 0.1 && x.minutes) pace = x.minutes / km;
-      var bike = x.kind === 'bike', side = el('div', 'wside'), main2 = el('div', 'wmain');
+      // The tiles, then the map (from 900 px on the right, beside both), then the rest.
+      var bike = x.kind === 'bike', top = el('div', 'wtop'), side = el('div', 'wside'), main2 = el('div', 'wmain');
       var tiles = el('div', 'wtiles');
-      [['Минуты', x.minutes ? woDur(x.minutes) : null], ['Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null],
-        ['Ср. пульс', x.avg_hr != null ? x.avg_hr + ' уд/мин' : null], ['Макс', x.max_hr != null ? x.max_hr + ' уд/мин' : null],
-        ['Дистанция', km ? woNum(Math.round(km * 100) / 100) + ' км' : null],
-        bike ? ['Скорость', pace ? woNum(60 / pace) + ' км/ч' : null] : ['Темп', pace ? woPace(pace) + ' /км' : null]].forEach(function (t) {
-        var c = add(el('div', 'wtile'), el('div', 'mu', t[0]), el('div', 'wtv' + (t[1] == null ? ' mu' : ''), t[1] == null ? '—' : t[1]));
-        c.setAttribute('aria-label', t[0] + ': ' + (t[1] == null ? 'нет данных' : t[1]));
+      [['Минуты', x.minutes ? woDur(x.minutes) : null, ''], ['Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null, ''],
+        ['Ср. пульс', x.avg_hr, 'уд/мин'], ['Макс', x.max_hr, 'уд/мин'],
+        ['Дистанция', km ? woNum(Math.round(km * 100) / 100) : null, 'км'],
+        bike ? ['Скорость', pace ? woNum(60 / pace) : null, 'км/ч'] : ['Темп', pace ? woPace(pace) : null, '/км']].forEach(function (t) {
+        var none = t[1] == null, c = add(el('div', 'wtile'), el('div', 'mu', t[0]),
+          add(el('div', 'wtv' + (none ? ' mu' : '')), document.createTextNode(none ? '—' : String(t[1])), !none && t[2] ? el('small', '', ' ' + t[2]) : null));
+        c.setAttribute('aria-label', t[0] + ': ' + (none ? 'нет данных' : t[1] + (t[2] ? ' ' + t[2] : '')));
         tiles.appendChild(c);
       });
-      main2.appendChild(tiles);
-      if (x.elev_up_m) main2.appendChild(el('div', 'mu wline', 'набор высоты ' + x.elev_up_m + ' м'));
+      top.appendChild(tiles);
+      if (x.elev_up_m) top.appendChild(el('div', 'mu wline', 'набор высоты ' + x.elev_up_m + ' м'));
       var route = Array.isArray(x.route) && x.route.length > 1 ? x.route : null;
       body.className = 'wdet' + (route ? ' wmapd' : '');
-      add(clear(body), main2, route ? side : null);
+      add(clear(body), top, route ? side : null, main2);
       if (route) {
         var mapBox = el('div', 'wmap');
         mapBox.setAttribute('role', 'img');
@@ -14910,7 +14914,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     var top = 0;
     hr.forEach(function (p, i) { if (p[1] > hr[top][1]) top = i; });
     var tx = x(hr[top][0]), ty = y(hr[top][1]), tl = String(hr[top][1]);
-    add(box, svg('circle', { cx: tx, cy: ty, r: 4.5, 'class': 'dot wdot' }),
+    add(box, svg('circle', { cx: tx, cy: ty, r: 4.5, 'class': 'dot' }),
       svg('text', { x: Math.min(Math.max(tx, L + 10), W - R - 10), y: ty - 8 < T ? ty + 16 : ty - 8, 'class': 'tk strong', 'text-anchor': 'middle' }, tl));
     var xh = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, 'class': 'xh' });
     xh.style.display = 'none';
