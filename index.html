@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 18:10">
+<meta name="published" content="2026-10-29 18:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1170,6 +1170,47 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .hbd-d{display:flex;align-items:center;gap:8px;min-width:0}.hbd-d b{flex:none;width:34px;font:600 13px var(--font-num);font-variant-numeric:tabular-nums}
 .hbd-b{flex:1;height:6px;border-radius:3px;background:var(--track);overflow:hidden}.hbd-b i{display:block;height:100%;border-radius:3px;background:var(--hs)}
 .hbd-p{text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
+/* The full-screen «Биологический возраст» (docs/specs/labs.md, the last section; docs/bevel/bioage-screen.jpg): the
+   accent-tinted gradient with SVG stars (no picture), the title and the week's date centred, the number large over a
+   faint disc with its band of ticks, the segment of the gauge and its dots in the accent (older — orange); younger
+   words green, older orange; «Из чего» in a ring of the accent; the groups as pill rows. On a phone the sheet fills
+   the screen above the bottom bar, which stays. */
+.tsum.bfull>div{height:100%;max-height:none;border-radius:0;border:0;padding-top:calc(6px + env(safe-area-inset-top))}
+@media (max-width:899px){.tsum.bfull{bottom:calc(var(--bar) + env(safe-area-inset-bottom))}.tsum.bfull>div{padding-bottom:24px;box-shadow:none}.tsum.bfull>div>.grab{visibility:hidden}}
+.tsum>div.hsheet.bsheet{position:relative;--star:color-mix(in srgb,var(--fg) 70%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 18%,var(--solid)) 0,color-mix(in srgb,var(--accent) 6%,var(--solid)) 520px,var(--solid) 900px) var(--solid);background-attachment:local}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .tsum>div.hsheet.bsheet{--star:color-mix(in srgb,var(--mark) 40%,transparent)}}
+:root[data-theme="light"] .tsum>div.hsheet.bsheet{--star:color-mix(in srgb,var(--mark) 40%,transparent)}
+.bas{position:relative}.bas>*{position:relative}
+.bas>svg.bas-stars{position:absolute;left:-16px;right:-16px;top:-60px;width:calc(100% + 32px);height:620px;pointer-events:none}.bas-stars circle{fill:var(--star)}
+.bas-top{position:sticky;top:0;z-index:2;height:0}
+.bas-x{position:absolute;right:-4px;top:-38px;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--fg)}
+.bas-x .i{width:18px;height:18px}
+.bas-d{margin:-2px 0 0;text-align:center;font-size:15px}
+.bas-gz{max-width:400px;margin:4px auto 0}.bas-g{display:block;width:100%;height:auto;overflow:visible}
+.bas-disc{fill:color-mix(in srgb,var(--fg) 3%,transparent)}.bas-band{fill:none;stroke:color-mix(in srgb,var(--fg) 5%,transparent);stroke-width:18}
+.bas-tk{stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:1}.bas-tk.maj{stroke:color-mix(in srgb,var(--fg) 40%,transparent);stroke-width:1.5}
+.bas-gl{fill:var(--muted);font:600 12px var(--font-num)}.bas-cl{fill:var(--fg);font:700 15px var(--font-num)}
+.bas-seg{fill:none;stroke:var(--mark);stroke-width:12;stroke-linecap:round;filter:var(--hl-glow)}.bas-seg.old{stroke:var(--ring-load)}
+.bas-bio{fill:var(--solid);stroke:var(--mark);stroke-width:4}.bas-bio.old{stroke:var(--ring-load)}.bas-cal{fill:var(--fg)}
+.bas-gz{position:relative}.bas-c{position:absolute;left:8%;right:8%;top:15%;display:flex;flex-direction:column;align-items:center;text-align:center}
+.bas-big{font:800 72px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.bas-w{font-weight:700;font-size:15px}.bas-c .bas-w{font-size:17px;margin-top:4px}
+.bas-yg{color:color-mix(in srgb,var(--ring-recovery) 82%,var(--fg))}.bas-old{color:color-mix(in srgb,var(--ring-load) 85%,var(--fg))}.bas-eq{color:var(--muted)}
+.bas-dp{display:inline-flex;align-items:center;gap:8px;max-width:min(100%,250px);margin-top:14px;padding:8px 10px 8px 12px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface-2) 80%,transparent);color:var(--fg);font:600 13px/1.3 var(--font);text-align:left}
+.bas-dp>.i{flex:none;width:16px;height:16px;color:var(--muted)}.bas-dpi{flex:none;display:grid;color:var(--muted)}.bas-dpi .i{width:14px;height:14px}
+.bas-dpi.old{color:var(--ring-load)}.bas-dpi.yg{color:var(--ring-recovery)}.bas-nd{margin-top:12px;font-size:12px}
+.bas-nu{margin:4px 0 16px;text-align:center;color:var(--muted);font-size:15px}.bas-nu b{color:var(--fg)}
+.bas-h{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid color-mix(in srgb,var(--mark) 55%,transparent);border-radius:var(--r-b);background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.bas-hi{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--mark)}.bas-hi .i{width:18px;height:18px}
+.bas-h .tx{flex:1;min-width:0}.bas-ht{font-weight:800;font-size:16px;color:var(--mark)}.bas-h .mu{font-size:13px;margin-top:2px;line-height:1.35}
+.bas-h .hpr-go,.bas-r .hpr-go{align-self:center}
+.hpr.bas-r{border-radius:30px;padding:10px 14px 10px 10px}.hpr.bas-r .hmini{width:48px;height:48px}.hpr.bas-r .hmini>svg.hring{width:48px;height:48px}
+.bas-r .hpr-n{font-size:16px}.bas-r .bas-w{font-size:14px;margin-top:2px}.bas-n{margin-top:14px}
+.hpr.bas-f{align-items:flex-start;padding:12px 14px}.hpr.bas-f.mu .hpr-n{color:var(--muted)}
+.bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
+.bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
+.bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
 </style>
 </head>
 <body>
@@ -14937,8 +14978,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // «Биологический возраст»: the overall large (the blood's PhenoAge at its freshness weight and the fitness age from
   // VO2max, their mean), against his age on a single axis of years (a dot each, the overall in the accent, the age a
   // line); the three parts a row each (the blood with the panel's date and weight, the fitness with VO2max, «по
-  // привычкам» — the factor model's plain sum); «Из чего» opens every part, the head's target his birth date and
-  // height («Цели»). «Анализы»: the latest of each test by group, its value, the lab's range as a band with the value's
+  // привычкам» — the factor model's plain sum); a tap on the head or «Из чего» opens the full-screen sheet (bioAgeSheet:
+  // the week's number of bioage_log and every part), the head's target his birth date and height («Цели»). «Анализы»: the latest of each test by group, its value, the lab's range as a band with the value's
   // dot and «норма / выше / ниже»; a tap — its dates (the history sheet); «Прочее» folded; «Добавить PDF» — how.
   // The charts are inline SVG on the app's variables (the norm green, above sky, below orange, as «Монитор»).
   var LAB_FLAG = { norm: 'норма', high: 'выше', low: 'ниже' }, LAB_ST = { norm: 'norm', high: 'above', low: 'below' };
@@ -14994,13 +15035,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function bioAgeCard(j, box, reload) {
     var c = mkCard('dna', 'Биологический возраст'), p = j.pheno || {}, f = j.fitness || {}, l = j.lifestyle || {};
     c.className += ' hbage';
-    var gb = foodBtn('mtoday', 'target', 'Цели', function () { foodGoalSheet(gb, function () { cacheDrop('body:bioage'); reload(); }); });
+    // A new birth date or height rewrites this week's number (bioage_recompute), then the card reloads.
+    var gb = foodBtn('mtoday', 'target', 'Цели', function () {
+      foodGoalSheet(gb, function () {
+        api('miniapp', { action: 'bioage_recompute' }, 15000, true, {}).catch(noop).then(function () { cacheDrop('body:bioage'); reload(); });
+      });
+    });
     gb.setAttribute('aria-label', 'Дата рождения и рост');
     c.firstChild.appendChild(gb);
     var head = add(el('div', 'bah'), add(el('div', 'bav'), document.createTextNode(bioYears(j.overall)), j.overall != null ? el('small', '', ' лет') : null),
       el('div', 'mu', j.overall == null ? 'нужен анализ крови или VO2max' : bioDelta(j.overall - j.age) + ' календарных ' + woNum(j.age)));
-    c.appendChild(head);
-    if (j.overall != null) c.appendChild(add(el('div', 'bax-w'), bioAxis(j, Math.max(260, Math.min(560, ((box && box.clientWidth) || 360) - 28)))));
+    // The head and the axis open the full-screen sheet (the week's number, the gauge, the groups).
+    var open = add(el('div', 'bah-go'), head);
+    if (j.overall != null) open.appendChild(add(el('div', 'bax-w'), bioAxis(j, Math.max(260, Math.min(560, ((box && box.clientWidth) || 360) - 28)))));
+    open.setAttribute('aria-label', 'Биологический возраст ' + bioYears(j.overall) + ' — подробно');
+    c.appendChild(tap(open, function () { bioAgeSheet(j, open); }));
     function part(ic, name, v, sub) {
       return add(el('div', 'row bpart'), add(el('span', 'lead'), icon(ic)), add(el('span', 'tx'), el('div', 't', name), el('div', 'mu', sub)),
         el('span', 'pr' + (v == null ? ' mu' : ''), v == null ? '—' : woNum(v)));
@@ -15012,7 +15061,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       f.age == null ? 'VO2max с часов ещё нет' : 'VO2max ' + woNum(f.vo2max) + (f.floor ? ' — выше медианы 20-летних, младше в таблице нет' : ' · медиана возраста ' + woNum(f.median))));
     c.appendChild(part('activity', 'По привычкам', l.factors && l.factors.length ? l.age : null,
       l.factors && l.factors.length ? 'сумма ' + (l.sum > 0 ? '+' : l.sum < 0 ? '−' : '') + woNum(Math.abs(l.sum)) + ' за 28 дней · ' + l.factors.length + ' факторов' : 'мало данных за 28 дней'));
-    var xb = foodBtn('btn ghost', 'layers', 'Из чего', function () { bioExplainSheet(j, xb); });
+    var xb = foodBtn('btn ghost', 'layers', 'Из чего', function () { bioAgeSheet(j, xb); });
     add(c, add(el('div', 'foot'), xb), el('div', 'mu msrc bnote', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
     return c;
   }
@@ -15035,36 +15084,217 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       sec.appendChild(row);
     });
   }
-  function bioExplainSheet(j, from) {
-    var p = j.pheno || {}, f = j.fitness || {}, l = j.lifestyle || {}, nodes = [];
-    var s1 = add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Кровь · PhenoAge'), el('span', 'pr', p.age == null ? '—' : woNum(p.age))));
-    if (p.age == null) s1.appendChild(el('div', 'mu', 'Нужны все девять показателей. Нет: ' + (p.missing || []).join(', ') + '.'));
-    else {
-      var ex = p.explain || [], max = Math.max.apply(null, ex.map(function (x) { return Math.abs(x.years); }));
-      s1.appendChild(el('div', 'mu', 'Анализ ' + dmy(p.taken_on) + ', возраст на дату ' + woNum(p.age_at != null ? p.age_at : p.age - p.delta) + ' · ' + bioDelta(p.delta) +
-        ' · вес ' + Math.round(p.weight * 100) + ' % (полный до 6 мес., к 18 мес. — ноль).'));
-      bioRows(s1, ex.map(function (x) { return [x.label, x.value == null ? 'при средних значениях' : woLab(x.value) + ' ' + x.unit, x.years]; }), max);
+  // --- The full-screen «Биологический возраст» (docs/specs/labs.md, the last section; docs/bevel/bioage-screen.jpg) ---
+  // The week's number (bioage_log: recomputed on the first open of each week, Monday) under the accent-tinted gradient
+  // with sparse SVG stars; the title and the week's date, the number large with «на N лет моложе / старше» coloured,
+  // the pill of the change against last week (its chevron — the 12 weeks), the half-circle gauge from (calendar − 10,
+  // not under 18) to (calendar + 10) with the segment from the biological to the calendar age and its two dots, the
+  // calendar's label under it; «Следующее обновление через N дней»; «Из чего» — the honest sentence in a ring of the
+  // accent (a tap — how it is counted); «Биомаркеры возраста» — a pill row a group (a small ring and its icon, the
+  // group's years coloured, a chevron → its sheet: each factor's value, threshold, contribution and its 28 days when
+  // there is a series). The app's bottom bar stays under the sheet on a phone; a tab closes the sheet.
+  var BIO_FACT = { sleep: ['sleep', 'sleep_min'], regularity: ['sleep', null], steps: ['act', 'steps'], z23: ['act', null], z45: ['act', null],
+    strength: ['act', null], vo2max: ['fit', 'vo2max'], rhr: ['fit', 'resting_hr'], lean: ['fit', null] };
+  var BIO_MISS = { 'Время сна': 'sleep', 'Регулярность сна': 'sleep', 'Шаги': 'act', 'Зоны 2–3': 'act', 'Зоны 4–5': 'act', 'Силовые': 'act',
+    'Пульс покоя': 'fit', 'VO2max': 'fit', 'Безжировая масса': 'fit', 'Питание': 'life', 'Алкоголь': 'life', 'Курение': 'life' };
+  var BIO_GROUPS = [['sleep', 'Сон', 'moon'], ['act', 'Физическая активность', 'footprints'], ['fit', 'Фитнес', 'heart'],
+    ['life', 'Стиль жизни', 'sun'], ['blood', 'Кровь', 'test-tube']];
+  // «года» after a fraction («5,1 года»), else by the whole number.
+  function bioYw(v) { var a = Math.round(Math.abs(v) * 10) / 10; return a % 1 ? 'года' : ['год', 'года', 'лет'][plural3(a)]; }
+  function plural3(n) { var a = n % 100, b = n % 10; return a > 10 && a < 20 ? 2 : b === 1 ? 0 : b >= 2 && b <= 4 ? 1 : 2; }
+  // «на 5,1 года моложе» / «старше» / «как по паспорту» with its class (younger green, older orange).
+  function bioWord(d) {
+    if (d == null) return ['нет данных', 'mu'];
+    if (Math.abs(d) < 0.05) return ['как по паспорту', 'bas-eq'];
+    return ['на ' + woNum(Math.abs(d)) + ' ' + bioYw(d) + (d < 0 ? ' моложе' : ' старше'), d < 0 ? 'bas-yg' : 'bas-old'];
+  }
+  // The groups of the week: the factors of each (its years their plain sum), what it misses; the blood — PhenoAge.
+  function bioGroups(j) {
+    var l = j.lifestyle || {}, p = j.pheno || {}, by = {};
+    BIO_GROUPS.forEach(function (g) { by[g[0]] = { key: g[0], name: g[1], ic: g[2], factors: [], missing: [], years: null }; });
+    (l.factors || []).forEach(function (f) { var g = by[(BIO_FACT[f.key] || ['life'])[0]]; g.factors.push(f); g.years = Math.round(((g.years || 0) + f.years) * 10) / 10; });
+    (l.missing || []).forEach(function (m) { var g = by[BIO_MISS[m] || 'life']; if (g.missing.indexOf(m) < 0) g.missing.push(m); });
+    by.blood.years = p.age != null && p.weight > 0 ? p.delta : null;
+    return BIO_GROUPS.map(function (g) { return by[g[0]]; });
+  }
+  // The stars: sparse dots in the SVG over the gradient's top (slice keeps them round at any width).
+  function bioStars() {
+    var box = svg('svg', { viewBox: '0 0 400 620', preserveAspectRatio: 'xMidYMin slice', 'class': 'bas-stars', 'aria-hidden': 'true' });
+    [[44, 38, 1.2, .9], [318, 24, .9, .6], [362, 96, 1.6, .8], [132, 84, .8, .5], [232, 142, 1.3, .7], [22, 176, 1, .6], [84, 262, 2.2, .45],
+      [376, 238, .9, .6], [300, 330, 1.1, .5], [12, 400, .8, .5], [196, 22, .7, .5], [262, 470, .8, .4], [110, 520, 1, .4], [350, 560, 1.2, .5]]
+      .forEach(function (s) { box.appendChild(svg('circle', { cx: s[0], cy: s[1], r: s[2], opacity: s[3] })); });
+    return box;
+  }
+  // The gauge: the lower arc of a circle from 140° to 40° (lo on the left, hi on the right), a tick every half year,
+  // the ends labelled along the arc; the segment from the biological to the calendar age in the accent with a dot on
+  // each end, the calendar's value under its dot.
+  function bioGauge(bio, age) {
+    var W = 360, H = 372, cx = 180, cy = 176, R = 158, lo = Math.round(Math.max(18, age - 10) * 10) / 10, hi = Math.round((age + 10) * 10) / 10;
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'bas-g', role: 'img',
+      'aria-label': 'Шкала от ' + woNum(lo) + ' до ' + woNum(hi) + ': биологический ' + (bio == null ? 'нет' : woNum(bio)) + ', календарный ' + woNum(age) });
+    function ang(t) { return (140 - (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * 100) * Math.PI / 180; }
+    function pt(t, r) { var a = ang(t); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+    box.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-disc' }));
+    box.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-band' }));
+    for (var t = Math.ceil(lo * 2) / 2; t <= hi + 1e-9; t += 0.5) {
+      var a1 = pt(t, R - 7), a2 = pt(t, R + 7);
+      box.appendChild(svg('line', { x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1), 'class': 'bas-tk' + (t % 5 ? '' : ' maj') }));
     }
-    nodes.push(s1);
-    var s2 = add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Фитнес-возраст'), el('span', 'pr', f.age == null ? '—' : (f.floor ? '≤ ' : '') + woNum(f.age))));
-    s2.appendChild(el('div', 'mu', f.age == null ? 'VO2max с часов ещё нет.' : 'Возраст, в котором медианный VO2max мужчин равен твоим ' + woNum(f.vo2max) +
-      ' (FRIEND / ACSM: 48,0 в 20–29, 42,4 в 30–39, 37,8 в 40–49…). ' + (f.floor ? 'Ты выше медианы 20-летних — моложе 20 таблица не знает.' : '')));
-    nodes.push(s2);
-    var s3 = add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', l.factors && l.factors.length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')));
-    var fs = l.factors || [];
-    if (fs.length) {
-      bioRows(s3, fs.map(function (x) { return [x.label, x.value + ' · ' + x.rule + ' (' + x.source + ')', x.years]; }),
-        Math.max.apply(null, fs.map(function (x) { return Math.abs(x.years); })));
-      s3.appendChild(el('div', 'mu', 'Сумма честная: факторы перекрываются (пульс и VO2max, силовые и мышцы), у Bevel итог меньше за счёт перекрытий. Каждый — не больше ±4 лет.'));
+    [lo, hi].forEach(function (v) {
+      var p = pt(v, R - 24), deg = ang(v) * 180 / Math.PI - 90;
+      box.appendChild(svg('text', { x: p[0].toFixed(1), y: p[1].toFixed(1), 'class': 'bas-gl', 'text-anchor': 'middle', 'dominant-baseline': 'middle',
+        transform: 'rotate(' + deg.toFixed(1) + ' ' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ')' }, v.toFixed(1).replace('.', ',')));
+    });
+    var c = pt(age, R);
+    if (bio != null && Math.abs(bio - age) >= 0.05) {
+      var s = pt(Math.min(bio, age), R), e = pt(Math.max(bio, age), R);
+      box.appendChild(svg('path', { d: 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + 'A' + R + ' ' + R + ' 0 0 0 ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1),
+        'class': 'bas-seg' + (bio > age ? ' old' : '') }));
     }
-    if ((l.missing || []).length) s3.appendChild(el('div', 'mu', 'Не считается: ' + l.missing.join(', ').toLowerCase() + '.'));
-    nodes.push(s3);
-    nodes.push(el('div', 'mu msrc', 'Общий — среднее крови (с весом свежести) и фитнеса. Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту ' +
-      'из PhenoAge (Levine 2018). Источники: Levine 2018; Kaminsky 2015 (FRIEND); Kodama 2009; Cappuccio 2010; Windred 2024; Paluch 2022; Arem 2015; ' +
-      'Gebel 2015; Momma 2022; Jensen 2013; Schutz 2002; Sedlmeier 2021. Ориентир, не диагноз.'));
-    var close = noop;
-    nodes.push(add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); })));
-    close = legalSheet('Из чего биовозраст', nodes, from);
+    box.appendChild(svg('circle', { cx: c[0].toFixed(1), cy: c[1].toFixed(1), r: 4.5, 'class': 'bas-cal' }));
+    if (bio != null) { var b = pt(bio, R); box.appendChild(svg('circle', { cx: b[0].toFixed(1), cy: b[1].toFixed(1), r: 7, 'class': 'bas-bio' + (bio > age ? ' old' : '') })); }
+    box.appendChild(svg('text', { x: c[0].toFixed(1), y: (c[1] + 28).toFixed(1), 'class': 'bas-cl', 'text-anchor': 'middle' }, woNum(age)));
+    return box;
+  }
+  // A group's row: the small ring (fuller the younger; green younger, orange older), its icon, the name, the years.
+  function bioGroupRow(g, open) {
+    var w = bioWord(g.years), arc = g.years == null ? 0 : Math.max(8, Math.min(100, 50 - g.years * 12.5));
+    var row = add(el('div', 'hpr bas-r'), hlMini(arc, g.years == null ? 'hl-sleep' : g.years > 0 ? 'hl-load' : 'hl-rec', g.ic),
+      add(el('div', 'hpr-m'), el('div', 'hpr-n', g.name), el('div', 'bas-w ' + w[1], g.years == null ? (g.key === 'life' ? 'опросов нет' : 'нет данных') : w[0])),
+      add(el('span', 'hpr-go'), icon('chevron-right')));
+    row.setAttribute('aria-label', g.name + ': ' + (g.years == null ? 'нет данных' : w[0]));
+    return tap(row, function () { open(g, row); });
+  }
+  // The honest sentence of «Из чего»: the blood's date and weight, the factors' count, what the physiology misses.
+  function bioHonest(j) {
+    var p = j.pheno || {}, l = j.lifestyle || {}, n = (l.factors || []).length, out = [];
+    out.push(p.taken_on ? 'Кровь от ' + dm(p.taken_on) + ' (вес ' + Math.round((p.weight || 0) * 100) + ' %)' : 'анализа крови нет');
+    out.push(n + ' ' + ['фактор', 'фактора', 'факторов'][plural3(n)] + ' из 28 дней');
+    var miss = [];
+    (l.missing || []).forEach(function (m) {
+      if (BIO_MISS[m] === 'life') return;
+      var s = /^Зоны/.test(m) ? 'зон пульса' : m === 'VO2max' ? 'VO2max' : m.toLowerCase();
+      if (miss.indexOf(s) < 0) miss.push(s);
+    });
+    if (miss.length) out.push(miss.length === 1 && miss[0] === 'зон пульса' ? 'зон пульса нет' : 'нет: ' + miss.join(', '));
+    return out.join(', ');
+  }
+  function bioAgeSheet(j, from) {
+    var cur = j.current, bio = cur ? cur.bio : j.overall, age = j.age, body = el('div', 'bas'), close = noop;
+    var w = bioWord(bio == null ? null : bio - age), day = cur ? cur.week_start : null;
+    var top = add(el('div', 'bas-top'), foodBtn('bas-x', 'x', '', function () { close(); }));
+    top.firstChild.setAttribute('aria-label', 'Закрыть');
+    var center = add(el('div', 'bas-c'), el('div', 'bas-big', bio == null ? '—' : woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0]));
+    if (j.delta != null) {
+      var dp = add(el('button', 'bas-dp'), add(el('span', 'bas-dpi ' + (j.delta > 0 ? 'old' : j.delta < 0 ? 'yg' : '')), icon(j.delta > 0 ? 'arrow-up' : j.delta < 0 ? 'arrow-down' : 'circle-dot')),
+        el('span', '', (j.delta > 0 ? '+' : j.delta < 0 ? '−' : '±') + woNum(Math.abs(j.delta)) + ' по сравнению с прошлой неделей'), icon('chevron-right'));
+      dp.type = 'button';
+      dp.onclick = function () { bioWeeksSheet(j, dp); };
+      center.appendChild(dp);
+    } else if ((j.history || []).length) center.appendChild(el('div', 'mu bas-nd', 'Сравнение с прошлой неделей — со следующего понедельника'));
+    add(body, top, bioStars(),
+      el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
+      add(el('div', 'bas-gz'), bioGauge(bio, age), center),
+      add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', j.next_update_days + ' ' + ['день', 'дня', 'дней'][plural3(j.next_update_days)])));
+    var hx = add(el('div', 'bas-h'), add(el('span', 'bas-hi'), icon('layers')), add(el('div', 'tx'), el('div', 'bas-ht', 'Из чего'), el('div', 'mu', bioHonest(j))),
+      add(el('span', 'hpr-go'), icon('chevron-right')));
+    hx.setAttribute('aria-label', 'Из чего: ' + bioHonest(j) + ' — как считается');
+    body.appendChild(tap(hx, function () { bioHowSheet(j, hx); }));
+    var list = add(el('div', 'hsec'), el('div', 'hsec-h', 'Биомаркеры возраста'));
+    bioGroups(j).forEach(function (g) { list.appendChild(bioGroupRow(g, function (g, row) { bioFactorSheet(g, j, row); })); });
+    add(body, list, el('div', 'mu msrc bas-n', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
+    var close0 = legalSheet('Биологический возраст', [body], from), z = body.parentNode && body.parentNode.parentNode;
+    close = close0;
+    hlFrame(body);
+    body.parentNode.classList.add('bsheet');
+    if (z) z.classList.add('bfull');
+    tabbar.classList.remove('hid');
+    tabbar.addEventListener('click', function () { close0(); }, { capture: true, once: true });
+  }
+  // How it is counted: the overall, the years of a factor, the overlaps, the sources (the old «Из чего»'s footnote).
+  function bioHowSheet(j, from) {
+    var f = j.fitness || {}, l = j.lifestyle || {}, close = noop;
+    var nodes = [el('div', 'mu hxs', bioHonest(j) + '.'),
+      add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Общий'), el('span', 'pr', j.overall == null ? '—' : woNum(j.overall))),
+        el('div', 'mu', 'Среднее крови (PhenoAge, с весом свежести: полный до 6 мес., к 18 мес. — ноль) и фитнес-возраста по VO2max' +
+          (f.age != null ? ' (' + (f.floor ? '≤ ' : '') + woNum(f.age) + ')' : '') + '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
+      add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', (l.factors || []).length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')),
+        el('div', 'mu', 'Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту из PhenoAge. Сумма честная: факторы перекрываются ' +
+          '(пульс и VO2max, силовые и мышцы), у Bevel итог меньше за счёт перекрытий. Каждый — не больше ±4 лет; считается при 20 днях из 28.')),
+      el('div', 'mu msrc', 'Источники: Levine 2018; Kaminsky 2015 (FRIEND); Kodama 2009; Cappuccio 2010; Windred 2024; Paluch 2022; Arem 2015; ' +
+        'Gebel 2015; Momma 2022; Jensen 2013; Schutz 2002; Sedlmeier 2021. Ориентир, не диагноз.'),
+      add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))];
+    close = legalSheet('Как считается', nodes, from);
+  }
+  // The 12 weeks: the overall a week as a line with dots (hlChart), a row a week with its change.
+  function bioWeeksSheet(j, from) {
+    var hs = (j.history || []).filter(function (h) { return h.bio != null; }), body = el('div', 'hsh'), close = noop;
+    var nodes = [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))];
+    close = legalSheet('Биовозраст по неделям', nodes, from);
+    hlFrame(body);
+    var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
+    if (hs.length > 1) {
+      body.appendChild(hlChart(hs.map(function (h) { return { day: h.week_start, v: h.bio }; }),
+        { W: W, from: hs[0].week_start, to: hs[hs.length - 1].week_start, days: 84, dots: true, label: 'Биовозраст по неделям', unit: 'лет', tick: woNum }));
+    }
+    var t = add(el('div', 'htr bas-wk'), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Возраст'), el('span', '', 'Изменение')));
+    hs.slice().reverse().forEach(function (h, i, a) {
+      var prev = a[i + 1], d = prev && addDays(h.week_start, -7) === prev.week_start ? Math.round((h.bio - prev.bio) * 10) / 10 : null;
+      t.appendChild(add(el('div', 'htr-r ' + (d == null || Math.abs(d) < 0.05 ? 'hs-same' : d > 0 ? 'hs-below' : 'hs-norm')), el('span', 'mu', 'с ' + hlShort(h.week_start)),
+        el('span', 'htr-c', woNum(h.bio)), add(el('span', 'htr-c bas-wd'), el('i', 'hdot'), document.createTextNode(d == null ? '—' : bioSigned(d)))));
+    });
+    add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'По неделям'), el('div', 'mu hsec-s', 'Пересчёт по понедельникам; младше — зелёным, старше — оранжевым.'), t));
+  }
+  // A group's sheet: its years large; a card a factor — the value, the threshold, the contribution as a bar from the
+  // middle, the source; its 28 days (hlChart) when the factor has a series. The blood: the nine PhenoAge terms.
+  function bioFactorSheet(g, j, from) {
+    var body = el('div', 'hsh'), close = noop, w = bioWord(g.years), p = j.pheno || {}, f = j.fitness || {};
+    add(body, add(el('div', 'hsh-head'), add(el('div', 'hsh-v'), el('div', 'hsh-big bas-fb ' + w[1], g.years == null ? '—' : bioSigned(g.years) + ' ' + bioYw(g.years)),
+      el('div', 'mu', g.years == null ? (g.key === 'life' ? 'опросов нет' : 'нет данных') : w[0] + (g.key === 'blood' ? ' · анализ ' + dmy(p.taken_on) : ' · за 28 дней')))));
+    var charts = [];
+    if (g.key === 'blood') {
+      var s = el('div', 'hxs');
+      if (p.age == null) s.appendChild(el('div', 'mu', 'Нужны все девять показателей. Нет: ' + (p.missing || []).join(', ') + '.'));
+      else {
+        var ex = p.explain || [];
+        s.appendChild(el('div', 'mu', 'PhenoAge ' + woNum(p.age) + ' при возрасте на дату ' + woNum(p.age_at != null ? p.age_at : p.age - p.delta) +
+          ' · вес ' + Math.round(p.weight * 100) + ' % (полный до 6 мес., к 18 мес. — ноль).'));
+        bioRows(s, ex.map(function (x) { return [x.label, x.value == null ? 'при средних значениях' : woLab(x.value) + ' ' + x.unit, x.years]; }),
+          Math.max.apply(null, ex.map(function (x) { return Math.abs(x.years); }).concat([0.5])));
+      }
+      body.appendChild(add(el('div', 'hsec'), el('div', 'hsec-h', 'Девять показателей'), el('div', 'mu hsec-s', 'Вклад каждого в годы (Levine 2018).'), s));
+    } else {
+      var max = Math.max.apply(null, g.factors.map(function (x) { return Math.abs(x.years); }).concat([0.5]));
+      g.factors.forEach(function (x) {
+        var c = add(el('div', 'hpr bas-f'), add(el('div', 'hpr-m'),
+          add(el('div', 'hpr-t'), el('span', 'hpr-n', x.label), add(el('span', 'bas-fy ' + bioWord(x.years)[1]), bioBar(x.years, max), el('b', '', bioSigned(x.years)))),
+          add(el('div', 'hpr-v'), el('b', '', hlNb(x.value))), el('div', 'mu hpr-l', 'Порог: ' + x.rule + ' · ' + x.source)));
+        c.setAttribute('role', 'group');
+        c.setAttribute('aria-label', x.label + ': ' + x.value + ', ' + bioSigned(x.years) + ' лет. ' + x.rule);
+        body.appendChild(c);
+        var sk = (BIO_FACT[x.key] || [])[1];
+        if (sk) { var box = el('div', 'bas-ch'); body.appendChild(box); charts.push([sk, box, x.label]); }
+      });
+      g.missing.forEach(function (m) {
+        var c = add(el('div', 'hpr bas-f mu'), add(el('div', 'hpr-m'), el('div', 'hpr-n', m),
+          el('div', 'mu hpr-l', g.key === 'life' ? 'Не считается: опросов в приложении нет.' : 'Нет данных: нужно 20 дней из 28.')));
+        c.setAttribute('role', 'group');
+        body.appendChild(c);
+      });
+      if (g.key === 'fit' && f.age != null) body.appendChild(el('div', 'mu hsec-n', 'Фитнес-возраст по VO2max ' + woNum(f.vo2max) + ' — ' + (f.floor ? '≤ ' : '') + woNum(f.age) + ' (FRIEND / ACSM).'));
+    }
+    close = legalSheet(g.name, [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
+    var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
+    HL_CACHE = {};
+    charts.forEach(function (c) {
+      c[1].appendChild(el('div', 'mu hsh-none', 'загружаю…'));
+      hlSeries(c[0], 30).then(function (sj) {
+        var to = sj.to, fromD = addDays(to, -27), pts = sj.points.filter(function (q) { return q.day >= fromD; }), unit = c[0] === 'sleep_min' ? '' : sj.unit;
+        add(clear(c[1]), pts.length ? hlChart(pts, { W: W, from: fromD, to: to, days: 28, band: sj.band, mean: sj.band && sj.band.mean, dots: true,
+          label: c[2] + ' за 28 дней', unit: unit, tick: function (v) { return hlFmt(c[0], v); } }) : el('div', 'mu hsh-none', 'За 28 дней данных нет.'));
+      }, function () { add(clear(c[1]), el('div', 'mu hsh-none', 'График не загрузился.')); });
+    });
   }
   function dmy(d) { return d ? dm(d) + '.' + d.slice(0, 4) : ''; }
   // The lab's range as a band on a short track and the value's dot on it, the domain the range widened by its half (and
