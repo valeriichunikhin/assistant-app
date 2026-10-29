@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 18:22">
+<meta name="published" content="2026-10-29 18:26">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1231,6 +1231,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></symbol>
 <symbol id="i-news" viewBox="0 0 24 24"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="10" y="6" rx="1"/></symbol>
 <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-spark" viewBox="0 0 24 24"><polygon points="12,2 14,10 22,12 14,14 12,22 10,14 2,12 10,10" fill="currentColor" stroke="none"/><polygon points="19,3 19.8,5.2 22,6 19.8,6.8 19,9 18.2,6.8 16,6 18.2,5.2" fill="currentColor" stroke="none"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
 <symbol id="i-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/></symbol>
 <symbol id="i-check-square" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
@@ -1876,7 +1877,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
     ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Здоровье'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
     ['legal', 'stamp', 'Легализация'],
-    ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['news', 'sparkles', 'Что нового']];
+    ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['updates', 'sparkles', 'Обновления'], ['settings', 'settings', 'Настройки']];
   var BAR = ['food', 'home', 'shop', 'tasks'], MORE = [];
   // One-column views: 720 px wide on a desktop (.main.narrow). Each of these has a desktop view (desktop-a/b.js), so the cap
   // holds only until those scripts land; «Фильмы», «Задачи», «LinkedIn» and «Что нового» use the full width with their cards
@@ -1889,7 +1890,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   var ALIAS = { list: 1, picks: 1, prices: 1 };
   function isSeg(t) { return Object.prototype.hasOwnProperty.call(ALIAS, t); }
   // A segment's key as its tab (a link, the remembered tab, a widget's start_param); the bar folds only the shop's.
-  function canon(t) { return isSeg(t) ? 'shop' : isHSeg(t) ? 'food' : t; }
+  function canon(t) { return t === 'news' ? 'settings' : isSeg(t) ? 'shop' : isHSeg(t) ? 'food' : t; }
   var shopSeg = isSeg(store('shopSeg')) ? store('shopSeg') : 'list';
   function shopIs(k) { return current === 'shop' && shopSeg === k; }
   // «Здоровье» (docs/specs/health-v2.md, «Навигация», 29.10.2026): «Сегодня · Питание · Фитнес · Биология» on top, as
@@ -2110,7 +2111,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return s === 'tiles' || s === 'board' || s === 'boards' ? prefs[s] : Object.assign({}, prefs[s], { fold: {}, folded: [] });
   }
   var modules = (prefsHit && prefsHit.j && normModules(prefsHit.j.modules)) || [];
-  function tabShown(k) { if (isHSeg(k)) k = 'food'; return k === 'news' || prefs.tabs.hidden.indexOf(k) < 0; }
+  function tabShown(k) { if (isHSeg(k)) k = 'food'; return k === 'settings' || prefs.tabs.hidden.indexOf(k) < 0; }
   function visibleTabs() { return TABS.filter(function (t) { return tabShown(t[0]); }); }
   var shell = el('div', 'shell'), rail = el('nav', 'rail'), col = el('div', 'col'), hdr = el('header', 'hdr');
   var hTitle = el('h1'), hDate = el('span', 'date'), rDate = el('span');
@@ -2205,6 +2206,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   function barTabs() {
     var v = null;
     try { v = JSON.parse(store('tabBar') || 'null'); } catch (e) {}
+    if (Array.isArray(v)) v = v.map(function (k) { return k === 'news' ? 'settings' : k; });
     var keys = !Array.isArray(v) ? null : v.filter(function (k, i) {
       return typeof k === 'string' && Object.prototype.hasOwnProperty.call(NAMES, k) && v.indexOf(k) === i;
     });
@@ -2223,7 +2225,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   }
   // The start tab (26.10.2026, his «я не использую [Главную]… делай первое»): «Главная» while it is shown, else the
   // first tab of his bar (normally «Деньги»); every place that fell back to 'home' asks this.
-  function homeTab() { return tabShown('home') ? 'home' : barTabs()[0] || 'news'; }
+  function homeTab() { return tabShown('home') ? 'home' : barTabs()[0] || 'settings'; }
   function tabOf(k) { return TABS.concat(HSEG_TABS).filter(function (t) { return t[0] === k; })[0]; }
   // The rail, the bar and the sheet are drawn again on every change of the choice or of the hidden tabs.
   function drawBar() {
@@ -2800,6 +2802,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     } catch (e) {}
   }
   function show(tab) {
+    // «Что нового» became «Настройки» (29.10.2026): the old key stays an alias for pins, links and pushes.
+    if (tab === 'news') tab = 'settings';
     if (isSeg(tab)) {
       shopSeg = tab;
       store('shopSeg', tab);
@@ -12915,7 +12919,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       var o0 = el('option', '', 'последняя открытая');
       o0.value = '';
       startSel.appendChild(o0);
-      visibleTabs().forEach(function (t) {
+      visibleTabs().filter(function (t) { return TAB_KEYS.indexOf(t[0]) >= 0; }).forEach(function (t) {
         var o = el('option', '', t[2]);
         o.value = t[0];
         startSel.appendChild(o);
@@ -13600,22 +13604,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     return card;
   }
 
-  // --- changelog ---
+  // --- settings and changelog ---
   // changelog.json is published next to the page; the publish script stamps
   // the page's own date into <meta name="published">.
-  function newsView() {
-    var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
+  function settingsView() {
+    var meta = document.querySelector('meta[name="published"]');
     var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), ac = accentCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard();
-    prefsHook = { tab: 'news', fn: function (focus) {
+    prefsHook = { tab: 'settings', fn: function (focus) {
       tc.paint(focus); ac.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); if (bc) bc.paint();
     },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
-      body.className = 'cols';
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, ac, mo), body, note);
-    } else add(main, browser ? pushCard() : null, tc, ac, mc, tgc, mo, bc, body, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, ac, mo), note);
+    } else add(main, browser ? pushCard() : null, tc, ac, mc, tgc, mo, bc, note);
     // «Выйти»: the last row of the settings, two taps — the second («Точно выйти») within 5 s, else it reverts.
     if (browser) {
       var lo = label(el('button', 'btn ghost'), 'logout', 'Выйти'), loT = null;
@@ -13631,13 +13634,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       };
       var lrow = el('div');
       lrow.style.margin = '4px 0 16px';
-      main.insertBefore(add(lrow, lo), body);
+      main.insertBefore(add(lrow, lo), note);
     }
+  }
+
+  // «Обновления» (29.10.2026): the list of changes from changelog.json, nothing else.
+  function updatesView() {
+    var body = add(el('div', wide() ? 'cols' : ''), skeleton(2));
+    add(main, body);
     fetch('./changelog.json', { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error(r.status);
       return r.json();
     }).then(function (list) {
-      if (current !== 'news') return;
+      if (current !== 'updates') return;
       clear(body);
       list.forEach(function (e) {
         var ul = el('ul');
@@ -13645,8 +13654,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         body.appendChild(add(mkCard('sparkles', dm(e.date) + '.' + e.date.slice(0, 4) + ' · ' + e.title), ul));
       });
     }).catch(function () {
-      if (current === 'news') {
-        add(clear(body), state('alert', 'Список обновлений недоступен', 'Повторить', function () { show('news'); }));
+      if (current === 'updates') {
+        add(clear(body), state('alert', 'Список обновлений недоступен', 'Повторить', function () { show('updates'); }));
       }
     });
   }
@@ -15916,7 +15925,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 
   var VIEWS = {
     home: homeView, shop: shopView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, news: newsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, updates: updatesView, settings: settingsView, vb: vbView,
     genshin: genshinView, notif: notifView, food: foodView
   };
   // --- desktop (≥ 900 px) ---
