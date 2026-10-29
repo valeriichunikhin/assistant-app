@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 23:40">
+<meta name="published" content="2026-10-30 00:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -16564,22 +16564,31 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // The hint after an exercise's plan — the twin of _shared/gym.ts hintText: «80 → 85 кг», «80 кг», «80 → 75 кг (−5 %)»,
   // «подбери вес», «было 12 → 13», «было 12». Edit both together.
   function gymHint(i) {
+    var h = gymHintBase(i), s = i.suggest || {};
+    return h && s.via ? h + ' (по аналогу ' + s.via + ')' : h;
+  }
+  function gymHintBase(i) {
     var s = i.suggest || {};
     if (s.why === 'new') return 'подбери вес';
     if (i.unit === 'bw' || i.progress === 'bw' || s.kg == null) {
       var best = Math.max.apply(null, (s.last_reps || []).concat(0));
       return !best ? '' : s.reps_to != null ? 'было ' + best + ' → ' + s.reps_to : 'было ' + best;
     }
+    if (s.why === 'restart') return 'после перерыва: ' + woNum(s.last_kg) + ' → ' + woNum(s.kg) + ' (' + s.pct + ' %)';
+    if (s.why === 'assist' || s.why === 'assist_more') return 'противовес ' + woNum(s.last_kg) + ' → ' + woNum(s.kg);
     if (s.why === 'up' || s.why === 'down') return woNum(s.last_kg) + ' → ' + woNum(s.kg) + ' кг' + (s.why === 'down' ? ' (−5 %)' : '');
     return woNum(s.kg) + ' кг';
   }
   // Why this weight, one line under the current exercise.
   function gymWhy(it) {
-    var s = it.sg || {}, reps = (s.last_reps || []).join('/');
+    var s = it.sg || {}, reps = (s.last_reps || []).join('/'), via = s.via ? ' По аналогу: ' + s.via + '.' : '';
     if (s.why === 'new') return 'Первый раз — подбери вес, чтобы последний повтор давался с трудом.';
-    if (s.why === 'up') return 'В прошлый раз ' + reps + (s.last_kg ? ' с ' + woNum(s.last_kg) + ' кг' : '') + ' — все до верха, прибавь.';
-    if (s.why === 'down') return 'Дважды второй подход ниже ' + gymRange(it.reps)[0] + ' — сбавь на 5 %.';
-    return reps ? 'В прошлый раз ' + reps + (s.last_kg ? ' с ' + woNum(s.last_kg) + ' кг' : '') + ' — тот же вес.' : '';
+    if (s.why === 'restart') return 'Давно не делал — ' + s.pct + ' % от прошлых ' + woNum(s.last_kg) + ' кг, потом снова вверх.' + via;
+    if (s.why === 'assist') return 'В прошлый раз ' + reps + ' — все до верха, противовес меньше.' + via;
+    if (s.why === 'assist_more') return 'Не вышло дважды или был перерыв — противовес больше.' + via;
+    if (s.why === 'up') return 'В прошлый раз ' + reps + (s.last_kg ? ' с ' + woNum(s.last_kg) + ' кг' : '') + ' — все до верха, прибавь.' + via;
+    if (s.why === 'down') return 'Дважды второй подход ниже ' + gymRange(it.reps)[0] + ' — сбавь на 5 %.' + via;
+    return reps ? 'В прошлый раз ' + reps + (s.last_kg ? ' с ' + woNum(s.last_kg) + ' кг' : '') + ' — тот же вес.' + via : '';
   }
   function gymRange(r) { var m = String(r || '').match(/^(\d+)(?:\s*[–-]\s*(\d+))?$/); return m ? [+m[1], +(m[2] || m[1])] : [0, 0]; }
 
@@ -16774,7 +16783,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
               haptic();
               keep();
               draw();
-              api('miniapp', { action: 'gym_suggest' }, 15000, true, { exercise: a, sets: it.sets, reps: it.reps, unit: it.unit, progress: it.progress || undefined })
+              api('miniapp', { action: 'gym_suggest' }, 15000, true, { exercise: a, sets: it.sets, reps: it.reps, unit: it.unit, progress: it.progress || undefined, alts: [it.orig].concat(it.alts).filter(function (x) { return x !== a; }) })
                 .then(function (j) {
                   if (it.exercise !== a || it.done.length) return;
                   it.sg = j.suggest || {};
