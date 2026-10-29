@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 17:15">
+<meta name="published" content="2026-10-29 17:21">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -982,6 +982,35 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 .row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
+/* A workout's detail sheet (docs/specs/workout-map.md): six tiles three across, the map 240 px tall (from 900 px beside
+   the tiles, the sheet widened), the pulse on its zones' bands — one hue (--ring-load) deepening with the zone, the line
+   in --mark so both accents carry it; the tiles under a dark map inverted by the spec's filter, the route not. */
+.tsum .sub.wdsub{padding:0 0 12px;color:var(--muted);font-size:13px}
+.wtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wtile{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.wtile .mu{font-size:12px}.wtv{font:800 17px/1.25 var(--font-num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wtv.mu{font-weight:500}
+.wline{margin:8px 0 0;font-size:12px}.wchart{margin:14px 0 0}.wchart .hfh,.wex .hfh{margin:0 0 4px}.wex{margin:14px 0 0}.wex .wl{display:block}
+.wload{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:10px 12px;border-radius:var(--r-b);background:var(--accent-soft);font-weight:600;font-size:13px}
+.wload .i{flex:none;width:18px;height:18px;color:var(--mark)}
+.wdet .wside{margin:14px 0 0}
+.wmap{position:relative;z-index:0;height:240px;border-radius:var(--r-b);overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+.wmap.off{display:grid;place-items:center;padding:16px;color:var(--muted);font-size:13px;text-align:center}
+.wmap.leaflet-container{font:11px/1.4 var(--font);background:var(--surface-2)}
+.wmap .leaflet-control-attribution{background:color-mix(in srgb,var(--solid) 82%,transparent);color:var(--muted);font-size:10px}
+.wmap .leaflet-control-attribution a{color:var(--link)}
+.wmap .leaflet-bar a{background:var(--solid);color:var(--fg);border-color:var(--line)}
+.wmap path.wrth{stroke:var(--solid);stroke-opacity:.9}.wmap path.wrt{stroke:var(--mark);stroke-opacity:1}
+.wmap path.wpt{stroke:var(--mark);fill:var(--solid);fill-opacity:1}.wmap path.wpt.wfin{fill:var(--mark);stroke:var(--solid)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9)}}
+:root[data-theme="dark"] .wmap .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9)}
+.chart.whr .wz{fill:var(--ring-load)}.chart.whr .wz1{fill-opacity:.06}.chart.whr .wz2{fill-opacity:.1}.chart.whr .wz3{fill-opacity:.15}
+.chart.whr .wz4{fill-opacity:.21}.chart.whr .wz5{fill-opacity:.28}
+.chart.whr .wln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chart.whr .war{fill:var(--mark);fill-opacity:.1}.chart.whr .wdot{fill:var(--mark);stroke:var(--solid);stroke-width:2}
+.chart.whr .hit{fill:transparent;outline:none}
+@media (min-width:900px){.tsum>div:has(.wdet.wmapd){max-width:1040px}
+  .wdet.wmapd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .wdet.wmapd .wside{margin:0;position:sticky;top:0}.wdet.wmapd .wmap{height:420px}}
 /* «Здоровье» (docs/specs/health-v2.md, the look — docs/specs/health-look.md): Bevel's soft gradients. The rings — thick,
    a gradient down the arc (#g-ring-* in the sprite) and a soft glow (#g-glow, stronger in the dark), each ring on its own
    tinted track; the main stops validated by dataviz for both themes (the light top stops are decoration, every ring is
@@ -14703,7 +14732,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 
   // --- «Спорт», «Зал», «План» (docs/specs/workouts.md, 28.10.2026) ---
   // Under the day's meals its workouts (the gym with its exercises, a run, his PNH volleyball written by itself); a tap
-  // opens one's sheet (the kind, the time, the minutes, the exercises and their sets, or the km, «Убрать» on two taps).
+  // opens its detail sheet (woDetailSheet: the tiles, the map, the pulse), whose «Поправить» opens the edit sheet (the
+  // kind, the time, the minutes, the exercises and their sets, or the km, «Убрать» on two taps).
   // «＋ Тренировка» sends a text to the same model on the Mac (workout_add, as «Записать» does). «Зал»: the next gym
   // session by the plan (plan_next) with last time's weights and «↑ 62,5» where an increase is due; «План» on it opens
   // the plan's sheet (plan_get / plan_set). The texts here are twins of _shared/workouts.ts (setsText, parts): edit
@@ -14751,8 +14781,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       es.forEach(function (e) { tx.appendChild(el('div', 'mu wl', woLine(e))); });
       if (w.note) tx.appendChild(el('div', 'mu fnote', w.note));
       var r = add(el('div', 'row frow'), add(el('span', 'lead'), icon(WO_IC[w.kind] || 'medal')), tx, el('span', 'pr', woParts(w).join(' · ')));
-      r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — поправить');
-      c.appendChild(tap(r, function () { woSheet(w, r, done); }));
+      r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
+      c.appendChild(tap(r, function () { woDetailSheet(w, r, done); }));
     });
     if (!ws.length) {
       c.appendChild(el('div', 'mu wempty', date === foodToday() ? 'Сегодня тренировок нет. Напиши боту «зал: жим лёжа 4×8 60, 55 минут» — или нажми «Тренировка». Волейбол PNH запишется сам.'
@@ -14760,6 +14790,206 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     }
     c.appendChild(add(el('div', 'foot'), foodBtn('btn ghost', 'plus', 'Тренировка', function (ev) { woAddSheet(date, ev.currentTarget, added); })));
     return c;
+  }
+  // A workout's detail sheet (docs/specs/workout-map.md), Bevel's: the kind's emoji and name, the day and the time from
+  // start to end; six tiles (Минуты · Ккал · Ср. пульс · Макс · Дистанция · Темп — «Скорость» on a ride), «—» for what
+  // is not known; the route's map (only with one; from 900 px beside the tiles), the pulse by minute over its zones, the
+  // zones' minutes and «Нагрузка этой тренировки» (workout_get's load: his usual week's share); the gym's exercises.
+  // Drawn at once from the row the day has, again with workout_get's answer. «Поправить» — the edit sheet (woSheet).
+  var WO_EMOJI = { gym: '🏋️', volleyball: '🏐', run: '🏃', bike: '🚴', swim: '🏊', other: '💪' };
+  function woDetailSheet(w, from, done) {
+    var d = foodDay(w.at), end = w.minutes ? foodTime(Date.parse(w.at) + w.minutes * 60000) : '', close = noop;
+    var sub = el('div', 'sub wdsub', WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1] + ' · ' +
+      foodTime(w.at) + (end ? '–' + end : '')), body = el('div', 'wdet'), drawn = null;
+    var edit = foodBtn('btn ghost', 'pen-line', 'Поправить', function () { close(); woSheet(w, from, done); });
+    close = legalSheet((WO_EMOJI[w.kind] || WO_EMOJI.other) + ' ' + woLabel(w), [sub, body,
+      add(el('div', 'bar mact mstick'), edit, foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+    function draw(x, load) {
+      var key = JSON.stringify([x, load]);
+      if (key === drawn || !body.isConnected) return;
+      drawn = key;
+      var km = x.distance_km != null ? Number(x.distance_km) : null, pace = x.pace_min_km != null ? Number(x.pace_min_km) : null;
+      if (km == null) woParts(x).forEach(function (s) { if (/ км$/.test(s)) km = foodNum(s.replace(' км', '')); });
+      if (pace == null && km >= 0.1 && x.minutes) pace = x.minutes / km;
+      var bike = x.kind === 'bike', side = el('div', 'wside'), main2 = el('div', 'wmain');
+      var tiles = el('div', 'wtiles');
+      [['Минуты', x.minutes ? woDur(x.minutes) : null], ['Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null],
+        ['Ср. пульс', x.avg_hr != null ? x.avg_hr + ' уд/мин' : null], ['Макс', x.max_hr != null ? x.max_hr + ' уд/мин' : null],
+        ['Дистанция', km ? woNum(Math.round(km * 100) / 100) + ' км' : null],
+        bike ? ['Скорость', pace ? woNum(60 / pace) + ' км/ч' : null] : ['Темп', pace ? woPace(pace) + ' /км' : null]].forEach(function (t) {
+        var c = add(el('div', 'wtile'), el('div', 'mu', t[0]), el('div', 'wtv' + (t[1] == null ? ' mu' : ''), t[1] == null ? '—' : t[1]));
+        c.setAttribute('aria-label', t[0] + ': ' + (t[1] == null ? 'нет данных' : t[1]));
+        tiles.appendChild(c);
+      });
+      main2.appendChild(tiles);
+      if (x.elev_up_m) main2.appendChild(el('div', 'mu wline', 'набор высоты ' + x.elev_up_m + ' м'));
+      var route = Array.isArray(x.route) && x.route.length > 1 ? x.route : null;
+      body.className = 'wdet' + (route ? ' wmapd' : '');
+      add(clear(body), main2, route ? side : null);
+      if (route) {
+        var mapBox = el('div', 'wmap');
+        mapBox.setAttribute('role', 'img');
+        mapBox.setAttribute('aria-label', 'Карта маршрута' + (km ? ', ' + woNum(km) + ' км' : ''));
+        side.appendChild(mapBox);
+        woMap(mapBox, route);
+      }
+      var hr = Array.isArray(x.hr_series) && x.hr_series.length > 1 ? x.hr_series : null;
+      if (hr) {
+        var mx = woMaxHr(d), wrap = add(el('div', 'wchart'), el('div', 'hfh', 'Пульс'));
+        main2.appendChild(wrap);
+        wrap.appendChild(woHrChart(hr, mx, Math.max(260, (main2.clientWidth || 340))));
+        var zm = woZoneMinutes(hr, mx), zs = zm.map(function (m, i) { return m ? 'з' + i + ' ' + m + ' мин' : null; }).filter(Boolean);
+        if (zs.length) wrap.appendChild(el('div', 'mu wline', 'по зонам: ' + zs.join(' · ') + ' (максимум ' + mx + ')'));
+      }
+      if (load && load.trimp != null) {
+        main2.appendChild(add(el('div', 'wload'), icon('gauge'), el('span', '', 'Нагрузка этой тренировки: ' + grouped(load.trimp) + ' ед.' +
+          (load.pct != null ? ' — ' + load.pct + ' % обычной недели' : ''))));
+      }
+      var es = (x.items || []).filter(woEx);
+      if (es.length) {
+        var ex = add(el('div', 'wex'), el('div', 'hfh', 'Упражнения'));
+        es.forEach(function (e) { ex.appendChild(el('div', 'mu wl', woLine(e))); });
+        main2.appendChild(ex);
+      }
+      if (x.note) main2.appendChild(el('div', 'mu fnote', x.note));
+    }
+    draw(w, null);
+    api('miniapp', { action: 'workout_get' }, 15000, true, { id: w.id }).then(function (j) {
+      if (j && j.workout) draw(j.workout, j.load || null);
+    }, noop);
+  }
+  // «5:42»: minutes a km as m:ss.
+  function woPace(p) { var m = Math.floor(p), sec = Math.round((p - m) * 60); if (sec === 60) { m++; sec = 0; } return m + ':' + (sec < 10 ? '0' : '') + sec; }
+  // His top pulse by age (docs/specs/health-v2.md, «Пульсовые зоны»): 220 − his age on that day, the birth date from
+  // prefs.health (2000-11-25 when unset).
+  function woMaxHr(day) {
+    var b = (prefs.health && prefs.health.birth_date) || '2000-11-25', age = Number(day.slice(0, 4)) - Number(b.slice(0, 4));
+    if (day.slice(5) < b.slice(5)) age--;
+    return 220 - age;
+  }
+  // The zones' lower bounds in % of the top pulse (0–49 / 50–59 / 60–69 / 70–79 / 80–89 / 90–100), Bevel's.
+  var WO_ZONES = [0, 50, 60, 70, 80, 90];
+  function woZone(bpm, mx) { var z = 0; WO_ZONES.forEach(function (p, i) { if (bpm >= mx * p / 100) z = i; }); return z; }
+  // The minutes in each zone 0..5: a point lasts until the next one (the last a minute).
+  function woZoneMinutes(hr, mx) {
+    var out = [0, 0, 0, 0, 0, 0];
+    hr.forEach(function (p, i) { out[woZone(p[1], mx)] += i + 1 < hr.length ? Math.max(0, hr[i + 1][0] - p[0]) : 1; });
+    return out;
+  }
+  // The pulse by minute: one line in --mark over a faint wash, on the zones' bands (one hue, deeper with the zone, its
+  // name at the right edge where the band is tall enough); the top pulse a dot with its value; a few clean bpm ticks on
+  // the left, the minutes under it. A crosshair on hover or touch snaps to the minute and reads the pulse and its zone.
+  function woHrChart(hr, mx, W) {
+    var H = 160, L = 30, R = 26, T = 12, B = 20;
+    var vs = hr.map(function (p) { return p[1]; }), last = hr[hr.length - 1][0] || 1;
+    var lo = Math.max(30, Math.floor((Math.min.apply(null, vs) - 6) / 10) * 10), hi = Math.ceil((Math.max.apply(null, vs) + 6) / 10) * 10;
+    var wrap = el('div', 'mch'), box = chartBox(W, H, 'Пульс по минутам'), tip = mtTip(wrap);
+    box.classList.add('mchart');
+    box.classList.add('whr');
+    wrap.appendChild(box);
+    function x(m) { return L + m / last * (W - L - R); }
+    function y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
+    WO_ZONES.forEach(function (p, z) {
+      if (!z) return;
+      var a = Math.max(lo, mx * p / 100), b = Math.min(hi, z === 5 ? hi : mx * WO_ZONES[z + 1] / 100);
+      if (b <= a) return;
+      add(box, svg('rect', { x: L, y: y(b), width: W - L - R, height: y(a) - y(b), 'class': 'wz wz' + z }));
+      if (y(a) - y(b) >= 12) add(box, svg('text', { x: W - R + 5, y: (y(a) + y(b)) / 2 + 4, 'class': 'tk' }, 'з' + z));
+    });
+    var st = hi - lo > 80 ? 40 : 20;
+    for (var v = Math.ceil(lo / st) * st; v <= hi; v += st) {
+      add(box, svg('text', { x: L - 6, y: y(v) + 4, 'class': 'tk', 'text-anchor': 'end' }, v));
+    }
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
+    var pts = hr.map(function (p) { return x(p[0]).toFixed(1) + ',' + y(p[1]).toFixed(1); }).join(' ');
+    add(box, svg('polygon', { 'class': 'war', points: x(hr[0][0]).toFixed(1) + ',' + (H - B) + ' ' + pts + ' ' + x(last).toFixed(1) + ',' + (H - B) }),
+      svg('polyline', { 'class': 'wln', points: pts }));
+    [[0, 'start'], [Math.round(last / 2), 'middle'], [last, 'end']].forEach(function (t) {
+      add(box, svg('text', { x: x(t[0]), y: H - 5, 'class': 'tk', 'text-anchor': t[1] }, t[0] + (t[1] === 'end' ? ' мин' : '')));
+    });
+    var top = 0;
+    hr.forEach(function (p, i) { if (p[1] > hr[top][1]) top = i; });
+    var tx = x(hr[top][0]), ty = y(hr[top][1]), tl = String(hr[top][1]);
+    add(box, svg('circle', { cx: tx, cy: ty, r: 4.5, 'class': 'dot wdot' }),
+      svg('text', { x: Math.min(Math.max(tx, L + 10), W - R - 10), y: ty - 8 < T ? ty + 16 : ty - 8, 'class': 'tk strong', 'text-anchor': 'middle' }, tl));
+    var xh = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, 'class': 'xh' });
+    xh.style.display = 'none';
+    var zm = woZoneMinutes(hr, mx);
+    var hit = svg('rect', { x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'hit', tabindex: '0', role: 'img',
+      'aria-label': 'Пульс: от ' + Math.min.apply(null, vs) + ' до ' + hr[top][1] + ' уд/мин за ' + last + ' мин; ' +
+        zm.map(function (m, i) { return m ? 'зона ' + i + ' — ' + m + ' мин' : null; }).filter(Boolean).join(', ') });
+    add(box, xh, hit);
+    var k = 0;
+    function at(i) {
+      k = Math.min(Math.max(i, 0), hr.length - 1);
+      var p = hr[k];
+      xh.setAttribute('x1', x(p[0]));
+      xh.setAttribute('x2', x(p[0]));
+      xh.style.display = '';
+      tip.show(box, W, x(p[0]), y(p[1]), p[1] + ' уд/мин', p[0] + '-я мин · зона ' + woZone(p[1], mx));
+    }
+    function fromEvent(e) {
+      var r = box.getBoundingClientRect(), m = ((e.clientX - r.left) * W / r.width - L) / (W - L - R) * last, best = 0;
+      hr.forEach(function (p, i) { if (Math.abs(p[0] - m) < Math.abs(hr[best][0] - m)) best = i; });
+      at(best);
+    }
+    function off() { xh.style.display = 'none'; tip.hide(); }
+    hit.addEventListener('pointermove', fromEvent);
+    hit.addEventListener('pointerdown', fromEvent);
+    hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') off(); });
+    hit.addEventListener('focus', function () { at(top); });
+    hit.addEventListener('blur', off);
+    hit.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); at(k + (e.key === 'ArrowLeft' ? -1 : 1)); }
+    });
+    return wrap;
+  }
+  // Leaflet 1.9.4 from cdnjs (with its SRI), loaded on the first map and kept; a failure lets the next sheet try again.
+  var leafletP = null;
+  function leaflet() {
+    if (window.L && window.L.map) return Promise.resolve(window.L);
+    if (leafletP) return leafletP;
+    var base = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/';
+    leafletP = new Promise(function (ok, no) {
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = base + 'leaflet.min.css';
+      css.integrity = 'sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb';
+      css.crossOrigin = 'anonymous';
+      var js = document.createElement('script');
+      js.src = base + 'leaflet.min.js';
+      js.integrity = 'sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO';
+      js.crossOrigin = 'anonymous';
+      js.onload = function () { if (window.L && window.L.map) ok(window.L); else { leafletP = null; no(); } };
+      js.onerror = function () { leafletP = null; css.remove(); js.remove(); no(); };
+      add(document.head, css, js);
+    });
+    return leafletP;
+  }
+  // The route on OpenStreetMap's tiles (their attribution in the corner): the line in --mark over a halo, the start a
+  // ringed dot, the finish a filled one, fitted to the route. On a touch screen one finger scrolls the sheet (no map
+  // dragging) and two pinch the map; with a mouse it drags, the wheel scrolls the sheet. In the dark the tiles are
+  // inverted (the spec's filter), the line keeps its colour.
+  function woMap(box, route) {
+    leaflet().then(function (L) {
+      if (!box.isConnected) return;
+      var coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+      var m = L.map(box, { zoomControl: !coarse, dragging: !coarse, scrollWheelZoom: false, keyboard: false, boxZoom: false });
+      m.attributionControl.setPrefix(false);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(m);
+      var ll = route.map(function (p) { return [p[0], p[1]]; });
+      L.polyline(ll, { className: 'wrth', weight: 7, interactive: false }).addTo(m);
+      L.polyline(ll, { className: 'wrt', weight: 4, interactive: false }).addTo(m);
+      L.circleMarker(ll[0], { className: 'wpt', radius: 6, weight: 3, interactive: false }).addTo(m);
+      L.circleMarker(ll[ll.length - 1], { className: 'wpt wfin', radius: 6, weight: 3, interactive: false }).addTo(m);
+      function fit() { if (box.isConnected) { m.invalidateSize(); m.fitBounds(L.latLngBounds(ll), { padding: [20, 20], maxZoom: 17 }); } }
+      fit();
+      setTimeout(fit, 350);
+    }, function () {
+      box.classList.add('off');
+      text(box, 'Карта не загрузилась — проверь связь и открой ещё раз.');
+    });
   }
   // «Зал»: «Следующая: B · прошлый раз пт 24.10», its exercises with last time's weight (or best reps for his own
   // weight) and «↑ 62,5» where all the sets reached the top of the reps; a tap — the plan.
