@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 19:30">
+<meta name="published" content="2026-10-29 19:52">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1285,6 +1285,38 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hpr.bas-r{border-radius:30px;padding:10px 14px 10px 10px}.hpr.bas-r .hmini{width:48px;height:48px}.hpr.bas-r .hmini>svg.hring{width:48px;height:48px}
 .bas-r .hpr-n{font-size:16px}.bas-r .bas-w{font-size:14px;margin-top:2px}.bas-n{margin-top:14px}
 .hpr.bas-f{align-items:flex-start;padding:12px 14px}.hpr.bas-f.mu .hpr-n{color:var(--muted)}
+/* docs/specs/bevel-gap.md, п. 2, 6, 11, 13. «Стресс» beside the advice: a 270° arc in its zone's colour (home.jpg).
+   «Таймлайн» (tour-1.jpg): the emoji in a tinted circle, the time, the title on one line, the kcal and Ж·У·Б dots.
+   The sleep sheet's night: the pair and the phases, a colour a phase (sleep-phases.jpg: awake orange, REM light blue,
+   core blue, deep violet). «Кардио» and «Сила»: tiles two across (four from 900 px), as «Монитор»'s. */
+.hadvr{display:flex;align-items:center;gap:12px;margin-top:14px}.hadvr .hadv{flex:1;min-width:0;margin:0;text-align:left;text-wrap:pretty}
+.hstr{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:92px;padding:8px 4px 10px;border-radius:var(--r-b);background:var(--surface-2)}
+.hstr-h{font-size:12px}.hstr-w{font-size:12px;font-weight:700;color:color-mix(in srgb,var(--st) 72%,var(--fg))}
+.hstg{display:block;overflow:visible}.hstg circle{fill:none;stroke-linecap:round}.hstg .tr{stroke:color-mix(in srgb,var(--st) 18%,transparent)}
+.hstg .arc{stroke:var(--st);filter:var(--hl-glow)}.hstg .v{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}
+.row.htl-r{padding:10px 14px}.row.htl-r[hidden]{display:none}.htl-r .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.htl-t{font-size:12px;font-variant-numeric:tabular-nums}.htl-n{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.htl-m{font-size:12px;font-variant-numeric:tabular-nums}.htl-m .htl-k{font-weight:600}
+.htl-e{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-size:20px;line-height:1}
+.htl-meal{background:color-mix(in srgb,var(--nu-carbs) 16%,transparent)}.htl-workout{background:var(--ring-load-soft)}
+.htl-sleep{background:var(--ring-sleep-soft);color:var(--ring-sleep)}.htl-sleep .i{width:20px;height:20px}
+.hslp{margin:14px 0 2px}.hslp-p{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px}
+.hslp-p .mu{display:inline-flex;align-items:center;gap:6px;font-size:13px}.hslp-p .i{width:16px;height:16px}.hslp-p b{font:800 17px var(--font-num);font-variant-numeric:tabular-nums}
+.hslp-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hslp-p+.hslp-p{margin-top:-4px}
+.hslp-c,.hph{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.hslp-c .mu{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hslp-c b{display:block;margin-top:2px;font:800 18px/1.2 var(--font-num);white-space:nowrap}
+.hph-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}.hph{display:flex;align-items:center;gap:8px;padding:12px}
+.hph-m{flex:1;min-width:0}.hph-n{font-size:12px;overflow-wrap:anywhere}.hph b{display:block;margin-top:2px;font:800 22px/1.15 var(--font-num);font-variant-numeric:tabular-nums}
+.hph-s{font-size:13px;font-weight:700;color:var(--ph)}.hph-r{flex:none;overflow:visible}.hph-r circle{fill:none;stroke-linecap:round}
+.hph-r .tr{stroke:color-mix(in srgb,var(--ph) 18%,transparent)}.hph-r .arc{stroke:var(--ph)}
+.hph-awake{--ph:var(--ring-load)}.hph-rem{--ph:var(--ring-sleep-2)}.hph-core{--ph:var(--ring-sleep)}.hph-deep{--ph:color-mix(in srgb,var(--ring-sleep) 55%,var(--fg))}
+.hgst{margin:-2px 0 2px;font-size:13px;font-weight:700;color:color-mix(in srgb,var(--st) 75%,var(--fg))}.hgg.tap{border-radius:var(--r-b)}
+.hft{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 14px 14px}@media (min-width:900px){.hft{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.hftl{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px;border-radius:var(--r-b);background:var(--surface-2)}
+.hft-h{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--muted)}.hft-h span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hft-h .i{flex:none;width:15px;height:15px}.hft-v{font:800 22px/1.15 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}
+.hft-v small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}.hft-s{font-size:12px}
+.lfold.lgf{color:var(--fg)}.lgf-n{font-weight:700}.lgf-c{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}.lgf>.i{color:var(--muted)}.lgr[hidden]{display:none}
 .bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
 .bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
 .bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
@@ -13977,6 +14009,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // the goal, the weight, the entries) and «Неделя и месяц»; «Фитнес» — the week's strip, the load and the muscles'
     // freshness, the day's workouts and «Зал».
     var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div');
+    // The day's food_day and health_day answers: «Таймлайн» (from health_day) opens the meal's and the workout's sheets
+    // from food_day's rows, and while it is drawn «Сегодня» leaves out the entries and «Спорт» it already lists.
+    var FJ = null, HJ = null;
     add.apply(null, [main].concat(seg === 'fitness' ? [nav, fit, body] : seg === 'nutrition' ? [nav, body, stats] : [nav, top, body]));
     function fresh() { cacheDrop('food'); cacheDrop('home'); }
     function go(n) { goTo(n === 0 ? foodToday() : addDays(FOOD.date, n)); }
@@ -14040,7 +14075,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     function render(j) {
       var es = j.entries || [], t = j.totals || { kcal: 0, protein: 0, carbs: 0, fat: 0 }, norm = prefs.food, k = Math.round(t.kcal || 0);
-      var nu = j.nutrition, goal = kcalGoal(), pend = j.pending || [], list = null, out;
+      var nu = j.nutrition, goal = kcalGoal(), pend = j.pending || [], list = null, out, tl = seg === 'today' && HJ && HJ.has_data;
+      FJ = j;
+      if (tl) es = [];
       // The entries in time order after the texts the Mac still reads; a tap opens one's sheet. Under Health's sums on
       // «Сегодня» they are «Записи»; «Питание» puts them under «Таймлайн питания» with each one's Ж·У·Б.
       if (pend.length || es.length) {
@@ -14079,12 +14116,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       out = [day];
       swipe(day);
       if (list) out.push(list);
-      else if (!nu) out.push(none);
+      else if (!nu && !tl) out.push(none);
       // The day's workouts under its meals («Сегодня»), then «Зал» («Фитнес»: the next gym session by the plan, the same for
       // every day).
       var wo = woCard(j.workouts || [], date, function () { fresh(); load(); loadStats(); }, load);
       if (seg === 'fitness') out = [wo].concat(j.plan_next ? [gymCard(j.plan_next, function () { fresh(); load(); })] : []);
-      else out.push(wo);
+      else if (!tl) out.push(wo);
       add.apply(null, [clear(body)].concat(out));
     }
     function loadStats() {
@@ -14101,9 +14138,25 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       swr({ key: 'body:' + date, box: box, n: 1, live: function () { return current === 'food' && FOOD.date === date && healthSeg === seg; },
         fetch: function () { return api('miniapp', { action: 'health_day' }, 15000, true, { date: date }); },
         render: function (j) {
-          if (seg === 'fitness') return add(clear(fit), hlFitness(j));
-          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j)));
+          var had = HJ && HJ.has_data;
+          HJ = j;
+          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlTimeline(j, openTl, function (ev) {
+            woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
+          }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+          // The food's cards drawn before the timeline lose (or get back) its entries and «Спорт».
+          if (FJ && !had !== !j.has_data) render(FJ);
         } });
+    }
+    // A timeline row's sheet: the meal's and the workout's from food_day's rows (a meal not there yet — «Питание»),
+    // the night's — the sleep ring's.
+    function openTl(x, r) {
+      var done = function () { fresh(); load(); loadHealth(); };
+      if (x.type === 'sleep') return hlRingSheet('sleep', HJ, r);
+      var hit = ((x.type === 'meal' ? (FJ || {}).entries : (FJ || {}).workouts) || []).filter(function (e) { return e.id === x.id; })[0];
+      if (!hit) return x.type === 'meal' ? show('nutrition') : null;
+      if (x.type === 'meal') foodSheet(hit, r, done);
+      else woDetailSheet(hit, r, done);
     }
     load();
     loadHealth();
@@ -14742,11 +14795,82 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
     var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
-    wrap.appendChild(el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice ? hlAdvice(j.advice, today && today.kinds) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.')));
+    var adv = el('div', 'hadv' + (j.advice ? '' : ' mu'), j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
+    // The stress gauge beside the advice (docs/specs/bevel-gap.md, п. 2); a tap — its sheet.
+    wrap.appendChild(sc.stress ? add(el('div', 'hadvr'), adv, hlStressTile(sc.stress, function (t) { hlRingSheet('stress', j, t); })) : adv);
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
     b.setAttribute('aria-label', 'Из чего считаются кольца');
     c.firstChild.appendChild(b);
     c.appendChild(wrap);
+    return c;
+  }
+  // «1:35», «0:58»: minutes as hours and minutes (Bevel's, without the seconds).
+  function hlHm(m) { m = Math.round(m || 0); return Math.floor(m / 60) + ':' + ('0' + m % 60).slice(-2); }
+  // The stress in a word, the server's («39 — стресс средний»), capitalised; its zone by the bands 34 / 67.
+  function hlStressWord(s) {
+    var w = String(s.line || '').split('стресс ')[1] || (s.value < 34 ? 'низкий' : s.value < 67 ? 'средний' : 'высокий');
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }
+  function hlStressZone(v) { return v < 34 ? 'good' : v < 67 ? 'mid' : 'bad'; }
+  // «Стресс» as Bevel's gauge (home.jpg): a 270° arc lit to the value in its zone's colour, the number in the middle,
+  // the word under it.
+  function hlStressTile(s, onTap) {
+    var size = 72, sw = 6, r = (size - sw) / 2 - 2, c = 2 * Math.PI * r, h = size / 2, z = hlStressZone(s.value), word = hlStressWord(s);
+    var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hstg', 'aria-hidden': 'true' });
+    var rot = 'rotate(135 ' + h + ' ' + h + ')';
+    box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw, 'stroke-dasharray': (c * 0.75).toFixed(1) + ' ' + c.toFixed(1), transform: rot }));
+    if (s.value > 0) box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw,
+      'stroke-dasharray': (c * 0.75 * Math.min(100, s.value) / 100).toFixed(1) + ' ' + c.toFixed(1), transform: rot }));
+    box.appendChild(svg('text', { x: h, y: h, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 22 }, String(s.value)));
+    var t = add(el('div', 'hstr hz-st-' + z), el('div', 'mu hstr-h', 'Стресс'), box, el('div', 'hstr-w', word));
+    t.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
+    return tap(t, function () { haptic(); onTap(t); });
+  }
+  // «Таймлайн» (docs/specs/bevel-gap.md, п. 2; docs/bevel/tour-1.jpg): the day's meals, workouts and the night, the
+  // latest first; a row — the emoji in a tinted circle, the time, the title, one line of what it was (a meal's kcal and
+  // its Ж·У·Б dots, a workout's load share · length · kcal, the night's window · sleep · score); three rows and
+  // «Показать таймлайн» for the rest; a tap — open(item, row). «Тренировка» under it (the day's «Спорт» is folded in).
+  function hlTlRow(x) {
+    var lead = el('span', 'htl-e htl-' + x.type, x.type === 'sleep' ? null : x.emoji || ''), title = x.title, meta;
+    if (x.type === 'sleep') lead.appendChild(icon('moon'));
+    if (x.type === 'meal') {
+      title = x.title + (x.text ? ': ' + x.text : '');
+      meta = nuMacroLine(x);
+      meta.insertBefore(el('span', 'htl-k', grouped(Math.round(Number(x.kcal) || 0)) + ' ккал'), meta.firstChild);
+    } else {
+      meta = el('div', 'mu', (x.type === 'workout' ? [x.load_pct != null ? x.load_pct + ' %' : null, x.minutes ? hlHm(x.minutes) : null,
+        x.kcal ? grouped(Math.round(x.kcal)) + ' ккал' : null] : [x.time && x.end_time ? x.time + '–' + x.end_time : null,
+        x.minutes ? hlVal('sleep_min', x.minutes) : null, x.score != null ? x.score + ' %' : null]).filter(Boolean).join(' · '));
+    }
+    meta.className += ' htl-m';
+    var r = add(el('div', 'row htl-r'), lead, add(el('span', 'tx'), el('div', 'mu htl-t', x.time || 'ночь'), el('div', 't htl-n', title), meta),
+      add(el('span', 'hpr-go'), icon('chevron-right')));
+    r.setAttribute('aria-label', (x.time ? x.time + ', ' : '') + title + ', ' + meta.textContent);
+    return r;
+  }
+  function hlTimeline(j, open, addWo) {
+    var xs = (j.timeline || []).slice().reverse(), n = xs.length, more = [];
+    var c = mkCard('history', 'Таймлайн', n ? n + ' ' + ['событие', 'события', 'событий'][plural3(n)] : null);
+    c.className += ' htlc';
+    xs.forEach(function (x, i) {
+      var r = hlTlRow(x);
+      if (i >= 3) { r.hidden = true; more.push(r); }
+      c.appendChild(tap(r, function () { haptic(); open(x, r); }));
+    });
+    if (!n) c.appendChild(el('div', 'mu wempty', 'Пока пусто: еда, тренировки и сон встанут сюда по времени.'));
+    var foot = el('div', 'foot');
+    if (more.length) {
+      var sb = foodBtn('btn ghost htl-more', 'chevron-down', 'Показать таймлайн', function () {
+        var open1 = more[0].hidden;
+        more.forEach(function (r) { r.hidden = !open1; });
+        label(sb, open1 ? 'chevron-up' : 'chevron-down', open1 ? 'Свернуть' : 'Показать таймлайн');
+        sb.setAttribute('aria-expanded', String(open1));
+      });
+      sb.setAttribute('aria-expanded', 'false');
+      foot.appendChild(sb);
+    }
+    foot.appendChild(foodBtn('btn ghost', 'plus', 'Тренировка', addWo));
+    c.appendChild(foot);
     return c;
   }
   // --- The metric and ring sheets (docs/specs/metric-sheets.md, 29.10.2026) in Bevel's look: a metric as
@@ -14771,7 +14895,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // The part's icon by its label (the rings' parts).
   var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer',
     'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', '7 дней': 'flame',
-    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed' };
+    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
   var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Норма', bad: 'Мало' } };
   var HL_LOAD_RU = { calibration: 'Калибровка', low: 'Недостаток тренировки', maintain: 'Поддержание', productive: 'Результативность',
     fatigue: 'Усталость', overtrain: 'Перетренировка' };
@@ -15077,31 +15201,36 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     });
     return add(el('div', 'hsec'), el('div', 'hsec-h', 'Разбивка за 30 дней'), t);
   }
-  var HL_RING_CLS = { load: 'hl-load', recovery: 'hl-rec', sleep: 'hl-sleep' };
+  var HL_RING_CLS = { load: 'hl-load', recovery: 'hl-rec', sleep: 'hl-sleep', stress: 'hl-load' };
   // A ring's sheet: the three rings as pills, the value large with its zone or status, the line; the 30 days over the
   // zones; «Из чего»; the load — the muscles and the statuses' breakdown, the sleep — a way to the hours of sleep.
   function hlRingSheet(k, j, from) {
     HL_CACHE = {};
     var cur = k, body = el('div', 'hsh'), close = noop, seq = 0;
-    var pills = hlPills(HL_RINGS.map(function (r) { return [r[0], HL_NAMES[r[0]]]; }), k, function (x) { cur = x; draw(); });
+    // The stress (docs/specs/bevel-gap.md, п. 2) is a fourth pill when the day has it: its parts, no chart.
+    var keys = HL_RINGS.map(function (r) { return r[0]; }).concat((j.scores || {}).stress ? ['stress'] : []);
+    var pills = hlPills(keys.map(function (x) { return [x, HL_NAMES[x]]; }), k, function (x) { cur = x; draw(); });
     function draw() {
       var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
       if (h) h.textContent = HL_NAMES[cur];
       clear(body);
       var tgt = cur === 'load' ? j.load_target || [20, 49] : null;
-      var zone = s && cur !== 'load' ? (s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
-      var st = !s ? null : cur === 'load' ? HL_LOAD_RU[s.status || 'calibration'] : HL_ZONE_RU[cur][zone];
+      var stress = cur === 'stress';
+      var zone = s && cur !== 'load' ? (stress ? hlStressZone(s.value) : s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
+      var st = !s ? null : cur === 'load' ? HL_LOAD_RU[s.status || 'calibration'] : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
       var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.status || 'calibration') : 'hz-st-' + zone;
-      var range = cur === 'load' ? 'Оптимальная: ' + tgt[0] + '–' + tgt[1] + ' %' : cur === 'sleep' ? 'Отлично от 85 %' : 'Высокое от 67 %';
-      add(body, hlHead(s ? String(s.value) : '—', s ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line ? s.line.replace(/^\d+ % — /, '') : null));
-      var chart = add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
-      body.appendChild(chart);
+      var range = cur === 'load' ? 'Оптимальная: ' + tgt[0] + '–' + tgt[1] + ' %' : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
+      add(body, hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line && !stress ? s.line.replace(/^\d+ % — /, '') : null));
+      if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
+      var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
+      if (chart) body.appendChild(chart);
       var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
         el('div', 'mu hsec-s', cur === 'recovery' ? 'Обычный день — 75 %; каждая часть сдвигает вверх или вниз.' :
-          cur === 'sleep' ? 'Цель — 100 %; каждая часть показывает, сколько отняла.' : '7 дней нагрузки против обычной недели за 28 дней.'));
+          cur === 'sleep' ? 'Цель — 100 %; каждая часть показывает, сколько отняла.' : stress ? 'Обычный день — 50; ВСР ниже нормы и пульс покоя выше поднимают стресс.' :
+          '7 дней нагрузки против обычной недели за 28 дней.'));
       if (!s) {
         parts.appendChild(el('div', 'mu', cur === 'recovery' ? 'Нужны ВСР и пульс во сне хотя бы за 5 дней.' :
-          cur === 'sleep' ? 'Сна за этот день нет.' : 'Пока нет базы: нужна неделя тренировок.'));
+          cur === 'sleep' ? 'Сна за этот день нет.' : stress ? 'Нужны ВСР или пульс покоя и их норма.' : 'Пока нет базы: нужна неделя тренировок.'));
       } else {
         s.explain.forEach(function (p) { parts.appendChild(hlPartRow(p, HL_RING_CLS[cur], j)); });
       }
@@ -15123,6 +15252,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           el('div', 'mu', 'график за 30 дней — год, тенденции')), add(el('span', 'hpr-go'), icon('chevron-right')));
         body.appendChild(tap(go, function () { hlSeriesSheet('sleep_min', HL_MON_KEYS, go); }));
       }
+      if (!chart) return;
       var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32)), ring = cur;
       hlSeries(cur, 30, j.date).then(function (sj) {
         if (n !== seq) return;
@@ -15147,6 +15277,36 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     close = legalSheet(HL_NAMES[k], [pills, body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
     hlFrame(body);
     draw();
+  }
+  // The night at the top of the sleep ring's sheet (sleep-score.jpg, sleep-phases.jpg): the period and the efficiency,
+  // «В постели · Сон» large, then a tile a phase — Бодрствование · REM · Основной · Глубокий, its time, its share in its colour
+  // and a small ring of the share.
+  function hlSleepBlock(sl) {
+    var out = el('div', 'hslp');
+    if (sl.period) out.appendChild(add(el('div', 'hslp-p'), add(el('span', 'mu'), icon('moon'), document.createTextNode('Период сна')), el('b', '', sl.period)));
+    if (sl.efficiency != null) out.appendChild(add(el('div', 'hslp-p'), add(el('span', 'mu'), icon('percent'), document.createTextNode('Эффективность')), el('b', '', sl.efficiency + ' %')));
+    var pair = el('div', 'hslp-g');
+    [['Время в постели', sl.in_bed_min == null ? '—' : hlVal('sleep_min', sl.in_bed_min)], ['Время сна', sl.asleep_min == null ? '—' : hlVal('sleep_min', sl.asleep_min)]].forEach(function (x) {
+      pair.appendChild(add(el('div', 'hslp-c'), el('div', 'mu', x[0]), el('b', '', x[1])));
+    });
+    out.appendChild(pair);
+    if ((sl.phases || []).length) {
+      var g = el('div', 'hph-g');
+      sl.phases.forEach(function (p) {
+        var size = 40, sw = 4, r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
+        var ring = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hph-r', 'aria-hidden': 'true' });
+        ring.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
+        if (p.share > 0) ring.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw,
+          'stroke-dasharray': (c * p.share / 100).toFixed(1) + ' ' + c.toFixed(1), transform: 'rotate(-90 ' + h + ' ' + h + ')' }));
+        var t = add(el('div', 'hph hph-' + p.key), add(el('div', 'hph-m'), el('div', 'mu hph-n', p.label), el('b', '', p.min == null ? '—' : hlHm(p.min)),
+          el('div', 'hph-s', p.share == null ? '—' : p.share + ' %')), ring);
+        t.setAttribute('role', 'group');
+        t.setAttribute('aria-label', p.label + ': ' + (p.min == null ? 'нет данных' : hlHm(p.min) + ', ' + p.share + ' %'));
+        g.appendChild(t);
+      });
+      out.appendChild(g);
+    }
+    return out;
   }
   // A tile's scale: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it with a halo; both in the
   // status colour of the tile (--st).
@@ -15180,8 +15340,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     return c;
   }
   // A load gauge as Bevel's: a half ring 0–100 %, the target in green, a marker at the value, the number in the middle,
-  // the words under it.
-  function hlGauge(name, s, tgt) {
+  // the status word under it in its colour (the server's line, tour-4.jpg), then the target; a tap — onTap(row).
+  function hlGauge(name, s, tgt, onTap) {
     var row = el('div', 'hgg'), v = s ? s.value : null;
     var W = 140, H = 84, cx = 70, cy = 72, r = 58, sw = 10;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
@@ -15199,9 +15359,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     if (v != null) t.appendChild(svg('tspan', { 'class': 'gu', 'font-size': 13, dx: 2 }, '%'));
     box.appendChild(t);
     var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели';
-    add(row, el('div', 'hgh', name), box, el('div', 'mu', where + ' · цель ' + tgt[0] + '–' + tgt[1] + ' %'));
-    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + where));
-    return row;
+    var word = s && ((String(s.line || '').match(/— ([^:]+):/) || [])[1] || HL_LOAD_RU[s.status || 'calibration'].toLowerCase());
+    word = word ? word.charAt(0).toUpperCase() + word.slice(1) : null;
+    add(row, el('div', 'hgh', name), box, word ? el('div', 'hgst hl-st-' + (s.status || 'calibration'), word) : null,
+      el('div', 'mu', where + ' · цель ' + tgt[0] + '–' + tgt[1] + ' %'));
+    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where) + (onTap ? ' — из чего' : ''));
+    return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
   // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout, a dot for rest), the two gauges, the
   // muscles' freshness. Nothing to show (no workout in 28 days, every group fresh) — null.
@@ -15219,7 +15382,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     });
     c.appendChild(strip);
     var tgt = j.load_target || [20, 49];
-    add(c, add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt), hlGauge('Мышцы', sc.muscle, tgt)));
+    // Both open the load's sheet: the muscles' row is in it.
+    function open(row) { hlRingSheet('load', j, row); }
+    add(c, add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null), hlGauge('Мышцы', sc.muscle, tgt, sc.muscle ? open : null)));
     if (fr.length) {
       var f = add(el('div', 'hfr'), el('div', 'hfh', 'Свежесть мышц'));
       fr.forEach(function (g) {
@@ -15236,6 +15401,41 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       c.appendChild(f);
     }
     return c;
+  }
+  // «Кардио» and «Сила» under «Фитнес» (docs/specs/bevel-gap.md, п. 11; tour-4.jpg, row 3): tiles two across over the
+  // 7 days — the workouts but the gym (their time and count), their kcal, the latest VO2max (a tap — its chart) and
+  // heart rate recovery; the sets of the exercises and their volume. Nothing without the server's tiles.
+  function hlFitTiles(j) {
+    var ct = j.cardio_tiles, sg = j.strength_tiles, out = [];
+    function grid(card, tiles) {
+      var g = el('div', 'hft');
+      tiles.forEach(function (x) {
+        var t = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(x[0]), el('span', '', x[1]), x[5] ? icon('chevron-right') : null),
+          add(el('div', 'hft-v' + (x[2] === '—' ? ' mu' : '')), document.createTextNode(x[2]), x[3] && x[2] !== '—' ? el('small', '', ' ' + x[3]) : null),
+          el('div', 'mu hft-s', x[4]));
+        t.setAttribute('aria-label', x[1] + ': ' + x[2] + (x[3] && x[2] !== '—' ? ' ' + x[3] : '') + ', ' + x[4] + (x[5] ? ' — график' : ''));
+        if (x[5]) tap(t, function () { x[5](t); });
+        else t.setAttribute('role', 'group');
+        g.appendChild(t);
+      });
+      card.appendChild(g);
+      return card;
+    }
+    if (ct) {
+      var n = ct.workouts || 0;
+      out.push(grid(mkCard('heart-pulse', 'Кардио', 'за 7 дней'), [
+        ['timer', 'Все занятия', n ? hlHm(ct.minutes) : '0', '', 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)]],
+        ['flame', 'Активная энергия', ct.kcal == null ? '—' : grouped(ct.kcal), 'ккал', 'на тренировках'],
+        ['wind', 'VO2 max', ct.vo2max ? woNum(ct.vo2max.v) : '—', '', ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
+          ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null],
+        ['heart', 'Восст. пульса', ct.recovery ? woNum(ct.recovery.v) : '—', 'уд/мин', ct.recovery ? 'за минуту, на ' + hlShort(ct.recovery.day) : 'нет данных']]));
+    }
+    if (sg) {
+      out.push(grid(mkCard('dumbbell', 'Сила', 'за 7 дней'), [
+        ['biceps-flexed', 'Все мышцы', String(sg.sets || 0), '', 'всего подходов'],
+        ['weight', 'Общий объём', grouped(sg.volume_kg || 0), 'кг', 'вес × повторы']]));
+    }
+    return out;
   }
   // A sparkline: the points of the window as one quiet line over a fading area, the last one a dot with a halo; no
   // axes, no grid.
@@ -15295,10 +15495,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // --- «Биология»: the biological age and the lab results (docs/specs/labs.md, 29.10.2026) ---
   // «Биологический возраст»: the overall large (the blood's PhenoAge at its freshness weight and the fitness age from
   // VO2max, their mean), against his age on a single axis of years (a dot each, the overall in the accent, the age a
-  // line); the three parts a row each (the blood with the panel's date and weight, the fitness with VO2max, «по
-  // привычкам» — the factor model's plain sum); a tap on the head or «Из чего» opens the full-screen sheet (bioAgeSheet:
+  // line); the server's three rows (Кровь · Фитнес · Сон и активность, bioage.rows — the sheet's groups too); a tap on the head or «Из чего» opens the full-screen sheet (bioAgeSheet:
   // the week's number of bioage_log and every part), the head's target his birth date and height («Цели»). «Анализы»: the latest of each test by group, its value, the lab's range as a band with the value's
-  // dot and «норма / выше / ниже»; a tap — its dates (the history sheet); «Прочее» folded; «Добавить PDF» — how.
+  // dot and «норма / выше / ниже»; a tap — its dates (the history sheet); each group folded but its rows out of range; «Добавить PDF» — how.
   // The charts are inline SVG on the app's variables (the norm green, above sky, below orange, as «Монитор»).
   var LAB_FLAG = { norm: 'норма', high: 'выше', low: 'ниже' }, LAB_ST = { norm: 'norm', high: 'above', low: 'below' };
   function bioView() {
@@ -15321,7 +15520,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function bioYears(v) { return v == null ? '—' : woNum(v); }
   function bioDelta(d) { return d == null ? '' : (Math.abs(d) < 0.05 ? 'как по паспорту' : (d < 0 ? 'на ' + woNum(-d) + ' моложе' : 'на ' + woNum(d) + ' старше')); }
   function bioAgeCard(j, box, reload) {
-    var c = mkCard('dna', 'Биологический возраст'), p = j.pheno || {}, f = j.fitness || {}, l = j.lifestyle || {};
+    var c = mkCard('dna', 'Биологический возраст');
     c.className += ' hbage';
     // A new birth date or height rewrites this week's number (bioage_recompute), then the card reloads.
     var gb = foodBtn('mtoday', 'target', 'Цели', function () {
@@ -15339,19 +15538,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       center.appendChild(add(el('div', 'bas-dp'), add(el('span', 'bas-dpi ' + (j.delta > 0 ? 'old' : j.delta < 0 ? 'yg' : '')), icon(j.delta > 0 ? 'arrow-up' : j.delta < 0 ? 'arrow-down' : 'circle-dot')),
         el('span', '', (j.delta > 0 ? '+' : j.delta < 0 ? '−' : '±') + woNum(Math.abs(j.delta)) + ' по сравнению с прошлой неделей'), icon('chevron-right')));
     }
-    function prow(ic, name, v, delta) {
+    function prow(ic, name, v, delta, line) {
       var wd = bioWord(delta), arc = v == null ? 0 : Math.max(8, Math.min(100, 50 - (delta || 0) * 12.5));
       return add(el('div', 'hpr bas-r bac-r'), hlMini(arc, v == null ? 'hl-sleep' : delta > 0 ? 'hl-load' : 'hl-rec', ic),
-        add(el('div', 'hpr-m'), add(el('div', 'hpr-n'), document.createTextNode(name + ' '), el('b', '', v == null ? '—' : woNum(v)),
-          v != null && delta != null ? add(el('span', 'bas-w ' + wd[1]), document.createTextNode(' · ' + bioDelta(delta))) : null)),
+        add(el('div', 'hpr-m'), add(el('div', 'hpr-n'), document.createTextNode(name + ' '), el('b', '', v == null ? '—' : woNum(v))),
+          v != null && delta != null ? el('div', 'bas-w ' + wd[1], line || bioDelta(delta)) : null),
         add(el('span', 'hpr-go'), icon('chevron-right')));
     }
     var body = add(el('div', 'bas bac'), bioStars(), el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
       add(el('div', 'bas-gz'), bioGauge(bio, age, 64), center),
-      add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', j.next_update_days + ' ' + ['день', 'дня', 'дней'][plural3(j.next_update_days)])),
-      prow('test-tube', 'Кровь', p.weight > 0 ? p.age : null, p.weight > 0 ? p.delta : null),
-      prow('flame', 'Фитнес', f.age, f.age != null ? f.age - age : null),
-      prow('activity', 'Привычки', l.factors && l.factors.length ? l.age : null, l.factors && l.factors.length ? l.age - age : null));
+      add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', j.next_update_days + ' ' + ['день', 'дня', 'дней'][plural3(j.next_update_days)])));
+    // The server's rows (Кровь · Фитнес · Сон и активность), the same as the sheet's «Биомаркеры возраста».
+    bioRowsOf(j).forEach(function (r) { body.appendChild(prow(BIO_ROW_IC[r.key] || 'circle-dot', r.label, r.years, r.delta, r.line)); });
     body.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + ' — подробно');
     c.appendChild(tap(body, function () { bioAgeSheet(j, body); }));
     c.appendChild(el('div', 'mu msrc bnote', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
@@ -15409,6 +15607,28 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     by.blood.years = p.age != null && p.weight > 0 ? p.delta : null;
     return BIO_GROUPS.map(function (g) { return by[g[0]]; });
   }
+  // The three rows of the card and of the sheet (docs/specs/bevel-gap.md, п. 13): the server's bioage.rows — an
+  // answer cached before them gets the same three from the groups; the sheet's groups merged to match (Сон and
+  // Физическая активность → «Сон и активность»; «Стиль жизни» has no surveys and is left out).
+  var BIO_ROW_IC = { blood: 'test-tube', fit: 'heart', sleep_act: 'moon' };
+  function bioRowsOf(j) {
+    if (j.rows) return j.rows;
+    var g = {}, p = j.pheno || {};
+    bioGroups(j).forEach(function (x) { g[x.key] = x; });
+    var sa = g.sleep.years == null && g.act.years == null ? null : Math.round(((g.sleep.years || 0) + (g.act.years || 0)) * 10) / 10;
+    return [['blood', 'Кровь', g.blood.years, p.age], ['fit', 'Фитнес', g.fit.years], ['sleep_act', 'Сон и активность', sa]].map(function (r) {
+      return { key: r[0], label: r[1], delta: r[2], years: r[2] == null ? null : r[3] != null ? r[3] : Math.round((j.age + r[2]) * 10) / 10,
+        line: bioWord(r[2])[0] };
+    });
+  }
+  function bioRowGroups(j) {
+    var g = {};
+    bioGroups(j).forEach(function (x) { g[x.key] = x; });
+    g.sleep_act = { factors: g.sleep.factors.concat(g.act.factors), missing: g.sleep.missing.concat(g.act.missing) };
+    return bioRowsOf(j).map(function (r) {
+      return Object.assign({}, g[r.key] || { factors: [], missing: [] }, { key: r.key, name: r.label, ic: BIO_ROW_IC[r.key] || 'circle-dot', years: r.delta, line: r.line });
+    });
+  }
   // The stars: sparse dots in the SVG over the gradient's top (slice keeps them round at any width).
   function bioStars() {
     var box = svg('svg', { viewBox: '0 0 400 620', preserveAspectRatio: 'xMidYMin slice', 'class': 'bas-stars', 'aria-hidden': 'true' });
@@ -15452,7 +15672,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function bioGroupRow(g, open) {
     var w = bioWord(g.years), arc = g.years == null ? 0 : Math.max(8, Math.min(100, 50 - g.years * 12.5));
     var row = add(el('div', 'hpr bas-r'), hlMini(arc, g.years == null ? 'hl-sleep' : g.years > 0 ? 'hl-load' : 'hl-rec', g.ic),
-      add(el('div', 'hpr-m'), el('div', 'hpr-n', g.name), el('div', 'bas-w ' + w[1], g.years == null ? (g.key === 'life' ? 'опросов нет' : 'нет данных') : w[0])),
+      add(el('div', 'hpr-m'), el('div', 'hpr-n', g.name), el('div', 'bas-w ' + w[1], g.years == null ? (g.key === 'life' ? 'опросов нет' : 'нет данных') : g.line || w[0])),
       add(el('span', 'hpr-go'), icon('chevron-right')));
     row.setAttribute('aria-label', g.name + ': ' + (g.years == null ? 'нет данных' : w[0]));
     return tap(row, function () { open(g, row); });
@@ -15493,7 +15713,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     hx.setAttribute('aria-label', 'Из чего: ' + bioHonest(j) + ' — как считается');
     body.appendChild(tap(hx, function () { bioHowSheet(j, hx); }));
     var list = add(el('div', 'hsec'), el('div', 'hsec-h', 'Биомаркеры возраста'));
-    bioGroups(j).forEach(function (g) { list.appendChild(bioGroupRow(g, function (g, row) { bioFactorSheet(g, j, row); })); });
+    bioRowGroups(j).forEach(function (g) { list.appendChild(bioGroupRow(g, function (g, row) { bioFactorSheet(g, j, row); })); });
     add(body, list, el('div', 'mu msrc bas-n', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
     var close0 = legalSheet('Биологический возраст', [body], from), z = body.parentNode && body.parentNode.parentNode;
     close = close0;
@@ -15615,26 +15835,40 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     c.className += ' hlabs';
     var W = Math.max(64, Math.min(120, ((box && box.clientWidth) || 360) - 250));
     if (!gs.length) c.appendChild(el('div', 'mu wempty', 'Анализов пока нет. Пришли PDF — разберу в показатели с нормой лаборатории.'));
+    // A group folded under its name (docs/specs/bevel-gap.md, п. 13): the rows out of the lab's range stay in sight
+    // first, the rest open with the name; «Показать все» opens (and folds) every group.
+    var folds = [];
+    function fold(f, open) { f[1].hidden = !open; f[0].setAttribute('aria-expanded', String(open)); f[0].classList.toggle('on', open); }
     gs.forEach(function (g) {
-      var rows = el('div', 'lgr');
+      var off = el('div', 'lgr'), rest = el('div', 'lgr'), n = 0;
       g.items.forEach(function (it) {
         var st = LAB_ST[it.flag], r = add(el('div', 'row lrow' + (st ? ' hs-' + st : '')), add(el('span', 'tx'), el('div', 't', it.name),
           el('div', 'mu', labRefText(it) + ' · ' + dm(it.taken_on))),
           labRange(it, W), add(el('span', 'pr'), el('div', 'lv', labVal(it)), it.flag ? pill(LAB_FLAG[it.flag], 'hst') : null));
         r.setAttribute('aria-label', it.name + ': ' + labVal(it) + (it.flag ? ', ' + LAB_FLAG[it.flag] : '') + ' — история');
-        rows.appendChild(tap(r, function () { labSheet(it, r); }));
+        var x = it.flag === 'high' || it.flag === 'low';
+        (x ? off : rest).appendChild(tap(r, function () { labSheet(it, r); }));
+        if (x) n++;
       });
-      if (g.key === 'other') {
-        var tg = add(el('button', 'lfold'), icon('chevron-down'), el('span', '', g.name + ' · ' + g.items.length));
-        tg.type = 'button';
-        tg.setAttribute('aria-expanded', 'false');
-        rows.hidden = true;
-        tg.onclick = function () { rows.hidden = !rows.hidden; tg.setAttribute('aria-expanded', String(!rows.hidden)); tg.classList.toggle('on', !rows.hidden); };
-        add(c, tg, rows);
-      } else add(c, el('div', 'lgh', g.name), rows);
+      var m = g.items.length - n, tg = add(el('button', 'lfold lgf'), icon('chevron-down'), el('span', 'lgf-n', g.name),
+        el('span', 'lgf-c', n ? 'вне нормы ' + n + (m ? ' · ещё ' + m : '') : 'все ' + m + ' в норме')), f = [tg, rest];
+      tg.type = 'button';
+      fold(f, false);
+      tg.onclick = function () { fold(f, rest.hidden); sync(); };
+      folds.push(f);
+      add(c, tg, n ? off : null, rest);
     });
+    var all = foodBtn('btn ghost', 'chevron-down', 'Показать все', function () {
+      var open = folds.some(function (f) { return f[1].hidden; });
+      folds.forEach(function (f) { fold(f, open); });
+      sync();
+    });
+    function sync() {
+      var shut = folds.some(function (f) { return f[1].hidden; });
+      label(all, shut ? 'chevron-down' : 'chevron-up', shut ? 'Показать все' : 'Свернуть');
+    }
     var ab = foodBtn('btn ghost', 'plus', 'Добавить PDF', function () { labsAddSheet(ab); });
-    c.appendChild(add(el('div', 'foot'), ab));
+    c.appendChild(add(el('div', 'foot'), gs.length ? all : null, ab));
     return c;
   }
   // One test's dates: the values as dots joined by a line over the lab's band (the latest range), a label on each
