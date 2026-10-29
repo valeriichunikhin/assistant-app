@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 16:43">
+<meta name="published" content="2026-10-29 16:57">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -30,6 +30,23 @@
 <!-- Manrope without holding the first paint and the script back: preloaded, applied once it is here (display=swap). -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap"></noscript>
+<script>
+// The accent of each theme (docs/specs/health-look.md): <html data-accent-l / data-accent-d> from the copy kept in
+// localStorage, before the first paint; the CSS picks the one of the theme on screen. setAccent() also saves the copy.
+function setAccent(a, keep) {
+  var r = document.documentElement;
+  a = a || {};
+  var l = a.light === 'lime' ? 'lime' : 'purple', d = a.dark === 'lime' ? 'lime' : 'purple';
+  r.setAttribute('data-accent-l', l);
+  r.setAttribute('data-accent-d', d);
+  if (keep) try { localStorage.setItem('accent', JSON.stringify({ light: l, dark: d })); } catch (e) {}
+}
+(function () {
+  var a = null;
+  try { a = JSON.parse(localStorage.getItem('accent') || 'null'); } catch (e) {}
+  setAccent(a);
+})();
+</script>
 <style>
 /* Design: Valerii's pair of 17.10.2026 on the Geist structure (docs/specs/miniapp-geist.md): dark «21» and light
    «22», glass cards (blurred, translucent) on a violet gradient, Manrope, rows split by 1 px hairlines edge to
@@ -70,6 +87,16 @@
   --bad-bg:rgba(198,40,40,.1);--blue:#0070f3;--area-fba:#9f1f14;--area-clinic:#075985;--area-personal:#0b5e2e;--area-home:#863f00;
   --toast:#141629;--toast-act:#a891ff;--toast-fg:#fff;--scrim:rgba(0,0,0,.3);
   --shadow:0 8px 24px rgba(20,22,41,.1)}
+/* The lime accent (docs/specs/health-look.md), chosen apart for the light and the dark theme: fills #c1f354 with ink
+   #0f171f; on white the text accents (.mark, links, tab labels) go to a darker lime to stay readable. */
+@media (prefers-color-scheme:dark){:root[data-accent-d="lime"]:not([data-theme="light"]){
+  --accent:#c1f354;--accent-ink:#0f171f;--mark:#c1f354;--link:#c1f354;--accent-soft:rgba(193,243,84,.16);--toast-act:#c1f354}}
+:root[data-theme="dark"][data-accent-d="lime"]{
+  --accent:#c1f354;--accent-ink:#0f171f;--mark:#c1f354;--link:#c1f354;--accent-soft:rgba(193,243,84,.16);--toast-act:#c1f354}
+@media (prefers-color-scheme:light){:root[data-accent-l="lime"]:not([data-theme="dark"]){
+  --accent:#c1f354;--accent-ink:#0f171f;--mark:#7aa012;--link:#6a8c0e;--accent-soft:rgba(122,160,18,.14);--toast-act:#c1f354}}
+:root[data-theme="light"][data-accent-l="lime"]{
+  --accent:#c1f354;--accent-ink:#0f171f;--mark:#7aa012;--link:#6a8c0e;--accent-soft:rgba(122,160,18,.14);--toast-act:#c1f354}
 *{box-sizing:border-box}
 html,body{margin:0;color:var(--fg)}
 html{background:var(--bg0)}
@@ -1902,7 +1929,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
       start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null, genshin: genshinIn(p && p.genshin),
-      health: healthPrefsIn(p && p.health) };
+      health: healthPrefsIn(p && p.health),
+      accent: { light: p && p.accent && p.accent.light === 'lime' ? 'lime' : 'purple', dark: p && p.accent && p.accent.dark === 'lime' ? 'lime' : 'purple' } };
   }
   // prefs.health (docs/specs/nutrition-health.md, docs/specs/labs.md): the kcal goal (a whole 500–6000), his birth date
   // and height (a whole 100–250 cm), each optional; none of them — null. miniapp's healthPrefsIn is the twin.
@@ -12648,6 +12676,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
     if (JSON.stringify(p) === JSON.stringify(prefs)) return;
     var was = current && tabShown(current);
     prefs = p;
+    setAccent(p.accent, true);
     drawBar();
     if (was && !tabShown(current)) show(homeTab());
     else if (!quiet && prefsHook && prefsHook.tab === current) prefsHook.fn(focus);
@@ -12683,7 +12712,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
       telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food,
       start: next.start !== undefined ? next.start : prefs.start, genshin: next.genshin !== undefined ? next.genshin : prefs.genshin,
-      health: next.health !== undefined ? next.health : prefs.health };
+      health: next.health !== undefined ? next.health : prefs.health, accent: next.accent || prefs.accent };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -12826,6 +12855,37 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
         b.onclick = function () { if (!on) editPrefs({ telegram: m[0] }, ['telegram', m[0]]); };
         seg.appendChild(b);
         if (focus && focus[0] === 'telegram' && focus[1] === m[0]) b.focus();
+      });
+    };
+    card.paint();
+    return card;
+  }
+  // «Тема» (docs/specs/health-look.md): the accent of the light and of the dark theme apart, purple or lime; drawn at
+  // once (setPrefs → setAccent), saved with the other settings.
+  function accentCard() {
+    var card = mkCard('sun', 'Тема'), box = el('div');
+    add(card, el('div', 'sub', 'Акцент — отдельно для светлой и тёмной темы'), box);
+    card.paint = function (focus) {
+      clear(box);
+      [['light', 'Светлая'], ['dark', 'Тёмная']].forEach(function (t) {
+        var seg = el('div', 'seg tgseg');
+        seg.setAttribute('role', 'group');
+        seg.setAttribute('aria-label', t[1]);
+        [['purple', 'Фиолетовая'], ['lime', 'Лаймовая']].forEach(function (m) {
+          var on = prefs.accent[t[0]] === m[0], b = el('button', on ? 'on' : '', t[1] + ': ' + m[1]);
+          b.type = 'button';
+          b.setAttribute('aria-pressed', String(on));
+          b.onclick = function () {
+            if (!on) {
+              var a = { light: prefs.accent.light, dark: prefs.accent.dark };
+              a[t[0]] = m[0];
+              editPrefs({ accent: a }, ['accent', t[0] + m[0]]);
+            }
+          };
+          seg.appendChild(b);
+          if (focus && focus[0] === 'accent' && focus[1] === t[0] + m[0]) b.focus();
+        });
+        box.appendChild(seg);
       });
     };
     card.paint();
@@ -13414,17 +13474,17 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   // the page's own date into <meta name="published">.
   function newsView() {
     var body = add(el('div'), skeleton(2)), meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard();
+    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), ac = accentCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard();
     prefsHook = { tab: 'news', fn: function (focus) {
-      tc.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); if (bc) bc.paint();
+      tc.paint(focus); ac.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); if (bc) bc.paint();
     },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
       body.className = 'cols';
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, mo), body, note);
-    } else add(main, browser ? pushCard() : null, tc, mc, tgc, mo, bc, body, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, ac, mo), body, note);
+    } else add(main, browser ? pushCard() : null, tc, ac, mc, tgc, mo, bc, body, note);
     // «Выйти»: the last row of the settings, two taps — the second («Точно выйти») within 5 s, else it reverts.
     if (browser) {
       var lo = label(el('button', 'btn ghost'), 'logout', 'Выйти'), loT = null;
