@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-29 23:02">
+<meta name="published" content="2026-10-29 23:15">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1158,7 +1158,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}}
 :root[data-theme="light"] .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}
 .bac{cursor:pointer;padding:0 12px 2px}.bac>svg.bas-stars{top:-50px;height:480px}.bac .bas-d{margin-top:6px}.bac .bas-gz{max-width:360px;margin-top:0}
-.bac .bas-c{top:10%}.bac .bas-big{font-size:52px}.bac .bas-dp{margin-top:10px;padding:6px 8px 6px 10px;font-size:12px;max-width:min(100%,230px)}.bac .bas-nu{margin:2px 0 12px;font-size:14px}
+.bac .bas-big{font-size:52px}.bac .bas-dp{margin-top:10px;padding:6px 8px 6px 10px;font-size:12px;max-width:min(100%,230px)}.bac .bas-nu{margin:2px 0 12px;font-size:14px}
 .bac-r{margin:0 0 6px;padding:7px 12px 7px 8px;border-radius:26px}.bac-r .hmini,.bac-r .hmini>svg.hring{width:42px;height:42px}.bac-r .bmini>.i{width:16px;height:16px}.bac-r .hpr-n{font-size:15px;font-weight:600}.bac-r .hpr-n b{font:800 15px var(--font-num)}
 .bac-r .bas-w{font-size:13px;margin:0}
 @media (max-width:389px){.bac{padding:0 8px 2px}.bac-r{gap:8px}.bac-r .hpr-n,.bac-r .hpr-n b{font-size:13px}.bac-r .bas-w{font-size:12px}.bac-r .hmini,.bac-r .hmini>svg.hring{width:36px;height:36px}.bac-r .bmini>.i{width:14px;height:14px}.bac-r{padding-right:8px}}
@@ -1267,12 +1267,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .bas-x .i{width:18px;height:18px}
 .bas-d{margin:-2px 0 0;text-align:center;font-size:15px}
 .bas-gz{max-width:400px;margin:4px auto 0}.bas-g{display:block;width:100%;height:auto;overflow:hidden}
-.bas-disc{fill:color-mix(in srgb,var(--fg) 3%,transparent)}.bas-band{fill:none;stroke:color-mix(in srgb,var(--fg) 7%,transparent);stroke-width:18}
-.bas-tk{stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:1}.bas-tk.maj{stroke:color-mix(in srgb,var(--fg) 40%,transparent);stroke-width:1.5}
-.bas-gl{fill:var(--muted);font:600 12px var(--font-num)}.bas-cl{fill:var(--fg);font:700 15px var(--font-num)}
-.bas-seg{fill:none;stroke:var(--mark);stroke-width:12;stroke-linecap:round;filter:var(--hl-glow)}.bas-seg.old{stroke:var(--ring-load)}
-.bas-bio{fill:var(--solid);stroke:var(--mark);stroke-width:4}.bas-bio.old{stroke:var(--ring-load)}.bas-cal{fill:var(--fg)}
-.bas-gz{position:relative}.bas-c{position:absolute;left:8%;right:8%;top:12%;display:flex;flex-direction:column;align-items:center;text-align:center}
+.bas-tk{stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:1.5}.bas-tk.maj{stroke:color-mix(in srgb,var(--fg) 50%,transparent)}
+.bas-gl{fill:var(--muted);font:600 12px var(--font-num)}.bas-cl{fill:var(--fg);font:700 13px var(--font-num)}
+.bas-seg{fill:none;stroke-width:16}.bas-seg.yg{stroke:var(--ring-recovery)}.bas-seg.old{stroke:var(--ring-load);stroke-opacity:.85}
+.bas-cal{stroke:var(--fg);stroke-width:3;stroke-linecap:round}
+.bas-bio{stroke:var(--mark);stroke-width:5;stroke-linecap:round}.bas-hub{fill:var(--mark)}.bas-hub2{fill:var(--solid)}
+.bas-gz{position:relative}.bas-c{display:flex;flex-direction:column;align-items:center;margin-top:2px;text-align:center}
 .bas-big{font:800 72px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .bas-w{font-weight:700;font-size:15px}.bas-c .bas-w{font-size:17px;margin-top:4px}
 .bas-yg{color:color-mix(in srgb,var(--ring-recovery) 82%,var(--fg))}.bas-old{color:color-mix(in srgb,var(--ring-load) 85%,var(--fg))}.bas-eq{color:var(--muted)}
@@ -15758,37 +15758,41 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       .forEach(function (s) { box.appendChild(svg('circle', { cx: s[0], cy: s[1], r: s[2], opacity: s[3] })); });
     return box;
   }
-  // The gauge (docs/bevel/bioage-screen.jpg): a ring across 85 % of the width, faint and whole, nothing past the view;
-  // the scale on its lower arc from 8 o'clock (150°, lo) to 4 o'clock (30°, hi) through 6, a tick every half year,
-  // the ends labelled inside the ring along it; the segment from the biological to the calendar age in the accent with
-  // a dot on each end, the calendar's value under its dot. The same geometry on the card and the sheet, scaled by
-  // the width; the number sits inside the ring's upper part (.bas-c).
+  // The gauge, a 240° speedometer: the dial from 8 o'clock (lo) over the top to 4 o'clock (hi), the years younger than
+  // the calendar one in green, the older in orange, a thin tick and its label at the calendar age, a needle at the
+  // biological one, a tick every half year outside the dial, the ends labelled under it. The number and the words sit
+  // BELOW the dial (.bas-c). The same geometry on the card and the sheet, scaled by the width.
   function bioGauge(bio, age) {
-    var W = 360, R = 153, cx = 180, cy = R + 12, H = cy + R + 40, lo = Math.round(Math.max(18, age - 10) * 10) / 10, hi = Math.round((age + 10) * 10) / 10;
+    var W = 360, R = 130, cx = 180, cy = 180, H = 282, lo = Math.round(Math.max(18, age - 10) * 10) / 10, hi = Math.round((age + 10) * 10) / 10;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'bas-g', role: 'img',
       'aria-label': 'Шкала от ' + woNum(lo) + ' до ' + woNum(hi) + ': биологический ' + (bio == null ? 'нет' : woNum(bio)) + ', календарный ' + woNum(age) });
-    function ang(t) { return (150 - (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * 120) * Math.PI / 180; }
-    function pt(t, r) { var a = ang(t); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
-    var ring = svg('g', {}); box.appendChild(ring);
-    ring.appendChild(svg('circle', { cx: cx, cy: cy, r: R, 'class': 'bas-band' }));
+    function rad(t) { return (150 + (Math.max(lo, Math.min(hi, t)) - lo) / (hi - lo) * 240) * Math.PI / 180; }
+    function pt(t, r) { var a = rad(t); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+    function f(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }
+    function zone(from, to, cls) {
+      if (to - from < 0.05) return;
+      var s = pt(from, R), e = pt(to, R), large = (to - from) / (hi - lo) * 240 > 180 ? 1 : 0;
+      box.appendChild(svg('path', { d: 'M' + f(s) + 'A' + R + ' ' + R + ' 0 ' + large + ' 1 ' + f(e), 'class': 'bas-seg ' + cls }));
+    }
+    zone(lo, age, 'yg');
+    zone(age, hi, 'old');
     for (var t = Math.ceil(lo * 2) / 2; t <= hi + 1e-9; t += 0.5) {
-      var a1 = pt(t, R - 7), a2 = pt(t, R + 7);
-      ring.appendChild(svg('line', { x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1), 'class': 'bas-tk' + (t % 5 ? '' : ' maj') }));
+      var maj = !(t % 5), a1 = pt(t, R + 11), a2 = pt(t, R + (maj ? 22 : 16));
+      box.appendChild(svg('line', { x1: a1[0].toFixed(1), y1: a1[1].toFixed(1), x2: a2[0].toFixed(1), y2: a2[1].toFixed(1), 'class': 'bas-tk' + (maj ? ' maj' : '') }));
     }
+    var c1 = pt(age, R - 14), c2 = pt(age, R + 14), cl = pt(age, R + 38);
+    box.appendChild(svg('line', { x1: c1[0].toFixed(1), y1: c1[1].toFixed(1), x2: c2[0].toFixed(1), y2: c2[1].toFixed(1), 'class': 'bas-cal' }));
+    box.appendChild(svg('text', { x: cl[0].toFixed(1), y: cl[1].toFixed(1), 'class': 'bas-cl', 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, woNum(age)));
     [lo, hi].forEach(function (v) {
-      var p = pt(v, R - 26), deg = ang(v) * 180 / Math.PI - 90;
-      box.appendChild(svg('text', { x: p[0].toFixed(1), y: p[1].toFixed(1), 'class': 'bas-gl', 'text-anchor': 'middle', 'dominant-baseline': 'middle',
-        transform: 'rotate(' + deg.toFixed(1) + ' ' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ')' }, v.toFixed(1).replace('.', ',')));
+      var p = pt(v, R);
+      box.appendChild(svg('text', { x: p[0].toFixed(1), y: (p[1] + 26).toFixed(1), 'class': 'bas-gl', 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, v.toFixed(1).replace('.', ',')));
     });
-    var c = pt(age, R);
-    if (bio != null && Math.abs(bio - age) >= 0.05) {
-      var s = pt(Math.min(bio, age), R), e = pt(Math.max(bio, age), R);
-      box.appendChild(svg('path', { d: 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + 'A' + R + ' ' + R + ' 0 0 0 ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1),
-        'class': 'bas-seg' + (bio > age ? ' old' : '') }));
+    if (bio != null) {
+      var n = pt(bio, R - 24);
+      box.appendChild(svg('line', { x1: cx, y1: cy, x2: n[0].toFixed(1), y2: n[1].toFixed(1), 'class': 'bas-bio' }));
+      box.appendChild(svg('circle', { cx: cx, cy: cy, r: 11, 'class': 'bas-hub' }));
+      box.appendChild(svg('circle', { cx: cx, cy: cy, r: 4, 'class': 'bas-hub2' }));
     }
-    box.appendChild(svg('circle', { cx: c[0].toFixed(1), cy: c[1].toFixed(1), r: 4.5, 'class': 'bas-cal' }));
-    if (bio != null) { var b = pt(bio, R); box.appendChild(svg('circle', { cx: b[0].toFixed(1), cy: b[1].toFixed(1), r: 7, 'class': 'bas-bio' + (bio > age ? ' old' : '') })); }
-    box.appendChild(svg('text', { x: c[0].toFixed(1), y: (c[1] + 28).toFixed(1), 'class': 'bas-cl', 'text-anchor': 'middle' }, woNum(age)));
     return box;
   }
   // A row's ring (docs/bevel/bioage-screen.jpg): the share of the years that make him younger («моложе» green) from
