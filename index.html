@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 09:49">
+<meta name="published" content="2026-10-30 10:04">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1153,6 +1153,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
 .hbody{padding:6px 14px 16px;border-radius:var(--r-b)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
+/* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
+.bw .hrings.bsm{flex:none;margin:2px 0 4px}.bw .bl.bh3{font-size:12.5px;line-height:1.3}
 .hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
 .hxh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}.hxh .pr{font:800 17px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .row.hxr{padding-left:0;padding-right:0;min-height:44px}.row.hxr .pr{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
@@ -3693,14 +3695,28 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       },
       // «Здоровье» (docs/specs/health-v2.md): the three rings of today (yesterday's until the night is in); m — the advice
       // under them. No health row — «нет данных»; a tap opens «Здоровье».
+      // m — three lines under the rings (his ask 30.10.2026): the night with its word and length, the recovery with its
+      // word, the load against the target band and what that allows today; then the advice and the bio-age.
       body: function () {
         var h = j.health;
         r.go = tab('food');
         if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
         if (h.date !== today) name.textContent = 'Здоровье · вчера';
-        n.appendChild(hlRings(h, s === 'm' ? 52 : 44));
-        if (s === 'm') note(h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice ? '' : 'mu');
-        if (s === 'm' && h.bioage) note(h.bioage, 'mu');
+        var rings = n.appendChild(hlRings(h, s === 'm' ? 40 : 44, null, s === 'm'));
+        if (s === 'm') {
+          rings.className += ' bsm';
+          var z = h.zones || {}, tg = h.load_target || [20, 49];
+          if (h.sleep != null) add(line('', 'bkg bh3'), icon('moon'), document.createTextNode('Сон ' + h.sleep + ' %' +
+            (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '')));
+          if (h.recovery != null) add(line('', 'bkg bh3'), icon('activity'), document.createTextNode('Восстановление ' + h.recovery + ' %' +
+            (z.recovery ? ' · ' + HL_ZONE_RU.recovery[z.recovery].toLowerCase() : '')));
+          if (h.load != null) {
+            var lw = h.load < tg[0] ? 'ниже цели ' + tg[0] + ' — можно больше' : h.load > tg[1] ? 'выше ' + tg[1] + ' — сегодня легче'
+              : 'в цели ' + tg[0] + '–' + tg[1] + ' — тренировка ок';
+            add(line('', 'bkg bh3' + (h.load > tg[1] ? ' bad' : '')), icon('flame'), document.createTextNode('Нагрузка ' + h.load + ' % · ' + lw));
+          }
+          note(h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice ? '' : 'mu');
+        }
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
       // when it is planned.
@@ -14899,10 +14915,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   }
   // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls; onTap(key, cell) —
   // a ring opens its sheet (left out on the board's widget).
-  function hlRings(vs, size, onTap) {
+  function hlRings(vs, size, onTap, bare) {
     var row = el('div', 'hrings');
     HL_RINGS.forEach(function (k) {
-      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size), el('div', 'hrl', k[1]));
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size), bare ? null : el('div', 'hrl', k[1]));
       if (onTap) tap(cell, function () { onTap(k[0], cell); });
       else cell.setAttribute('role', 'img');
       cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
