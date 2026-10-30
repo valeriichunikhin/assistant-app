@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 09:29">
+<meta name="published" content="2026-10-30 09:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1070,6 +1070,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .gym .gdays{margin:0;flex:0 1 auto}.gym .gdays button{min-width:48px;height:44px;font-weight:700}
 .gym .card{margin-bottom:12px}
 .gcur{padding:16px 14px 12px}.gname{font:800 22px/1.2 var(--font)}.gset{margin-top:4px;font-weight:600;font-size:15px}
+.ggif{display:flex;justify-content:center;height:180px;margin:-4px 0 12px;border-radius:16px;background:#fff;overflow:hidden;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 8%,transparent)}
+.ggif img{height:100%;width:auto;max-width:100%;object-fit:contain;display:block}.ggif[hidden]{display:none}
+.gattr{margin:-4px 0 10px;text-align:center;font-size:12px}
 .gwhy{margin-top:6px;font-size:13px;line-height:1.35}
 .gst{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:10px;margin-top:14px}
 .gst-b{height:64px;padding:0;border:0;border-radius:var(--r-b);background:var(--accent-soft);color:var(--mark);font:800 18px var(--font-num);font-variant-numeric:tabular-nums}
@@ -16633,9 +16636,22 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       r: sg.reps_to || gymRange(i.reps)[1] || 10, sg: sg, done: [], skip: false };
   }
   // A new session of the day (gym_start's day) — or the server's draft of it taken over: its start and its sets.
+  // The exercise's animation from the day's map, or nothing; a load that fails (no net, a gone file) hides the tile.
+  function gymGif(s, name) {
+    var u = s.gifs && s.gifs[name];
+    if (!u || !/^https:\/\/static\.exercisedb\.dev\//.test(u)) return null;
+    var img = el('img'), box = add(el('div', 'ggif'), img);
+    img.alt = 'Как делать: ' + name;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.referrerPolicy = 'no-referrer';
+    img.onerror = function () { box.hidden = true; };
+    img.src = u;
+    return box;
+  }
   function gymNew(j, draft) {
     var d = j.day, s = { v: 1, day: d.name, days: j.days || [d.name], started_at: draft ? draft.started_at : new Date().toISOString(),
-      cur: 0, rest: null, sent: 0, items: (d.items || []).map(gymItem) };
+      cur: 0, rest: null, sent: 0, items: (d.items || []).map(gymItem), gifs: d.gifs || {} };
     (draft ? draft.items || [] : []).forEach(function (x) {
       var it = s.items.filter(function (y) { return y.exercise === x.exercise; })[0];
       if (!it) s.items.push(it = gymItem({ exercise: x.exercise, sets: (x.sets || []).length }));
@@ -16755,7 +16771,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         box.appendChild(rc);
       } else if (it) {
         var sec = /\(сек\)|сек\b/i.test(it.exercise), top2 = gymRange(it.reps);
-        var cur = add(el('div', 'card gcur'), el('div', 'gname', it.exercise),
+        var cur = add(el('div', 'card gcur'), gymGif(s, it.exercise), el('div', 'gname', it.exercise),
           el('div', 'gset', 'Подход ' + (it.done.length + 1) + ' из ' + it.sets + ' · цель ' + it.reps + (sec ? ' сек' : '')),
           it.exercise === it.orig && gymWhy(it) ? el('div', 'mu gwhy', gymWhy(it)) : null);
         if (it.unit === 'kg') cur.appendChild(stepper(it.kg, 2.5, 'кг', function (v) { return v == null || isNaN(v) ? '' : woNum(v); },
@@ -16832,6 +16848,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         list.appendChild(tap(r, function () { s.cur = n; x.skip = false; s.rest = null; alt = false; keep(); haptic(); draw(); }));
       });
       box.appendChild(list);
+      if (s.gifs && Object.keys(s.gifs).length) box.appendChild(el('div', 'mu gattr', 'Анимации: ExerciseDB · AscendAPI'));
       var all = s.cur < 0;
       var fin = foodBtn('btn wide' + (all ? '' : ' ghost'), reset ? 'trash' : 'check', reset ? 'Точно сбросить?' : 'Закончить', finish);
       box.appendChild(add(el('div', 'bar mact mstick gfin'), fin));
