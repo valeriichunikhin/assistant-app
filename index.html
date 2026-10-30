@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 19:39">
+<meta name="published" content="2026-10-30 21:42">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -17635,7 +17635,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       hd.appendChild(b);
     });
     // «Сегодня» in the day's head, away from today only: the month's strip never moves.
-    var back = foodBtn('mtoday', 'calendar', 'Сегодня', function () { if (m === today.slice(0, 7)) pick(today); else goTo(today.slice(0, 7), today); });
+    // The label in a span: on a phone the head's pill is icon-only (.calhd .mtoday span{display:none}) — a bare text node
+    // was not hidden and «Сегодня» stuck out of the row (his screenshot 30.10.2026).
+    var back = foodBtn('mtoday', 'calendar', '', function () { if (m === today.slice(0, 7)) pick(today); else goTo(today.slice(0, 7), today); });
+    back.appendChild(el('span', '', 'Сегодня'));
+    back.setAttribute('aria-label', 'Сегодня');
     back.setAttribute('aria-label', 'К сегодняшнему дню');
     (span > 1 ? hd : dcard.firstChild).appendChild(back);
     // Swipes (В9): the grid — a month, the strip — a week, the feed — its span.
