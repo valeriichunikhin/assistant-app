@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 22:20">
+<meta name="published" content="2026-10-30 23:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1550,6 +1550,28 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .ctnow{position:absolute;left:69px;right:0;top:50%;z-index:2;height:2px;margin-top:-1px;background:var(--mark);pointer-events:none}
 .ctnow::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--mark)}
 .ctnowl{position:absolute;right:calc(100% - 54px);top:50%;z-index:2;transform:translateY(-50%);padding:2px 5px;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:800 11px/1.2 var(--font-num);font-variant-numeric:tabular-nums;pointer-events:none}
+/* «Часы» of one day (calendar-2, В7, variant A): an hour grid that scrolls inside the card — the hours' labels in a
+   46 px gutter that never wraps, a hairline an hour and a lighter one at the half hour; an item a block by its time, its
+   source's colour as the bar on the left over a tint of it, title on one line and «09:30–10:30 · place» under it when it
+   has room; a timed task the timeline's thin pill at its time; a free gap a muted centred «свободно · 3 ч»; «now» a line in
+   the accent across the grid with the accent pill in the gutter. */
+.chgs{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}.chgs::-webkit-scrollbar{display:none}
+.chg{position:relative;margin:8px 0 10px}
+.chgl,.chgh{position:absolute;left:46px;right:0;border-top:1px solid var(--line)}
+.chgh{border-top-color:color-mix(in srgb,var(--line) 45%,transparent)}
+.chgt{position:absolute;left:0;width:40px;transform:translateY(-50%);text-align:right;color:var(--muted-2);font:600 11px/1 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chgt.hid{visibility:hidden}
+.chga{position:absolute;top:0;bottom:0;left:50px;right:8px}
+.chge{position:absolute;overflow:hidden;padding:5px 6px 4px 10px;border-radius:8px;background:color-mix(in srgb,var(--cs) var(--hl-tint2),var(--solid));box-shadow:inset 3px 0 0 var(--cs);color:var(--fg)}
+.chge.tap{cursor:pointer}.chge.cskip>*{opacity:.5}
+.chge .ctet{gap:5px;font-size:13px;line-height:1.3}.chge .ctic .i{width:14px;height:14px}
+.chge .mu{margin-top:1px;font:500 12px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cttk.chgk{position:absolute;left:0;z-index:1;height:26px;transform:translateY(-50%);white-space:nowrap}
+.chgk .chgkt{flex:none;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.chgf{position:absolute;left:0;right:0;transform:translateY(-50%);text-align:center;color:var(--muted);font:500 12px/1.3 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.chgn{position:absolute;left:46px;right:0;z-index:2;height:2px;margin-top:-1px;background:var(--mark);pointer-events:none}
+.chgn::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--mark)}
+.chgnl{position:absolute;left:1px;z-index:2;transform:translateY(-50%);padding:2px 5px;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:800 11px/1.2 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none}
 .cdur.c4{grid-template-columns:repeat(4,minmax(0,1fr))}.cdur.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.cdur.c1{grid-template-columns:minmax(0,1fr)}
 .cmovd{position:relative;overflow:hidden;cursor:pointer}.cdur .cmovd{white-space:normal;line-height:1.1;text-align:center}.cmovd input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;font-size:16px;cursor:pointer}
 .crep[hidden]{display:none}.crep .field input[type=number]{width:3em;flex:none;text-align:center}
@@ -17596,8 +17618,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var CAL_DONE = [[true, 'Был'], [false, 'Не было'], [null, '—']];
   // The feed's span (calendar-2, В6): a day, three or a week from the chosen day — the device's own (localStorage calSpan).
   var CAL_SPANS = [[1, 'День'], [3, '3 дня'], [7, 'Неделя']];
-  // «Список · Часы» (calendar-2, В7, his pick 30.10.2026 — variant C): the rows as a list, or a timeline with a ruler of
-  // only the times that have something — the device's own (localStorage calMode), for every span.
+  // «Список · Часы» (calendar-2, В7): the rows as a list, or by the hour — the day an hour grid of the whole day (variant
+  // A, his word 30.10.2026 22:30), each card of «3 дня» and «Неделя» a timeline with a ruler of only the times that have
+  // something (variant C, his pick the same day) — the device's own (localStorage calMode), for every span.
   var CAL_MODES = [['list', 'Список'], ['hours', 'Часы']];
   // A series (В2): its chips, the twin of REPEATS in _shared/tasks.ts (REPEAT_LABEL words it, as for a task).
   var CAL_REP = [[null, 'нет'], ['daily', 'день'], ['weekly', 'неделя'], ['monthly', 'месяц'], ['yearly', 'год']];
@@ -17831,7 +17854,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // One day's lines into box: the work bands, the rows («ничего не запланировано» for none), «Свободно: …» under
     // them (В1), muted, none when the day has no window.
     function fill(box, date, items, free) {
-      if (mode === 'hours') return hours(box, date, items, free);
+      if (mode === 'hours') return span > 1 ? hours(box, date, items, free) : dayGrid(box, date, items);
       items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
       var rest = items.filter(function (x) { return !isWorkX(x); });
       if (!rest.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
@@ -17846,8 +17869,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         box.appendChild(el('div', 'mu cfree', 'Свободно: ' + free.map(function (s) { return s.from + '–' + s.to; }).join(' · ')));
       }
     }
-    // «Часы» (В7, variant C): one day's timeline into box. On top the shelf — the work bands, then the all-day rows as in
-    // the list; under it a ruler with a time only where something starts (its end under it, smaller), a dot in the
+    // The shelf over «Часы» (В7): the work bands, the all-day rows as in the list, the untimed tasks folded.
+    function shelf(box, date, items) {
+      items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
+      items.filter(function (x) { return x.all_day && !isWorkX(x) && !isUntimedTask(x); }).forEach(function (x) { box.appendChild(row(x, date)); });
+      var folded = items.filter(isUntimedTask);
+      if (folded.length) box.appendChild(taskFold(date, folded));
+    }
+    // «Часы» in a card of «3 дня» and «Неделя» (В7, variant C): one day's timeline into box. On top the shelf; under it a ruler with a time only where something starts (its end under it, smaller), a dot in the
     // source's colour on the rail and the item as a card beside it (a timed task — a thin pill); the free windows (В1)
     // between them folded into one dashed line «свободно 12:00–15:00 · 3 ч» — a window split where a task falls in it,
     // a piece under 30 min left out; items whose times cross (as `overlapping`: no tasks, no work day, an item without
@@ -17856,10 +17885,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     function hours(box, date, items, free) {
       var all = items.filter(function (x) { return x.all_day && !isWorkX(x); });
       var timed = items.filter(function (x) { return !x.all_day && !isWorkX(x); });
-      items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
-      all.filter(function (x) { return !isUntimedTask(x); }).forEach(function (x) { box.appendChild(row(x, date)); });
-      var folded = all.filter(isUntimedTask);
-      if (folded.length) box.appendChild(taskFold(date, folded));
+      shelf(box, date, items);
       // Minutes of this day: a start on the day before is 0, an end on the day after 1440.
       function mOf(ts, end) {
         var d = foodDay(ts), p = wp(ts);
@@ -17951,6 +17977,133 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         if (now != null && r.b > r.a && now >= r.a && now < r.b) nowMark(line, 'calc(3px + (100% - 6px) * ' + ((now - r.a) / (r.b - r.a)).toFixed(3) + ')');
       });
       box.appendChild(tl);
+    }
+    // «Часы» of one day (В7, variant A, his word 30.10.2026 22:30: «видеть полный график от начала дня до конца, но первым
+    // делом видеть самое первое событие»): the shelf, then an hour grid, HG px an hour, from 06:00 (or the first item's
+    // hour) to 24:00 that scrolls inside the card — as tall as the screen leaves it (240–720 px, the page never grows),
+    // opened half an hour above the first timed item (at 08:00 for none), the same day redrawn keeps its scroll. Items
+    // by their time: a block in the source's colour, 26 px at least, one without an end an hour; crossing ones share the
+    // width in columns (first fit); a timed task a thin pill at its time. A free gap of an hour or more between them (and
+    // from the grid's start, and to 22:00) a muted «свободно · 3 ч» in its middle; today the «now» line with the accent
+    // pill in the gutter, moved once a minute.
+    var HG = 52, nowTick = null, gridKeep = null;
+    function dayGrid(box, date, items) {
+      clearInterval(nowTick);
+      shelf(box, date, items);
+      // Minutes of this day: a start on the day before is 0, an end on the day after 1440.
+      function mOf(ts, end) {
+        var d = foodDay(ts), p = wp(ts);
+        return d < date ? 0 : d > date ? (end ? 1440 : 0) : Number(p.hour) * 60 + Number(p.minute);
+      }
+      var es = [];
+      items.forEach(function (x) {
+        if (x.all_day || isWorkX(x)) return;
+        var a = mOf(x.starts_at), b = x.ends_at && x.ends_at !== x.starts_at ? mOf(x.ends_at, true) : a;
+        es.push({ x: x, a: a, b: b, e: b > a ? b : Math.min(a + 60, 1440), task: x.src === 'task' });
+      });
+      es.sort(function (p, q) { return p.a - q.a || q.e - p.e; });
+      var t0 = es.length ? Math.min(360, Math.floor(es[0].a / 60) * 60) : 360, t1 = 1440;
+      function y(t) { return (t - t0) * HG / 60; }
+      var sc = el('div', 'chgs'), g = el('div', 'chg'), area = el('div', 'chga'), labels = [];
+      g.style.height = y(t1) + 'px';
+      // The hours: a hairline and its label in the gutter, a lighter line at the half hour.
+      for (var h = t0; h <= t1; h += 30) {
+        var hl = g.appendChild(el('i', h % 60 ? 'chgh' : 'chgl'));
+        hl.style.top = y(h) + 'px';
+        if (h % 60) continue;
+        var lb = g.appendChild(el('span', 'chgt', calMin(h)));
+        lb.style.top = y(h) + 'px';
+        labels.push([h, lb]);
+      }
+      // Clusters of crossing items (tasks stay out — they do not take the hour), columns by first fit.
+      var cur = [], end = -1;
+      function cols(c) {
+        var ends = [];
+        c.forEach(function (p) {
+          var k = 0;
+          while (k < ends.length && ends[k] > p.a) k++;
+          ends[k] = p.e;
+          p.col = k;
+        });
+        c.forEach(function (p) { p.n = ends.length; });
+      }
+      es.forEach(function (p) {
+        if (p.task) return;
+        if (cur.length && p.a >= end) { cols(cur); cur = []; }
+        cur.push(p);
+        end = Math.max(end, p.e);
+      });
+      if (cur.length) cols(cur);
+      es.forEach(function (p) {
+        var x = p.x, c, lbl;
+        if (p.task) {
+          c = add(el('span', 'cttk chgk ' + csOf(x)), icon(icOf(x)), el('span', 'ctn', x.title || 'Без названия'), el('span', 'chgkt', calMin(p.a)));
+          c.style.top = y(p.a) + 'px';
+          if (x.ref != null) c.setAttribute('data-ref', String(x.ref));
+          lbl = calMin(p.a) + ', ' + (x.title || '');
+        } else {
+          var ht = Math.max(26, y(p.e) - y(p.a) - 2), dn = doneOf(x), sub = subOf(x);
+          var tm = calHm(x.starts_at) + (p.b > p.a ? '–' + calHm(x.ends_at) : '');
+          c = el('div', 'chge ' + csOf(x) + (dn === false ? ' cskip' : ''));
+          c.style.cssText = 'top:' + (y(p.a) + 1) + 'px;height:' + ht + 'px;left:calc((100% + 4px) * ' + p.col + ' / ' + p.n +
+            ');width:calc((100% + 4px) / ' + p.n + ' - 4px)';
+          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x)), dn === true ? icon('check', 'cck') : null), el('span', 'ctn', x.title || 'Без названия')));
+          // Its times and place under the title when there is room; in a column the place on a line of its own.
+          if (ht >= 70 && p.n > 1 && sub) add(c, el('div', 'mu', tm), el('div', 'mu', sub));
+          else if (ht >= 44) c.appendChild(el('div', 'mu', [tm, sub].filter(Boolean).join(' · ')));
+          lbl = calHm(x.starts_at) + ', ' + (x.title || '') + (dn === true ? ', был' : dn === false ? ', не было' : '');
+        }
+        var act = actOf(x, date, c);
+        if (act) { c.setAttribute('aria-label', lbl + ' — открыть'); tap(c, act); }
+        area.appendChild(c);
+      });
+      // The free gaps: a task is a point that cuts one; the label kept a quarter hour off a task's pill and set between
+      // two lines (at :15 or :45), never on one.
+      function freeAt(a, b, ta, tb) {
+        var a2 = a + (ta ? 15 : 0), b2 = b - (tb ? 15 : 0), c = (a2 + b2) / 2, s = Math.round((c - 15) / 30) * 30 + 15;
+        var f = area.appendChild(el('span', 'chgf', 'свободно · ' + calDur(b - a)));
+        f.style.top = y(s >= a2 && s <= b2 ? s : c) + 'px';
+      }
+      var last = t0, lastTask = false, empty = null;
+      es.forEach(function (p) {
+        if (p.a - last >= 60) freeAt(last, p.a, lastTask, p.task);
+        if (p.task) { if (p.a >= last) { last = p.a; lastTask = true; } } else if (p.e > last) { last = p.e; lastTask = false; }
+      });
+      if (!es.length) empty = area.appendChild(el('span', 'chgf', 'свободно · весь день'));
+      else if (1320 - last >= 60) freeAt(last, 1320, lastTask, false);
+      add(box, add(sc, add(g, area)));
+      // Today the «now» line, an hour's label it would touch hidden; once a minute it moves, gone with the grid or the day.
+      if (date === foodToday()) {
+        var nl = g.appendChild(el('i', 'chgn')), np = g.appendChild(el('span', 'chgnl'));
+        var place = function () {
+          var q = wp(Date.now()), v = Number(q.hour) * 60 + Number(q.minute);
+          nl.style.top = np.style.top = y(v) + 'px';
+          text(np, calMin(v));
+          labels.forEach(function (l) { l[1].classList.toggle('hid', Math.abs(l[0] - v) < 18); });
+        };
+        place();
+        nowTick = setInterval(function () {
+          if (!nl.isConnected || foodToday() !== date) {
+            clearInterval(nowTick);
+            nl.remove();
+            np.remove();
+            return;
+          }
+          place();
+        }, 60000);
+      }
+      var keep = gridKeep && gridKeep.d === date ? gridKeep.y : null;
+      // As tall as the screen leaves it down to «＋ Событие» over the tab bar (240–720 px): measured with 240 px against
+      // the page's bottom, the tab bar's room included, so the page does not grow.
+      function fit() {
+        sc.style.height = '240px';
+        var hh = Math.min(720, Math.max(240, Math.floor(240 + innerHeight - main.getBoundingClientRect().bottom - window.pageYOffset)));
+        sc.style.height = hh + 'px';
+        sc.scrollTop = keep != null ? keep : y(es.length ? es[0].a - 30 : 480);
+        if (empty) empty.style.top = (sc.scrollTop + hh / 2 - 8) + 'px';
+        sc.addEventListener('scroll', function () { gridKeep = { d: date, y: sc.scrollTop }; }, { passive: true });
+      }
+      if (sc.isConnected) fit(); else requestAnimationFrame(fit);
     }
     // The day on screen (lastDay) without the tasks done or moved off it in their sheet.
     var lastDay = null;
