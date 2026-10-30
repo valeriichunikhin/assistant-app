@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 21:42">
+<meta name="published" content="2026-10-30 22:11">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1496,7 +1496,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    after row); the sheet's
    «Перенести» chips (four, two or one in a row) and the series' «каждые N · до» row. */
 .cs-show{--cs:var(--ring-sleep)}
-.calhd{margin:0 -8px 8px}.calhd .seg{flex:1;min-width:0;margin:0 4px 0 8px}
+.calhd{gap:6px;margin:0 0 8px}.calhd .seg{flex:1;min-width:0;margin:0}.calhd .seg.cspan{flex:1.5}
 .mnav.calhd .seg button{flex:1;display:block;width:auto;height:auto;min-height:38px;padding:0 6px;border-radius:var(--r-s)}.calhd .mtoday[hidden]{display:none}
 .calhd .mtoday{width:44px;padding:0;justify-content:center}.calhd .mtoday span{display:none}
 .mnav button.cmon{flex:1;width:auto;gap:4px;display:inline-flex;align-items:center;justify-content:center;font:600 14px/1.3 var(--font)}
@@ -1507,6 +1507,38 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .cwork .go{color:var(--muted-2)}
 .cfree{padding:2px 14px 14px;font-size:13px}
 .calrange>.card{margin-bottom:12px}
+/* «Часы» (calendar-2, В7, variant C): a ruler of only the times that have something — the time in the accent's link colour
+   with its end under it, a rail with a dot in the source's colour, the item a card tinted with that colour and its bar on
+   the left; a timed task a thin outlined pill; a free window a dashed line «свободно 12:00–15:00 · 3 ч»; crossing items two
+   to a row under an orange «накладка»; «now» a line in the accent across the rail with the accent pill in the time column.
+   Nothing wraps: titles, sub-lines and the free line clamp to one line with an ellipsis. */
+.ctl{padding:4px 14px 12px 0}.ctl0{padding-left:14px}.ctl0 .ctt,.ctl0 .ctr{display:none}
+.ctli{position:relative;display:flex;gap:10px}
+.ctli .ctt{flex:none;width:54px;padding:6px 0 0;text-align:right;color:var(--link);font:700 13px/1.2 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ctli .ctt small{display:block;color:var(--muted);font-size:11.5px;font-weight:500}
+.ctr{position:relative;flex:none;width:10px}
+.ctr::before{content:"";position:absolute;left:4px;top:0;bottom:0;width:2px;background:var(--line)}
+.ctr i{position:absolute;left:0;top:10px;width:10px;height:10px;border-radius:50%;background:var(--cs);box-shadow:0 0 0 3px var(--solid)}
+.ctbx{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:6px;padding:3px 0}
+.ctbx.ct2>.ctev{flex:1 1 calc(50% - 3px)}
+.ctev{position:relative;flex:1;min-width:0;padding:8px 10px 6px 12px;border-radius:12px;background:color-mix(in srgb,var(--cs) var(--hl-tint2),var(--solid));box-shadow:inset 3px 0 0 var(--cs);color:var(--fg)}
+.ctev.tap{cursor:pointer}.ctev.cskip>*{opacity:.5}
+.ctet{display:flex;align-items:center;gap:6px;min-width:0;font:700 14px/1.3 var(--font)}
+.ctic{position:relative;flex:none;display:flex;color:var(--cs)}.ctic .i{width:16px;height:16px}
+.ctic .cck{position:absolute;right:-5px;bottom:-4px;width:12px;height:12px;padding:2px;border-radius:50%;background:var(--good);color:var(--solid);stroke-width:3.2}
+.ctn{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ctev .mu{margin-top:1px;font:500 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctbt{align-items:center;min-height:38px}
+.cttk{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:100%;height:30px;padding:0 12px 0 8px;border:1px solid color-mix(in srgb,var(--cs) 55%,transparent);border-radius:999px;background:var(--solid);color:var(--fg);font:600 13px/1 var(--font)}
+.cttk .i{flex:none;width:15px;height:15px;color:var(--cs)}.cttk.tap{cursor:pointer}
+.ctf{flex:1;min-width:0;display:flex;align-items:center;gap:6px;min-height:30px;color:var(--muted);font:500 12px/1.2 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
+.ctf::before,.ctf::after{content:"";flex:1 1 8px;border-top:1px dashed var(--line-2)}.ctf::before{flex:0 0 10px}
+.ctfx{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}.ctf b{font-weight:700;color:var(--fg)}
+.ctovn{flex:1;min-width:0;padding:4px 0 0;color:var(--ring-load);font:600 12px/1.2 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctnowr{height:18px}
+.ctnow{position:absolute;left:69px;right:0;top:50%;z-index:2;height:2px;margin-top:-1px;background:var(--mark);pointer-events:none}
+.ctnow::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--mark)}
+.ctnowl{position:absolute;right:calc(100% - 54px);top:50%;z-index:2;transform:translateY(-50%);padding:2px 5px;border-radius:6px;background:var(--accent);color:var(--accent-ink);font:800 11px/1.2 var(--font-num);font-variant-numeric:tabular-nums;pointer-events:none}
 .cdur.c4{grid-template-columns:repeat(4,minmax(0,1fr))}.cdur.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.cdur.c1{grid-template-columns:minmax(0,1fr)}
 .cmovd{position:relative;overflow:hidden;cursor:pointer}.cdur .cmovd{white-space:normal;line-height:1.1;text-align:center}.cmovd input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;font-size:16px;cursor:pointer}
 .crep[hidden]{display:none}.crep .field input[type=number]{width:3em;flex:none;text-align:center}
@@ -17553,11 +17585,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var CAL_DONE = [[true, 'Был'], [false, 'Не было'], [null, '—']];
   // The feed's span (calendar-2, В6): a day, three or a week from the chosen day — the device's own (localStorage calSpan).
   var CAL_SPANS = [[1, 'День'], [3, '3 дня'], [7, 'Неделя']];
+  // «Список · Часы» (calendar-2, В7, his pick 30.10.2026 — variant C): the rows as a list, or a timeline with a ruler of
+  // only the times that have something — the device's own (localStorage calMode), for every span.
+  var CAL_MODES = [['list', 'Список'], ['hours', 'Часы']];
   // A series (В2): its chips, the twin of REPEATS in _shared/tasks.ts (REPEAT_LABEL words it, as for a task).
   var CAL_REP = [[null, 'нет'], ['daily', 'день'], ['weekly', 'неделя'], ['monthly', 'месяц'], ['yearly', 'год']];
   // The month folds into its week on a phone (В8) until he opens it (localStorage calMonthOpen); from 1400 px always the grid.
   var calWideQ = window.matchMedia ? matchMedia('(min-width:1400px)') : null;
   function calSpan() { var n = Number(store('calSpan')); return n === 3 || n === 7 ? n : 1; }
+  function calMode() { return store('calMode') === 'hours' ? 'hours' : 'list'; }
+  // Minutes as «1 ч 30 мин», «45 мин», «3 ч»; minutes of the day as «09:30».
+  function calDur(n) { var h = Math.floor(n / 60); return [h ? h + ' ч' : '', n % 60 ? n % 60 + ' мин' : ''].filter(Boolean).join(' '); }
+  function calMin(n) { return ('0' + Math.floor(n / 60)).slice(-2) + ':' + ('0' + n % 60).slice(-2); }
   function calGrid() { return !!(calWideQ && calWideQ.matches) || store('calMonthOpen') === '1'; }
   function calKind(k) { return CAL_KINDS.filter(function (x) { return x[0] === k; })[0] || CAL_KINDS[0]; }
   function calHm(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
@@ -17568,10 +17607,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     CAL.ev = {};
     if (CAL.on !== today) { CAL.on = today; CAL.month = today.slice(0, 7); CAL.day = today; }
     if (CAL.day.slice(0, 7) !== CAL.month) CAL.day = CAL.month === today.slice(0, 7) ? today : CAL.month + '-01';
-    var span = calSpan(), open = calGrid(), fixed = calWideQ && calWideQ.matches;
+    var span = calSpan(), mode = calMode(), open = calGrid(), fixed = calWideQ && calWideQ.matches;
     var m = CAL.month, wrap = el('div', 'calw' + (span > 1 ? ' calr' : '')), gcard = el('div', 'card calg' + (open ? '' : ' cfold')), nav = el('div', 'mnav'), wk = el('div', 'calwk');
     var grid = el('div', 'calgrid'), dcard = mkCard('calendar', ''), dtitle = dcard.querySelector('h3'), list = el('div'), cells = {};
-    var fcol = el('div', 'calf'), hd = el('div', 'mnav calhd'), seg = el('div', 'seg'), rbox = el('div', 'calrange'), md = {};
+    var fcol = el('div', 'calf'), hd = el('div', 'mnav calhd'), seg = el('div', 'seg cspan'), mseg = el('div', 'seg'), rbox = el('div', 'calrange'), md = {};
     dcard.classList.add('cald');
     grid.setAttribute('role', 'group');
     grid.setAttribute('aria-label', monthLabel(m));
@@ -17592,8 +17631,24 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       };
       seg.appendChild(b);
     });
+    // «Список · Часы» beside it (В7): the device's own too; a change draws the tab again.
+    mseg.setAttribute('role', 'group');
+    mseg.setAttribute('aria-label', 'Вид');
+    CAL_MODES.forEach(function (x) {
+      var b = el('button', x[0] === mode ? 'on' : '', x[1]);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(x[0] === mode));
+      b.onclick = function () {
+        if (x[0] === mode) return;
+        haptic();
+        store('calMode', x[0]);
+        clear(main);
+        calView();
+      };
+      mseg.appendChild(b);
+    });
     var addB = add(el('div', 'foot cfoot'), foodBtn('btn', 'plus', 'Событие', function (ev) { calSheet(null, CAL.day, ev.currentTarget, after); }));
-    add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, add(hd, seg),
+    add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, add(hd, seg, mseg),
       span > 1 ? rbox : add(dcard, list, addB), span > 1 ? addB : null)));
     // A month or a day by the arrows, «Сегодня» and a day of the next month's edge: the tab drawn again on it.
     function goTo(month, day) {
@@ -17626,14 +17681,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       b.onclick = function () { if (open) goTo(monthStep(m, x[0])); else stepTo(addDays(CAL.day, 7 * x[0])); };
       nav.appendChild(b);
     });
-    // «‹ ›» by the switch: a day, three or a week on.
-    [[-1, 'chevron-left', 'Раньше'], [1, 'chevron-right', 'Дальше']].forEach(function (x) {
-      var b = add(el('button'), icon(x[1]));
-      b.type = 'button';
-      b.setAttribute('aria-label', x[2] + ' на ' + CAL_SPANS.filter(function (s) { return s[0] === span; })[0][1].toLowerCase());
-      b.onclick = function () { stepTo(addDays(CAL.day, span * x[0])); };
-      hd.appendChild(b);
-    });
+    // The «‹ ›» that stepped the span gave their place to «Список · Часы» (В7): the swipe on the feed steps it (В9).
     // «Сегодня» in the day's head, away from today only: the month's strip never moves.
     // The label in a span: on a phone the head's pill is icon-only (.calhd .mtoday span{display:none}) — a bare text node
     // was not hidden and «Сегодня» stuck out of the row (his screenshot 30.10.2026).
@@ -17695,22 +17743,20 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (x.occurrence) { ev.starts_at = x.starts_at; ev.ends_at = x.ends_at; ev.occurrence = x.occurrence; ev.done = x.done; }
       calSheet(ev, day, r, after);
     }
-    function row(x, day) {
-      day = day || CAL.day;
-      var src = x.src, wo = src === 'workout', ic = src === 'cal' ? calKind(x.kind)[2] : wo ? WO_IC[x.kind] || 'dumbbell' : CAL_IC[src] || 'calendar';
-      var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
-      if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
-      var sub = [x.place, CAL_SUB[src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · ');
-      // A planned workout, plan vs fact: done — the check on its icon, skipped — dimmed.
-      var dn = src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null;
-      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple') + (src === 'cal' ? ' k-' + calKind(x.kind)[0] : '') +
-        (dn === false ? ' cskip' : '')), tm,
-        add(el('span', 'lead cic'), icon(ic), dn === true ? icon('check', 'cck') : null),
-        add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
-      var act = src === 'cal' && x.editable !== false ? function () { openCal(x, day, r); }
-        : src === 'task' && x.ref != null ? function () { calTaskSheet(x, day, r, taskAfter); }
-        : src === 'show' ? function () { show('cinema'); }
-        : wo && x.ref != null ? function () {
+    // An item's icon, its sub-line (place, source, series) and its source's colour class — the list's rows and the
+    // timeline's cards alike.
+    function icOf(x) { return x.src === 'cal' ? calKind(x.kind)[2] : x.src === 'workout' ? WO_IC[x.kind] || 'dumbbell' : CAL_IC[x.src] || 'calendar'; }
+    function subOf(x) { return [x.place, CAL_SUB[x.src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · '); }
+    function csOf(x) { return 'cs-' + (CAL_SRC.indexOf(x.src) >= 0 ? x.src : 'apple') + (x.src === 'cal' ? ' k-' + calKind(x.kind)[0] : ''); }
+    // A planned workout, plan vs fact: done (true) — the check on its icon, skipped (false) — dimmed; null — not known.
+    function doneOf(x) { return x.src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null; }
+    // What a tap on the item r stands for opens: our event — its sheet, a task — the task's, a screening — «Кино», a
+    // workout — its sheet; a game, Apple and the mail nothing (null).
+    function actOf(x, day, r) {
+      return x.src === 'cal' && x.editable !== false ? function () { openCal(x, day, r); }
+        : x.src === 'task' && x.ref != null ? function () { calTaskSheet(x, day, r, taskAfter); }
+        : x.src === 'show' ? function () { show('cinema'); }
+        : x.src === 'workout' && x.ref != null ? function () {
           if (r.busy) return;
           r.busy = true;
           api('miniapp', { action: 'workout_get' }, 15000, false, { id: x.ref }).then(function (j) {
@@ -17718,6 +17764,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
             if (j && j.workout) woDetailSheet(j.workout, r, function () { cacheDrop('food'); load(); });
           }, function () { r.busy = false; });
         } : null;
+    }
+    function row(x, day) {
+      day = day || CAL.day;
+      var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
+      if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
+      var sub = subOf(x), dn = doneOf(x);
+      var r = add(el('div', 'row crow ' + csOf(x) + (dn === false ? ' cskip' : '')), tm,
+        add(el('span', 'lead cic'), icon(icOf(x)), dn === true ? icon('check', 'cck') : null),
+        add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
+      var act = actOf(x, day, r);
       if (x.src === 'task' && x.ref != null) r.setAttribute('data-ref', String(x.ref));
       if (!act) return r;
       r.appendChild(icon('chevron-right', 'go'));
@@ -17737,6 +17793,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // One day's lines into box: the work bands, the rows («ничего не запланировано» for none), «Свободно: …» under
     // them (В1), muted, none when the day has no window.
     function fill(box, date, items, free) {
+      if (mode === 'hours') return hours(box, date, items, free);
       items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
       var rest = items.filter(function (x) { return !isWorkX(x); });
       if (!rest.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
@@ -17744,6 +17801,110 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (free && free.length) {
         box.appendChild(el('div', 'mu cfree', 'Свободно: ' + free.map(function (s) { return s.from + '–' + s.to; }).join(' · ')));
       }
+    }
+    // «Часы» (В7, variant C): one day's timeline into box. On top the shelf — the work bands, then the all-day rows as in
+    // the list; under it a ruler with a time only where something starts (its end under it, smaller), a dot in the
+    // source's colour on the rail and the item as a card beside it (a timed task — a thin pill); the free windows (В1)
+    // between them folded into one dashed line «свободно 12:00–15:00 · 3 ч» — a window split where a task falls in it,
+    // a piece under 30 min left out; items whose times cross (as `overlapping`: no tasks, no work day, an item without
+    // an end taken as an hour) side by side, two to a row, under an orange «накладка 20:15–22:00»; today the «now» line
+    // on the rail with the accent pill — across the item it falls in, else a line of its own.
+    function hours(box, date, items, free) {
+      var all = items.filter(function (x) { return x.all_day && !isWorkX(x); });
+      var timed = items.filter(function (x) { return !x.all_day && !isWorkX(x); });
+      items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
+      all.forEach(function (x) { box.appendChild(row(x, date)); });
+      // Minutes of this day: a start on the day before is 0, an end on the day after 1440.
+      function mOf(ts, end) {
+        var d = foodDay(ts), p = wp(ts);
+        return d < date ? 0 : d > date ? (end ? 1440 : 0) : Number(p.hour) * 60 + Number(p.minute);
+      }
+      var es = [], now = null;
+      timed.forEach(function (x) {
+        var a = mOf(x.starts_at), b = x.ends_at && x.ends_at !== x.starts_at ? mOf(x.ends_at, true) : a;
+        es.push({ x: x, a: a, b: b, e: b > a ? b : a + 60, task: x.src === 'task' });
+      });
+      es.sort(function (p, q) { return p.a - q.a; });
+      if (date === foodToday()) { var np = wp(Date.now()); now = Number(np.hour) * 60 + Number(np.minute); }
+      if (!all.length && !timed.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
+      // The rows in time order: a cluster of crossing items is one row, a task its own.
+      var rows = [], cl = null;
+      es.forEach(function (p) {
+        if (p.task) return rows.push({ a: p.a, b: p.a, e: p.a, xs: [p], task: true });
+        if (cl && p.a < cl.e) { cl.xs.push(p); cl.e = Math.max(cl.e, p.e); cl.b = Math.max(cl.b, p.b); return; }
+        rows.push(cl = { a: p.a, b: p.b, e: p.e, xs: [p] });
+      });
+      var lines = rows.map(function (r) { return { m: r.a, k: 0, r: r }; });
+      (free || []).forEach(function (s) {
+        var a = Number(s.from.slice(0, 2)) * 60 + Number(s.from.slice(3)), b = Number(s.to.slice(0, 2)) * 60 + Number(s.to.slice(3));
+        es.forEach(function (p) {
+          if (p.a <= a || p.a >= b) return;
+          if (p.a - a >= 30) lines.push({ m: a, k: 2, f: [a, p.a] });
+          a = p.a;
+        });
+        if (b - a >= 30) lines.push({ m: a, k: 2, f: [a, b] });
+      });
+      var inRow = now != null && rows.some(function (r) { return !r.task && r.b > r.a && now >= r.a && now < r.b; });
+      if (now != null && timed.length && !inRow) lines.push({ m: now, k: 1 });
+      lines.sort(function (p, q) { return p.m - q.m || p.k - q.k; });
+      if (!lines.length) return;
+      // A day with nothing timed: only its free line, without a rail that leads nowhere.
+      var tl = el('div', 'ctl' + (rows.length ? '' : ' ctl0'));
+      // One line of the ruler: its time cell, the rail (a dot for an item) and what stands beside it.
+      function li(cls, tm, dot, body) {
+        return add(el('div', 'ctli' + (cls ? ' ' + cls : '')), tm || el('span', 'ctt'), add(el('span', 'ctr'), dot ? el('i') : null), body);
+      }
+      function nowMark(ln, top) {
+        var nl = el('span', 'ctnow'), pill = el('span', 'ctnowl', calMin(now));
+        if (top) { nl.style.top = top; pill.style.top = top; }
+        add(ln, nl, pill);
+      }
+      lines.forEach(function (ln) {
+        if (ln.k === 2) {
+          return tl.appendChild(li('ctfree', null, false, add(el('div', 'ctf'), add(el('span', 'ctfx'), el('span', '', 'свободно '),
+            el('b', '', calMin(ln.f[0]) + '–' + calMin(ln.f[1])), el('span', '', ' · ' + calDur(ln.f[1] - ln.f[0]))))));
+        }
+        if (ln.k === 1) return nowMark(tl.appendChild(li('ctnowr', null, false, null)));
+        var r = ln.r, p0 = r.xs[0], tm = el('span', 'ctt', calMin(r.a));
+        if (r.b > r.a) tm.appendChild(el('small', '', calMin(r.b)));
+        // A timed task: a thin outlined pill, not a block.
+        if (r.task) {
+          var x = p0.x, pill = add(el('span', 'cttk ' + csOf(x)), icon(icOf(x)), el('span', 'ctn', x.title || 'Без названия'));
+          var act = actOf(x, date, pill);
+          if (x.ref != null) pill.setAttribute('data-ref', String(x.ref));
+          if (act) { pill.setAttribute('aria-label', calMin(r.a) + ', ' + (x.title || '') + ' — открыть'); tap(pill, act); }
+          return tl.appendChild(li(csOf(x), tm, true, add(el('div', 'ctbx ctbt'), pill)));
+        }
+        var two = r.xs.length > 1, bx = el('div', 'ctbx' + (two ? ' ct2' : ''));
+        // Taller the longer it lasts (54–112 px), so an hour and an evening do not look alike; side by side 86 at most.
+        var h = Math.max(54, Math.min(two ? 86 : 112, Math.round((r.e - r.a) * 0.9)));
+        r.xs.forEach(function (p) {
+          var x = p.x, sub = subOf(x), dn = doneOf(x), c = el('div', 'ctev ' + csOf(x) + (dn === false ? ' cskip' : ''));
+          c.style.minHeight = h + 'px';
+          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x)), dn === true ? icon('check', 'cck') : null), el('span', 'ctn', x.title || 'Без названия')),
+            two ? el('div', 'mu', calHm(x.starts_at) + (p.b > p.a ? '–' + calHm(x.ends_at) : '')) : null, sub ? el('div', 'mu', sub) : null);
+          var act = actOf(x, date, c);
+          if (act) {
+            c.setAttribute('aria-label', calHm(x.starts_at) + ', ' + (x.title || '') + (dn === true ? ', был' : dn === false ? ', не было' : '') + ' — открыть');
+            tap(c, act);
+          }
+          bx.appendChild(c);
+        });
+        if (two) {
+          // The span where any two cross.
+          var oa = 1440, ob = 0;
+          r.xs.forEach(function (p, i) {
+            r.xs.slice(i + 1).forEach(function (q) {
+              var a = Math.max(p.a, q.a), b = Math.min(p.e, q.e);
+              if (a < b) { oa = Math.min(oa, a); ob = Math.max(ob, b); }
+            });
+          });
+          tl.appendChild(li('ctov', null, false, el('div', 'ctovn', 'накладка ' + calMin(oa) + '–' + calMin(ob))));
+        }
+        var line = tl.appendChild(li(csOf(p0.x), tm, true, bx));
+        if (now != null && r.b > r.a && now >= r.a && now < r.b) nowMark(line, 'calc(3px + (100% - 6px) * ' + ((now - r.a) / (r.b - r.a)).toFixed(3) + ')');
+      });
+      box.appendChild(tl);
     }
     // The day on screen (lastDay) without the tasks done or moved off it in their sheet.
     var lastDay = null;
