@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 10:04">
+<meta name="published" content="2026-10-30 10:23">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1186,7 +1186,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 14px}.hgsh{padding:0 14px 8px;font-weight:600}
 .hgg{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center;padding:12px 8px 10px;border-radius:16px;background:var(--surface-2)}.hgh{font-weight:600;margin:0 0 2px}
 .hgv{display:block;width:100%;max-width:168px;height:auto;overflow:visible}.hgv .tr,.hgv .zone{fill:none;stroke-linecap:round}
-.hgv .tr{stroke:var(--track)}.hgv .zone{stroke:var(--ring-recovery);filter:var(--hl-glow)}
+.hgv .tr{stroke:var(--track)}.hgv .zone{stroke:var(--ring-recovery);filter:var(--hl-glow)}.hgv .zone.soft{stroke-opacity:.3;filter:none}
 .hgv .tk{stroke:var(--track);stroke-width:2.6;stroke-linecap:round}.hgv .tk.on{stroke:var(--st,var(--mark))}
 .hgv .mk{fill:var(--surface);stroke:var(--fg);stroke-width:2.5}.hgv .mkh{fill:var(--st,var(--mark));fill-opacity:.18}
 .hgv .ge{fill:var(--muted);font:500 11px var(--font-num)}
@@ -3705,7 +3705,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         var rings = n.appendChild(hlRings(h, s === 'm' ? 40 : 44, null, s === 'm'));
         if (s === 'm') {
           rings.className += ' bsm';
-          var z = h.zones || {}, tg = h.load_target || [20, 49];
+          var z = h.zones || {}, tg = h.load_target || [28, 46];
           if (h.sleep != null) add(line('', 'bkg bh3'), icon('moon'), document.createTextNode('Сон ' + h.sleep + ' %' +
             (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '')));
           if (h.recovery != null) add(line('', 'bkg bh3'), icon('activity'), document.createTextNode('Восстановление ' + h.recovery + ' %' +
@@ -14876,7 +14876,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // advice, a tap on a ring opens its sheet (hlRingSheet: the 30 days and «Из чего», docs/specs/metric-sheets.md);
   // «Монитор» — six tiles against his own 30 days (a vertical track, the norm's band ±1 σ in it, a dot for the day,
   // «норма/выше/ниже»), a tap — the metric's sheet with its trends (hlSeriesSheet).
-  // After the day's workouts «Фитнес»: the week as a strip of icons, «Кардио» and «Мышцы» against the green 20–49 %,
+  // After the day's workouts «Фитнес»: the week as a strip of icons, «Кардио» and «Мышцы» against the green 28–49 %,
   // «Свежесть мышц» as 10 dots a group. Under «Неделя и месяц» «Биология» (health_stats): weight, fat, HRV, resting HR,
   // VO2max as 30-day sparklines with the last value and the change, a tap — the sheet. Without any health row the cards fold into one line
   // that opens the setup (docs/shortcuts.md, «Здоровье»). The charts are inline SVG on CSS variables (light and dark).
@@ -15386,7 +15386,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
       if (h) h.textContent = HL_NAMES[cur];
       clear(body);
-      var tgt = cur === 'load' ? j.load_target || [20, 49] : null;
+      var tgt = cur === 'load' ? j.load_target || [28, 46] : null;
       var stress = cur === 'stress';
       var zone = s && cur !== 'load' ? (stress ? hlStressZone(s.value) : s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
       var st = !s ? null : cur === 'load' ? HL_LOAD_RU[s.status || 'calibration'] : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
@@ -15515,8 +15515,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // the status word under it in its colour (the server's line, tour-4.jpg), then the target; a tap — onTap(row).
   // Bevel's load gauge (fitness-2.png): the name with a chevron, the status word in its colour, 270° of ticks lit
   // to the value, the target's green arc outside with a dot at the value, the number inside, «0» and «100» under the
-  // open ends, «≡ 20–49» under it all; a tap — the load's sheet.
-  function hlGauge(name, s, tgt, onTap) {
+  // open ends, «≡ 28–46» under it all (the margin of safety a paler arc on either side); a tap — the load's sheet.
+  function hlGauge(name, s, tgt, onTap, mg) {
     var row = el('div', 'hgg hl-st-' + (s && s.status || 'calibration')), v = s ? s.value : null;
     var W = 140, H = 126, cx = 70, cy = 66, r = 46, N = 37;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
@@ -15527,6 +15527,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var tk = svg('line', { x1: a[0].toFixed(1), y1: a[1].toFixed(1), x2: b[0].toFixed(1), y2: b[1].toFixed(1), 'class': 'tk' + (on ? ' on' : '') });
       if (on) tk.style.strokeOpacity = (0.45 + 0.55 * f).toFixed(2);
       box.appendChild(tk);
+    }
+    if (mg) {
+      if (mg[0] < tgt[0]) box.appendChild(svg('path', { d: arc(mg[0] / 100, tgt[0] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
+      if (mg[1] > tgt[1]) box.appendChild(svg('path', { d: arc(tgt[1] / 100, mg[1] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
     }
     box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100, r + 14), 'class': 'zone', 'stroke-width': 5 }));
     if (v != null) {
@@ -15581,11 +15585,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     c.appendChild(strip);
     var today = week.filter(function (d) { return d.day === j.date; })[0], kinds = today && today.kinds;
     if (j.tip || j.advice) c.appendChild(add(el('div', 'hfadv'), j.tip ? hlTip(j.tip, kinds) : el('div', 'hadv', hlNb(hlAdvice(j.advice, kinds)))));
-    var tgt = j.load_target || [20, 49];
+    var tgt = j.load_target || [28, 46], mg = j.load_margin || [24, 52];
     // Both open the load's sheet: the muscles' row is in it.
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
-      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null), hlGauge('Мышцы', sc.muscle, tgt, sc.muscle ? open : null)));
+      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle, tgt, sc.muscle ? open : null, mg)));
     if (fr.length) {
       var f = add(el('div', 'hfr'), el('div', 'hfh', 'Свежесть мышц')), grid = el('div', 'hfr-g');
       fr.forEach(function (g) {
