@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 23:13">
+<meta name="published" content="2026-10-31 00:45">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -3895,7 +3895,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       // «Здоровье» (docs/specs/health-v2.md): the three rings of today (yesterday's until the night is in); m — the advice
       // under them. No health row — «нет данных»; a tap opens «Здоровье».
       // m — three lines under the rings (his ask 30.10.2026): the night with its word and length, the recovery with its
-      // word, the load against the target band and what that allows today; then the advice and the bio-age.
+      // word, today's load in its day's word (docs/specs/load-today.md); then the advice and the bio-age.
       body: function () {
         var h = j.health;
         r.go = tab('food');
@@ -3904,15 +3904,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         var rings = n.appendChild(hlRings(h, s === 'm' ? 40 : 44, null, s === 'm'));
         if (s === 'm') {
           rings.className += ' bsm';
-          var z = h.zones || {}, tg = h.load_target || [28, 46];
+          var z = h.zones || {}, tg = h.load_target || [28, 46], ld = h.load_day;
           if (h.sleep != null) add(line('', 'bkg bh3'), icon('moon'), document.createTextNode('Сон ' + h.sleep + ' %' +
             (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '')));
           if (h.recovery != null) add(line('', 'bkg bh3'), icon('activity'), document.createTextNode('Восстановление ' + h.recovery + ' %' +
             (z.recovery ? ' · ' + HL_ZONE_RU.recovery[z.recovery].toLowerCase() : '')));
           if (h.load != null) {
-            var lw = h.load < tg[0] ? 'ниже цели ' + tg[0] + ' — можно больше' : h.load > tg[1] ? 'выше ' + tg[1] + ' — сегодня легче'
-              : 'в цели ' + tg[0] + '–' + tg[1] + ' — тренировка ок';
-            add(line('', 'bkg bh3' + (h.load > tg[1] ? ' bad' : '')), icon('flame'), document.createTextNode('Нагрузка ' + h.load + ' % · ' + lw));
+            var lw = ld === 'rest' ? 'сегодня отдых' : ld === 'under' ? 'можно больше · цель ' + tg[0] + '–' + tg[1]
+              : ld === 'in' ? 'в цели ' + tg[0] + '–' + tg[1] : HL_DAY_RU[ld] ? HL_DAY_RU[ld].toLowerCase() : '';
+            add(line('', 'bkg bh3' + (ld === 'above' || ld === 'over' ? ' bad' : '')), icon('flame'),
+              document.createTextNode('Нагрузка ' + h.load + ' %' + (lw ? ' · ' + lw : '')));
           }
           note(h.advice_model ? h.advice_model.title : h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice_model || h.advice ? '' : 'mu');
         }
@@ -15389,11 +15390,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var HL_PERIODS = [[30, '30 Д'], [90, '3 М'], [180, '6 М'], [365, '1 Г']];
   // The part's icon by its label (the rings' parts).
   var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer',
-    'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', '7 дней': 'flame',
+    'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', 'Сегодня': 'flame', 'За 7 дней': 'calendar-range',
     'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
   var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Норма', bad: 'Мало' } };
   var HL_LOAD_RU = { calibration: 'Калибровка', low: 'Недостаток тренировки', maintain: 'Поддержание', productive: 'Результативность',
     fatigue: 'Усталость', overtrain: 'Перетренировка' };
+  // Today's load against its day's band (docs/specs/load-today.md): the word and the colour of a load status it borrows.
+  var HL_DAY_RU = { calibration: 'Калибровка', rest: 'Сегодня отдых', under: 'Можно больше', 'in': 'В цели', above: 'Выше цели — дальше легче',
+    over: 'Перегруз' };
+  var HL_DAY_CLS = { calibration: 'calibration', rest: 'maintain', under: 'low', 'in': 'productive', above: 'fatigue', over: 'overtrain' };
   // «28 окт. 2026»: a sheet's date.
   function hlDay(d) { return d ? +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1] + ' ' + d.slice(0, 4) : ''; }
   function hlShort(d) { return +d.slice(8, 10) + ' ' + MON[+d.slice(5, 7) - 1]; }
@@ -15712,17 +15717,17 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var tgt = cur === 'load' ? j.load_target || [28, 46] : null;
       var stress = cur === 'stress';
       var zone = s && cur !== 'load' ? (stress ? hlStressZone(s.value) : s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
-      var st = !s ? null : cur === 'load' ? HL_LOAD_RU[s.status || 'calibration'] : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
-      var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.status || 'calibration') : 'hz-st-' + zone;
-      var range = cur === 'load' ? 'Оптимальная: ' + tgt[0] + '–' + tgt[1] + ' %' : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
-      add(body, hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line && !stress ? s.line.replace(/^\d+ % — /, '') : null));
+      var st = !s ? null : cur === 'load' ? (s.day ? HL_DAY_RU[s.day] : HL_LOAD_RU[s.status || 'calibration']) : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
+      var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.day ? HL_DAY_CLS[s.day] : s.status || 'calibration') : 'hz-st-' + zone;
+      var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
+      add(body, hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null));
       if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
       var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
       if (chart) body.appendChild(chart);
       var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
         el('div', 'mu hsec-s', cur === 'recovery' ? 'Обычный день — 75 %; каждая часть сдвигает вверх или вниз.' :
           cur === 'sleep' ? 'Цель — 100 %; каждая часть показывает, сколько отняла.' : stress ? 'Обычный день — 50; ВСР ниже нормы и пульс покоя выше поднимают стресс.' :
-          '7 дней нагрузки против обычной недели за 28 дней.'));
+          'Сегодня против обычной недели за 28 дней; цель — сколько добрать сегодня, чтобы неделя была в норме.'));
       if (!s) {
         parts.appendChild(el('div', 'mu', cur === 'recovery' ? 'Нужны ВСР и пульс во сне хотя бы за 5 дней.' :
           cur === 'sleep' ? 'Сна за этот день нет.' : stress ? 'Нужны ВСР или пульс покоя и их норма.' : 'Пока нет базы: нужна неделя тренировок.'));
@@ -15840,7 +15845,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // to the value, the target's green arc outside with a dot at the value, the number inside, «0» and «100» under the
   // open ends, «≡ 28–46» under it all (the margin of safety a paler arc on either side); a tap — the load's sheet.
   function hlGauge(name, s, tgt, onTap, mg) {
-    var row = el('div', 'hgg hl-st-' + (s && s.status || 'calibration')), v = s ? s.value : null;
+    var row = el('div', 'hgg hl-st-' + (s && s.day ? HL_DAY_CLS[s.day] : s && s.status || 'calibration')), v = s ? s.value : null;
     var W = 140, H = 126, cx = 70, cy = 66, r = 46, N = 37;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
     function pt(f, rad) { var a = Math.PI * (0.75 + 1.5 * Math.max(0, Math.min(1, f))); return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; }
@@ -15867,12 +15872,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var e0 = pt(0, r + 14), e1 = pt(1, r + 14);
     box.appendChild(svg('text', { x: (e0[0] + 2).toFixed(1), y: (e0[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '0'));
     box.appendChild(svg('text', { x: (e1[0] - 2).toFixed(1), y: (e1[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '100'));
-    var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели';
+    var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели', rest = tgt[1] === 0;
     var word = s && ((String(s.line || '').match(/— ([^:]+):/) || [])[1] || HL_LOAD_RU[s.status || 'calibration'].toLowerCase());
     word = word ? word.charAt(0).toUpperCase() + word.slice(1) : null;
     add(row, add(el('div', 'hgh'), document.createTextNode(name), onTap ? icon('chevron-right') : null), word ? el('div', 'hgst', word) : null, box,
-      el('div', 'hgt', '≡ ' + tgt[0] + '–' + tgt[1]));
-    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where + ', цель ' + tgt[0] + '–' + tgt[1] + ' %') + (onTap ? ' — из чего' : ''));
+      el('div', 'hgt', rest ? '≡ отдых' : '≡ ' + tgt[0] + '–' + tgt[1]));
+    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where + ', цель ' +
+      (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %')) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
   // A tap on the strip's day: one workout — its sheet; several — the day's list, a row each, to pick from.
@@ -15963,11 +15969,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     c.appendChild(strip);
     var today = week.filter(function (d) { return d.day === j.date; })[0], kinds = today && today.kinds;
     if (j.tip || j.advice) c.appendChild(add(el('div', 'hfadv'), j.tip ? hlTip(j.tip, kinds) : el('div', 'hadv', hlNb(hlAdvice(j.advice, kinds)))));
+    // «Кардио» against today's band, «Мышцы» — the 7 days' sets against the constant one (docs/specs/load-today.md).
     var tgt = j.load_target || [28, 46], mg = j.load_margin || [24, 52];
     // Both open the load's sheet: the muscles' row is in it.
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
-      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle, tgt, sc.muscle ? open : null, mg)));
+      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle, [28, 46], sc.muscle ? open : null, [24, 52])));
     if (fr.length) {
       var fh = add(el('div', 'hfh hfh-go'), el('span', '', 'Свежесть мышц'), icon('chevron-right'));
       fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
