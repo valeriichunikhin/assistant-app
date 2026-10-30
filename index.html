@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 10:45">
+<meta name="published" content="2026-10-30 11:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1147,6 +1147,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:round;filter:var(--hl-glow)}
 .hring.hl-load .tr{stroke:var(--ring-load-soft)}.hring.hl-rec .tr{stroke:var(--ring-recovery-soft)}.hring.hl-sleep .tr{stroke:var(--ring-sleep-soft)}
 .hring.hl-load .arc{stroke:url(#g-ring-load)}.hring.hl-rec .arc{stroke:url(#g-ring-rec)}.hring.hl-sleep .arc{stroke:url(#g-ring-sleep)}
+/* The load ring's recommended band as Bevel's (30.10.2026): a hatched arc over the target, the value's dot on the ring. */
+.hring .band{fill:none;stroke:url(#p-load-band);stroke-opacity:.75}.hring .dot{fill:var(--ring-load-2);stroke:var(--surface);stroke-width:2}
 .hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.hring .rv.mu{fill:var(--muted)}
 .hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
 .hrl{font-size:13px;color:var(--muted);white-space:nowrap}
@@ -1377,8 +1379,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .htip-p{margin-top:4px;font-size:14px;line-height:1.45;color:color-mix(in srgb,var(--fg) 72%,transparent);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
 .htips{display:flex;flex-direction:column;gap:8px}
 .hstr{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:92px;padding:8px 4px 10px;border-radius:var(--r-b);background:var(--surface-2)}
-.hstc{display:flex;align-items:center;gap:14px;padding:2px 14px 14px;border-radius:var(--r-b)}.hstc-m{flex:1;min-width:0}.hstc-m>.mu{font-size:13px}
-.hstc-w{font-weight:800;font-size:20px;color:var(--st)}.hstc .hstr-h{display:none}.hstc .hstr-w{display:none}.hstc .hpr-go{flex:none;color:var(--muted)}
+.hsc-b{display:flex;align-items:center;gap:10px;padding:0 14px 12px;border-radius:var(--r-b)}.hsc-l{flex:1;min-width:0}
+.hsc-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}.hsc-dot{width:8px;height:8px;border-radius:50%;background:var(--st)}.hsc-t{flex:1;min-width:0}.hsc-h .hpr-go{color:var(--muted)}
+.hsc-u{font-size:12px;margin-top:2px}.hsc-s{display:flex;gap:12px;margin-top:10px}.hsc-1{flex:1;min-width:0;padding-right:10px;border-right:1px solid var(--card-line)}.hsc-1:last-child{border-right:0;padding-right:0}
+.hsc-v{font:800 24px var(--font-num);font-variant-numeric:tabular-nums;color:var(--hs,var(--fg));white-space:nowrap}.hsc-v small{font-size:12px;font-weight:600}.hsc-1>.mu{font-size:12px;line-height:1.25}
+.hsd{flex:none;display:block;overflow:visible}.hsd .tk{stroke-width:2.2;stroke-linecap:round;opacity:.22}.hsd .tk.on{opacity:1}
+.hsd .v{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}.hsd .w{fill:var(--hs,var(--muted));font-weight:700}
+.hsc-e{display:flex;align-items:center;gap:10px;margin:0 14px 14px;padding:12px 14px;border-radius:var(--r-b);background:var(--surface-2)}.hsc-e .i{width:18px;height:18px;color:var(--ring-recovery);flex:none}
+.hsc-et{flex:1;display:flex;gap:3px;height:18px;min-width:0}.hsc-et i{flex:1;border-radius:2px;background:var(--track)}.hsc-et i.on{background:var(--ring-recovery)}
+.hsc-e b{flex:none;font:800 16px var(--font-num);font-variant-numeric:tabular-nums}
 .hstr-h{font-size:12px}.hstr-w{font-size:12px;font-weight:700;color:color-mix(in srgb,var(--st) 72%,var(--fg))}
 .hstg{display:block;overflow:visible}.hstg circle{fill:none;stroke-linecap:round}.hstg .tr{stroke:color-mix(in srgb,var(--st) 18%,transparent)}
 .hstg .arc{stroke:var(--st);filter:var(--hl-glow)}.hstg .v{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}
@@ -1419,7 +1428,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 <linearGradient id="g-ring-sleep" x1="1" y1="0" x2="0" y2="0"><stop offset="0" style="stop-color:var(--ring-sleep-2)"/><stop offset="1" style="stop-color:var(--ring-sleep)"/></linearGradient>
 <linearGradient id="g-bio-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hl-bio);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--hl-bio);stop-opacity:0"/></linearGradient>
 <filter id="g-glow" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".4"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="g-glow-d" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".7"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<filter id="g-glow-d" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".7"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<pattern id="p-load-band" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--ring-load);stroke-width:2.2"/></pattern></defs>
 <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
 <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
@@ -14904,13 +14914,23 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   }
   // A ring: its tinted track, the arc of v (0–100) from 12 o'clock in the ring's gradient with a glow (the CSS), the
   // number in the middle; the stroke 13 % of the size (11 px at 84).
-  function hlRing(v, cls, size) {
-    var sw = Math.round(size * 0.13), r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2;
+  // band — [from, to] as fractions of the ring: the recommended range hatched over the track, and then the value's
+  // dot at the arc's end (the load ring, as Bevel's).
+  function hlRing(v, cls, size, band) {
+    var sw = Math.round(size * 0.13), r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2, rot = 'rotate(-90 ' + h + ' ' + h + ')';
     var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hring ' + cls, 'aria-hidden': 'true' });
     box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
+    if (band && band[1] > band[0]) {
+      box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'band', 'stroke-width': sw, 'stroke-dasharray': (c * (band[1] - band[0])).toFixed(1) + ' ' + c.toFixed(1),
+        'stroke-dashoffset': (-c * band[0]).toFixed(1), transform: rot }));
+    }
     if (v != null && v > 0) {
       box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw, 'stroke-dasharray': (c * Math.min(100, v) / 100).toFixed(1) + ' ' + c.toFixed(1),
-        transform: 'rotate(-90 ' + h + ' ' + h + ')' }));
+        transform: rot }));
+    }
+    if (band && v != null) {
+      var a = Math.PI * (2 * Math.min(100, v) / 100 - 0.5);
+      box.appendChild(svg('circle', { cx: (h + r * Math.cos(a)).toFixed(1), cy: (h + r * Math.sin(a)).toFixed(1), r: Math.max(3, sw * 0.5), 'class': 'dot' }));
     }
     box.appendChild(svg('text', { x: h, y: h, 'class': 'rv' + (v == null ? ' mu' : ''), 'text-anchor': 'middle', 'dominant-baseline': 'central',
       'font-size': size >= 60 ? 22 : 13 }, v == null ? '—' : String(v)));
@@ -14921,7 +14941,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function hlRings(vs, size, onTap, bare) {
     var row = el('div', 'hrings');
     HL_RINGS.forEach(function (k) {
-      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size), bare ? null : el('div', 'hrl', k[1]));
+      var band = k[0] === 'load' ? (vs.load_target || [28, 46]).map(function (x) { return x / 100; }) : null;
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band), bare ? null : el('div', 'hrl', k[1]));
       if (onTap) tap(cell, function () { onTap(k[0], cell); });
       else cell.setAttribute('role', 'img');
       cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
@@ -14988,18 +15009,60 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function hlStressZone(v) { return v < 34 ? 'good' : v < 67 ? 'mid' : 'bad'; }
   // «Стресс» as Bevel's gauge (home.jpg): a 270° arc lit to the value in its zone's colour, the number in the middle,
   // the word under it.
-  // «Стресс» as its own card under «Здоровье» (his ask 30.10.2026; Bevel's «Стресс и энергия», home.jpg): the gauge
-  // tile on the left, the word in its colour and the scale's hint on the right; a tap anywhere — the stress sheet.
+  // «Стресс» as Bevel's «Стресс за сегодня» (his frame 30.10.2026, 11:03): the dot in the zone's colour and the name,
+  // «→», «Последнее обновление: 10:34»; three numbers — the score with its word, the night's HRV and resting pulse
+  // against their bases (green better, orange worse); on the right a full circle of ticks coloured low→high, lit to
+  // the value, the number and the word inside; under the card the energy bar — the recovery as lit ticks with «%».
+  // A tap on the card — the stress sheet; on the bar — the recovery's.
   function hlStressCard(j) {
-    var s = (j.scores || {}).stress;
+    var sc = j.scores || {}, s = sc.stress;
     if (!s) return null;
-    var c = mkCard('brain', 'Стресс'), z = hlStressZone(s.value), word = hlStressWord(s);
-    var row = add(el('div', 'hstc hz-st-' + z), hlStressTile(s, function (t) { hlRingSheet('stress', j, t); }),
-      add(el('div', 'hstc-m'), el('div', 'hstc-w', word), el('div', 'mu', 'Низкий до 34 · высокий от 67')),
-      add(el('span', 'hpr-go'), icon('chevron-right')));
-    row.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
-    c.appendChild(tap(row, function (ev) { if (ev && ev.target && ev.target.closest && ev.target.closest('.hstr')) return; haptic(); hlRingSheet('stress', j, row); }));
+    var z = hlStressZone(s.value), word = hlStressWord(s), row = j.row || {};
+    var c = mkCard('brain', 'Стресс и энергия');
+    var head = add(el('div', 'hsc-h hz-st-' + z), el('i', 'hsc-dot'), el('span', 'hsc-t', 'Стресс за сегодня'), add(el('span', 'hpr-go'), icon('arrow-right')));
+    var upd = row.received_at ? el('div', 'mu hsc-u', 'Последнее обновление: ' + foodTime(row.received_at)) : null;
+    var stats = el('div', 'hsc-s');
+    // «48,3 мс» — the number big, the unit small beside it.
+    function stat(v, label, cls) {
+      var m = String(v).match(/^([\d.,−-]+)\s*(.*)$/), num = m ? m[1] : String(v), unit = m ? m[2] : '';
+      stats.appendChild(add(el('div', 'hsc-1'), add(el('div', 'hsc-v ' + cls), document.createTextNode(num), unit ? el('small', '', ' ' + unit) : null), el('div', 'mu', label)));
+    }
+    stat(String(s.value), 'Среднее значение', 'hz-' + z);
+    // A part's text is «48,3 мс (норма 50,2)»: the number before the bracket; its score under 50 — calmer than his
+    // norm (green), over — tenser (orange).
+    (s.explain || []).forEach(function (x) {
+      var t = String(x.text || (typeof x.value === 'string' ? x.value : '')).split(' (')[0];
+      if (!t) return;
+      stat(t, String(x.label || '').replace(/ к норме$/, ''), x.score == null ? '' : x.score <= 50 ? 'hz-good' : 'hz-mid');
+    });
+    var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), hlStressDial(s.value, word, z));
+    body.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
+    c.appendChild(tap(body, function () { haptic(); hlRingSheet('stress', j, body); }));
+    if (sc.recovery && sc.recovery.value != null) {
+      var e = sc.recovery.value, bar = el('div', 'hsc-e');
+      bar.appendChild(icon('zap'));
+      var ticks = el('div', 'hsc-et');
+      for (var i = 0; i < 40; i++) ticks.appendChild(el('i', i < Math.round(e / 100 * 40) ? 'on' : ''));
+      add(bar, ticks, el('b', '', e + ' %'));
+      bar.setAttribute('aria-label', 'Энергия (восстановление) ' + e + ' % — из чего');
+      c.appendChild(tap(bar, function () { haptic(); hlRingSheet('recovery', j, bar); }));
+    }
     return c;
+  }
+  // The dial: 48 ticks round the circle, each in the colour of its place (green → yellow → red), lit to the value,
+  // the rest faint; the number and the word in the middle.
+  function hlStressDial(v, word, z) {
+    var size = 104, h = size / 2, N = 48, box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hsd', 'aria-hidden': 'true' });
+    for (var i = 0; i < N; i++) {
+      var f = i / N, a = Math.PI * (2 * f - 0.5), on = f * 100 <= v + 1e-9;
+      var hue = Math.round(130 - 130 * f);
+      var tk = svg('line', { x1: (h + 42 * Math.cos(a)).toFixed(1), y1: (h + 42 * Math.sin(a)).toFixed(1), x2: (h + 50 * Math.cos(a)).toFixed(1), y2: (h + 50 * Math.sin(a)).toFixed(1), 'class': 'tk' + (on ? ' on' : '') });
+      tk.style.stroke = 'hsl(' + hue + ' 70% 50%)';
+      box.appendChild(tk);
+    }
+    box.appendChild(svg('text', { x: h, y: h - 4, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 26 }, String(v)));
+    box.appendChild(svg('text', { x: h, y: h + 16, 'class': 'w hz-' + z, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 11 }, word));
+    return box;
   }
   function hlStressTile(s, onTap) {
     var size = 72, sw = 6, r = (size - sw) / 2 - 2, c = 2 * Math.PI * r, h = size / 2, z = hlStressZone(s.value), word = hlStressWord(s);
