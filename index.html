@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 19:19">
+<meta name="published" content="2026-10-30 19:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -954,7 +954,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .ch>.pg{min-height:32px;padding:0 10px}.ch>.mu+.pg{margin-left:-2px}
 /* «Еда» (docs/specs/food.md): ‹ день › over the day's card, its sums and the norm's bar, the entries; the entry's sheet
    with a block per line (name, amount, then kcal and grams four across). */
-.mnav.fnav{margin:0 -8px 8px}.fnav .mmon{flex:1;min-width:0;text-align:center;font:700 15px/1.3 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mnav.fnav{margin:0 -8px 8px}.mnav.fnav-st{min-height:44px}.fnav .mmon{flex:1;min-width:0;text-align:center;font:700 15px/1.3 var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fsum{padding:0 14px 12px}.fsum .fk{margin:0 0 2px;font:800 28px/1.15 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .fsum .mbar{margin:10px 0 6px}.fsum .fover{color:var(--warn)}
 /* The day's food from Health (docs/specs/nutrition-health.md): the source small. */
@@ -983,14 +983,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--nu-fat:#4f62e6;--nu-carbs:#cf8500;--nu-protein:#df3a72;--nu-mid:#dad6e6}}
 :root[data-theme="light"]{--nu-fat:#4f62e6;--nu-carbs:#cf8500;--nu-protein:#df3a72;--nu-mid:#dad6e6}
 .nu-fat{--nu:var(--nu-fat)}.nu-carbs{--nu:var(--nu-carbs)}.nu-protein{--nu:var(--nu-protein)}
-.nuhd{display:flex;flex-direction:column;align-items:center;margin:2px 0 6px;text-align:center}
-.nut{margin:0;font:800 26px/1.2 var(--font);letter-spacing:-.02em}
-.nudr{display:flex;align-items:center;justify-content:center;gap:2px;max-width:100%}
-.nuarr{flex:none;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:none;color:var(--muted)}.nuarr:disabled{opacity:.3}
-.nudt{position:relative;display:inline-flex;align-items:center;gap:6px;min-width:0;min-height:40px;padding:0 6px;color:var(--muted);font-size:17px;white-space:nowrap}
-.nudt .i{width:18px;height:18px}
-.nudt input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;font-size:16px;-webkit-appearance:none;appearance:none}
-.nutop{margin:0 0 18px}
+/* «Питание» in the frame of «Сегодня» and «Фитнес» (his ask 30.10.2026): the shared day row, the lead card tinted as
+   theirs, the sections as card heads. */
+.card.nutop{padding:0 0 14px}
 /* The food scale «C · стопка» (30.10.2026): the meals' colours, the bar with the hatched rest, the axis, the legend,
    the macro bars. */
 .nus{padding:0 14px}.nus-top{display:flex;justify-content:space-between;align-items:baseline}.nus-big{font:800 40px/1 var(--font-num);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
@@ -1010,7 +1005,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nuact button{display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:500 13px var(--font);white-space:nowrap}
 .nuact .i{width:16px;height:16px;color:var(--mark)}
 .card.nuc{padding:0 0 14px}
-.nuch{display:flex;align-items:center;gap:10px;min-height:52px;padding:12px 14px 8px}.nuch h3{flex:1;min-width:0;margin:0;font:700 17px/1.3 var(--font);letter-spacing:-.01em}
 .nugo{flex:none;display:grid;place-items:center;width:40px;height:40px;margin:-8px -10px -8px 0;padding:0;border:0;background:none;color:var(--muted)}
 .nuk{display:flex;align-items:center;gap:10px;margin:0 14px 8px;padding:12px 12px 12px 14px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
 .nukt{flex:1;min-width:0}.nun{font-weight:600;font-size:15px;line-height:1.3}.nukt .mu,.num .mu{font-size:14px;line-height:1.3}
@@ -1038,8 +1032,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nuet{position:relative;height:26px;margin:12px 0 0;border-top:1px solid var(--line)}
 .nuet span{position:absolute;top:9px;transform:translateX(-50%);color:var(--muted);font:500 11px var(--font-num);white-space:nowrap}
 .nuet span::before{content:"";position:absolute;left:50%;top:-9px;height:5px;border-left:1px solid var(--line-2)}
-.nufs,.nutl{margin:6px 0 20px}
-.nush{display:flex;align-items:center;gap:6px;margin:0 2px 10px}.nush h3{margin:0;font:700 18px/1.3 var(--font);letter-spacing:-.01em}.nush .mu{font-size:14px}
+.card.nufs{padding:0 14px 14px}.ch>.nuinfo{margin:-6px -8px -6px 0}
+.ch>.nusw button{min-width:34px;height:28px;padding:0 9px}
 .nuinfo{flex:none;display:grid;place-items:center;width:36px;height:36px;padding:0;border:0;background:none;color:var(--muted)}.nuinfo .i{width:18px;height:18px}
 .nufl{display:flex;flex-direction:column;gap:8px}
 .nuf{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 12px 0 14px;border:1px solid var(--card-line);border-radius:var(--r-b);background:var(--surface);box-shadow:var(--shadow)}
@@ -1057,7 +1051,6 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nurm{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}.nurm span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .nurm i,.nudot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--nu)}.nudot{width:10px;height:10px}
 .nufx{margin:0 0 12px;line-height:1.5}
-@media (min-width:900px){.nus{max-width:560px;margin:0 auto}}
 /* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
    last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
 .wempty{padding:0 14px 12px}.row.frow .wl{display:block}
@@ -1184,6 +1177,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .htrk{flex:none;overflow:visible}.htrk .tr{fill:var(--track)}.htrk .band{fill:color-mix(in srgb,var(--st) 55%,transparent)}
 .htrk .halo{fill:color-mix(in srgb,var(--st) 28%,transparent)}.htrk .dot{fill:var(--st);stroke:var(--solid);stroke-width:2}
 .card.hfit{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-peach) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
+.card.hnu{background:linear-gradient(180deg,color-mix(in srgb,var(--nu-carbs) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .card.hbio{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-teal) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:2px 14px 14px}
 .hwd{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding-top:8px}.hwd>.mu{font-size:12px}.hwd.on>.mu{color:var(--fg);font-weight:700}
@@ -1214,7 +1208,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    colour of «Монитор» (норма green, выше sky, ниже orange), the value and its pill; «Прочее» folded. The history sheet —
    the dates as dots on a line over the band, a value label on each. */
 .seg.hseg{margin-bottom:12px}
-.card.hbage{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 18%,var(--surface)) 0,color-mix(in srgb,var(--accent) 6%,var(--surface)) 380px,var(--surface) 640px) var(--surface);--star:color-mix(in srgb,var(--fg) 70%,transparent);overflow:hidden}
+.card.hbage{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) var(--hl-tint2),transparent),transparent 120px),var(--surface);--star:color-mix(in srgb,var(--fg) 70%,transparent);overflow:hidden}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}}
 :root[data-theme="light"] .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}
 .bac{cursor:pointer;padding:0 12px 2px}.bac>svg.bas-stars{top:-50px;height:480px}.bac .bas-d{margin-top:6px}.bac .bas-gz{max-width:360px;margin-top:0}
@@ -14310,8 +14304,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     if (!FOOD.date || FOOD.date > today || FOOD.on !== today) FOOD.date = today;
     FOOD.on = today;
     main.appendChild(healthSegs());
-    // «Биология»: the series, the biological age and the lab results — not of a day, no ‹ день ›.
-    if (seg === 'biology') return bioView();
+    // «Биология»: the series, the biological age and the lab results — the 30 days up to today and the week's age, not
+    // of a day: the same day row as the other segments', today's, without the arrows.
+    if (seg === 'biology') {
+      main.appendChild(add(el('div', 'mnav fnav fnav-st'), el('div', 'mmon', dayName(today))));
+      return bioView();
+    }
     // The day's segments (docs/specs/health-v2.md, «Навигация»): «Сегодня» — the rings and the advice, «Монитор», the
     // day in short (the food's sums and entries) and «Спорт»; «Питание» — the day's food in full (Health's sums against
     // the goal, the weight, the entries) and «Неделя и месяц»; «Фитнес» — the week's strip, the load and the muscles'
@@ -14323,7 +14321,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     add.apply(null, [main].concat(seg === 'fitness' ? [nav, fit, body] : seg === 'nutrition' ? [nav, body, stats] : [nav, top, body]));
     function fresh() { cacheDrop('food'); cacheDrop('home'); }
     function go(n) { goTo(n === 0 ? foodToday() : addDays(FOOD.date, n)); }
-    // A day by its date (the arrows, «Сегодня», the date picker of «Питание»): never after today.
+    // A day by its date (the arrows, «Сегодня»): never after today.
     function goTo(d) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '') || d > foodToday() || d === FOOD.date) return;
       FOOD.date = d;
@@ -14336,9 +14334,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       return (d === t ? 'Сегодня' : d === addDays(t, -1) ? 'Вчера' : WEEK[wd(d)]) + ', ' + Number(d.slice(8, 10)) + ' ' +
         MONTHS_G[Number(d.slice(5, 7)) - 1];
     }
-    // «Питание»: Bevel's head — the title, the date with ▾ (a date picker) between the arrows.
-    if (seg === 'nutrition') nuNav(nav, date, go, goTo);
-    else [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
+    [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
       if (!x[0]) return nav.appendChild(el('div', 'mmon', dayName(date)));
       var b = add(el('button'), icon(x[1]));
       b.type = 'button';
@@ -14347,7 +14343,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       b.onclick = function () { go(x[0]); };
       nav.appendChild(b);
     });
-    if (date !== today && seg !== 'nutrition') {
+    if (date !== today) {
       var back = foodBtn('mtoday', 'calendar', 'Сегодня', function () { go(0); });
       back.setAttribute('aria-label', 'К сегодняшнему дню');
       nav.appendChild(back);
@@ -14389,7 +14385,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       // The entries in time order after the texts the Mac still reads; a tap opens one's sheet. Under Health's sums on
       // «Сегодня» they are «Записи»; «Питание» puts them under «Таймлайн питания» with each one's Ж·У·Б.
       if (pend.length || es.length) {
-        list = nu && seg !== 'nutrition' ? mkCard('clipboard-list', 'Записи') : el('div', 'card');
+        list = seg === 'nutrition' ? nuTimeline(es.length) : nu ? mkCard('clipboard-list', 'Записи') : el('div', 'card');
         pend.forEach(function (p) {
           list.appendChild(add(el('div', 'row fpend'), add(el('span', 'lead'), icon('clock')),
             add(el('span', 'tx'), el('div', 't', 'разбираю…'), el('div', 'mu clip', '«' + p.text + '»')), el('span', 'pr mu', foodTime(p.at))));
@@ -14405,7 +14401,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var none = state('utensils', date === today ? 'Сегодня записей нет. Пришли фото, текст или голосовое в тему Claude — или нажми «Записать».'
         : 'В этот день записей нет.');
       if (seg === 'nutrition') {
-        out = nuView(j, list || none, {
+        out = nuView(j, list || add(nuTimeline(0), none), {
           weight: function (wb) { foodWeightSheet(date, j.weight, wb, function () { fresh(); load(); loadStats(); }); },
           add: function (ev) { foodAddSheet(date, ev.currentTarget, load); },
           redraw: function () { render(j); } });
@@ -14485,39 +14481,21 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // «2,5k», «850»: a kcal mark on a small chart.
   function nuK(v) { return Math.abs(v) >= 1000 ? woNum(Math.round(v / 100) / 10) + 'k' : String(Math.round(v)); }
   function nuSigned(v) { return (v < 0 ? '−' : '') + grouped(Math.abs(Math.round(v))); }
-  function nuNav(nav, date, go, goTo) {
-    var today = foodToday(), inp = el('input'), row = el('div', 'nudr');
-    nav.className = 'nuhd';
-    inp.type = 'date';
-    inp.max = today;
-    inp.value = date;
-    inp.setAttribute('aria-label', 'Выбрать день');
-    inp.onchange = function () { goTo(inp.value); };
-    inp.onclick = function () { try { inp.showPicker(); } catch (e) {} };
-    var dt = add(el('label', 'nudt'), el('span', '', Number(date.slice(8, 10)) + ' ' + MONTHS_G[Number(date.slice(5, 7)) - 1] + ' ' +
-      date.slice(0, 4) + ' г.'), icon('chevron-down'), inp);
-    [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
-      if (!x[0]) return row.appendChild(dt);
-      var b = add(el('button', 'nuarr'), icon(x[1]));
-      b.type = 'button';
-      b.setAttribute('aria-label', x[2]);
-      b.disabled = x[0] > 0 && date >= today;
-      b.onclick = function () { go(x[0]); };
-      row.appendChild(b);
-    });
-    add(nav, el('h2', 'nut', 'Питание'), row);
-  }
   function nuView(j, timeline, h) {
     var nu = j.nutrition, src = nu || j.totals || {}, kcal = Math.round(src.kcal || 0), goal = kcalGoal(), w = j.weight;
     var wb = foodBtn('', 'weight', w ? foodKg(w.kg) + ' кг' : 'вес', function () { h.weight(wb); });
     wb.setAttribute('aria-label', w ? 'Вес ' + foodKg(w.kg) + ' кг — поправить' : 'Записать вес');
-    var top = add(el('div', 'nutop'), nuStack(j, src, kcal, goal),
-      el('div', 'mu nusrc', kcal ? (nu ? 'из Bevel через Health' : 'из записей') : 'за этот день еды нет'),
-      add(el('div', 'nuact'), wb, foodBtn('', 'plus', 'Записать', h.add)));
-    var n = (j.entries || []).length;
-    return [top, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []),
-      add(el('div', 'nutl'), add(el('div', 'nush'), add(el('div'), el('h3', '', 'Таймлайн питания'),
-        el('div', 'mu', n ? n + ' ' + ['событие', 'события', 'событий'][plural3(n)] : 'событий нет'))), timeline)];
+    // The lead card as «Здоровье»'s and «Фитнес»'s: the head with «Записать», the scale, the weight under it.
+    var top = mkCard('utensils', 'Питание');
+    top.className += ' hnu nutop';
+    top.firstChild.appendChild(foodBtn('mtoday', 'plus', 'Записать', h.add));
+    add(top, nuStack(j, src, kcal, goal), el('div', 'mu nusrc', kcal ? (nu ? 'из Bevel через Health' : 'из записей') : 'за этот день еды нет'),
+      add(el('div', 'nuact'), wb));
+    return [top, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
+  }
+  // «Таймлайн питания»: the day's entries under a head as «Таймлайн» on «Сегодня».
+  function nuTimeline(n) {
+    return mkCard('history', 'Таймлайн питания', n ? n + ' ' + ['событие', 'события', 'событий'][plural3(n)] : 'событий нет');
   }
   // Our food scale (his pick 30.10.2026 of four variants — «C · стопка»): the day's kcal big against the goal; one bar
   // to the goal — the meals as segments in the meal's colour in the day's order (food from Health beyond the entries
@@ -14577,9 +14555,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     box.appendChild(mb);
     return box;
   }
-  // A card titled in Bevel's way: the title, what goes beside it, an arrow to more.
-  function nuCard(title, extra, go, aria) {
-    var hd = add(el('div', 'nuch'), el('h3', '', title), extra || null);
+  // A card with the app's head (the icon, the title), what goes beside it, an arrow to more.
+  function nuCard(ic, title, extra, go, aria) {
+    var c = mkCard(ic, title), hd = add(c.firstChild, extra || null);
+    c.className += ' nuc';
     if (go) {
       var b = add(el('button', 'nugo'), icon('arrow-right'));
       b.type = 'button';
@@ -14587,7 +14566,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       b.onclick = function () { go(b); };
       hd.appendChild(b);
     }
-    return add(el('div', 'card nuc'), hd);
+    return c;
   }
   // A macro's small ring: its colour, the arc of f (0–1) from 12 o'clock.
   function nuRing(f) {
@@ -14600,7 +14579,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // «Цели»: the kcal tile (what is left or over, the dotted goal with its «2,5k», the day's column, a faint baseline) and a
   // tile a macro; the arrow and the kcal tile open the «Цели» sheet.
   function nuGoals(src, kcal, goal, redraw) {
-    var c = nuCard('Цели', null, function (b) { foodGoalSheet(b, redraw); }, 'Цели — поправить'), left = goal - kcal;
+    var c = nuCard('target', 'Цели', null, function (b) { foodGoalSheet(b, redraw); }, 'Цели — поправить'), left = goal - kcal;
     var W = 128, gy = 16, by = 44, hgt = Math.max(kcal ? 3 : 0, Math.min(1.22, kcal / goal) * (by - gy));
     var bar = svg('svg', { viewBox: '0 0 ' + W + ' 46', 'class': 'nukb', 'aria-hidden': 'true' });
     add(bar, svg('line', { x1: 2, y1: by, x2: W - 22, y2: by, 'class': 'base' }), svg('line', { x1: 2, y1: gy, x2: W - 2, y2: gy, 'class': 'gl' }),
@@ -14634,7 +14613,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var mode = 'g', sw = el('div', 'nusw'), grid = el('div', 'nudf');
     sw.setAttribute('role', 'group');
     sw.setAttribute('aria-label', 'Единицы');
-    var c = nuCard('Сведения о питании', sw, function (b) { nuNutrSheet(j, b); }, 'Пищевая ценность за день');
+    var c = nuCard('apple', 'Сведения о питании', sw, function (b) { nuNutrSheet(j, b); }, 'Пищевая ценность за день');
     [['g', 'г', 'Граммы'], ['p', '%', 'Проценты от цели']].forEach(function (x) {
       var b = el('button', x[0] === mode ? 'on' : '', x[1]);
       b.type = 'button';
@@ -14737,7 +14716,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (i >= 6) r.hidden = true;
       list.appendChild(tap(r, function () { nuFactorSheet(f, r); }));
     });
-    var box = add(el('div', 'nufs'), add(el('div', 'nush'), el('h3', '', 'Факторы качества питания'), info), list);
+    var box = mkCard('layers', 'Факторы качества питания');
+    box.className += ' nufs';
+    add(box.firstChild, info);
+    box.appendChild(list);
     if (fs.length > 6) {
       var more = add(el('button', 'nuf numore'), icon('chevron-down'));
       more.type = 'button';
@@ -16059,6 +16041,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       render: function (j) { add(clear(labs), labsCard(j, labs)); } });
   }
   function bioYears(v) { return v == null ? '—' : woNum(v); }
+  // A number the card may print: finite, else null (a missing field, an answer cached before it).
+  function bioNum(v) { return typeof v === 'number' && isFinite(v) ? v : null; }
+  // «Следующее обновление через N дней» — none without N.
+  function bioNext(j) {
+    var n = bioNum(j.next_update_days);
+    return n == null ? null : add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', n + ' ' + ['день', 'дня', 'дней'][plural3(n)]));
+  }
   function bioDelta(d) { return d == null ? '' : (Math.abs(d) < 0.05 ? 'как по паспорту' : (d < 0 ? 'на ' + woNum(-d) + ' моложе' : 'на ' + woNum(d) + ' старше')); }
   function bioAgeCard(j, box, reload) {
     var c = mkCard('dna', 'Биологический возраст');
@@ -16073,9 +16062,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     c.firstChild.appendChild(gb);
     // A compact preview of the full-screen sheet: the same gradient and stars, the week's number, the pill of the change, the
     // gauge, the next update and the five rows of «Биомаркеры возраста»; a tap anywhere (the chevrons too) opens bioAgeSheet.
-    var cur = j.current, bio = cur ? cur.bio : j.overall, age = j.age, w = bioWord(bio == null ? null : bio - age), day = cur ? cur.week_start : null;
-    var center = add(el('div', 'bas-c'), el('div', 'bas-big', bio == null ? '—' : woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), pill = el('div', 'bas-c bas-pl');
-    if (j.delta != null) {
+    // No score (or no age) — the empty line alone: no number, no ruler.
+    var cur = j.current, bio = bioNum(cur ? cur.bio : j.overall), age = bioNum(j.age), day = cur ? cur.week_start : null;
+    var w = bioWord(bio == null || age == null ? null : bio - age);
+    var center = add(el('div', 'bas-c'), bio == null ? null : el('div', 'bas-big', woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), pill = el('div', 'bas-c bas-pl');
+    if (bioNum(j.delta) != null) {
       pill.appendChild(add(el('div', 'bas-dp'), add(el('span', 'bas-dpi ' + (j.delta > 0 ? 'old' : j.delta < 0 ? 'yg' : '')), icon(j.delta > 0 ? 'arrow-up' : j.delta < 0 ? 'arrow-down' : 'circle-dot')),
         el('span', '', (j.delta > 0 ? '+' : j.delta < 0 ? '−' : '±') + woNum(Math.abs(j.delta)) + ' по сравнению с прошлой неделей'), icon('chevron-right')));
     }
@@ -16084,7 +16075,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // A row's own tap opens that group's sheet from the bottom (his ask 30.10.2026 — not the full-screen one the
     // rest of the card opens); the click stays in the row.
     function prow(r) {
-      var g = bioGroupOf(r, j), v = r.years, wd = bioWord(v == null ? null : r.delta);
+      var g = bioGroupOf(r, j), v = bioNum(r.years), wd = bioWord(v == null ? null : bioNum(r.delta));
       var row = add(el('div', 'hpr bas-r bac-r'), bioRing(bioShare(g, j), g.ic, v == null ? null : r.delta),
         add(el('div', 'hpr-m'), add(el('div', 'hpr-n'), document.createTextNode(r.label + ' '), v == null ? null : el('b', '', woNum(v))),
           el('div', 'bas-w ' + wd[1], v == null || r.delta == null ? wd[0] : r.line || bioDelta(r.delta))),
@@ -16093,8 +16084,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       return tap(row, function (ev) { if (ev && ev.stopPropagation) ev.stopPropagation(); haptic(); bioFactorSheet(g, j, row); });
     }
     var body = add(el('div', 'bas bac'), bioStars(), el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
-      add(el('div', 'bas-gz'), center, bioGauge(bio, age), pill),
-      add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', j.next_update_days + ' ' + ['день', 'дня', 'дней'][plural3(j.next_update_days)])));
+      add(el('div', 'bas-gz'), center, bio == null || age == null ? null : bioGauge(bio, age), pill), bioNext(j));
     // The server's five rows (Сон · Физическая активность · Фитнес · Стиль жизни · Кровь), the sheet's very rows.
     bioRowsOf(j).forEach(function (r) { body.appendChild(prow(r)); });
     body.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + ' — подробно');
@@ -16434,16 +16424,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     return out.join(', ');
   }
   function bioAgeSheet(j, from) {
-    var cur = j.current, bio = cur ? cur.bio : j.overall, age = j.age, body = el('div', 'bas'), close = noop;
-    var w = bioWord(bio == null ? null : bio - age), day = cur ? cur.week_start : null;
+    var cur = j.current, bio = bioNum(cur ? cur.bio : j.overall), age = bioNum(j.age), body = el('div', 'bas'), close = noop;
+    var w = bioWord(bio == null || age == null ? null : bio - age), day = cur ? cur.week_start : null;
     var mb = foodBtn('bas-x bas-mb', 'ellipsis', '', function () { bioMenu(mb, j); });
     mb.setAttribute('aria-label', 'Ещё');
     mb.setAttribute('aria-haspopup', 'menu');
     mb.setAttribute('aria-expanded', 'false');
     var top = add(el('div', 'bas-top'), mb, foodBtn('bas-x', 'x', '', function () { close(); }));
     top.lastChild.setAttribute('aria-label', 'Закрыть');
-    var center = add(el('div', 'bas-c'), el('div', 'bas-big', bio == null ? '—' : woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), pill = el('div', 'bas-c bas-pl');
-    if (j.delta != null) {
+    var center = add(el('div', 'bas-c'), bio == null ? null : el('div', 'bas-big', woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), pill = el('div', 'bas-c bas-pl');
+    if (bioNum(j.delta) != null) {
       var dp = add(el('button', 'bas-dp'), add(el('span', 'bas-dpi ' + (j.delta > 0 ? 'old' : j.delta < 0 ? 'yg' : '')), icon(j.delta > 0 ? 'arrow-up' : j.delta < 0 ? 'arrow-down' : 'circle-dot')),
         el('span', '', (j.delta > 0 ? '+' : j.delta < 0 ? '−' : '±') + woNum(Math.abs(j.delta)) + ' по сравнению с прошлой неделей'), icon('chevron-right'));
       dp.type = 'button';
@@ -16452,8 +16442,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     } else if ((j.history || []).length) pill.appendChild(el('div', 'mu bas-nd', 'Сравнение с прошлой неделей — со следующего понедельника'));
     add(body, top, bioStars(),
       el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
-      add(el('div', 'bas-gz'), center, bioGauge(bio, age), pill),
-      add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', j.next_update_days + ' ' + ['день', 'дня', 'дней'][plural3(j.next_update_days)])));
+      add(el('div', 'bas-gz'), center, bio == null || age == null ? null : bioGauge(bio, age), pill), bioNext(j));
     var hx = add(el('div', 'bas-h'), add(el('span', 'bas-hi'), icon('layers')), add(el('div', 'tx'), el('div', 'bas-ht', 'Из чего'), el('div', 'mu', bioHonest(j))),
       add(el('span', 'hpr-go'), icon('chevron-right')));
     hx.setAttribute('aria-label', 'Из чего: ' + bioHonest(j) + ' — как считается');
