@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 12:01">
+<meta name="published" content="2026-10-30 13:05">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1018,7 +1018,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nukb .gt{fill:var(--mark);font:600 12px var(--font-num)}.nukb .col{fill:color-mix(in srgb,var(--mark) 50%,var(--surface-2))}.nukb .col.over{fill:var(--mark)}
 .nukb .base{stroke:color-mix(in srgb,var(--fg) 12%,transparent);stroke-width:2;stroke-linecap:round;stroke-dasharray:8 6}
 .nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 14px}
-.num{min-width:0;padding:10px 8px 12px 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.nums>.num{min-width:0;padding:10px 8px 12px 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
 .numh{display:flex;align-items:flex-start;justify-content:space-between;gap:4px}.numh .nun{min-width:0;font-size:14px;-webkit-hyphens:auto;hyphens:auto}
 .nur{flex:none;width:18px;height:18px;margin-top:1px;overflow:visible}.nur .tr{fill:none;stroke:color-mix(in srgb,var(--nu) 22%,transparent);stroke-width:3}
 .nur .a{fill:none;stroke:var(--nu);stroke-width:3;stroke-linecap:round}
@@ -1150,16 +1150,21 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}
-.hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:round;filter:var(--hl-glow)}
+.hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:butt}.hring .arc.cap{stroke-linecap:round}.hring .arcs{filter:var(--hl-glow)}
+/* The arc's two shades, light at the start and dark at the end (Bevel's rings, 30.10.2026); the load over its target ends red. */
+.hring.hl-load{--rc-start:var(--ring-load-2);--rc-end:var(--ring-load)}.hring.hl-load .arcs.hot{--rc-end:var(--bad)}
+.hring.hl-rec{--rc-start:var(--ring-recovery-2);--rc-end:var(--ring-recovery)}.hring.hl-sleep{--rc-start:var(--ring-sleep-2);--rc-end:var(--ring-sleep)}
 .hring.hl-load .tr{stroke:var(--ring-load-soft)}.hring.hl-rec .tr{stroke:var(--ring-recovery-soft)}.hring.hl-sleep .tr{stroke:var(--ring-sleep-soft)}
-.hring.hl-load .arc{stroke:url(#g-ring-load)}.hring.hl-rec .arc{stroke:url(#g-ring-rec)}.hring.hl-sleep .arc{stroke:url(#g-ring-sleep)}
 /* The load ring's recommended band as Bevel's (30.10.2026): a hatched arc over the target, the value's dot on the ring. */
 .hring .band{fill:none;stroke:url(#p-load-band);stroke-opacity:.75}.hring .dot{fill:var(--ring-load-2);stroke:var(--surface);stroke-width:2}
 .hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.hring .rv.mu{fill:var(--muted)}
 .hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
-.hrl{font-size:13px;color:var(--muted);white-space:nowrap}
+.hrl{font-size:12.5px;letter-spacing:-.01em;color:var(--muted);white-space:nowrap}
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
-.hbody{padding:6px 14px 16px;border-radius:var(--r-b)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
+.hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
+/* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
+.hcur{margin:-14px 8px 0;padding:26px 14px 14px;background:color-mix(in srgb,var(--surface) 55%,transparent);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line)}
+.hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 /* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
 .bw .hrings.bsm{flex:none;margin:2px 0 4px}.bw .bl.bh3{font-size:12.5px;line-height:1.3}
@@ -1393,8 +1398,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hstr{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:92px;padding:8px 4px 10px;border-radius:var(--r-b);background:var(--surface-2)}
 .hsc-b{display:flex;align-items:center;gap:10px;padding:0 14px 12px;border-radius:var(--r-b)}.hsc-l{flex:1;min-width:0}
 .hsc-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}.hsc-dot{width:8px;height:8px;border-radius:50%;background:var(--st)}.hsc-t{flex:1;min-width:0}.hsc-h .hpr-go{color:var(--muted)}
-.hsc-u{font-size:12px;margin-top:2px}.hsc-s{display:flex;gap:12px;margin-top:10px}.hsc-1{flex:1;min-width:0;padding-right:10px;border-right:1px solid var(--card-line)}.hsc-1:last-child{border-right:0;padding-right:0}
-.hsc-v{font:800 24px var(--font-num);font-variant-numeric:tabular-nums;color:var(--hs,var(--fg));white-space:nowrap}.hsc-v small{font-size:12px;font-weight:600}.hsc-1>.mu{font-size:12px;line-height:1.25}
+.hsc-u{font-size:12px;margin-top:2px}.hsc-s{display:flex;gap:8px;margin-top:10px}.hsc-1{flex:1;min-width:0;padding-right:8px;border-right:1px solid var(--card-line)}.hsc-1:last-child{border-right:0;padding-right:0}
+.hsc-v{font:800 22px/1.1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--hs,var(--fg));white-space:nowrap}.hsc-v small{display:block;font-size:11px;font-weight:600;color:var(--muted)}.hsc-1>.mu{font-size:12px;line-height:1.25}
 .hsd{flex:none;display:block;overflow:visible}.hsd .tk{stroke-width:2.2;stroke-linecap:round;opacity:.22}.hsd .tk.on{opacity:1}
 .hsd .v{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}.hsd .w{fill:var(--hs,var(--muted));font-weight:700}
 .hsc-e{display:flex;align-items:center;gap:10px;margin:0 14px 14px;padding:12px 14px;border-radius:var(--r-b);background:var(--surface-2)}.hsc-e .i{width:18px;height:18px;color:var(--ring-recovery);flex:none}
@@ -1429,6 +1434,51 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
 .bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
 .bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
+/* «Календарь» (docs/specs/calendar.md, 30.10.2026): the month Monday-first, today ringed, the chosen day filled in the
+   accent, under the number up to three dots in the sources' colours (--cs: ours the accent, a task pink — the sleep
+   violet read as the accent's twin —, a game the volleyball's orange, a workout green — the gym's colour is the accent —,
+   Apple muted, the mail sky); the day's rows under it — the time in the
+   accent, the icon in the source's colour. From 900 px the month and the day side by side. The event's sheet: the
+   duration and the kind as five equal cells. */
+.cs-cal{--cs:var(--mark)}.cs-task{--cs:#ff7eb6}.cs-game{--cs:var(--ring-load)}.cs-workout{--cs:var(--ring-recovery)}.cs-apple{--cs:var(--muted)}.cs-mail{--cs:var(--hl-sky)}
+.calg .mnav{margin:0;padding:6px 6px 0}
+.calwk,.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 6px}
+.calwk{padding-top:4px}.calwk span{text-align:center;color:var(--muted);font:600 11px/1.8 var(--font)}.calwk span.we{color:var(--muted-2)}
+.calgrid{padding-bottom:8px}
+.cday{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;height:50px;padding:4px 0 0;border:0;border-radius:var(--r-s);background:none;color:var(--fg);font:600 15px/1 var(--font-num);font-variant-numeric:tabular-nums;cursor:pointer}
+.cday .cn{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;transition:background .15s,color .15s}
+.cday.out{color:var(--muted-2)}.cday.out .cn{font-weight:500;opacity:.6}
+.cday.today .cn{box-shadow:inset 0 0 0 2px var(--mark);color:var(--link)}
+.cday.on .cn{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.cday:focus-visible{outline:none}.cday:focus-visible .cn{outline:2px solid var(--fg);outline-offset:2px}
+.cday:active .cn{transform:scale(.94)}.cday .cn{transition:background .15s,color .15s,transform .12s}
+.cdots{display:flex;justify-content:center;gap:3px;height:5px}.cdots i{flex:none;width:5px;height:5px;border-radius:50%;background:var(--cs)}
+.crow .ctm{flex:none;width:46px;color:var(--link);font:600 14px/1.25 var(--font-num);font-variant-numeric:tabular-nums}
+.crow .ctm small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.crow .ctm.cad{font-size:12px;line-height:1.2}
+.crow .lead.cic{color:var(--cs)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs-task{--cs:#d6336c}}:root[data-theme="light"] .cs-task{--cs:#d6336c}
+.crow .tx .mu{font-size:12px}
+.cnone{padding:6px 14px 14px;color:var(--muted)}
+@media (min-width:900px){.calw{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+  .cday{height:62px;padding-top:6px}.cday .cn{width:38px;height:38px}.calgrid{padding:0 10px 12px}.calwk{padding:4px 10px 0}}
+@media (min-width:1400px){.cday{height:74px;padding-top:8px}.cdots{gap:4px;height:6px}.cdots i{width:6px;height:6px}}
+.ccap{margin:0 0 6px;color:var(--muted);font-size:12px}
+.cdur,.ckind{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.cdur .pill{width:100%;height:44px;justify-content:center;padding:0 2px;font-size:13px}
+.cdur.off .pill{opacity:.4}
+.ckind button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:58px;padding:6px 2px;border:1px solid var(--line);border-radius:var(--r-s);background:none;color:var(--muted);font:500 11px/1.1 var(--font);overflow-wrap:anywhere;text-align:center}
+.ckind button .i{width:18px;height:18px}
+.ckind button[aria-pressed="true"]{border-color:var(--mark);background:var(--accent-soft);color:var(--link)}
+.lta.cnt{min-height:76px;margin:0 0 12px}
+.cald .ch .mtoday[hidden]{display:none}
+.foot.cfoot .btn .i{display:inline}/* «＋ Событие» keeps its plus on a narrow phone too */
+.field input[type=date],.field input[type=time]{min-width:0;text-align:left;color:var(--fg)}
+.field input::-webkit-date-and-time-value{text-align:left}
+/* Chromium's own picker icon beside ours: hidden, a click on the field opens the picker (showPicker) */
+.field input.cpk::-webkit-calendar-picker-indicator{display:none}
+.field .cclr{flex:none;display:grid;place-items:center;width:32px;height:32px;margin-right:-6px;padding:0;border:0;border-radius:50%;background:none;color:var(--muted)}
+.field .cclr[hidden]{display:grid;visibility:hidden}.field .cclr .i{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -1524,6 +1574,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 <symbol id="i-biceps-flexed" viewBox="0 0 24 24"><path d="M12.409 13.017A5 5 0 0 1 22 15c0 3.866-4 7-9 7-4.077 0-8.153-.82-10.371-2.462-.426-.316-.631-.832-.62-1.362C2.118 12.723 2.627 2 10 2a3 3 0 0 1 3 3 2 2 0 0 1-2 2c-1.105 0-1.64-.444-2-1"/><path d="M15 14a5 5 0 0 0-7.584 2"/><path d="M9.964 6.825C8.019 7.977 9.5 13 8 15"/></symbol>
 <symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol>
 <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.967-.516"/><path d="M19.967 17.484A4 4 0 0 1 18 18"/></symbol>
+<symbol id="i-maximize-2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" x2="14" y1="3" y2="10"/><line x1="3" x2="10" y1="21" y2="14"/></symbol>
 <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
 <symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></symbol>
 <symbol id="i-languages" viewBox="0 0 24 24"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
@@ -2101,7 +2152,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // in a browser, in location.hash (Telegram passes its initData in the hash,
   // so inside Telegram the hash is only read).
   var TABS = [['home', 'house', 'Главная'], ['shop', 'cart', 'Покупки'],
-    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Здоровье'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'],
+    ['vb', 'ball', 'Волейбол'], ['genshin', 'game', 'Genshin'], ['wish', 'gift', 'Вишлист'], ['cinema', 'film', 'Кино'], ['films', 'clapperboard', 'Фильмы'], ['food', 'activity', 'Здоровье'], ['dela', 'tack', 'Дела'], ['money', 'wallet', 'Деньги'], ['tasks', 'check-square', 'Задачи'], ['cal', 'calendar', 'Календарь'],
     ['legal', 'stamp', 'Легализация'],
     ['li', 'linkedin', 'LinkedIn'], ['inbox', 'inbox', 'Инбокс'], ['feed', 'news', 'Новости'], ['updates', 'sparkles', 'Обновления'], ['settings', 'settings', 'Настройки']];
   var BAR = ['food', 'home', 'shop', 'tasks'], MORE = [];
@@ -2133,7 +2184,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // modules (docs/specs/module-switches.md), topic env names the server checks; the list of modules
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
-  var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'food', 'dela', 'money', 'tasks', 'legal', 'li', 'inbox', 'feed'];
+  var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'food', 'dela', 'money', 'tasks', 'cal', 'legal', 'li', 'inbox', 'feed'];
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
@@ -14941,7 +14992,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // «Свежесть мышц» as 10 dots a group. Under «Неделя и месяц» «Биология» (health_stats): weight, fat, HRV, resting HR,
   // VO2max as 30-day sparklines with the last value and the change, a tap — the sheet. Without any health row the cards fold into one line
   // that opens the setup (docs/shortcuts.md, «Здоровье»). The charts are inline SVG on CSS variables (light and dark).
-  var HL_RINGS = [['load', 'Нагрузка', 'hl-load'], ['recovery', 'Восст.', 'hl-rec'], ['sleep', 'Сон', 'hl-sleep']];
+  var HL_RINGS = [['load', 'Нагрузка', 'hl-load'], ['recovery', 'Восстановление', 'hl-rec'], ['sleep', 'Сон', 'hl-sleep']];
   var HL_NAMES = { load: 'Нагрузка', recovery: 'Восстановление', sleep: 'Сон', muscle: 'Мышцы', stress: 'Стресс' };
   var HL_MON = { resp_rate: ['Дыхание', '/мин'], resting_hr: ['Пульс', 'уд/мин'], hrv: ['ВСР', 'мс'], spo2: ['SpO2', '%'],
     wrist_temp: ['Темп.', '°C'], sleep_min: ['Сон', ''] };
@@ -14973,8 +15024,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         'stroke-dashoffset': (-c * band[0]).toFixed(1), transform: rot }));
     }
     if (v != null && v > 0) {
-      box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'arc', 'stroke-width': sw, 'stroke-dasharray': (c * Math.min(100, v) / 100).toFixed(1) + ' ' + c.toFixed(1),
-        transform: rot }));
+      var f = Math.min(100, v) / 100, L = c * f, N = Math.max(2, Math.round(40 * f)), seg = L / N, hot = band && v > band[1] * 100;
+      var g = svg('g', { 'class': 'arcs' + (hot ? ' hot' : '') });
+      function piece(from, len, p, cap) {
+        var e = svg('circle', { cx: h, cy: h, r: r, 'class': 'arc' + (cap ? ' cap' : ''), 'stroke-width': sw, 'stroke-dasharray': len.toFixed(2) + ' ' + c.toFixed(1),
+          'stroke-dashoffset': (-from).toFixed(2), transform: rot });
+        e.style.stroke = 'color-mix(in srgb, var(--rc-end) ' + Math.round(p * 100) + '%, var(--rc-start))';
+        return e;
+      }
+      g.appendChild(piece(0, Math.min(L, 0.01), 0, true));
+      for (var i = 0; i < N; i++) g.appendChild(piece(i * seg, seg + 0.6, N > 1 ? i / (N - 1) : 1, false));
+      g.appendChild(piece(L - Math.min(L, 0.01), Math.min(L, 0.01), 1, true));
+      box.appendChild(g);
     }
     if (band && v != null) {
       var a = Math.PI * (2 * Math.min(100, v) / 100 - 0.5);
@@ -14990,7 +15051,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var row = el('div', 'hrings');
     HL_RINGS.forEach(function (k) {
       var band = k[0] === 'load' ? (vs.load_target || [28, 46]).map(function (x) { return x / 100; }) : null;
-      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band), bare ? null : el('div', 'hrl', k[1]));
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band), bare ? null : el('div', 'hrl', size < 60 && k[0] === 'recovery' ? 'Восст.' : k[1]));
       if (onTap) tap(cell, function () { onTap(k[0], cell); });
       else cell.setAttribute('role', 'img');
       cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
@@ -15013,11 +15074,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var c = mkCard('activity', 'Здоровье'), sc = j.scores || {};
     var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
+    vs.load_target = j.load_target;
     var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
     var adv = j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
       j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
-    wrap.appendChild(adv);
+    wrap.appendChild(add(el('div', 'hcur'), adv));
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
     b.setAttribute('aria-label', 'Из чего считаются кольца');
     c.firstChild.appendChild(b);
@@ -15027,7 +15089,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // The day's advice with its context (docs/specs/advice-context.md) in Bevel's form (home.jpg): the title bold with the
   // sport's emoji, the paragraph under it (three lines at most), the chevron; a tap — hlTipSheet.
   function hlTip(t, kinds) {
-    var b = add(el('div', 'hadv htip'), add(el('div', 'htip-h'), el('div', 'htip-t', hlNb(hlAdvice(t.title, kinds))), icon('chevron-right')),
+    var b = add(el('div', 'hadv htip'), add(el('div', 'htip-h'), el('div', 'htip-t', hlNb(hlAdvice(t.title, kinds))), icon('maximize-2')),
       t.text ? el('div', 'htip-p', hlNb(t.text)) : null);
     b.setAttribute('aria-label', 'Совет дня: ' + t.title + (t.text ? '. ' + t.text : '') + ' — почему');
     return tap(b, function () { hlTipSheet(t, b); });
@@ -17392,9 +17454,286 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }, function () { from.disabled = false; });
   }
 
+  // --- «Календарь» (docs/specs/calendar.md, 30.10.2026) ---
+  // The month Monday-first in Warsaw time (cal_month): today ringed, the chosen day filled in the accent, under each number
+  // up to three dots, one per source that has something that day; a sideways swipe on the month steps it, as «Деньги» —
+  // here both ways, a calendar has no end. Under it the chosen day (cal_day), all-day first: ours open the event's sheet,
+  // a task its row in «Задачи», a workout its sheet; a game, Apple and the mail are read-only. «＋ Событие» — the sheet empty.
+  // CAL: the month and the day on screen (kept across the tab's redraws until the day changes), ev the month's own events
+  // by id — the sheet takes the notes from there (cal_day's rows do not carry them).
+  var CAL = { month: null, day: null, on: null, ev: {} };
+  var CAL_SRC = ['cal', 'task', 'game', 'workout', 'mail', 'apple'];
+  var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
+    ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane']];
+  var CAL_IC = { task: 'check-square', game: 'ball', apple: 'smartphone', mail: 'mail' };
+  var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
+  var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
+  function calKind(k) { return CAL_KINDS.filter(function (x) { return x[0] === k; })[0] || CAL_KINDS[0]; }
+  function calHm(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
+  function calDayName(d) { return WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
+  function calView() {
+    var today = foodToday();
+    if (CAL.on !== today) { CAL.on = today; CAL.month = today.slice(0, 7); CAL.day = today; }
+    if (CAL.day.slice(0, 7) !== CAL.month) CAL.day = CAL.month === today.slice(0, 7) ? today : CAL.month + '-01';
+    var m = CAL.month, wrap = el('div', 'calw'), gcard = el('div', 'card calg'), nav = el('div', 'mnav'), wk = el('div', 'calwk');
+    var grid = el('div', 'calgrid'), dcard = mkCard('calendar', ''), dtitle = dcard.querySelector('h3'), list = el('div'), cells = {};
+    dcard.classList.add('cald');
+    grid.setAttribute('role', 'group');
+    grid.setAttribute('aria-label', monthLabel(m));
+    WEEK.forEach(function (w, i) { wk.appendChild(el('span', i > 4 ? 'we' : '', w)); });
+    add(main, add(wrap, add(gcard, nav, wk, grid), add(dcard, list,
+      add(el('div', 'foot cfoot'), foodBtn('btn', 'plus', 'Событие', function (ev) { calSheet(null, CAL.day, ev.currentTarget, after); })))));
+    // A month or a day by the arrows, «Сегодня» and a day of the next month's edge: the tab drawn again on it.
+    function goTo(month, day) {
+      haptic();
+      CAL.month = month;
+      CAL.day = day || (month === foodToday().slice(0, 7) ? foodToday() : month + '-01');
+      clear(main);
+      calView();
+    }
+    [[-1, 'chevron-left', 'Предыдущий месяц'], [0], [1, 'chevron-right', 'Следующий месяц']].forEach(function (x) {
+      if (!x[0]) return nav.appendChild(el('div', 'mmon', monthLabel(m)));
+      var b = add(el('button'), icon(x[1]));
+      b.type = 'button';
+      b.setAttribute('aria-label', x[2]);
+      b.onclick = function () { goTo(monthStep(m, x[0])); };
+      nav.appendChild(b);
+    });
+    // «Сегодня» in the day's head, away from today only: the month's strip never moves.
+    var back = foodBtn('mtoday', 'calendar', 'Сегодня', function () { if (m === today.slice(0, 7)) pick(today); else goTo(today.slice(0, 7), today); });
+    back.setAttribute('aria-label', 'К сегодняшнему дню');
+    dcard.firstChild.appendChild(back);
+    // More sideways than down and longer than 40 px, as the month's swipe of «Деньги»; the page's own gestures skip .mswipe.
+    gcard.classList.add('mswipe');
+    var x0 = null, y0 = 0;
+    gcard.addEventListener('touchstart', function (e) {
+      x0 = e.touches.length === 1 ? e.touches[0].clientX : null;
+      if (x0 !== null) y0 = e.touches[0].clientY;
+    }, { passive: true });
+    gcard.addEventListener('touchend', function (e) {
+      if (x0 === null || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) goTo(monthStep(m, dx < 0 ? 1 : -1));
+    }, { passive: true });
+    gcard.addEventListener('touchcancel', function () { x0 = null; }, { passive: true });
+    // The grid: whole weeks from the Monday on or before the 1st; the days of the months around are muted and lead there.
+    function drawGrid(dots) {
+      var first = m + '-01', lead0 = wd(first), n = days(first, monthStep(m, 1) + '-01'), total = Math.ceil((lead0 + n) / 7) * 7;
+      clear(grid);
+      cells = {};
+      for (var i = 0; i < total; i++) {
+        var d = addDays(first, i - lead0), out = d.slice(0, 7) !== m, has = out ? [] : (dots[d] || []);
+        var srcs = CAL_SRC.filter(function (s) { return has.indexOf(s) >= 0; }).slice(0, 3);
+        var c = add(el('button', 'cday' + (out ? ' out' : '') + (d === today ? ' today' : '')), el('span', 'cn', String(Number(d.slice(8, 10)))),
+          add.apply(null, [el('span', 'cdots')].concat(srcs.map(function (s) { return el('i', 'cs-' + s); }))));
+        c.type = 'button';
+        c.setAttribute('aria-label', calDayName(d) + (d === today ? ', сегодня' : '') + (srcs.length ? ', есть дела' : ''));
+        if (d === today) c.setAttribute('aria-current', 'date');
+        c.onclick = (function (d, out) { return function () { if (out) goTo(d.slice(0, 7), d); else pick(d); }; })(d, out);
+        if (!out) cells[d] = c;
+        grid.appendChild(c);
+      }
+      mark();
+    }
+    function mark() {
+      for (var d in cells) {
+        cells[d].classList.toggle('on', d === CAL.day);
+        cells[d].setAttribute('aria-pressed', String(d === CAL.day));
+      }
+    }
+    function pick(d) {
+      if (d === CAL.day) return;
+      haptic();
+      CAL.day = d;
+      mark();
+      clear(list);
+      loadDay();
+    }
+    function row(x) {
+      var src = x.src, wo = src === 'workout', ic = src === 'cal' ? calKind(x.kind)[2] : wo ? WO_IC[x.kind] || 'dumbbell' : CAL_IC[src] || 'calendar';
+      var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
+      if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
+      var sub = [x.place, CAL_SUB[src]].filter(Boolean).join(' · ');
+      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple')), tm,
+        add(el('span', 'lead cic'), icon(ic)),
+        add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
+      // Ours: the month's row by ref (notes and all); the month not in yet — the feed's item with the row's id.
+      var open = src === 'cal' && x.editable !== false ? function () {
+        calSheet(CAL.ev[x.ref] || { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place, notes: x.notes || '', url: x.url || null }, CAL.day, r, after);
+      }
+        : src === 'task' && tabShown('tasks') && x.ref != null ? function () { taskOpenId = Number(x.ref) || x.ref; show('tasks'); }
+        : wo && x.ref != null ? function () {
+          if (r.busy) return;
+          r.busy = true;
+          api('miniapp', { action: 'workout_get' }, 15000, false, { id: x.ref }).then(function (j) {
+            r.busy = false;
+            if (j && j.workout) woDetailSheet(j.workout, r, function () { cacheDrop('food'); load(); });
+          }, function () { r.busy = false; });
+        } : null;
+      if (!open) return r;
+      r.appendChild(icon('chevron-right', 'go'));
+      r.setAttribute('aria-label', (x.all_day ? 'весь день' : calHm(x.starts_at)) + ', ' + (x.title || '') + ' — открыть');
+      return tap(r, open);
+    }
+    function drawDay(j) {
+      var items = j.items || [];
+      clear(list);
+      if (!items.length) return list.appendChild(el('div', 'cnone', 'ничего не запланировано'));
+      items.forEach(function (x) { list.appendChild(row(x)); });
+    }
+    function loadMonth() {
+      swr({ key: 'cal:m:' + m, box: grid, n: 0, live: function () { return current === 'cal' && CAL.month === m; },
+        fetch: function () { return api('miniapp', { action: 'cal_month' }, 15000, true, { ym: m }); },
+        render: function (j) {
+          CAL.ev = {};
+          (j.events || []).forEach(function (e) { CAL.ev[e.id] = e; });
+          drawGrid(j.dots || {});
+        }, retry: load, fail: noop });
+    }
+    function loadDay() {
+      var d = CAL.day;
+      text(dtitle, calDayName(d) + (d === today ? ' · сегодня' : ''));
+      back.hidden = d === today;
+      swr({ key: 'cal:d:' + d, box: list, n: 1, live: function () { return current === 'cal' && CAL.day === d; },
+        fetch: function () { return api('miniapp', { action: 'cal_day' }, 15000, true, { date: d }); },
+        render: drawDay, retry: load });
+    }
+    function load() { loadMonth(); loadDay(); }
+    // After a save or a delete: the days and months it touched are fetched again (the one on screen at once, cache-first);
+    // a saved event on another day takes the screen there.
+    function after(ev, was) {
+      [was, ev && ev.starts_at ? foodDay(ev.starts_at) : null].forEach(function (d) {
+        if (!d) return;
+        if (d !== CAL.day) cacheDrop('cal:d:' + d);
+        if (d.slice(0, 7) !== CAL.month) cacheDrop('cal:m:' + d.slice(0, 7));
+      });
+      cacheDrop('home');
+      var to = ev && ev.starts_at ? foodDay(ev.starts_at) : null;
+      if (current !== 'cal') return;
+      if (to && to !== CAL.day) return goTo(to.slice(0, 7), to);
+      load();
+    }
+    drawGrid({});
+    load();
+  }
+  // An event of ours (null — a new one on date): the title, the date, the time (empty — all day) with ✕ to take it away,
+  // the duration, the place, the notes, the kind; «Сохранить» (cal_add / cal_edit — only what changed), «Удалить» on two
+  // taps (cal_delete). done(event, the day it was on).
+  function calSheet(ev, date, from, done) {
+    var close = noop, timed = ev && !ev.all_day, p = timed ? wp(ev.starts_at) : null, d0 = ev && ev.starts_at ? foodDay(ev.starts_at) : date;
+    var dur = timed && ev.ends_at ? Math.round((Date.parse(ev.ends_at) - Date.parse(ev.starts_at)) / 60000) : 60, kind = ev && ev.kind || 'event';
+    if (!(dur > 0)) dur = 60;
+    var ti = el('input'), di = el('input'), tm = el('input'), pl = el('input'), nt = el('textarea', 'lta cnt');
+    ti.value = ev ? ev.title || '' : '';
+    ti.placeholder = 'Что: созвон, врач, поездка…';
+    ti.maxLength = 120;
+    ti.enterKeyHint = 'done';
+    ti.setAttribute('aria-label', 'Название');
+    di.type = 'date';
+    di.value = d0;
+    di.setAttribute('aria-label', 'Дата');
+    tm.type = 'time';
+    tm.value = p ? p.hour + ':' + p.minute : '';
+    tm.setAttribute('aria-label', 'Время');
+    [di, tm].forEach(function (i) {
+      i.className = 'cpk';
+      i.onclick = function () { try { if (i.showPicker) i.showPicker(); } catch (e) {} };
+    });
+    pl.value = ev && ev.place || '';
+    pl.placeholder = 'Где: адрес, Meet, Zoom';
+    pl.maxLength = 120;
+    pl.setAttribute('aria-label', 'Место');
+    nt.value = ev && ev.notes || '';
+    nt.placeholder = 'Заметка';
+    nt.maxLength = 1000;
+    nt.setAttribute('aria-label', 'Заметка');
+    var clr = foodBtn('cclr', 'x', '', function () { tm.value = ''; haptic(); paint(); });
+    clr.setAttribute('aria-label', 'Без времени — на весь день');
+    var cap = el('div', 'ccap'), durs = el('div', 'cdur'), kinds = el('div', 'ckind');
+    durs.setAttribute('role', 'group');
+    durs.setAttribute('aria-label', 'Длительность');
+    kinds.setAttribute('role', 'group');
+    kinds.setAttribute('aria-label', 'Вид');
+    var durB = CAL_DUR.map(function (x) {
+      return durs.appendChild(chip(x[1], false, x[1], function () { dur = x[0]; haptic(); if (!clr.hidden) return paint(); tm.focus(); paint(); }));
+    });
+    var kindB = CAL_KINDS.map(function (k) {
+      var b = add(el('button'), icon(k[2]), el('span', '', k[1]));
+      b.type = 'button';
+      b.onclick = function () { kind = k[0]; haptic(); paint(); };
+      return kinds.appendChild(b);
+    });
+    // The buttons stay, only their state changes: the keyboard keeps the one it pressed.
+    function paint() {
+      var hm = /^\d\d:\d\d/.test(tm.value) ? tm.value.slice(0, 5) : '';
+      clr.hidden = !hm;
+      text(cap, hm ? 'Длительность · до ' + calHm(Date.parse(foodIso(di.value || d0, hm)) + dur * 60000) : 'Без времени — событие на весь день');
+      durs.classList.toggle('off', !hm);
+      durB.forEach(function (b, i) {
+        var on = CAL_DUR[i][0] === dur;
+        b.className = 'pill' + (on ? ' acc' : '');
+        b.setAttribute('aria-pressed', String(on));
+      });
+      kindB.forEach(function (b, i) { b.setAttribute('aria-pressed', String(CAL_KINDS[i][0] === kind)); });
+    }
+    tm.oninput = tm.onchange = di.onchange = paint;
+    paint();
+    var save = foodBtn('btn', 'check', 'Сохранить', function () {
+      var t = ti.value.trim(), dd = di.value, hm = tm.value ? tm.value.slice(0, 5) : '', bad = '';
+      if (!t) bad = 'Нужно название';
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(dd)) bad = 'Нужна дата';
+      else if (hm && !/^\d\d:\d\d$/.test(hm)) bad = 'Время — ЧЧ:ММ';
+      if (bad) return toast(bad);
+      var allDay = !hm, st = foodIso(dd, allDay ? '00:00' : hm);
+      var b = { title: t, starts_at: st, ends_at: allDay ? null : new Date(Date.parse(st) + dur * 60000).toISOString(), all_day: allDay, kind: kind,
+        place: pl.value.trim() || null, notes: nt.value.trim() || null };
+      if (ev) {
+        // Only what changed; the notes a row of the day did not carry stay as they are unless he typed some.
+        var patch = { id: ev.id }, n = 0;
+        for (var k in b) {
+          var old = k === 'starts_at' || k === 'ends_at' ? (ev[k] ? new Date(ev[k]).toISOString() : null) : ev[k] == null ? null : ev[k];
+          if (k === 'notes' && ev.notes === undefined && !b.notes) continue;
+          if (k === 'all_day') old = !!ev.all_day;
+          if (old !== b[k]) { patch[k] = b[k]; n++; }
+        }
+        if (!n) return close();
+        b = patch;
+      } else for (var f in b) if (b[f] === null) delete b[f];
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: ev ? 'cal_edit' : 'cal_add' }, 15000, false, b).then(function (j) {
+        close();
+        toast(ev ? 'Сохранил' : 'Добавил: ' + t, 'calendar');
+        done((j && j.event) || { starts_at: st }, ev ? d0 : null);
+      }, function () { save.disabled = false; });
+    });
+    var del = null, armT = null;
+    if (ev) del = foodBtn('btn ghost', 'trash', 'Удалить', function () {
+      if (!armT) {
+        label(del, null, 'Точно удалить?');
+        del.className = 'btn warn';
+        armT = setTimeout(function () { armT = null; label(del, 'trash', 'Удалить'); del.className = 'btn ghost'; }, 3000);
+        return;
+      }
+      clearTimeout(armT);
+      del.disabled = true;
+      haptic();
+      api('miniapp', { action: 'cal_delete' }, 15000, false, { id: ev.id }).then(function () {
+        close();
+        toast('Удалил', 'trash');
+        done(null, d0);
+      }, function () { del.disabled = false; });
+    });
+    close = legalSheet(ev ? 'Событие' : 'Новое событие', [add(el('div', 'bar'), add(el('label', 'field'), ti)),
+      add(el('div', 'wrow2'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm, clr)),
+      cap, durs, add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
+      add(el('div', 'bar mact mstick'), save, del)], from);
+  }
+
   var VIEWS = {
     home: homeView, shop: shopView, list: listView, picks: picksView, prices: pricesView, stats: statsView, wish: wishView,
-    cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, updates: updatesView, settings: settingsView, vb: vbView,
+    cinema: cinemaView, films: filmsView, dela: delaView, money: moneyView, tasks: tasksView, cal: calView, legal: legalView, li: liView, inbox: inboxView, feed: feedView, updates: updatesView, settings: settingsView, vb: vbView,
     genshin: genshinView, notif: notifView, food: foodView
   };
   // --- desktop (≥ 900 px) ---
