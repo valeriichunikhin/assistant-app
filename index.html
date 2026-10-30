@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 16:51">
+<meta name="published" content="2026-10-30 17:33">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1163,7 +1163,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
 .hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 /* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
-.hcur{margin:-14px 8px 0;padding:26px 14px 14px;background:color-mix(in srgb,var(--surface) 55%,transparent);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line);clip-path:inset(14px 0 0 0)}/* the 14px under the rings tile is clipped: in the dark theme the tile is translucent, and the curtain showed through it as a lighter band with its own top line (his 30.10.2026) */
+.hcur{--hcur:color-mix(in srgb,var(--surface) 55%,transparent);position:relative;isolation:isolate;margin:calc(-1 * var(--r-b)) 8px 0;padding:calc(var(--r-b) + 12px) 14px 14px}/* the curtain under the rings tile (Bevel's «шторка», his 30.10.2026): the panel itself starts below the tile (::before), and only the two corner gaps under the tile's rounded corners are filled (::after) — the tile is translucent in the dark theme, so nothing may be painted under its body */
+.hcur::before{content:"";position:absolute;left:0;right:0;top:var(--r-b);bottom:0;background:var(--hcur);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line);z-index:-1}
+.hcur::after{content:"";position:absolute;left:0;right:0;top:0;height:var(--r-b);z-index:-1;background:radial-gradient(circle at var(--r-b) 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) left top/var(--r-b) var(--r-b) no-repeat,radial-gradient(circle at 0 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) right top/var(--r-b) var(--r-b) no-repeat}
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 /* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
@@ -1458,7 +1460,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .crow .ctm{flex:none;width:46px;color:var(--link);font:600 14px/1.25 var(--font-num);font-variant-numeric:tabular-nums}
 .crow .ctm small{display:block;color:var(--muted);font-size:12px;font-weight:500}
 .crow .ctm.cad{font-size:12px;line-height:1.2}
-.crow .lead.cic{color:var(--cs)}
+.crow .lead.cic{position:relative;color:var(--cs)}
+/* a planned workout that is over (calendar-2, Б1): done — a check on its icon, as a ticked task; skipped — the row dimmed */
+.crow .cic .cck{position:absolute;right:-5px;bottom:-4px;width:14px;height:14px;padding:2px;border-radius:50%;background:var(--good);color:var(--solid);stroke-width:3.2}
+.crow.cskip .cic,.crow.cskip .tx{opacity:.5}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs-task{--cs:#d6336c}}:root[data-theme="light"] .cs-task{--cs:#d6336c}
 .crow .tx .mu{font-size:12px}
 .cnone{padding:6px 14px 14px;color:var(--muted)}
@@ -1470,6 +1475,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .ckind{grid-template-columns:repeat(3,minmax(0,1fr))}@media (min-width:600px){.ckind{grid-template-columns:repeat(6,minmax(0,1fr))}}
 .cdur .pill{width:100%;height:44px;justify-content:center;padding:0 2px;font-size:13px}
 .cdur.off .pill{opacity:.4}
+.cdur.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .ckind button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:58px;padding:6px 2px;border:1px solid var(--line);border-radius:var(--r-s);background:none;color:var(--muted);font:500 11px/1.1 var(--font);overflow-wrap:anywhere;text-align:center}
 .ckind button .i{width:18px;height:18px}
 .ckind button[aria-pressed="true"]{border-color:var(--mark);background:var(--accent-soft);color:var(--link)}
@@ -17503,6 +17509,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var CAL_IC = { task: 'check-square', game: 'ball', apple: 'smartphone', mail: 'mail' };
   var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
   var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
+  // The reminder before an event (calendar-2, Б2) and its default by kind — the twin of REMIND_DEFAULT in _shared/calendar.ts.
+  var CAL_REMIND = [[null, 'нет'], [10, '10 мин'], [30, '30 мин'], [60, '60 мин'], [120, '2 ч']];
+  var CAL_REMIND_DEF = { event: 30, call: 10, work: 30, health: 60, trip: 120, sport: 60, other: 30 };
+  // A planned workout that is over: was he there (true), not (false), not said (null).
+  var CAL_DONE = [[true, 'Был'], [false, 'Не было'], [null, '—']];
   function calKind(k) { return CAL_KINDS.filter(function (x) { return x[0] === k; })[0] || CAL_KINDS[0]; }
   function calHm(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
   function calDayName(d) { return WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
@@ -17591,12 +17602,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
       if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
       var sub = [x.place, CAL_SUB[src]].filter(Boolean).join(' · ');
-      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple') + (src === 'cal' ? ' k-' + calKind(x.kind)[0] : '')), tm,
-        add(el('span', 'lead cic'), icon(ic)),
+      // A planned workout, plan vs fact: done — the check on its icon, skipped — dimmed.
+      var dn = src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null;
+      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple') + (src === 'cal' ? ' k-' + calKind(x.kind)[0] : '') +
+        (dn === false ? ' cskip' : '')), tm,
+        add(el('span', 'lead cic'), icon(ic), dn === true ? icon('check', 'cck') : null),
         add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
       // Ours: the month's row by ref (notes and all); the month not in yet — the feed's item with the row's id.
       var open = src === 'cal' && x.editable !== false ? function () {
-        calSheet(CAL.ev[x.ref] || { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place, notes: x.notes || '', url: x.url || null }, CAL.day, r, after);
+        calSheet(CAL.ev[x.ref] || { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place, notes: x.notes || '', url: x.url || null, done: x.done }, CAL.day, r, after);
       }
         : src === 'task' && x.ref != null ? function () { calTaskSheet(x, CAL.day, r, taskAfter); }
         : wo && x.ref != null ? function () {
@@ -17610,7 +17624,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (x.src === 'task' && x.ref != null) r.setAttribute('data-ref', String(x.ref));
       if (!open) return r;
       r.appendChild(icon('chevron-right', 'go'));
-      r.setAttribute('aria-label', (x.all_day ? 'весь день' : calHm(x.starts_at)) + ', ' + (x.title || '') + ' — открыть');
+      r.setAttribute('aria-label', (x.all_day ? 'весь день' : calHm(x.starts_at)) + ', ' + (x.title || '') + (dn === true ? ', был' : dn === false ? ', не было' : '') + ' — открыть');
       return tap(r, open);
     }
     // The day on screen (lastDay) without the tasks done or moved off it in their sheet.
@@ -17770,12 +17784,19 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     close = legalSheet(t.title, [when(), add(el('div', 'ctact'), done, next, time), row, open], from);
   }
   // An event of ours (null — a new one on date): the title, the date, the time (empty — all day) with ✕ to take it away,
-  // the duration, the place, the notes, the kind; «Сохранить» (cal_add / cal_edit — only what changed), «Удалить» on two
-  // taps (cal_delete). done(event, the day it was on).
+  // the duration, the reminder (a new one follows its kind until he picks one), the place, the notes, the kind; a planned
+  // workout that is over — «Был / Не было / —» first; «Сохранить» (cal_add / cal_edit — only what changed), «Удалить» on
+  // two taps (cal_delete). done(event, the day it was on).
   function calSheet(ev, date, from, done) {
     var close = noop, timed = ev && !ev.all_day, p = timed ? wp(ev.starts_at) : null, d0 = ev && ev.starts_at ? foodDay(ev.starts_at) : date;
     var dur = timed && ev.ends_at ? Math.round((Date.parse(ev.ends_at) - Date.parse(ev.starts_at)) / 60000) : 60, kind = ev && ev.kind || 'event';
     if (!(dur > 0)) dur = 60;
+    // The reminder: the row's (undefined — the day's row without the month: not touched unless he picks one).
+    var rem = ev ? ev.remind_min : CAL_REMIND_DEF[kind], remSet = !!ev;
+    // Plan vs fact: only an event of kind sport that is over; dn0 — as it stands (the month's row or the feed's done).
+    var end0 = ev ? (ev.ends_at ? Date.parse(ev.ends_at) : Date.parse(ev.starts_at) + (ev.all_day ? 864e5 : 36e5)) : 0;
+    var past = !!ev && ev.kind === 'sport' && end0 < Date.now();
+    var dn0 = !ev ? null : ev.done !== undefined ? ev.done : ev.done_at ? ev.done_ref !== 'skipped' : null, dn = dn0;
     var ti = el('input'), di = el('input'), tm = el('input'), pl = el('input'), nt = el('textarea', 'lta cnt');
     ti.value = ev ? ev.title || '' : '';
     ti.placeholder = 'Что: созвон, врач, поездка…';
@@ -17802,9 +17823,19 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     nt.setAttribute('aria-label', 'Заметка');
     var clr = foodBtn('cclr', 'x', '', function () { tm.value = ''; haptic(); paint(); });
     clr.setAttribute('aria-label', 'Без времени — на весь день');
-    var cap = el('div', 'ccap'), durs = el('div', 'cdur'), kinds = el('div', 'ckind');
+    var cap = el('div', 'ccap'), durs = el('div', 'cdur'), kinds = el('div', 'ckind'), rems = el('div', 'cdur'), dones = el('div', 'cdur c3');
     durs.setAttribute('role', 'group');
     durs.setAttribute('aria-label', 'Длительность');
+    rems.setAttribute('role', 'group');
+    rems.setAttribute('aria-label', 'Напомнить');
+    dones.setAttribute('role', 'group');
+    dones.setAttribute('aria-label', 'Тренировка была?');
+    var remB = CAL_REMIND.map(function (x) {
+      return rems.appendChild(chip(x[1], false, x[0] ? 'Напомнить за ' + x[1] : 'Не напоминать', function () { rem = x[0]; remSet = true; haptic(); paint(); }));
+    });
+    var doneB = CAL_DONE.map(function (x) {
+      return dones.appendChild(chip(x[1], false, x[0] === null ? 'Не отмечено' : x[1], function () { dn = x[0]; haptic(); paint(); }));
+    });
     kinds.setAttribute('role', 'group');
     kinds.setAttribute('aria-label', 'Вид');
     var durB = CAL_DUR.map(function (x) {
@@ -17828,6 +17859,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         b.setAttribute('aria-pressed', String(on));
       });
       kindB.forEach(function (b, i) { b.setAttribute('aria-pressed', String(CAL_KINDS[i][0] === kind)); });
+      // A new event's reminder follows its kind (none all day) until he picks one.
+      if (!remSet) rem = hm ? CAL_REMIND_DEF[kind] : null;
+      rems.classList.toggle('off', !hm);
+      [[remB, CAL_REMIND, rem], [doneB, CAL_DONE, dn]].forEach(function (g) {
+        g[0].forEach(function (b, i) {
+          var on = g[1][i][0] === g[2];
+          b.className = 'pill' + (on ? ' acc' : '');
+          b.setAttribute('aria-pressed', String(on));
+        });
+      });
     }
     tm.oninput = tm.onchange = di.onchange = paint;
     paint();
@@ -17840,6 +17881,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var allDay = !hm, st = foodIso(dd, allDay ? '00:00' : hm);
       var b = { title: t, starts_at: st, ends_at: allDay ? null : new Date(Date.parse(st) + dur * 60000).toISOString(), all_day: allDay, kind: kind,
         place: pl.value.trim() || null, notes: nt.value.trim() || null };
+      if (rem !== undefined) b.remind_min = allDay ? null : rem;
+      if (past) b.done = dn;
       if (ev) {
         // Only what changed; the notes a row of the day did not carry stay as they are unless he typed some.
         var patch = { id: ev.id }, n = 0;
@@ -17847,11 +17890,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           var old = k === 'starts_at' || k === 'ends_at' ? (ev[k] ? new Date(ev[k]).toISOString() : null) : ev[k] == null ? null : ev[k];
           if (k === 'notes' && ev.notes === undefined && !b.notes) continue;
           if (k === 'all_day') old = !!ev.all_day;
+          if (k === 'done') old = dn0;
+          if (k === 'remind_min' && ev.remind_min === undefined) old = undefined;
           if (old !== b[k]) { patch[k] = b[k]; n++; }
         }
         if (!n) return close();
         b = patch;
-      } else for (var f in b) if (b[f] === null) delete b[f];
+      } else for (var f in b) if (b[f] === null && f !== 'remind_min') delete b[f];
       save.disabled = true;
       haptic();
       api('miniapp', { action: ev ? 'cal_edit' : 'cal_add' }, 15000, false, b).then(function (j) {
@@ -17883,8 +17928,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       }, function () { del.disabled = false; });
     });
     close = legalSheet(ev ? 'Событие' : 'Новое событие', [add(el('div', 'bar'), add(el('label', 'field'), ti)),
+      past ? el('div', 'ccap', 'Тренировка была?') : null, past ? dones : null,
       add(el('div', 'wrow2'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm, clr)),
-      cap, durs, add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
+      cap, durs, el('div', 'ccap', 'Напомнить'), rems, add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
       add(el('div', 'bar mact mstick'), save, del)], from);
   }
 
