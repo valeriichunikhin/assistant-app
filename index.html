@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 11:56">
+<meta name="published" content="2026-10-30 12:01">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -991,14 +991,20 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nudt .i{width:18px;height:18px}
 .nudt input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;font-size:16px;-webkit-appearance:none;appearance:none}
 .nutop{margin:0 0 18px}
-.nupl{display:flex;align-items:center;justify-content:center;gap:clamp(14px,6vw,36px)}
-.nup{flex:none;display:block;width:min(56vw,240px);height:auto;overflow:visible}
-.i.nu-fk{width:24px;height:clamp(100px,34vw,150px);stroke-width:3.2;color:color-mix(in srgb,var(--fg) 32%,transparent)}
-.nup-rim{fill:color-mix(in srgb,var(--fg) 3%,transparent);stroke:color-mix(in srgb,var(--fg) 6%,transparent);stroke-width:1}
-.nup-disc{fill:color-mix(in srgb,var(--fg) 5%,var(--solid));stroke:color-mix(in srgb,var(--fg) 12%,transparent);stroke-width:1.2}
-.nup-tk{stroke:color-mix(in srgb,var(--fg) 15%,transparent);stroke-width:2.2;stroke-linecap:round}.nup-tk.on{stroke:var(--mark)}
-.nup-v{fill:var(--fg);font:800 64px var(--font-num);letter-spacing:-.03em}.nup-l{fill:var(--mark);font:600 15px var(--font)}
-.nup-e{fill:var(--muted);font:500 13px var(--font-num)}
+/* The food scale «C · стопка» (30.10.2026): the meals' colours, the bar with the hatched rest, the axis, the legend,
+   the macro bars. */
+.nus{padding:0 14px}.nus-top{display:flex;justify-content:space-between;align-items:baseline}.nus-big{font:800 40px/1 var(--font-num);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.nus-top .mu{font-size:14px}.nus-g{color:var(--fg)}
+.nus-breakfast{--ms:var(--nu-carbs)}.nus-lunch{--ms:var(--mark)}.nus-dinner{--ms:var(--hl-sky)}.nus-snack{--ms:var(--ring-recovery-2)}.nus-other{--ms:var(--muted)}
+.nus-bar{position:relative;height:22px;margin-top:10px;border-radius:11px;overflow:hidden;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--fg) 14%,transparent) 0 2px,transparent 2px 7px),var(--track)}
+.nus-seg{position:absolute;top:0;bottom:0;background:var(--ms)}.nus-seg:first-child{border-radius:11px 0 0 11px}
+.nus-goal{position:absolute;top:0;bottom:0;width:2px;margin-left:-2px;background:var(--fg)}.nus-bar:not(.over) .nus-goal{display:none}
+.nus-ax{position:relative;display:flex;justify-content:space-between;margin-top:4px;height:16px;font-size:12px}.nus-at{position:absolute;top:0;transform:translateX(-50%);font-size:12px;font-variant-numeric:tabular-nums}
+.nus-lg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nus-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--ms)}
+.nus-dot.nus-rest{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--fg) 30%,transparent) 0 1px,transparent 1px 3px),var(--track)}
+.nus-mb{margin-top:12px}.nus-m{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;margin-top:6px;font-size:13px}
+.nus-t{height:8px;border-radius:4px;background:var(--track);overflow:hidden}.nus-t i{display:block;height:100%;border-radius:4px;background:var(--nu)}.nus-t.over i{background:var(--bad)}
+.nus-mv{font-weight:700;font-variant-numeric:tabular-nums}
 .nusrc{margin:2px 0 12px;font-size:11px;text-align:center}
 .nuact{display:flex;justify-content:center;flex-wrap:wrap;gap:6px}
 .nuact button{display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:500 13px var(--font);white-space:nowrap}
@@ -1051,7 +1057,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nurm{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}.nurm span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .nurm i,.nudot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--nu)}.nudot{width:10px;height:10px}
 .nufx{margin:0 0 12px;line-height:1.5}
-@media (min-width:900px){.nup{width:250px}.i.nu-fk{height:150px}}
+@media (min-width:900px){.nus{max-width:560px;margin:0 auto}}
 /* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
    last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
 .wempty{padding:0 14px 12px}.row.frow .wl{display:block}
@@ -14383,7 +14389,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var nu = j.nutrition, src = nu || j.totals || {}, kcal = Math.round(src.kcal || 0), goal = kcalGoal(), w = j.weight;
     var wb = foodBtn('', 'weight', w ? foodKg(w.kg) + ' кг' : 'вес', function () { h.weight(wb); });
     wb.setAttribute('aria-label', w ? 'Вес ' + foodKg(w.kg) + ' кг — поправить' : 'Записать вес');
-    var top = add(el('div', 'nutop'), add(el('div', 'nupl'), icon('fork', 'nu-fk'), nuPlate(Math.round(kcal / goal * 100), kcal, goal), icon('knife', 'nu-fk')),
+    var top = add(el('div', 'nutop'), nuStack(j, src, kcal, goal),
       el('div', 'mu nusrc', kcal ? (nu ? 'из Bevel через Health' : 'из записей') : 'за этот день еды нет'),
       add(el('div', 'nuact'), wb, foodBtn('', 'plus', 'Записать', h.add)));
     var n = (j.entries || []).length;
@@ -14391,26 +14397,62 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       add(el('div', 'nutl'), add(el('div', 'nush'), add(el('div'), el('h3', '', 'Таймлайн питания'),
         el('div', 'mu', n ? n + ' ' + ['событие', 'события', 'событий'][plural3(n)] : 'событий нет'))), timeline)];
   }
-  // The plate: a faint rim and disc, 61 ticks over 270° from the lower left (0) clockwise to the lower right (100), every
-  // tenth longer; lit in the accent up to pct (brighter towards the end), the number in the middle.
-  function nuPlate(pct, kcal, goal) {
-    var c = 130, box = svg('svg', { viewBox: '0 0 260 260', 'class': 'nup', role: 'img',
-      'aria-label': pct + ' % от цели: ' + grouped(kcal) + ' из ' + grouped(goal) + ' ккал' });
-    add(box, svg('circle', { cx: c, cy: c, r: 129, 'class': 'nup-rim' }), svg('circle', { cx: c, cy: c, r: 114, 'class': 'nup-disc' }));
-    for (var i = 0; i <= 60; i++) {
-      var f = i / 60, a = (135 + 270 * f) * Math.PI / 180, r1 = i % 10 ? 99 : 94, on = pct > 0 && f * 100 <= pct + 1e-9;
-      var at = { x1: (c + r1 * Math.cos(a)).toFixed(1), y1: (c + r1 * Math.sin(a)).toFixed(1), x2: (c + 107 * Math.cos(a)).toFixed(1),
-        y2: (c + 107 * Math.sin(a)).toFixed(1), 'class': 'nup-tk' + (on ? ' on' : '') };
-      if (on) at.opacity = (0.4 + 0.6 * f).toFixed(2);
-      box.appendChild(svg('line', at));
-    }
-    [[0, 122], [100, 58]].forEach(function (x) {
-      var a = x[1] * Math.PI / 180;
-      box.appendChild(svg('text', { x: (c + 86 * Math.cos(a)).toFixed(1), y: (c + 86 * Math.sin(a)).toFixed(1), 'class': 'nup-e',
-        'text-anchor': 'middle', 'dominant-baseline': 'middle' }, String(x[0])));
+  // Our food scale (his pick 30.10.2026 of four variants — «C · стопка»): the day's kcal big against the goal; one bar
+  // to the goal — the meals as segments in the meal's colour in the day's order (food from Health beyond the entries
+  // — a grey «без записи» one), the rest hatched; under it 0 · the eaten · the goal; the legend; three thin macro bars
+  // with «62 / 120 г». Over the goal the bar is the eaten and the goal a marker inside it.
+  var NU_MEAL_CLS = { breakfast: 'nus-breakfast', lunch: 'nus-lunch', dinner: 'nus-dinner', snack: 'nus-snack' };
+  function nuStack(j, src, kcal, goal) {
+    var box = el('div', 'nus'), left = goal - kcal, scale = Math.max(goal, kcal, 1);
+    add(box, add(el('div', 'nus-top'), add(el('div'), el('span', 'nus-big', grouped(kcal)), el('span', 'mu', ' ккал')),
+      add(el('div', 'mu'), document.createTextNode('цель '), el('b', 'nus-g', grouped(goal)))));
+    var es = (j.entries || []).filter(function (e) { return Number(e.kcal) > 0; }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
+    var segs = es.map(function (e) { return { kcal: Math.round(Number(e.kcal)), cls: NU_MEAL_CLS[e.meal] || 'nus-snack', label: (FOOD_RU[e.meal] || 'еда').toLowerCase(), at: e.at }; });
+    var rest = kcal - segs.reduce(function (a, x) { return a + x.kcal; }, 0);
+    if (rest > 0 && kcal) segs.push({ kcal: rest, cls: 'nus-other', label: 'без записи' });
+    var bar = el('div', 'nus-bar' + (left < 0 ? ' over' : '')), x = 0;
+    segs.forEach(function (sg) {
+      var w = sg.kcal / scale * 100, i = add(el('i', 'nus-seg ' + sg.cls));
+      i.style.left = x.toFixed(2) + '%';
+      i.style.width = Math.max(0, w - 0.3).toFixed(2) + '%';
+      i.title = sg.label + ' · ' + grouped(sg.kcal) + ' ккал';
+      bar.appendChild(i);
+      x += w;
     });
-    add(box, svg('text', { x: c, y: 124, 'class': 'nup-v', 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, String(pct)),
-      svg('text', { x: c, y: 166, 'class': 'nup-l', 'text-anchor': 'middle' }, 'от цели'));
+    var gm = el('i', 'nus-goal');
+    gm.style.left = (goal / scale * 100).toFixed(2) + '%';
+    bar.appendChild(gm);
+    bar.setAttribute('role', 'img');
+    bar.setAttribute('aria-label', grouped(kcal) + ' из ' + grouped(goal) + ' ккал' + (left >= 0 ? ', осталось ' + grouped(left) : ', сверх цели ' + grouped(-left)) +
+      (segs.length ? ': ' + segs.map(function (sg) { return sg.label + ' ' + grouped(sg.kcal); }).join(', ') : ''));
+    var ax = add(el('div', 'nus-ax'), el('span', 'mu', '0'), el('span', 'mu nus-end', grouped(goal)));
+    // The eaten's number under its end, unless it would sit on «0» or on the goal.
+    if (kcal && kcal / scale > 0.1 && kcal / scale < 0.78) {
+      var mk = el('b', 'nus-at', grouped(kcal));
+      mk.style.left = (kcal / scale * 100).toFixed(2) + '%';
+      ax.appendChild(mk);
+    }
+    add(box, bar, ax);
+    // The legend: a meal a chip in the day's order (the same meal twice — summed), then what is left.
+    var byMeal = [], seen = {};
+    segs.forEach(function (sg) { var k = sg.cls; if (seen[k] == null) { seen[k] = byMeal.length; byMeal.push({ cls: k, label: sg.label, kcal: 0 }); } byMeal[seen[k]].kcal += sg.kcal; });
+    var lg = el('div', 'nus-lg');
+    byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
+    lg.appendChild(add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode(left >= 0 ? 'осталось ' + grouped(left) : 'сверх цели ' + grouped(-left))));
+    box.appendChild(lg);
+    // Б · Ж · У thin bars against their goals.
+    var mb = el('div', 'nus-mb');
+    [NU_MACROS[2], NU_MACROS[0], NU_MACROS[1]].forEach(function (m) {
+      var v = Math.round(src[m[0]] || 0), g = nuGoal(m), f = Math.min(1, g ? v / g : 0), t = el('div', 'nus-t');
+      var fill = add(t, el('i', 'nu-' + m[0]));
+      fill.style.width = (f * 100).toFixed(1) + '%';
+      if (v > g) t.classList.add('over');
+      var row = add(el('div', 'nus-m'), el('span', 'mu', m[5]), t, add(el('span', 'nus-mv'), document.createTextNode(v + ' / ' + g + ' г')));
+      row.setAttribute('role', 'img');
+      row.setAttribute('aria-label', m[1] + ': ' + v + ' из ' + g + ' г');
+      mb.appendChild(row);
+    });
+    box.appendChild(mb);
     return box;
   }
   // A card titled in Bevel's way: the title, what goes beside it, an arrow to more.
