@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 17:53">
+<meta name="published" content="2026-10-30 19:19">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1495,6 +1495,29 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .ctact .btn{min-width:0;padding:0 6px;justify-content:center}.ctact .btn .i{display:inline}
 .cttime[hidden]{display:none}.cttime .field{flex:1;min-width:0}.cttime .btn{flex:none}
 .btn.ghost.ctopen{width:100%;justify-content:center}
+/* Batch В (docs/specs/calendar-2.md): a screening in the sleep ring's violet, a colour no other source has (in both themes); the
+   switch «День · 3 дня · Неделя» with «‹ ›» over the feed; the month's name folds the grid into its week's strip on a
+   phone (the days of a «3 дня» / «Неделя» range softly filled); a work day as a band under the day's heading; the free
+   windows a muted line under the rows; «3 дня» and «Неделя» a card per day, in columns from 900 px (by date, row
+   after row); the sheet's
+   «Перенести» chips (four, two or one in a row) and the series' «каждые N · до» row. */
+.cs-show{--cs:var(--ring-sleep)}
+.calhd{margin:0 -8px 8px}.calhd .seg{flex:1;min-width:0;margin:0 4px 0 8px}
+.mnav.calhd .seg button{flex:1;display:block;width:auto;height:auto;min-height:38px;padding:0 6px;border-radius:var(--r-s)}.calhd .mtoday[hidden]{display:none}
+.calhd .mtoday{width:44px;padding:0;justify-content:center}.calhd .mtoday span{display:none}
+.mnav button.cmon{flex:1;width:auto;gap:4px;display:inline-flex;align-items:center;justify-content:center;font:600 14px/1.3 var(--font)}
+.mnav .cmon .i{width:16px;height:16px;color:var(--muted)}
+.cday.inr .cn{background:var(--accent-soft);color:var(--link)}
+.cwork{display:flex;align-items:center;gap:8px;margin:0 14px 8px;padding:8px 12px;border-radius:var(--r-s);background:color-mix(in srgb,var(--mark) 10%,transparent);color:var(--muted);font-size:13px}
+.cwork .i{flex:none;width:16px;height:16px;color:var(--mark)}.cwork>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cwork .go{color:var(--muted-2)}
+.cfree{padding:2px 14px 14px;font-size:13px}
+.calrange>.card{margin-bottom:12px}
+.cdur.c4{grid-template-columns:repeat(4,minmax(0,1fr))}.cdur.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.cdur.c1{grid-template-columns:minmax(0,1fr)}
+.cmovd{position:relative;overflow:hidden;cursor:pointer}.cdur .cmovd{white-space:normal;line-height:1.1;text-align:center}.cmovd input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;font-size:16px;cursor:pointer}
+.crep[hidden]{display:none}.crep .field input[type=number]{width:3em;flex:none;text-align:center}
+@media (min-width:900px){.calw.calr{grid-template-columns:minmax(320px,.8fr) minmax(0,2.2fr)}
+  .calrange{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start;margin-bottom:16px}.calrange>.card{margin:0}}
 </style>
 </head>
 <body>
@@ -10186,10 +10209,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     return nav;
   }
-  // A sideways swipe on the month's header or on «Графики» (docs/specs/money-11.md §9, his word 23.10.2026) steps the
-  // month: to the right the one before, to the left the next, never past the current one — there the card bounces.
-  // Only a swipe that is more sideways than down and longer than 40 px; the page's own gestures skip .mswipe.
-  function moneySwipe(node, go) {
+  // A sideways swipe on `node`: go(1) to the left, go(-1) to the right — only one more sideways than down and longer
+  // than 40 px; the page's own gestures skip .mswipe. Once per node. «Деньги» steps months with it, «Календарь» days,
+  // weeks and months (docs/specs/calendar-2.md, В9).
+  function sideSwipe(node, go) {
     if (node.mswipe) return;
     node.mswipe = true;
     node.classList.add('mswipe');
@@ -10203,7 +10226,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
       x0 = null;
       if (Math.abs(dx) <= 40 || Math.abs(dx) <= Math.abs(dy)) return;
-      var n = dx < 0 ? 1 : -1, m = monthStep(MONEY.month || monthNow(), n);
+      go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+    node.addEventListener('touchcancel', function () { x0 = null; }, { passive: true });
+  }
+  // A sideways swipe on the month's header or on «Графики» (docs/specs/money-11.md §9, his word 23.10.2026) steps the
+  // month: to the right the one before, to the left the next, never past the current one — there the card bounces.
+  function moneySwipe(node, go) {
+    sideSwipe(node, function (n) {
+      var m = monthStep(MONEY.month || monthNow(), n);
       if (m < MONEY_FROM || m > monthNow()) {
         node.classList.remove('mbounce-l', 'mbounce-r');
         void node.offsetWidth;
@@ -10211,8 +10242,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         return;
       }
       go(n);
-    }, { passive: true });
-    node.addEventListener('touchcancel', function () { x0 = null; }, { passive: true });
+    });
   }
   function moneyGo(n, load) {
     var m = monthStep(MONEY.month, n);
@@ -17521,10 +17551,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // by id — the sheet takes the notes from there (cal_day's rows do not carry them).
   // task: the task objects of the day's rows opened in their sheet (by id) — one done or moved off the day hides its row.
   var CAL = { month: null, day: null, on: null, ev: {}, task: {} };
-  var CAL_SRC = ['cal', 'task', 'game', 'workout', 'mail', 'apple'];
+  var CAL_SRC = ['cal', 'task', 'game', 'show', 'workout', 'mail', 'apple'];
   var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
     ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane'], ['sport', 'Тренировка', 'dumbbell']];
-  var CAL_IC = { task: 'check-square', game: 'ball', apple: 'smartphone', mail: 'mail' };
+  var CAL_IC = { task: 'check-square', game: 'ball', show: 'film', apple: 'smartphone', mail: 'mail' };
   var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
   var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
   // The reminder before an event (calendar-2, Б2) and its default by kind — the twin of REMIND_DEFAULT in _shared/calendar.ts.
@@ -17532,22 +17562,50 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var CAL_REMIND_DEF = { event: 30, call: 10, work: 30, health: 60, trip: 120, sport: 60, other: 30 };
   // A planned workout that is over: was he there (true), not (false), not said (null).
   var CAL_DONE = [[true, 'Был'], [false, 'Не было'], [null, '—']];
+  // The feed's span (calendar-2, В6): a day, three or a week from the chosen day — the device's own (localStorage calSpan).
+  var CAL_SPANS = [[1, 'День'], [3, '3 дня'], [7, 'Неделя']];
+  // A series (В2): its chips, the twin of REPEATS in _shared/tasks.ts (REPEAT_LABEL words it, as for a task).
+  var CAL_REP = [[null, 'нет'], ['daily', 'день'], ['weekly', 'неделя'], ['monthly', 'месяц'], ['yearly', 'год']];
+  // The month folds into its week on a phone (В8) until he opens it (localStorage calMonthOpen); from 1400 px always the grid.
+  var calWideQ = window.matchMedia ? matchMedia('(min-width:1400px)') : null;
+  function calSpan() { var n = Number(store('calSpan')); return n === 3 || n === 7 ? n : 1; }
+  function calGrid() { return !!(calWideQ && calWideQ.matches) || store('calMonthOpen') === '1'; }
   function calKind(k) { return CAL_KINDS.filter(function (x) { return x[0] === k; })[0] || CAL_KINDS[0]; }
   function calHm(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
   function calDayName(d) { return WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
   function calView() {
     var today = foodToday();
     CAL.task = {};
+    CAL.ev = {};
     if (CAL.on !== today) { CAL.on = today; CAL.month = today.slice(0, 7); CAL.day = today; }
     if (CAL.day.slice(0, 7) !== CAL.month) CAL.day = CAL.month === today.slice(0, 7) ? today : CAL.month + '-01';
-    var m = CAL.month, wrap = el('div', 'calw'), gcard = el('div', 'card calg'), nav = el('div', 'mnav'), wk = el('div', 'calwk');
+    var span = calSpan(), open = calGrid(), fixed = calWideQ && calWideQ.matches;
+    var m = CAL.month, wrap = el('div', 'calw' + (span > 1 ? ' calr' : '')), gcard = el('div', 'card calg' + (open ? '' : ' cfold')), nav = el('div', 'mnav'), wk = el('div', 'calwk');
     var grid = el('div', 'calgrid'), dcard = mkCard('calendar', ''), dtitle = dcard.querySelector('h3'), list = el('div'), cells = {};
+    var fcol = el('div', 'calf'), hd = el('div', 'mnav calhd'), seg = el('div', 'seg'), rbox = el('div', 'calrange'), md = {};
     dcard.classList.add('cald');
     grid.setAttribute('role', 'group');
     grid.setAttribute('aria-label', monthLabel(m));
     WEEK.forEach(function (w, i) { wk.appendChild(el('span', i > 4 ? 'we' : '', w)); });
-    add(main, add(wrap, add(gcard, nav, wk, grid), add(dcard, list,
-      add(el('div', 'foot cfoot'), foodBtn('btn', 'plus', 'Событие', function (ev) { calSheet(null, CAL.day, ev.currentTarget, after); })))));
+    // «День · 3 дня · Неделя» (В6): the device's own; a change draws the tab again.
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Период');
+    CAL_SPANS.forEach(function (x) {
+      var b = el('button', x[0] === span ? 'on' : '', x[1]);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(x[0] === span));
+      b.onclick = function () {
+        if (x[0] === span) return;
+        haptic();
+        store('calSpan', String(x[0]));
+        clear(main);
+        calView();
+      };
+      seg.appendChild(b);
+    });
+    var addB = add(el('div', 'foot cfoot'), foodBtn('btn', 'plus', 'Событие', function (ev) { calSheet(null, CAL.day, ev.currentTarget, after); }));
+    add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, add(hd, seg),
+      span > 1 ? rbox : add(dcard, list, addB), span > 1 ? addB : null)));
     // A month or a day by the arrows, «Сегодня» and a day of the next month's edge: the tab drawn again on it.
     function goTo(month, day) {
       haptic();
@@ -17556,46 +17614,62 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       clear(main);
       calView();
     }
-    [[-1, 'chevron-left', 'Предыдущий месяц'], [0], [1, 'chevron-right', 'Следующий месяц']].forEach(function (x) {
-      if (!x[0]) return nav.appendChild(el('div', 'mmon', monthLabel(m)));
+    // A day (a week in the strip) on: in this month — picked; in another — the tab drawn there.
+    function stepTo(d) {
+      if (d.slice(0, 7) !== CAL.month) return goTo(d.slice(0, 7), d);
+      pick(d);
+    }
+    // The month's head: the arrows step the month (the week in the strip); on a phone its name folds the grid into the
+    // week's strip and back (В8, localStorage calMonthOpen), from 1400 px the grid always.
+    [[-1, 'chevron-left', open ? 'Предыдущий месяц' : 'Предыдущая неделя'], [0], [1, 'chevron-right', open ? 'Следующий месяц' : 'Следующая неделя']].forEach(function (x) {
+      if (!x[0]) {
+        if (fixed) return nav.appendChild(el('div', 'mmon', monthLabel(m)));
+        var t = add(el('button', 'mmon cmon'), el('span', '', monthLabel(m)), icon(open ? 'chevron-up' : 'chevron-down'));
+        t.type = 'button';
+        t.setAttribute('aria-expanded', String(open));
+        t.setAttribute('aria-label', monthLabel(m) + (open ? ' — свернуть в неделю' : ' — показать месяц'));
+        t.onclick = function () { haptic(); store('calMonthOpen', open ? '0' : '1'); clear(main); calView(); };
+        return nav.appendChild(t);
+      }
       var b = add(el('button'), icon(x[1]));
       b.type = 'button';
       b.setAttribute('aria-label', x[2]);
-      b.onclick = function () { goTo(monthStep(m, x[0])); };
+      b.onclick = function () { if (open) goTo(monthStep(m, x[0])); else stepTo(addDays(CAL.day, 7 * x[0])); };
       nav.appendChild(b);
+    });
+    // «‹ ›» by the switch: a day, three or a week on.
+    [[-1, 'chevron-left', 'Раньше'], [1, 'chevron-right', 'Дальше']].forEach(function (x) {
+      var b = add(el('button'), icon(x[1]));
+      b.type = 'button';
+      b.setAttribute('aria-label', x[2] + ' на ' + CAL_SPANS.filter(function (s) { return s[0] === span; })[0][1].toLowerCase());
+      b.onclick = function () { stepTo(addDays(CAL.day, span * x[0])); };
+      hd.appendChild(b);
     });
     // «Сегодня» in the day's head, away from today only: the month's strip never moves.
     var back = foodBtn('mtoday', 'calendar', 'Сегодня', function () { if (m === today.slice(0, 7)) pick(today); else goTo(today.slice(0, 7), today); });
     back.setAttribute('aria-label', 'К сегодняшнему дню');
-    dcard.firstChild.appendChild(back);
-    // More sideways than down and longer than 40 px, as the month's swipe of «Деньги»; the page's own gestures skip .mswipe.
-    gcard.classList.add('mswipe');
-    var x0 = null, y0 = 0;
-    gcard.addEventListener('touchstart', function (e) {
-      x0 = e.touches.length === 1 ? e.touches[0].clientX : null;
-      if (x0 !== null) y0 = e.touches[0].clientY;
-    }, { passive: true });
-    gcard.addEventListener('touchend', function (e) {
-      if (x0 === null || !e.changedTouches.length) return;
-      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
-      x0 = null;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) goTo(monthStep(m, dx < 0 ? 1 : -1));
-    }, { passive: true });
-    gcard.addEventListener('touchcancel', function () { x0 = null; }, { passive: true });
+    (span > 1 ? hd : dcard.firstChild).appendChild(back);
+    // Swipes (В9): the grid — a month, the strip — a week, the feed — its span.
+    sideSwipe(gcard, function (n) { if (open) goTo(monthStep(m, n)); else stepTo(addDays(CAL.day, 7 * n)); });
+    sideSwipe(span > 1 ? rbox : dcard, function (n) { stepTo(addDays(CAL.day, span * n)); });
     // The grid: whole weeks from the Monday on or before the 1st; the days of the months around are muted and lead there.
-    function drawGrid(dots) {
-      var first = m + '-01', lead0 = wd(first), n = days(first, monthStep(m, 1) + '-01'), total = Math.ceil((lead0 + n) / 7) * 7;
+    // Folded: the seven days of the chosen day's week, all of them his (another month's lead there).
+    function drawGrid() {
+      var dots = {};
+      for (var k in md) for (var d0 in md[k]) dots[d0] = md[k][d0];
+      var first = open ? m + '-01' : addDays(CAL.day, -wd(CAL.day)), lead0 = open ? wd(first) : 0;
+      var total = open ? Math.ceil((lead0 + days(first, monthStep(m, 1) + '-01')) / 7) * 7 : 7;
       clear(grid);
       cells = {};
       for (var i = 0; i < total; i++) {
-        var d = addDays(first, i - lead0), out = d.slice(0, 7) !== m, has = out ? [] : (dots[d] || []);
+        var d = addDays(first, i - lead0), out = open && d.slice(0, 7) !== m, has = out ? [] : (dots[d] || []);
         var srcs = CAL_SRC.filter(function (s) { return has.indexOf(s) >= 0; }).slice(0, 3);
         var c = add(el('button', 'cday' + (out ? ' out' : '') + (d === today ? ' today' : '')), el('span', 'cn', String(Number(d.slice(8, 10)))),
           add.apply(null, [el('span', 'cdots')].concat(srcs.map(function (s) { return el('i', 'cs-' + s); }))));
         c.type = 'button';
         c.setAttribute('aria-label', calDayName(d) + (d === today ? ', сегодня' : '') + (srcs.length ? ', есть дела' : ''));
         if (d === today) c.setAttribute('aria-current', 'date');
-        c.onclick = (function (d, out) { return function () { if (out) goTo(d.slice(0, 7), d); else pick(d); }; })(d, out);
+        c.onclick = (function (d, out) { return function () { if (out) goTo(d.slice(0, 7), d); else stepTo(d); }; })(d, out);
         if (!out) cells[d] = c;
         grid.appendChild(c);
       }
@@ -17603,34 +17677,46 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     function mark() {
       for (var d in cells) {
+        var on = span > 1 ? d >= CAL.day && d < addDays(CAL.day, span) : d === CAL.day;
         cells[d].classList.toggle('on', d === CAL.day);
+        cells[d].classList.toggle('inr', on && d !== CAL.day);
         cells[d].setAttribute('aria-pressed', String(d === CAL.day));
       }
     }
     function pick(d) {
       if (d === CAL.day) return;
       haptic();
+      var week = addDays(CAL.day, -wd(CAL.day));
       CAL.day = d;
-      mark();
-      clear(list);
-      loadDay();
+      // The strip of another week: its days drawn, the month's data kept.
+      if (!open && addDays(d, -wd(d)) !== week) { drawGrid(); loadMonth(); } else mark();
+      loadFeed();
     }
-    function row(x) {
+    function isWorkX(x) { return x.src === 'cal' && x.kind === 'work'; }
+    // The sheet of our event: the month's row by ref (notes and all), else the feed's item; an occurrence of a series
+    // (В2) at its own date and time, which the sheet sends back with an edit (the series' row moves with it).
+    function openCal(x, day, r) {
+      var base = CAL.ev[x.ref], ev = base ? Object.assign({}, base) : { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place,
+        notes: x.notes || '', url: x.url || null, done: x.done, repeat: x.repeat || null, repeat_every: x.repeat_every || 1 };
+      // Its done mark is the occurrence's (the feed's), not the series row's.
+      if (x.occurrence) { ev.starts_at = x.starts_at; ev.ends_at = x.ends_at; ev.occurrence = x.occurrence; ev.done = x.done; }
+      calSheet(ev, day, r, after);
+    }
+    function row(x, day) {
+      day = day || CAL.day;
       var src = x.src, wo = src === 'workout', ic = src === 'cal' ? calKind(x.kind)[2] : wo ? WO_IC[x.kind] || 'dumbbell' : CAL_IC[src] || 'calendar';
       var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
       if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
-      var sub = [x.place, CAL_SUB[src]].filter(Boolean).join(' · ');
+      var sub = [x.place, CAL_SUB[src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · ');
       // A planned workout, plan vs fact: done — the check on its icon, skipped — dimmed.
       var dn = src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null;
       var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple') + (src === 'cal' ? ' k-' + calKind(x.kind)[0] : '') +
         (dn === false ? ' cskip' : '')), tm,
         add(el('span', 'lead cic'), icon(ic), dn === true ? icon('check', 'cck') : null),
         add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
-      // Ours: the month's row by ref (notes and all); the month not in yet — the feed's item with the row's id.
-      var open = src === 'cal' && x.editable !== false ? function () {
-        calSheet(CAL.ev[x.ref] || { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place, notes: x.notes || '', url: x.url || null, done: x.done }, CAL.day, r, after);
-      }
-        : src === 'task' && x.ref != null ? function () { calTaskSheet(x, CAL.day, r, taskAfter); }
+      var act = src === 'cal' && x.editable !== false ? function () { openCal(x, day, r); }
+        : src === 'task' && x.ref != null ? function () { calTaskSheet(x, day, r, taskAfter); }
+        : src === 'show' ? function () { show('cinema'); }
         : wo && x.ref != null ? function () {
           if (r.busy) return;
           r.busy = true;
@@ -17640,10 +17726,31 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           }, function () { r.busy = false; });
         } : null;
       if (x.src === 'task' && x.ref != null) r.setAttribute('data-ref', String(x.ref));
-      if (!open) return r;
+      if (!act) return r;
       r.appendChild(icon('chevron-right', 'go'));
       r.setAttribute('aria-label', (x.all_day ? 'весь день' : calHm(x.starts_at)) + ', ' + (x.title || '') + (dn === true ? ', был' : dn === false ? ', не было' : '') + ' — открыть');
-      return tap(r, open);
+      return tap(r, act);
+    }
+    // A work day (В14) is the day's background: a band under its heading, not a row — «FBA · рабочий день», its hours
+    // when it has them; ours opens its sheet.
+    function band(x, day) {
+      var hrs = x.all_day ? '' : ' ' + calHm(x.starts_at) + (x.ends_at && x.ends_at !== x.starts_at ? '–' + calHm(x.ends_at) : '');
+      var b = add(el('div', 'cwork'), icon('briefcase-business'), el('span', '', (x.title || 'Работа') + ' · рабочий день' + hrs));
+      if (x.editable === false) return b;
+      b.appendChild(icon('chevron-right', 'go'));
+      b.setAttribute('aria-label', (x.title || 'Работа') + ', рабочий день' + hrs + ' — открыть');
+      return tap(b, function () { openCal(x, day, b); });
+    }
+    // One day's lines into box: the work bands, the rows («ничего не запланировано» for none), «Свободно: …» under
+    // them (В1), muted, none when the day has no window.
+    function fill(box, date, items, free) {
+      items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
+      var rest = items.filter(function (x) { return !isWorkX(x); });
+      if (!rest.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
+      rest.forEach(function (x) { box.appendChild(row(x, date)); });
+      if (free && free.length) {
+        box.appendChild(el('div', 'mu cfree', 'Свободно: ' + free.map(function (s) { return s.from + '–' + s.to; }).join(' · ')));
+      }
     }
     // The day on screen (lastDay) without the tasks done or moved off it in their sheet.
     var lastDay = null;
@@ -17654,53 +17761,77 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         return !t || (!t.done && t.due_date === j.date);
       });
       clear(list);
-      if (!items.length) return list.appendChild(el('div', 'cnone', 'ничего не запланировано'));
-      items.forEach(function (x) { list.appendChild(row(x)); });
+      fill(list, j.date, items, j.free);
     }
+    // «3 дня» and «Неделя» (В6): a card per day — its heading, the same rows, its free windows; on a wide screen three
+    // columns in reading order (not .cols: its masonry put Monday under Sunday's neighbour).
+    function drawRange(j) {
+      clear(rbox);
+      (j.days || []).forEach(function (d) {
+        var c = add(el('div', 'card cald'), add(el('div', 'ch'), el('h3', '', calDayName(d.date) +
+          (d.date === today ? ' · сегодня' : d.date === addDays(today, 1) ? ' · завтра' : ''))));
+        fill(c, d.date, d.items || [], d.free);
+        rbox.appendChild(c);
+      });
+    }
+    // The months the grid shows (the strip's week may cross into the next one), each cache-first; their dots merged.
     function loadMonth() {
-      swr({ key: 'cal:m:' + m, box: grid, n: 0, live: function () { return current === 'cal' && CAL.month === m; },
-        fetch: function () { return api('miniapp', { action: 'cal_month' }, 15000, true, { ym: m }); },
-        render: function (j) {
-          CAL.ev = {};
-          (j.events || []).forEach(function (e) { CAL.ev[e.id] = e; });
-          drawGrid(j.dots || {});
-        }, retry: load, fail: noop });
+      var ms = open ? [m] : [addDays(CAL.day, -wd(CAL.day)).slice(0, 7), addDays(CAL.day, 6 - wd(CAL.day)).slice(0, 7)];
+      ms.filter(function (x, i) { return ms.indexOf(x) === i; }).forEach(function (mm) {
+        swr({ key: 'cal:m:' + mm, box: grid, n: 0, live: function () { return current === 'cal' && CAL.month === m; },
+          fetch: function () { return api('miniapp', { action: 'cal_month' }, 15000, true, { ym: mm }); },
+          render: function (j) {
+            (j.events || []).forEach(function (e) { CAL.ev[e.id] = e; });
+            md[mm] = j.dots || {};
+            drawGrid();
+          }, retry: load, fail: noop });
+      });
     }
-    function loadDay() {
+    function loadFeed() {
       var d = CAL.day;
-      text(dtitle, calDayName(d) + (d === today ? ' · сегодня' : ''));
       back.hidden = d === today;
+      if (span > 1) {
+        return swr({ key: 'cal:r:' + d + ':' + span, box: rbox, n: 2, live: function () { return current === 'cal' && CAL.day === d; },
+          fetch: function () { return api('miniapp', { action: 'cal_range' }, 15000, true, { from: d, days: span }); },
+          render: drawRange, retry: load });
+      }
+      text(dtitle, calDayName(d) + (d === today ? ' · сегодня' : ''));
       swr({ key: 'cal:d:' + d, box: list, n: 1, live: function () { return current === 'cal' && CAL.day === d; },
         fetch: function () { return api('miniapp', { action: 'cal_day' }, 15000, true, { date: d }); },
         render: drawDay, retry: load });
     }
-    function load() { loadMonth(); loadDay(); }
-    // After a save or a delete: the days and months it touched are fetched again (the one on screen at once, cache-first);
-    // a saved event on another day takes the screen there.
+    function load() { loadMonth(); loadFeed(); }
+    // After a save or a delete: the days, ranges and months it touched are fetched again (the one on screen at once,
+    // cache-first); a saved event off the days on screen takes the screen there.
     function after(ev, was) {
       [was, ev && ev.starts_at ? foodDay(ev.starts_at) : null].forEach(function (d) {
         if (!d) return;
         if (d !== CAL.day) cacheDrop('cal:d:' + d);
         if (d.slice(0, 7) !== CAL.month) cacheDrop('cal:m:' + d.slice(0, 7));
       });
+      cacheDrop('cal:r');
       cacheDrop('home');
+      // A series (or an edit of one) touches every day it falls on: the months and days cached are all stale.
+      if (ev && ev.repeat) { cacheDrop('cal:d'); cacheDrop('cal:m'); }
       var to = ev && ev.starts_at ? foodDay(ev.starts_at) : null;
       if (current !== 'cal') return;
-      if (to && to !== CAL.day) return goTo(to.slice(0, 7), to);
+      if (to && (to < CAL.day || to >= addDays(CAL.day, span))) return goTo(to.slice(0, 7), to);
       load();
     }
     // After a change in a task's sheet: its row as it is now (gone when done or moved, at its new time), the cached days,
-    // the month and «Главная» fetched afresh next time.
+    // the month and «Главная» fetched afresh next time; «3 дня» and «Неделя» fetched again.
     function taskAfter(t) {
       cacheDrop('home');
       cacheDrop('cal:m:' + CAL.month);
       cacheDrop('cal:d:' + CAL.day);
       cacheDrop('cal:d:' + addDays(CAL.day, 1));
+      cacheDrop('cal:r');
       if (t.due_date) {
         cacheDrop('cal:d:' + t.due_date);
         cacheDrop('cal:m:' + t.due_date.slice(0, 7));
       }
       if (current === 'cal' && grid.isConnected) loadMonth();
+      if (span > 1) { if (current === 'cal' && rbox.isConnected) loadFeed(); return; }
       if (!lastDay || !lastDay.items) return;
       lastDay.items.forEach(function (x) {
         if (x.src !== 'task' || CAL.task[x.ref] !== t || t.due_date !== lastDay.date) return;
@@ -17719,7 +17850,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         }
       }
     }
-    drawGrid({});
+    drawGrid();
     load();
   }
   // A task of the day (docs/specs/calendar-2.md, А1): its title, when («сегодня 15:00», «сегодня, без времени») and its
@@ -17811,10 +17942,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     if (!(dur > 0)) dur = 60;
     // The reminder: the row's (undefined — the day's row without the month: not touched unless he picks one).
     var rem = ev ? ev.remind_min : CAL_REMIND_DEF[kind], remSet = !!ev;
-    // Plan vs fact: only an event of kind sport that is over; dn0 — as it stands (the month's row or the feed's done).
+    // Plan vs fact: only an event of kind sport that is over — of a series, the occurrence (the series' row itself never);
+    // dn0 — as it stands (the month's row or the feed's done; an occurrence's own, openCal).
     var end0 = ev ? (ev.ends_at ? Date.parse(ev.ends_at) : Date.parse(ev.starts_at) + (ev.all_day ? 864e5 : 36e5)) : 0;
-    var past = !!ev && ev.kind === 'sport' && end0 < Date.now();
+    var past = !!ev && ev.kind === 'sport' && (!ev.repeat || !!ev.occurrence) && end0 < Date.now();
     var dn0 = !ev ? null : ev.done !== undefined ? ev.done : ev.done_at ? ev.done_ref !== 'skipped' : null, dn = dn0;
+    // A series (calendar-2, В2): its repeat, every n-th and last day. An occurrence (ev.occurrence, its date) is shown at
+    // its own date and time and edited as the series: the edit carries its date, the series' row moves with it.
+    var rep = ev ? ev.repeat || null : null, every = ev && ev.repeat_every || 1, until = ev && ev.repeat_until || '';
     var ti = el('input'), di = el('input'), tm = el('input'), pl = el('input'), nt = el('textarea', 'lta cnt');
     ti.value = ev ? ev.title || '' : '';
     ti.placeholder = 'Что: созвон, врач, поездка…';
@@ -17854,6 +17989,79 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var doneB = CAL_DONE.map(function (x) {
       return dones.appendChild(chip(x[1], false, x[0] === null ? 'Не отмечено' : x[1], function () { dn = x[0]; haptic(); paint(); }));
     });
+    var reps = el('div', 'cdur'), ni = el('input'), ui = el('input'), pre = el('span', 'mu'), unit = el('span', 'mu');
+    reps.setAttribute('role', 'group');
+    reps.setAttribute('aria-label', 'Повтор');
+    var repB = CAL_REP.map(function (x) {
+      return reps.appendChild(chip(x[1], false, x[0] ? 'Повтор: ' + REPEAT_LABEL(x[0], 1) : 'Без повтора', function () { rep = x[0]; haptic(); paint(); }));
+    });
+    ni.type = 'number';
+    ni.min = '1';
+    ni.max = '52';
+    ni.step = '1';
+    ni.inputMode = 'numeric';
+    ni.enterKeyHint = 'done';
+    ni.value = String(every);
+    ni.setAttribute('aria-label', 'Повтор: каждые');
+    ni.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); ni.blur(); } };
+    ni.onchange = function () {
+      var n = Number(ni.value);
+      if (n >= 1 && n <= 52 && n % 1 === 0) every = n; else ni.value = String(every);
+      paint();
+    };
+    ui.type = 'date';
+    ui.value = until;
+    ui.className = 'cpk';
+    ui.setAttribute('aria-label', 'Повтор до');
+    ui.onclick = function () { try { if (ui.showPicker) ui.showPicker(); } catch (e) {} };
+    ui.onchange = function () { until = ui.value; };
+    var repRow = add(el('div', 'wrow2 crep'), add(el('label', 'field'), pre, ni, unit), add(el('label', 'field'), el('span', 'mu', 'до'), ui));
+    // A weekly series on given weekdays (a work day Monday to Friday, В14): its days, said; set by the bot or cal.py.
+    var rdays = ev && ev.repeat_days && ev.repeat_days.length ? el('div', 'ccap', 'По дням: ' + ev.repeat_days.map(function (d) { return WEEK[d - 1]; }).join(', ')) : null;
+    // Moving our event (В10): «+30 мин · +1 ч · завтра · другой день» at once (cal_edit), the length kept, «Вернуть» in
+    // the toast; a series by its time only (a day would move every one of it), all day by days only.
+    var moves = null;
+    if (ev && ev.id != null) {
+      var mvs = (ev.all_day ? [] : [[30, '+30 мин'], [60, '+1 ч']]).concat(ev.repeat ? [] : [['d', 'завтра'], ['x', 'другой день']]);
+      if (mvs.length) {
+        moves = el('div', 'cdur c' + mvs.length);
+        moves.setAttribute('role', 'group');
+        moves.setAttribute('aria-label', 'Перенести');
+        mvs.forEach(function (x) {
+          if (x[0] !== 'x') return moves.appendChild(chip(x[1], false, typeof x[0] === 'number' ? 'Перенести на ' + x[1].slice(1) + ' позже' : 'Перенести на завтра', function () {
+            var hm0 = p ? p.hour + ':' + p.minute : '00:00';
+            if (typeof x[0] === 'number') return move(Date.parse(ev.starts_at) + x[0] * 60000, null);
+            move(null, addDays(d0, 1), hm0);
+          }));
+          // «другой день»: the date picker over the chip; a day picked — moved there at the same time.
+          var oi = el('input'), lb = add(el('label', 'pill cmovd'), el('span', '', x[1]), oi);
+          oi.type = 'date';
+          oi.value = d0;
+          oi.setAttribute('aria-label', 'Перенести на другой день');
+          oi.onchange = function () { if (/^\d{4}-\d{2}-\d{2}$/.test(oi.value) && oi.value !== d0) move(null, oi.value, p ? p.hour + ':' + p.minute : '00:00'); };
+          moves.appendChild(lb);
+        });
+      }
+    }
+    // The move itself: by minutes (s1, epoch ms) or to a day at a time; the end by the same length (all day — by days).
+    function move(s1, day, hm0) {
+      var s0 = Date.parse(ev.starts_at), e0 = ev.ends_at ? Date.parse(ev.ends_at) : null;
+      if (s1 === null) s1 = Date.parse(foodIso(day, ev.all_day ? '00:00' : hm0));
+      var e1 = e0 === null ? null : ev.all_day ? Date.parse(foodIso(addDays(foodDay(new Date(s1).toISOString()), Math.round((e0 - s0) / 864e5)), '00:00')) : s1 + e0 - s0;
+      var b = { id: ev.id, starts_at: new Date(s1).toISOString() }, nd = foodDay(b.starts_at);
+      if (e1 !== null) b.ends_at = new Date(e1).toISOString();
+      if (ev.occurrence) b.occurrence = ev.occurrence;
+      haptic();
+      api('miniapp', { action: 'cal_edit' }, 15000, false, b).then(function () {
+        close();
+        var back = { id: ev.id, starts_at: new Date(s0).toISOString(), ends_at: e0 === null ? null : new Date(e0).toISOString() };
+        if (ev.occurrence) back.occurrence = ev.occurrence;
+        backToast('Перенёс на ' + WEEK[wd(nd)] + ' ' + dm(nd) + (ev.all_day ? '' : ' ' + calHm(s1)), function () {
+          api('miniapp', { action: 'cal_edit' }, 15000, false, back).then(function () { done({ starts_at: back.starts_at, repeat: ev.repeat }, nd); });
+        });
+        done({ starts_at: b.starts_at, repeat: ev.repeat }, d0);
+      }, noop);
+    }
     kinds.setAttribute('role', 'group');
     kinds.setAttribute('aria-label', 'Вид');
     var durB = CAL_DUR.map(function (x) {
@@ -17880,7 +18088,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       // A new event's reminder follows its kind (none all day) until he picks one.
       if (!remSet) rem = hm ? CAL_REMIND_DEF[kind] : null;
       rems.classList.toggle('off', !hm);
-      [[remB, CAL_REMIND, rem], [doneB, CAL_DONE, dn]].forEach(function (g) {
+      // «каждую [1] неделю», «каждые [2] недели» (1 reads as 21, as the task's).
+      var lw = rep ? REPEAT_LABEL(rep, every === 1 ? 21 : every).split(' ') : [];
+      text(pre, lw[0] || '');
+      text(unit, lw.slice(2).join(' '));
+      repRow.hidden = !rep;
+      if (rdays) rdays.hidden = rep !== 'weekly';
+      [[remB, CAL_REMIND, rem], [doneB, CAL_DONE, dn], [repB, CAL_REP, rep]].forEach(function (g) {
         g[0].forEach(function (b, i) {
           var on = g[1][i][0] === g[2];
           b.className = 'pill' + (on ? ' acc' : '');
@@ -17895,12 +18109,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (!t) bad = 'Нужно название';
       else if (!/^\d{4}-\d{2}-\d{2}$/.test(dd)) bad = 'Нужна дата';
       else if (hm && !/^\d\d:\d\d$/.test(hm)) bad = 'Время — ЧЧ:ММ';
+      else if (rep && until && until < dd) bad = 'Повтор «до» — не раньше начала';
       if (bad) return toast(bad);
-      var allDay = !hm, st = foodIso(dd, allDay ? '00:00' : hm);
-      var b = { title: t, starts_at: st, ends_at: allDay ? null : new Date(Date.parse(st) + dur * 60000).toISOString(), all_day: allDay, kind: kind,
+      var allDay = !hm, st = foodIso(dd, allDay ? '00:00' : hm), en = allDay ? null : new Date(Date.parse(st) + dur * 60000).toISOString();
+      var b = { title: t, starts_at: st, ends_at: en, all_day: allDay, kind: kind,
         place: pl.value.trim() || null, notes: nt.value.trim() || null };
       if (rem !== undefined) b.remind_min = allDay ? null : rem;
       if (past) b.done = dn;
+      if (rep || (ev && ev.repeat)) {
+        b.repeat = rep;
+        b.repeat_every = rep ? every : 1;
+        b.repeat_until = rep && until ? until : null;
+      }
       if (ev) {
         // Only what changed; the notes a row of the day did not carry stay as they are unless he typed some.
         var patch = { id: ev.id }, n = 0;
@@ -17910,9 +18130,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           if (k === 'all_day') old = !!ev.all_day;
           if (k === 'done') old = dn0;
           if (k === 'remind_min' && ev.remind_min === undefined) old = undefined;
+          if (k === 'repeat_every' && ev.repeat_every == null) old = 1;
           if (old !== b[k]) { patch[k] = b[k]; n++; }
         }
         if (!n) return close();
+        // An occurrence's new time: its date goes along, the series' row moves by as much.
+        if (ev.occurrence && (patch.starts_at || patch.ends_at)) patch.occurrence = ev.occurrence;
         b = patch;
       } else for (var f in b) if (b[f] === null && f !== 'remind_min') delete b[f];
       save.disabled = true;
@@ -17922,16 +18145,19 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         var ov = (j && j.overlaps) || [], o = ov[0], saved = j && j.event;
         close();
         if (o && saved) {
+          // A series' occurrence opens again where it now is.
+          var again = ev && ev.occurrence ? Object.assign({}, saved, { starts_at: st, ends_at: en, occurrence: dd }) : saved;
           backToast('Накладывается на ' + o.emoji + ' ' + o.title + ' ' + calHm(o.starts_at) + (o.ends_at && o.ends_at !== o.starts_at ? '–' + calHm(o.ends_at) : '') +
-            (ov.length > 1 ? ' и ещё ' + (ov.length - 1) : ''), function () { calSheet(saved, foodDay(saved.starts_at), from, done); }, 'Открыть');
+            (ov.length > 1 ? ' и ещё ' + (ov.length - 1) : ''), function () { calSheet(again, foodDay(again.starts_at), from, done); }, 'Открыть');
         } else toast(ev ? 'Сохранил' : 'Добавил: ' + t, 'calendar');
-        done((j && j.event) || { starts_at: st }, ev ? d0 : null);
+        done(ev && ev.occurrence ? { starts_at: st, repeat: rep || ev.repeat } : (j && j.event) || { starts_at: st }, ev ? d0 : null);
       }, function () { save.disabled = false; });
     });
     var del = null, armT = null;
     if (ev) del = foodBtn('btn ghost', 'trash', 'Удалить', function () {
       if (!armT) {
-        label(del, null, 'Точно удалить?');
+        // A series goes as a whole (no exceptions for one occurrence).
+        label(del, null, ev.repeat ? 'Удалить всю серию?' : 'Точно удалить?');
         del.className = 'btn warn';
         armT = setTimeout(function () { armT = null; label(del, 'trash', 'Удалить'); del.className = 'btn ghost'; }, 3000);
         return;
@@ -17941,14 +18167,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       haptic();
       api('miniapp', { action: 'cal_delete' }, 15000, false, { id: ev.id }).then(function () {
         close();
-        toast('Удалил', 'trash');
-        done(null, d0);
+        toast(ev.repeat ? 'Удалил серию' : 'Удалил', 'trash');
+        done(ev.repeat ? { repeat: ev.repeat } : null, d0);
       }, function () { del.disabled = false; });
     });
     close = legalSheet(ev ? 'Событие' : 'Новое событие', [add(el('div', 'bar'), add(el('label', 'field'), ti)),
       past ? el('div', 'ccap', 'Тренировка была?') : null, past ? dones : null,
       add(el('div', 'wrow2'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm, clr)),
-      cap, durs, el('div', 'ccap', 'Напомнить'), rems, add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
+      moves ? el('div', 'ccap', 'Перенести') : null, moves,
+      cap, durs, el('div', 'ccap', 'Напомнить'), rems, el('div', 'ccap', 'Повтор'), reps, repRow, rdays,
+      add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
       add(el('div', 'bar mact mstick'), save, del)], from);
   }
 
