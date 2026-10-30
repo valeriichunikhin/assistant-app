@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 08:28">
+<meta name="published" content="2026-10-30 09:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1130,15 +1130,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    pastel pills (норма — green, выше — sky, ниже — orange). «Фитнес» under a peach tint: the week as circles, the
    gauges as half rings with the green target and a marker; «Биология» under a teal tint: a sparkline a row on the right. */
 :root{--ring-load:#d47a00;--ring-load-2:#ffc23d;--ring-recovery:#10a370;--ring-recovery-2:#8ee05a;--ring-sleep:#887bff;--ring-sleep-2:#5fb4ff;
-  --hl-sky:#3399d8;--hl-bio:#14a898;--hl-peach:#ff9a62;--hl-teal:#2ec4b6;--hl-tint:12%;--hl-tint2:18%;--hl-glow:url(#g-glow-d);
+  --hl-sky:#3399d8;--hl-bio:#14a898;--hl-peach:#ff9a62;--hl-teal:#2ec4b6;--wo-other:#d4a93a;--hl-tint:12%;--hl-tint2:18%;--hl-glow:url(#g-glow-d);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 22%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 22%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 22%,transparent)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
-  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}}
 :root[data-theme="light"]{--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
-  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}
 .hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:round;filter:var(--hl-glow)}
@@ -1168,8 +1168,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:2px 14px 14px}
 .hwd{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}.hwd>.mu{font-size:12px}.hwd.on>.mu{color:var(--fg);font-weight:700}
 .hwc{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--surface-2);color:var(--muted)}.hwc .i{width:18px;height:18px}
-.hwc.wo{background:color-mix(in srgb,var(--ring-load) 16%,transparent);color:var(--ring-load)}
-.hwd.on .hwc{box-shadow:0 0 0 2px var(--ring-load),0 0 12px color-mix(in srgb,var(--ring-load) 40%,transparent)}
+/* A colour per sport (30.10.2026): the gym in his accent, volleyball orange, the run green, the bike sky, swimming teal,
+   the rest gold; the strip's circles, today's ring and the «Спорт» rows' icons take it through --wo. */
+.hwc{--wo:var(--ring-load)}
+.k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}
+.hwc.wo{background:color-mix(in srgb,var(--wo) 16%,transparent);color:var(--wo)}
+.hwd.on .hwc{box-shadow:0 0 0 2px var(--wo),0 0 12px color-mix(in srgb,var(--wo) 40%,transparent)}
+.hwd.tap{cursor:pointer;border-radius:12px}.hwd.tap:active .hwc{transform:scale(.94)}.hwc{transition:transform .12s}
+.frow .lead.kd{color:var(--wo)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 14px}
 .hgg{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center}.hgh{font-weight:600;margin:0 0 2px}
 .hgv{display:block;width:100%;max-width:168px;height:auto;overflow:visible}.hgv .tr,.hgv .zone{fill:none;stroke-linecap:round}
@@ -14265,7 +14271,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       swr({ key: 'body:' + date, box: box, n: 1, live: function () { return current === 'food' && FOOD.date === date && healthSeg === seg; },
         fetch: function () { return api('miniapp', { action: 'health_day' }, 15000, true, { date: date }); },
         render: function (j) {
-          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j)));
+          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j, function () { fresh(); load(); })].concat(hlFitTiles(j)));
           var had = HJ && HJ.has_data;
           HJ = j;
           add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlTimeline(j, openTl, function (ev) {
@@ -15505,18 +15511,33 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
-  // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout, a dot for rest), the two gauges, the
-  // muscles' freshness. Nothing to show (no workout in 28 days, every group fresh) — null.
-  function hlFitness(j) {
+  // A tap on the strip's day: one workout — its sheet; several — the day's list, a row each, to pick from.
+  function hlDayOpen(day, ws, from, done) {
+    if (ws.length === 1) return woDetailSheet(ws[0], from, done);
+    var close = noop, rows = ws.map(function (w) {
+      var r = add(el('div', 'row frow'), add(el('span', 'lead kd k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')),
+        add(el('span', 'tx'), el('div', 't', woLabel(w) + ' · ' + foodTime(w.at))), el('span', 'pr', woParts(w).join(' · ')));
+      r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
+      return tap(r, function () { close(); woDetailSheet(w, from, done); });
+    });
+    close = legalSheet(WEEK[wd(day)] + ', ' + Number(day.slice(8, 10)) + ' ' + MONTHS_G[Number(day.slice(5, 7)) - 1], rows.concat([
+      add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))]), from);
+  }
+  // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout in the sport's colour, a moon for rest;
+  // a day with workouts opens them), the two gauges, the muscles' freshness. Nothing to show (no workout in 28 days,
+  // every group fresh) — null.
+  function hlFitness(j, done) {
     var sc = j.scores || {}, fr = j.freshness || [], week = j.week || [];
     var any = sc.load || sc.muscle || week.some(function (d) { return d.kinds.length; }) || fr.some(function (g) { return g.value < 10; });
     if (!any) return null;
     var c = mkCard('flame', 'Фитнес'), strip = el('div', 'hwk');
     c.className += ' hfit';
     week.forEach(function (d) {
-      var k = d.kinds[0], cell = add(el('div', 'hwd' + (d.day === j.date ? ' on' : '')), el('div', 'mu', WEEK[wd(d.day)]),
-        add(el('span', 'hwc' + (k ? ' wo' : '')), icon(k ? WO_IC[k] || 'medal' : 'moon')));
-      cell.setAttribute('aria-label', WEEK[wd(d.day)] + ' ' + dm(d.day) + ': ' + (d.kinds.length ? d.kinds.map(function (x) { return WO_RU[x] || x; }).join(', ') : 'отдых'));
+      var k = d.kinds[0], ws = d.workouts || [], cell = add(el('div', 'hwd' + (d.day === j.date ? ' on' : '')), el('div', 'mu', WEEK[wd(d.day)]),
+        add(el('span', 'hwc' + (k ? ' wo k-' + (WO_IC[k] ? k : 'other') : '')), icon(k ? WO_IC[k] || 'medal' : 'moon')));
+      cell.setAttribute('aria-label', WEEK[wd(d.day)] + ' ' + dm(d.day) + ': ' + (d.kinds.length ? d.kinds.map(function (x) { return WO_RU[x] || x; }).join(', ') : 'отдых') +
+        (ws.length ? ' — открыть' : ''));
+      if (ws.length) tap(cell, function () { haptic(); hlDayOpen(d.day, ws, cell, done || noop); });
       strip.appendChild(cell);
     });
     c.appendChild(strip);
@@ -16316,7 +16337,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var es = (w.items || []).filter(woEx), tx = add(el('span', 'tx'), el('div', 't', woLabel(w) + ' · ' + foodTime(w.at)));
       es.forEach(function (e) { tx.appendChild(el('div', 'mu wl', woLine(e))); });
       if (w.note) tx.appendChild(el('div', 'mu fnote', w.note));
-      var r = add(el('div', 'row frow'), add(el('span', 'lead'), icon(WO_IC[w.kind] || 'medal')), tx, el('span', 'pr', woParts(w).join(' · ')));
+      var r = add(el('div', 'row frow'), add(el('span', 'lead kd k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')), tx, el('span', 'pr', woParts(w).join(' · ')));
       r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
       c.appendChild(tap(r, function () { woDetailSheet(w, r, done); }));
     });
