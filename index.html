@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 17:33">
+<meta name="published" content="2026-10-30 17:53">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1163,8 +1163,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
 .hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 /* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
-.hcur{--hcur:color-mix(in srgb,var(--surface) 55%,transparent);position:relative;isolation:isolate;margin:calc(-1 * var(--r-b)) 8px 0;padding:calc(var(--r-b) + 12px) 14px 14px}/* the curtain under the rings tile (Bevel's «шторка», his 30.10.2026): the panel itself starts below the tile (::before), and only the two corner gaps under the tile's rounded corners are filled (::after) — the tile is translucent in the dark theme, so nothing may be painted under its body */
-.hcur::before{content:"";position:absolute;left:0;right:0;top:var(--r-b);bottom:0;background:var(--hcur);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line);z-index:-1}
+.hcur{--hcur:color-mix(in srgb,var(--surface) 55%,transparent);position:relative;isolation:isolate;margin:calc(-1 * var(--r-b)) 8px 0;padding:calc(var(--r-b) + 12px) 14px 14px}/* Bevel's «шторка» (his 30.10.2026): the curtain lies under the rings tile — its panel starts at the tile's bottom edge (::before, no top line, the tile's own edge is the only line at the joint) and only the two corner gaps under the tile's rounded corners are filled (::after); the tile is translucent in the dark theme, so nothing may be painted under its body */
+.hcur::before{content:"";position:absolute;left:0;right:0;top:var(--r-b);bottom:0;background:var(--hcur);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-b) var(--r-b);z-index:-1}
 .hcur::after{content:"";position:absolute;left:0;right:0;top:0;height:var(--r-b);z-index:-1;background:radial-gradient(circle at var(--r-b) 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) left top/var(--r-b) var(--r-b) no-repeat,radial-gradient(circle at 0 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) right top/var(--r-b) var(--r-b) no-repeat}
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
@@ -1397,6 +1397,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .htip-t{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.35;text-wrap:pretty}.htip-h .i{flex:none;width:16px;height:16px;margin-top:2px;color:var(--muted)}
 .htip-p{margin-top:4px;font-size:14px;line-height:1.45;color:color-mix(in srgb,var(--fg) 72%,transparent);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden}
 .htips{display:flex;flex-direction:column;gap:8px}
+.htip-p+.htip-p{margin-top:6px}.hmod{display:flex;flex-direction:column;gap:10px}.hmod-t{font-weight:700;font-size:17px;line-height:1.35;text-wrap:pretty}.hmod-p{font-size:15px;line-height:1.5}/* the Mac's paragraph of the day (docs/specs/health-advice-model.md): the card clamps each paragraph to three lines, the sheet shows them whole */
 .hstr{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;width:92px;padding:8px 4px 10px;border-radius:var(--r-b);background:var(--surface-2)}
 .hsc-b{display:flex;align-items:center;gap:10px;padding:0 14px 12px;border-radius:var(--r-b)}.hsc-l{flex:1;min-width:0}
 .hsc-h{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}.hsc-dot{width:8px;height:8px;border-radius:50%;background:var(--st)}.hsc-t{flex:1;min-width:0}.hsc-h .hpr-go{color:var(--muted)}
@@ -3831,7 +3832,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
               : 'в цели ' + tg[0] + '–' + tg[1] + ' — тренировка ок';
             add(line('', 'bkg bh3' + (h.load > tg[1] ? ' bad' : '')), icon('flame'), document.createTextNode('Нагрузка ' + h.load + ' % · ' + lw));
           }
-          note(h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice ? '' : 'mu');
+          note(h.advice_model ? h.advice_model.title : h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice_model || h.advice ? '' : 'mu');
         }
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
@@ -15117,7 +15118,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     vs.load_target = j.load_target;
     var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
-    var adv = j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
+    var adv = j.advice_model ? hlModel(j.advice_model, j.tip) : j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
       j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
     wrap.appendChild(add(el('div', 'hcur'), adv));
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
@@ -15134,10 +15135,26 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     b.setAttribute('aria-label', 'Совет дня: ' + t.title + (t.text ? '. ' + t.text : '') + ' — почему');
     return tap(b, function () { hlTipSheet(t, b); });
   }
+  // The Mac's paragraph of the day (docs/specs/health-advice-model.md) in the same form: the model's title (its own
+  // emoji), the two paragraphs three lines each; a tap — hlTipSheet with the whole text above the rules' «Из чего».
+  function hlModel(m, t) {
+    var ps = String(m.text || '').split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean);
+    var b = add(el('div', 'hadv htip'), add(el('div', 'htip-h'), el('div', 'htip-t', hlNb(m.title)), icon('maximize-2')));
+    ps.forEach(function (p) { b.appendChild(el('div', 'htip-p', hlNb(p))); });
+    b.setAttribute('aria-label', 'Совет дня: ' + m.title + '. ' + ps.join(' ') + ' — подробнее');
+    return tap(b, function () { hlTipSheet(t || { lines: [] }, b, { title: m.title, ps: ps }); });
+  }
   // Each sentence of the advice with its reason, as «Из чего» rows: the rule's icon, the sentence bold, the reason under it.
+  // m — the Mac's paragraph: its title and paragraphs first, the rows under «Из чего».
   var HL_TIP_IC = { 1: 'bed', 2: 'ball', 3: 'calendar-clock', 4: 'gauge', 5: 'check-square', 6: 'coffee', 7: 'utensils', 8: 'activity', 9: 'heart' };
-  function hlTipSheet(t, from) {
+  function hlTipSheet(t, from, m) {
     var body = el('div', 'hsh'), list = el('div', 'htips'), close = noop;
+    if (m) {
+      var mod = add(el('div', 'hmod'), el('div', 'hmod-t', hlNb(m.title)));
+      m.ps.forEach(function (p) { mod.appendChild(el('div', 'hmod-p', hlNb(p))); });
+      body.appendChild(mod);
+      if ((t.lines || []).length) body.appendChild(add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего')));
+    }
     (t.lines || []).forEach(function (l) {
       var r = add(el('div', 'hins'), add(el('span', 'hins-i'), icon(HL_TIP_IC[l.rule] || 'lightbulb')),
         add(el('div', 'tx'), el('div', 'hins-t', hlNb(l.text.charAt(0).toUpperCase() + l.text.slice(1))), el('div', 'mu', hlNb(l.why))));
@@ -15145,7 +15162,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       r.setAttribute('aria-label', l.text + '. Почему: ' + l.why);
       list.appendChild(r);
     });
-    add(body, list, el('div', 'mu hsec-n', 'Считается кодом: сон и восстановление, календарь и игры, задачи, траты на кафе, еда. Не больше трёх фраз, по важности.'));
+    add(body, list, el('div', 'mu hsec-n', m ? 'Текст пишет модель по цифрам дня; «Из чего» — правила кодом: сон и восстановление, календарь и игры, еда.'
+      : 'Считается кодом: сон и восстановление, календарь и игры, задачи, траты на кафе, еда. Не больше трёх фраз, по важности.'));
     close = legalSheet('Совет дня', [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
     hlFrame(body);
   }
