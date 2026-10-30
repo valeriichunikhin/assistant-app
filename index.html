@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 11:10">
+<meta name="published" content="2026-10-30 11:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1235,6 +1235,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hfr1 .hfs{display:block;margin:1px 0 5px;font-size:12px;font-weight:600;color:var(--st,var(--muted))}
 .hfd{display:flex;gap:3px}.hfd i{width:8px;height:12px;border-radius:4px;background:var(--track)}.hfd i.on{background:var(--st,var(--mark))}
 .hfadv{padding:0 14px 12px}.hfadv .hadv{margin-top:0}
+.hfh-go{display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-radius:8px}.hfh-go .i{width:16px;height:16px;color:var(--muted)}
+.hms-p{margin-top:12px;font-size:14px;line-height:1.4}.hms-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.hms-h .mu{font-size:13px}
+.hms-sort{min-width:44px;height:36px;padding:0 10px}.hms{margin-top:2px}
+.hms-r{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.hms-r:last-child{border-bottom:0}.hms-m{flex:1;min-width:0}
+.hms-n{font-weight:700}.hms-s{display:block;font-size:13px;color:var(--st,var(--muted))}.hms-s b{color:var(--fg)}
+.hms-pl{flex:none;display:flex;gap:4px}.hms-pl i{width:9px;height:18px;border-radius:5px;background:var(--track)}.hms-pl i.on{background:var(--st,var(--mark))}
 @media (min-width:900px){.hfr-g{grid-template-columns:repeat(4,1fr)}}
 .row.hbr{gap:12px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .tx .mu{font-size:12px}.hbv{font:800 19px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
 .hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
@@ -15642,6 +15648,61 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     close = legalSheet(WEEK[wd(day)] + ', ' + Number(day.slice(8, 10)) + ' ' + MONTHS_G[Number(day.slice(5, 7)) - 1], rows.concat([
       add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))]), from);
   }
+  // «Мышечные группы» (docs/specs/bevel-gap.md, 11a; docs/bevel/muscles-*.png): the segments Свежесть · Подходы · Объём
+  // (the last two over 28 days), a phrase about the groups, the sort toggle, a row a group — the name, the word with
+  // the per cent (or the sets / the kg with the last time), five pills lit by the value. No body map: own drawings
+  // are not ours to make (the icons' rule, 03.09).
+  var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём']];
+  function hlMusclesSheet(j, from) {
+    var ms = j.muscles || [], mode = 'fresh', desc = true, close = noop;
+    var rows = (j.freshness || []).map(function (g) {
+      var m = ms.filter(function (x) { return x.group === g.group; })[0] || {};
+      return { group: g.group, label: g.label, fresh: g.value, sets: m.sets || 0, volume: m.volume_kg || 0, last: m.last_at || null };
+    });
+    var seg = el('div', 'seg'), head = el('div', 'hms-h'), note = el('div', 'mu'), phrase = el('div', 'hms-p'), list = el('div', 'hms');
+    seg.setAttribute('role', 'group');
+    seg.setAttribute('aria-label', 'Что показать');
+    HMS_MODES.forEach(function (m) {
+      var b = el('button', m[0] === mode ? 'on' : '', m[1]);
+      b.type = 'button';
+      b.onclick = function () { if (mode === m[0]) return; mode = m[0]; haptic(); draw(); };
+      seg.appendChild(b);
+    });
+    var sortB = foodBtn('btn ghost hms-sort', 'arrow-up-down', '', function () { desc = !desc; haptic(); draw(); });
+    sortB.setAttribute('aria-label', 'Порядок');
+    add(head, note, sortB);
+    function fword(v) { return v >= 8 ? ['Восстановлены', 'productive'] : v >= 4 ? ['Утомлены', 'low'] : ['Истощены', 'overtrain']; }
+    function val(r) { return mode === 'fresh' ? r.fresh : mode === 'sets' ? r.sets : r.volume; }
+    function draw() {
+      seg.querySelectorAll('button').forEach(function (b, i) { b.className = HMS_MODES[i][0] === mode ? 'on' : ''; });
+      var sorted = rows.slice().sort(function (a, b) { return desc ? val(b) - val(a) : val(a) - val(b); }), max = Math.max.apply(null, rows.map(val).concat([1]));
+      note.textContent = mode === 'fresh' ? 'сейчас' : 'за 28 дней';
+      clear(list);
+      sorted.forEach(function (r) {
+        var w = fword(r.fresh), cls = mode === 'fresh' ? 'hl-st-' + w[1] : 'hl-st-maintain';
+        var sub = mode === 'fresh' ? add(el('span', 'hms-s'), document.createTextNode(w[0] + ' · '), el('b', '', r.fresh * 10 + ' %'))
+          : add(el('span', 'hms-s'), el('b', '', mode === 'sets' ? r.sets + ' ' + plural(r.sets, ['подход', 'подхода', 'подходов']) : grouped(r.volume) + ' кг'),
+            document.createTextNode(r.last ? ' · ' + WEEK[wd(foodDay(r.last))] + ' ' + dm(foodDay(r.last)) : ' · не было'));
+        var pills = el('span', 'hms-pl'), lit = mode === 'fresh' ? Math.round(r.fresh / 2) : Math.round(5 * val(r) / max);
+        for (var i = 0; i < 5; i++) pills.appendChild(el('i', i < lit ? 'on' : ''));
+        var row = add(el('div', 'hms-r ' + cls), add(el('div', 'hms-m'), el('div', 'hms-n', r.label), sub), pills);
+        row.setAttribute('role', 'listitem');
+        row.setAttribute('aria-label', r.label + ': ' + (mode === 'fresh' ? w[0].toLowerCase() + ', ' + r.fresh * 10 + ' %' : sub.textContent));
+        list.appendChild(row);
+      });
+      list.setAttribute('role', 'list');
+      // The phrase: the tired groups now, or the groups that worked most.
+      var tired = rows.filter(function (r) { return r.fresh < 8; }).sort(function (a, b) { return a.fresh - b.fresh; });
+      if (mode === 'fresh') phrase.textContent = tired.length ? 'Ещё не восстановились: ' + tired.slice(0, 3).map(function (r) { return r.label.toLowerCase() + ' ' + r.fresh * 10 + ' %'; }).join(', ') + '.' : 'Все группы восстановлены.';
+      else {
+        var top = sorted.slice().sort(function (a, b) { return val(b) - val(a); }).filter(function (r) { return val(r) > 0; });
+        phrase.textContent = top.length ? (mode === 'sets' ? 'Больше всего подходов: ' : 'Больше всего объёма: ') + top.slice(0, 3).map(function (r) {
+          return r.label.toLowerCase() + ' ' + (mode === 'sets' ? r.sets : grouped(r.volume) + ' кг'); }).join(', ') + '.' : 'За 28 дней силовых не было.';
+      }
+    }
+    draw();
+    close = legalSheet('Мышечные группы', [seg, phrase, head, list, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+  }
   // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout in the sport's colour, a moon for rest;
   // a day with workouts opens them), the two gauges, the muscles' freshness. Nothing to show (no workout in 28 days,
   // every group fresh) — null.
@@ -15669,7 +15730,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
       add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle, tgt, sc.muscle ? open : null, mg)));
     if (fr.length) {
-      var f = add(el('div', 'hfr'), el('div', 'hfh', 'Свежесть мышц')), grid = el('div', 'hfr-g');
+      var fh = add(el('div', 'hfh hfh-go'), el('span', '', 'Свежесть мышц'), icon('chevron-right'));
+      fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
+      var f = add(el('div', 'hfr'), tap(fh, function () { haptic(); hlMusclesSheet(j, fh); })), grid = el('div', 'hfr-g');
       fr.forEach(function (g) {
         // The word and the colour by the value: 8+ recovered (green), 4–7 fatigued (orange), under 4 depleted (red);
         // the ovals lit to the value in that colour, paler at the start.
