@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 15:58">
+<meta name="published" content="2026-10-30 16:51">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1163,7 +1163,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
 .hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 /* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
-.hcur{margin:-14px 8px 0;padding:26px 14px 14px;background:color-mix(in srgb,var(--surface) 55%,transparent);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line)}
+.hcur{margin:-14px 8px 0;padding:26px 14px 14px;background:color-mix(in srgb,var(--surface) 55%,transparent);border-radius:0 0 var(--r-b) var(--r-b);box-shadow:inset 0 0 0 1px var(--line);clip-path:inset(14px 0 0 0)}/* the 14px under the rings tile is clipped: in the dark theme the tile is translucent, and the curtain showed through it as a lighter band with its own top line (his 30.10.2026) */
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 /* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
@@ -1482,6 +1482,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .field input.cpk::-webkit-calendar-picker-indicator{display:none}
 .field .cclr{flex:none;display:grid;place-items:center;width:32px;height:32px;margin-right:-6px;padding:0;border:0;border-radius:50%;background:none;color:var(--muted)}
 .field .cclr[hidden]{display:grid;visibility:hidden}.field .cclr .i{width:16px;height:16px}
+/* A task's sheet from the day (docs/specs/calendar-2.md, А1): «Сделано · Завтра · Время» as three equal buttons in one row
+   (a 320 px phone too), the time field under them once «Время» is tapped, «Открыть в Задачах» a quiet link at the foot. */
+.ctwhen{margin:-4px 0 12px}.ctact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.ctact .btn{min-width:0;padding:0 6px;justify-content:center}.ctact .btn .i{display:inline}
+.cttime[hidden]{display:none}.cttime .field{flex:1;min-width:0}.cttime .btn{flex:none}
+.btn.ghost.ctopen{width:100%;justify-content:center}
 </style>
 </head>
 <body>
@@ -1749,12 +1755,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.className = ''; }, 3000);
   }
-  // «Убрал · Вернуть» for 10 s: the button brings the ids back, then `after`.
+  // «Убрал · Вернуть» for 10 s: the button brings the ids back, then `after`. backToast's lbl: another button than «Вернуть».
   function undoToast(s, ids, after) {
     backToast(s, function () { api('telegram-webhook', { action: 'undo', ids: ids.join(',') }).then(after, noop); });
   }
-  function backToast(s, fn) {
-    var b = el('button', 'tl', 'Вернуть');
+  function backToast(s, fn, lbl) {
+    var b = el('button', 'tl', lbl || 'Вернуть');
     b.type = 'button';
     b.onclick = function () {
       toastEl.className = '';
@@ -2245,13 +2251,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // 28.10.2026, docs/specs/food.md: today's kcal and what is left of the norm (home's answer).
     ['food', 'Еда сегодня', 'utensils', 'sm'],
     // 28.10.2026, docs/specs/health-v2.md: the three rings «Нагрузка · Восст. · Сон», the advice on m (home's health).
-    ['body', 'Здоровье', 'activity', 'sm']];
+    ['body', 'Здоровье', 'activity', 'sm'],
+    // 30.10.2026, docs/specs/calendar-2.md А3: today's next timed thing of «Календарь» (home's next).
+    ['next', 'Дальше', 'clock', 'sm']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
-    ['Дела', ['tasks', 'days', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
+    ['Дела', ['tasks', 'days', 'next', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
     ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
@@ -3290,7 +3298,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
       events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela'),
-      food: !tabShown('food'), body: !tabShown('food') }[w] || false;
+      food: !tabShown('food'), body: !tabShown('food'), next: !tabShown('cal') }[w] || false;
   }
   // The widget keys of a board, a stack's own among them.
   function boardKinds(bl) {
@@ -3323,7 +3331,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   }
   // «Заполнить как раньше»: the board from the tiles and the cards «Главная» showed before it (the view's own), each
   // widget once — a tile as a square (the accounts' tiles as one «Счета»), a card wide (the calendar large), in that
-  // order. The cards with no widget (План недели, Сроки, Документы, Корты, Вчера, Неделя, Система, Инбокс) are left out.
+  // order — the calendar's with «Дальше» before it. The cards with no widget (План недели, Сроки, Документы, Корты, Вчера,
+  // Неделя, Система, Инбокс) are left out.
   function boardSeed() {
     var out = [], has = {};
     function put(w, s) {
@@ -3337,7 +3346,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       linkedin: ['linkedin', 'm'], games: ['vb', 'm'], vb: ['vb', 'm'], shows: ['cinema', 'm'], genshin: ['genshin', 'm'] };
     homeTiles().forEach(function (k) { if (k.indexOf('acct:') === 0) put('accounts', 'm'); else if (T[k]) put(T[k], 's'); });
     var hid = viewPrefs('home').hidden, tiled = tiledCards();
-    homeOrder().forEach(function (k) { if (C[k] && hid.indexOf(k) < 0 && tiled.indexOf(k) < 0) put(C[k][0], C[k][1]); });
+    homeOrder().forEach(function (k) {
+      if (!C[k] || hid.indexOf(k) >= 0 || tiled.indexOf(k) >= 0) return;
+      if (k === 'calendar') put('next', 'm');
+      put(C[k][0], C[k][1]);
+    });
     return out;
   }
   // A size's chip: a small drawing of the shape (a square, two side by side, four), not a glyph.
@@ -3659,6 +3672,24 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           });
           left -= d[0].length;
         });
+      },
+      // «Дальше» (docs/specs/calendar-2.md, А3): today's next timed thing — «через 40 мин», «в 15:00» from an hour on,
+      // «идёт» while on — and its title and place (while on, «до» its end); none left — «сегодня больше ничего». The
+      // minutes are counted here, so a cached answer stays right; an item without an end lasts the calendar's hour.
+      // «сейчас» from half an hour before. A tap opens «Календарь» on today; its link — «Открыть ссылку» (wide only).
+      next: function () {
+        var x = j.next;
+        // No key: before home's first answer «загружаю…» ({} has no morning key either); in a real answer — the server dropped it.
+        if (x === undefined) return quiet(preview ? 'нет данных' : j.morning === undefined ? 'загружаю…' : 'недоступно');
+        r.go = function () { var td = foodToday(); CAL.on = td; CAL.month = td.slice(0, 7); CAL.day = td; show('cal'); };
+        var st = x ? Date.parse(x.starts_at) : 0, en = x && x.ends_at ? Date.parse(x.ends_at) : st;
+        if (!x || (en > st ? en : st + 3600000) <= now) return quiet('сегодня больше ничего');
+        var mins = Math.ceil((st - now) / 60000), on = mins <= 0;
+        r.now = mins <= 30;
+        r.hot = x.title;
+        big(on ? 'идёт' : mins < 60 ? 'через ' + mins + '\u00a0мин' : 'в ' + calHm(st), 'vs');
+        note(x.emoji + ' ' + x.title + (x.place ? ' · ' + x.place : '') + (on && en > st ? ' · до ' + calHm(en) : ''));
+        if (x.url && s === 'm') row('link', 'Открыть ссылку', null, function () { openLink(x.url); }, 'bnlink');
       },
       // His next game (else today's next free one, taken/all); «сейчас» within three hours; wide — the one after too.
       vb: function () {
@@ -17464,7 +17495,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // a task its row in «Задачи», a workout its sheet; a game, Apple and the mail are read-only. «＋ Событие» — the sheet empty.
   // CAL: the month and the day on screen (kept across the tab's redraws until the day changes), ev the month's own events
   // by id — the sheet takes the notes from there (cal_day's rows do not carry them).
-  var CAL = { month: null, day: null, on: null, ev: {} };
+  // task: the task objects of the day's rows opened in their sheet (by id) — one done or moved off the day hides its row.
+  var CAL = { month: null, day: null, on: null, ev: {}, task: {} };
   var CAL_SRC = ['cal', 'task', 'game', 'workout', 'mail', 'apple'];
   var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
     ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane'], ['sport', 'Тренировка', 'dumbbell']];
@@ -17476,6 +17508,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function calDayName(d) { return WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
   function calView() {
     var today = foodToday();
+    CAL.task = {};
     if (CAL.on !== today) { CAL.on = today; CAL.month = today.slice(0, 7); CAL.day = today; }
     if (CAL.day.slice(0, 7) !== CAL.month) CAL.day = CAL.month === today.slice(0, 7) ? today : CAL.month + '-01';
     var m = CAL.month, wrap = el('div', 'calw'), gcard = el('div', 'card calg'), nav = el('div', 'mnav'), wk = el('div', 'calwk');
@@ -17565,7 +17598,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var open = src === 'cal' && x.editable !== false ? function () {
         calSheet(CAL.ev[x.ref] || { id: x.ref, starts_at: x.starts_at, ends_at: x.ends_at, all_day: x.all_day, title: x.title, kind: x.kind, place: x.place, notes: x.notes || '', url: x.url || null }, CAL.day, r, after);
       }
-        : src === 'task' && tabShown('tasks') && x.ref != null ? function () { taskOpenId = Number(x.ref) || x.ref; show('tasks'); }
+        : src === 'task' && x.ref != null ? function () { calTaskSheet(x, CAL.day, r, taskAfter); }
         : wo && x.ref != null ? function () {
           if (r.busy) return;
           r.busy = true;
@@ -17574,13 +17607,20 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
             if (j && j.workout) woDetailSheet(j.workout, r, function () { cacheDrop('food'); load(); });
           }, function () { r.busy = false; });
         } : null;
+      if (x.src === 'task' && x.ref != null) r.setAttribute('data-ref', String(x.ref));
       if (!open) return r;
       r.appendChild(icon('chevron-right', 'go'));
       r.setAttribute('aria-label', (x.all_day ? 'весь день' : calHm(x.starts_at)) + ', ' + (x.title || '') + ' — открыть');
       return tap(r, open);
     }
+    // The day on screen (lastDay) without the tasks done or moved off it in their sheet.
+    var lastDay = null;
     function drawDay(j) {
-      var items = j.items || [];
+      lastDay = j;
+      var items = (j.items || []).filter(function (x) {
+        var t = x.src === 'task' && CAL.task[x.ref];
+        return !t || (!t.done && t.due_date === j.date);
+      });
       clear(list);
       if (!items.length) return list.appendChild(el('div', 'cnone', 'ничего не запланировано'));
       items.forEach(function (x) { list.appendChild(row(x)); });
@@ -17617,8 +17657,117 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (to && to !== CAL.day) return goTo(to.slice(0, 7), to);
       load();
     }
+    // After a change in a task's sheet: its row as it is now (gone when done or moved, at its new time), the cached days,
+    // the month and «Главная» fetched afresh next time.
+    function taskAfter(t) {
+      cacheDrop('home');
+      cacheDrop('cal:m:' + CAL.month);
+      cacheDrop('cal:d:' + CAL.day);
+      cacheDrop('cal:d:' + addDays(CAL.day, 1));
+      if (t.due_date) {
+        cacheDrop('cal:d:' + t.due_date);
+        cacheDrop('cal:m:' + t.due_date.slice(0, 7));
+      }
+      if (current === 'cal' && grid.isConnected) loadMonth();
+      if (!lastDay || !lastDay.items) return;
+      lastDay.items.forEach(function (x) {
+        if (x.src !== 'task' || CAL.task[x.ref] !== t || t.due_date !== lastDay.date) return;
+        x.all_day = !t.due_time;
+        x.starts_at = foodIso(lastDay.date, t.due_time || '00:00');
+      });
+      lastDay.items.sort(function (a, b) { return Number(!!b.all_day) - Number(!!a.all_day) || Date.parse(a.starts_at) - Date.parse(b.starts_at); });
+      if (current === 'cal' && CAL.day === lastDay.date && list.isConnected) {
+        drawDay(lastDay);
+        // The sheet gave focus back to a row the redraw has just replaced: the task's new row, else (done or moved) the day's heading.
+        var a = document.activeElement;
+        if (!a || a === document.body || !document.body.contains(a)) {
+          var nr = list.querySelector('[data-ref="' + t.id + '"]');
+          if (nr) nr.focus();
+          else { dtitle.tabIndex = -1; dtitle.focus({ preventScroll: true }); }
+        }
+      }
+    }
     drawGrid({});
     load();
+  }
+  // A task of the day (docs/specs/calendar-2.md, А1): its title, when («сегодня 15:00», «сегодня, без времени») and its
+  // area; «Сделано» (markTask, as the ✓ of «Задачи»: a repeating one goes on to its next date with rollTask's toast, any
+  // other — «Сделано · Вернуть»), «Завтра» (tasks_edit, the next day), «Время» (the time field: a new time, ✕ — none) and
+  // «Открыть в Задачах». Each is on screen at once and put back with a toast when the save fails; after(t) draws the day
+  // again — t done or on another day takes its row off.
+  function calTaskSheet(item, day, from, after) {
+    var close = noop, hm0 = item.all_day ? '' : calHm(item.starts_at), today = foodToday();
+    var t = CAL.task[item.ref] = { id: Number(item.ref), title: item.title, status: 'open', done: false, due_date: day, due_time: hm0 || null,
+      repeat: item.repeat || null, area: item.area || null, steps_total: 0 };
+    function redraw() { after(t); }
+    function when() {
+      var dw = day === today ? 'сегодня' : day === addDays(today, 1) ? 'завтра' : WEEK[wd(day)] + ' ' + dm(day);
+      return dotted(el('div', 'mu ctwhen'), [t.due_time ? dw + ' ' + t.due_time : dw + ', без времени', areaPill(t.area)].filter(Boolean));
+    }
+    // A save of tasks_edit: on screen already; a failure puts was back.
+    function edit(patch, was, said) {
+      close();
+      redraw();
+      api('miniapp', { action: 'tasks_edit' }, 15000, true, Object.assign({ id: t.id }, patch)).then(function () {
+        cacheDrop('tasks');
+        cacheDrop('home');
+        redraw(); // again, after the save: the month's dots are fetched afresh only now that the move has landed
+        toast(said);
+      }, function (e) {
+        Object.assign(t, was);
+        redraw();
+        if (!e.login) toast(SAVE_FAILED);
+      });
+    }
+    var done = foodBtn('btn', 'check', 'Сделано', function () {
+      haptic();
+      close();
+      // A repeating task rolls on when the server answers (rollTask's own toast); an answer without rolled leaves it
+      // done, and then the plain «Сделано» toast is the one to undo it.
+      markTask(t, function () {
+        redraw();
+        if (t.repeat && t.done) backToast('Сделано', function () { markTask(t, redraw); });
+      }, redraw);
+      if (!t.repeat) backToast('Сделано', function () { markTask(t, redraw); });
+    });
+    var next = foodBtn('btn ghost', 'arrow-right', 'Завтра', function () {
+      var was = { due_date: t.due_date };
+      haptic();
+      t.due_date = addDays(day, 1);
+      edit({ due_date: t.due_date }, was, 'Перенёс на завтра');
+    });
+    var ti = el('input'), row = el('div', 'bar cttime');
+    ti.type = 'time';
+    ti.className = 'cpk';
+    ti.value = hm0;
+    ti.setAttribute('aria-label', 'Время задачи');
+    ti.onclick = function () { try { if (ti.showPicker) ti.showPicker(); } catch (e) {} };
+    var clr = foodBtn('cclr', 'x', '', function () { ti.value = ''; clr.hidden = true; haptic(); });
+    clr.setAttribute('aria-label', 'Без времени');
+    clr.hidden = !hm0;
+    ti.oninput = ti.onchange = function () { clr.hidden = !ti.value; };
+    var put = foodBtn('btn', 'check', 'Сохранить', function () {
+      var v = /^\d\d:\d\d/.test(ti.value) ? ti.value.slice(0, 5) : null, was = { due_time: t.due_time };
+      if (v === t.due_time) return close();
+      haptic();
+      t.due_time = v;
+      edit({ due_time: v }, was, v ? 'Время: ' + v : 'Без времени');
+    });
+    row.hidden = true;
+    add(row, add(el('label', 'field'), icon('clock'), ti, clr), put);
+    var time = foodBtn('btn ghost', 'clock', 'Время', function () {
+      haptic();
+      row.hidden = !row.hidden;
+      time.setAttribute('aria-expanded', String(!row.hidden));
+      if (!row.hidden) ti.focus();
+    });
+    time.setAttribute('aria-expanded', 'false');
+    var open = tabShown('tasks') ? foodBtn('btn ghost ctopen', 'check-square', 'Открыть в Задачах', function () {
+      close();
+      taskOpenId = t.id;
+      show('tasks');
+    }) : null;
+    close = legalSheet(t.title, [when(), add(el('div', 'ctact'), done, next, time), row, open], from);
   }
   // An event of ours (null — a new one on date): the title, the date, the time (empty — all day) with ✕ to take it away,
   // the duration, the place, the notes, the kind; «Сохранить» (cal_add / cal_edit — only what changed), «Удалить» on two
@@ -17706,8 +17855,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       save.disabled = true;
       haptic();
       api('miniapp', { action: ev ? 'cal_edit' : 'cal_add' }, 15000, false, b).then(function (j) {
+        // Landing on something (docs/specs/calendar-2.md, А2): the first of it in the toast, «Открыть» — this event again.
+        var ov = (j && j.overlaps) || [], o = ov[0], saved = j && j.event;
         close();
-        toast(ev ? 'Сохранил' : 'Добавил: ' + t, 'calendar');
+        if (o && saved) {
+          backToast('Накладывается на ' + o.emoji + ' ' + o.title + ' ' + calHm(o.starts_at) + (o.ends_at && o.ends_at !== o.starts_at ? '–' + calHm(o.ends_at) : '') +
+            (ov.length > 1 ? ' и ещё ' + (ov.length - 1) : ''), function () { calSheet(saved, foodDay(saved.starts_at), from, done); }, 'Открыть');
+        } else toast(ev ? 'Сохранил' : 'Добавил: ' + t, 'calendar');
         done((j && j.event) || { starts_at: st }, ev ? d0 : null);
       }, function () { save.disabled = false; });
     });
