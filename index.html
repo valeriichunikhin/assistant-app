@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 00:51">
+<meta name="published" content="2026-10-30 08:28">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1299,8 +1299,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .bas-tk{stroke:color-mix(in srgb,var(--fg) 22%,transparent);stroke-width:1.5}.bas-tk.maj{stroke:color-mix(in srgb,var(--fg) 50%,transparent)}
 .bas-gl{fill:var(--muted);font:500 11.5px var(--font-num)}.bas-cl{fill:var(--fg);font:600 12.5px var(--font-num)}.bas-bl{fill:var(--mark);font:600 12.5px var(--font-num)}
 .bas-span{fill:var(--mark);fill-opacity:.9}
-.bas-cal{stroke:var(--fg);stroke-width:3;stroke-linecap:round}.bas-cd{fill:var(--fg)}
-.bas-bio{stroke:var(--mark);stroke-width:3;stroke-linecap:round}.bas-bd{fill:var(--mark)}
+.bas-cal{stroke:var(--fg);stroke-width:3}.bas-cd{fill:var(--fg)}
+.bas-bio{stroke:var(--mark);stroke-width:3}.bas-bd{fill:var(--mark)}
 .bas-gz{position:relative}.bas-gz>.bas-c:first-child{margin-bottom:8px}.bas-pl{margin-top:-4px}.bas-pl .bas-dp{margin-top:4px}.bas-c{display:flex;flex-direction:column;align-items:center;margin-top:2px;text-align:center}
 .bas-big{font:800 72px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .bas-w{font-weight:700;font-size:15px}.bas-c .bas-w{font-size:17px;margin-top:4px}
@@ -15799,7 +15799,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     function anchor(x) { return x < 70 ? 'start' : x > W - 70 ? 'end' : 'middle'; }
     function lx(x, a) { return a === 'start' ? x - 2 : a === 'end' ? x + 2 : x; }
     var xa = X(age), xb = bio == null ? null : X(bio);
-    if (xb != null && Math.abs(xa - xb) > 0.1) box.appendChild(svg('rect', { x: Math.min(xa, xb), y: top, width: Math.abs(xa - xb), height: 10, rx: 5, 'class': 'bas-span' }));
+    if (xb != null && Math.abs(xa - xb) > 0.1) box.appendChild(svg('rect', { x: Math.min(xa, xb), y: top, width: Math.abs(xa - xb), height: 10, 'class': 'bas-span' }));
     for (var t = lo; t <= hi; t++) {
       var maj = !(t % 5) || t === lo || t === hi, x = X(t);
       box.appendChild(svg('line', { x1: x, y1: top + 13, x2: x, y2: top + (maj ? 35 : 24), 'class': 'bas-tk' + (maj ? ' maj' : '') }));
@@ -15807,12 +15807,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     if (xb != null) {
       var ab = anchor(xb);
-      box.appendChild(svg('line', { x1: xb, y1: top - 25, x2: xb, y2: top + 11, 'class': 'bas-bio' }));
+      box.appendChild(svg('line', { x1: xb, y1: top - 25, x2: xb, y2: top + 10, 'class': 'bas-bio' }));
       box.appendChild(svg('circle', { cx: xb, cy: top - 29, r: 7, 'class': 'bas-bd' }));
       box.appendChild(svg('text', { x: lx(xb, ab), y: top - 47, 'class': 'bas-bl', 'text-anchor': ab }, 'биологический ' + woNum(bio)));
     }
     var ac = anchor(xa);
-    box.appendChild(svg('line', { x1: xa, y1: top - 1, x2: xa, y2: top + 45, 'class': 'bas-cal' }));
+    box.appendChild(svg('line', { x1: xa, y1: top, x2: xa, y2: top + 45, 'class': 'bas-cal' }));
     box.appendChild(svg('circle', { cx: xa, cy: top + 51, r: 7, 'class': 'bas-cd' }));
     box.appendChild(svg('text', { x: lx(xa, ac), y: top + 83, 'class': 'bas-cl', 'text-anchor': ac }, 'календарный ' + woNum(age)));
     return box;
