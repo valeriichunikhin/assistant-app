@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 00:45">
+<meta name="published" content="2026-10-31 00:50">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1157,7 +1157,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 /* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
 .hcur{--hcur:color-mix(in srgb,var(--surface) 55%,transparent);position:relative;isolation:isolate;margin:calc(-1 * var(--r-b)) 8px 0;padding:calc(var(--r-b) + 12px) 14px 14px}/* Bevel's «шторка» (his 30.10.2026): the curtain lies under the rings tile — its panel starts at the tile's bottom edge (::before, no top line, the tile's own edge is the only line at the joint) and only the two corner gaps under the tile's rounded corners are filled (::after); the tile is translucent in the dark theme, so nothing may be painted under its body */
-.hcur::before{content:"";position:absolute;left:0;right:0;top:var(--r-b);bottom:0;background:var(--hcur);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-b) var(--r-b);z-index:-1}
+.hcur::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(to bottom,transparent var(--r-b),var(--hcur) var(--r-b));border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-b) var(--r-b);z-index:-1}/* the side lines run up to the tile (his 31.10.2026), the fill still starts below its corners */
 .hcur::after{content:"";position:absolute;left:0;right:0;top:0;height:var(--r-b);z-index:-1;background:radial-gradient(circle at var(--r-b) 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) left top/var(--r-b) var(--r-b) no-repeat,radial-gradient(circle at 0 0,transparent var(--r-b),var(--hcur) calc(var(--r-b) + .5px)) right top/var(--r-b) var(--r-b) no-repeat}
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
