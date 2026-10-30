@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 10:23">
+<meta name="published" content="2026-10-30 10:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -15748,12 +15748,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     // A row as the sheet's (bioGroupOf over the same bioRowsOf): the ring, the name with the years, the word — grey
     // «нет данных» without them.
+    // A row's own tap opens that group's sheet from the bottom (his ask 30.10.2026 — not the full-screen one the
+    // rest of the card opens); the click stays in the row.
     function prow(r) {
       var g = bioGroupOf(r, j), v = r.years, wd = bioWord(v == null ? null : r.delta);
-      return add(el('div', 'hpr bas-r bac-r'), bioRing(bioShare(g, j), g.ic, v == null ? null : r.delta),
+      var row = add(el('div', 'hpr bas-r bac-r'), bioRing(bioShare(g, j), g.ic, v == null ? null : r.delta),
         add(el('div', 'hpr-m'), add(el('div', 'hpr-n'), document.createTextNode(r.label + ' '), v == null ? null : el('b', '', woNum(v))),
           el('div', 'bas-w ' + wd[1], v == null || r.delta == null ? wd[0] : r.line || bioDelta(r.delta))),
         add(el('span', 'hpr-go'), icon('chevron-right')));
+      row.setAttribute('aria-label', r.label + ': ' + (v == null ? 'нет данных' : wd[0]) + ' — подробно');
+      return tap(row, function (ev) { if (ev && ev.stopPropagation) ev.stopPropagation(); haptic(); bioFactorSheet(g, j, row); });
     }
     var body = add(el('div', 'bas bac'), bioStars(), el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
       add(el('div', 'bas-gz'), center, bioGauge(bio, age), pill),
