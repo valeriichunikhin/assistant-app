@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 14:53">
+<meta name="published" content="2026-10-30 15:58">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1439,8 +1439,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    violet read as the accent's twin —, a game the volleyball's orange, a workout green — the gym's colour is the accent —,
    Apple muted, the mail sky); the day's rows under it — the time in the
    accent, the icon in the source's colour. From 900 px the month and the day side by side. The event's sheet: the
-   duration and the kind as five equal cells. */
+   duration as five equal cells, the six kinds as two rows of three on a phone (a sixth in a row of five would sit alone and
+   break «Тренировка» mid-word), one row of six from 600 px. */
 .cs-cal{--cs:var(--mark)}.cs-task{--cs:#ff7eb6}.cs-game{--cs:var(--ring-load)}.cs-workout{--cs:var(--ring-recovery)}.cs-apple{--cs:var(--muted)}.cs-mail{--cs:var(--hl-sky)}
+.crow.k-sport{--cs:var(--mark)}/* a planned workout (kind sport) in the gym's colour, as .k-gym */
 .calg .mnav{margin:0;padding:6px 6px 0}
 .calwk,.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 6px}
 .calwk{padding-top:4px}.calwk span{text-align:center;color:var(--muted);font:600 11px/1.8 var(--font)}.calwk span.we{color:var(--muted-2)}
@@ -1465,6 +1467,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 @media (min-width:1400px){.cday{height:74px;padding-top:8px}.cdots{gap:4px;height:6px}.cdots i{width:6px;height:6px}}
 .ccap{margin:0 0 6px;color:var(--muted);font-size:12px}
 .cdur,.ckind{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.ckind{grid-template-columns:repeat(3,minmax(0,1fr))}@media (min-width:600px){.ckind{grid-template-columns:repeat(6,minmax(0,1fr))}}
 .cdur .pill{width:100%;height:44px;justify-content:center;padding:0 2px;font-size:13px}
 .cdur.off .pill{opacity:.4}
 .ckind button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:58px;padding:6px 2px;border:1px solid var(--line);border-radius:var(--r-s);background:none;color:var(--muted);font:500 11px/1.1 var(--font);overflow-wrap:anywhere;text-align:center}
@@ -17464,7 +17467,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   var CAL = { month: null, day: null, on: null, ev: {} };
   var CAL_SRC = ['cal', 'task', 'game', 'workout', 'mail', 'apple'];
   var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
-    ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane']];
+    ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane'], ['sport', 'Тренировка', 'dumbbell']];
   var CAL_IC = { task: 'check-square', game: 'ball', apple: 'smartphone', mail: 'mail' };
   var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
   var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
@@ -17555,7 +17558,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var tm = el('span', 'ctm' + (x.all_day ? ' cad' : ''), x.all_day ? 'весь день' : calHm(x.starts_at));
       if (!x.all_day && x.ends_at && x.ends_at !== x.starts_at) tm.appendChild(el('small', '', calHm(x.ends_at)));
       var sub = [x.place, CAL_SUB[src]].filter(Boolean).join(' · ');
-      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple')), tm,
+      var r = add(el('div', 'row crow cs-' + (CAL_SRC.indexOf(src) >= 0 ? src : 'apple') + (src === 'cal' ? ' k-' + calKind(x.kind)[0] : '')), tm,
         add(el('span', 'lead cic'), icon(ic)),
         add(el('span', 'tx'), el('div', 't', x.title || 'Без названия'), sub ? el('div', 'mu', sub) : null));
       // Ours: the month's row by ref (notes and all); the month not in yet — the feed's item with the row's id.
