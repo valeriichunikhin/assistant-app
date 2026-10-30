@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-30 22:11">
+<meta name="published" content="2026-10-30 22:20">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1460,7 +1460,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .crow .cic .cck{position:absolute;right:-5px;bottom:-4px;width:14px;height:14px;padding:2px;border-radius:50%;background:var(--good);color:var(--solid);stroke-width:3.2}
 .crow.cskip .cic,.crow.cskip .tx{opacity:.5}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs-task{--cs:#d6336c}}:root[data-theme="light"] .cs-task{--cs:#d6336c}
-.crow .tx .mu{font-size:12px}
+.crow .tx .mu{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow .tx .t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+/* the day's untimed tasks folded into one row «Задачи на день · N» under the work band; a tap unfolds one-line rows */
+.ctk{margin:0 14px 8px}
+.ctkh{display:flex;align-items:center;gap:8px;min-height:38px;padding:8px 12px;border-radius:var(--r-s);background:color-mix(in srgb,var(--cs) 10%,transparent);color:var(--fg);font:600 13px/1.3 var(--font)}
+.ctkh .ctki{flex:none;width:16px;height:16px;color:var(--cs)}.ctkh>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctkh .go{flex:none;width:16px;height:16px;color:var(--muted-2);transition:transform .15s}.ctk.open .ctkh .go{transform:rotate(90deg)}
+.ctkh.tap,.ctkr.tap{cursor:pointer}
+.ctkr{display:flex;align-items:center;gap:10px;min-height:36px;padding:0 12px;font-size:14px}
+.ctkr>i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--cs)}
+.ctkr>.ctn{flex:1}
+.ctkr .go{flex:none;width:16px;height:16px;color:var(--muted-2)}
 .cnone{padding:6px 14px 14px;color:var(--muted)}
 @media (min-width:900px){.calw{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
   .cday{height:62px;padding-top:6px}.cday .cn{width:38px;height:38px}.calgrid{padding:0 10px 12px}.calwk{padding:4px 10px 0}}
@@ -17734,6 +17745,33 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       loadFeed();
     }
     function isWorkX(x) { return x.src === 'cal' && x.kind === 'work'; }
+    function isUntimedTask(x) { return x.src === 'task' && x.all_day; }
+    // The day's untimed tasks as one row; its unfolded state per day lives in memory only (folded by default).
+    var foldOpen = {};
+    function taskFold(date, tasks) {
+      var n = tasks.length, m = n % 10, m100 = n % 100;
+      var word = m === 1 && m100 !== 11 ? 'задача' : m >= 2 && m <= 4 && (m100 < 12 || m100 > 14) ? 'задачи' : 'задач';
+      var lst = el('div', 'ctkl'), wrap = el('div', 'ctk cs-task' + (foldOpen[date] ? ' open' : ''));
+      lst.hidden = !foldOpen[date];
+      tasks.forEach(function (x) {
+        var r = add(el('div', 'ctkr ' + csOf(x)), el('i'), el('span', 'ctn', x.title || 'Без названия')), act = actOf(x, date, r);
+        if (x.ref != null) r.setAttribute('data-ref', String(x.ref));
+        if (!act) return lst.appendChild(r);
+        r.appendChild(icon('chevron-right', 'go'));
+        r.setAttribute('aria-label', (x.title || '') + ' — открыть');
+        lst.appendChild(tap(r, act));
+      });
+      var head = add(el('div', 'ctkh'), icon('check-square', 'ctki'), el('span', '', 'Задачи на день · ' + n), icon('chevron-right', 'go'));
+      head.setAttribute('aria-label', 'Задачи на день: ' + n + ' ' + word);
+      head.setAttribute('aria-expanded', String(!!foldOpen[date]));
+      tap(head, function () {
+        foldOpen[date] = !foldOpen[date];
+        lst.hidden = !foldOpen[date];
+        wrap.classList.toggle('open', !!foldOpen[date]);
+        head.setAttribute('aria-expanded', String(!!foldOpen[date]));
+      });
+      return add(wrap, head, lst);
+    }
     // The sheet of our event: the month's row by ref (notes and all), else the feed's item; an occurrence of a series
     // (В2) at its own date and time, which the sheet sends back with an edit (the series' row moves with it).
     function openCal(x, day, r) {
@@ -17797,7 +17835,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
       var rest = items.filter(function (x) { return !isWorkX(x); });
       if (!rest.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
-      rest.forEach(function (x) { box.appendChild(row(x, date)); });
+      var folded = rest.filter(isUntimedTask), foldAt = rest.filter(function (x) { return !isUntimedTask(x) && x.all_day; }).length;
+      rest = rest.filter(function (x) { return !isUntimedTask(x); });
+      if (folded.length && !foldAt) box.appendChild(taskFold(date, folded));
+      rest.forEach(function (x, i) {
+        box.appendChild(row(x, date));
+        if (folded.length && foldAt && i === foldAt - 1) box.appendChild(taskFold(date, folded));
+      });
       if (free && free.length) {
         box.appendChild(el('div', 'mu cfree', 'Свободно: ' + free.map(function (s) { return s.from + '–' + s.to; }).join(' · ')));
       }
@@ -17813,7 +17857,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var all = items.filter(function (x) { return x.all_day && !isWorkX(x); });
       var timed = items.filter(function (x) { return !x.all_day && !isWorkX(x); });
       items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
-      all.forEach(function (x) { box.appendChild(row(x, date)); });
+      all.filter(function (x) { return !isUntimedTask(x); }).forEach(function (x) { box.appendChild(row(x, date)); });
+      var folded = all.filter(isUntimedTask);
+      if (folded.length) box.appendChild(taskFold(date, folded));
       // Minutes of this day: a start on the day before is 0, an end on the day after 1440.
       function mOf(ts, end) {
         var d = foodDay(ts), p = wp(ts);
