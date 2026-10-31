@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 19:22">
+<meta name="published" content="2026-10-31 20:48">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1005,15 +1005,21 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .card.nutop{padding:0 0 14px}
 /* The food scale «C · стопка» (30.10.2026): the meals' colours, the bar with the hatched rest, the axis, the legend,
    the macro bars. */
-.nus{padding:0 14px}.nus-top{display:flex;justify-content:space-between;align-items:baseline}.nus-big{font:800 40px/1 var(--font-num);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.nus-top .mu{font-size:14px}.nus-g{color:var(--fg)}
+.nus{padding:0 14px}
 .nus-breakfast{--ms:var(--nu-carbs)}.nus-lunch{--ms:var(--mark)}.nus-dinner{--ms:var(--hl-sky)}.nus-snack{--ms:var(--ring-recovery-2)}.nus-other{--ms:var(--muted)}
-.nus-bar{position:relative;height:22px;margin-top:10px;border-radius:11px;overflow:hidden;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--fg) 14%,transparent) 0 2px,transparent 2px 7px),var(--track)}
-.nus-seg{position:absolute;top:0;bottom:0;background:var(--ms)}.nus-seg:first-child{border-radius:11px 0 0 11px}
-.nus-goal{position:absolute;top:0;bottom:0;width:2px;margin-left:-2px;background:var(--fg)}.nus-bar:not(.over) .nus-goal{display:none}
-.nus-ax{position:relative;display:flex;justify-content:space-between;margin-top:4px;height:16px;font-size:12px}.nus-at{position:absolute;top:0;transform:translateX(-50%);font-size:12px;font-variant-numeric:tabular-nums}
 .nus-lg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nus-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--ms)}
 .nus-dot.nus-rest{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--fg) 30%,transparent) 0 1px,transparent 1px 3px),var(--track)}
+.nud{display:block;width:100%;max-width:260px;margin:0 auto}.nud line{stroke-width:4;stroke-linecap:round}.nud line.off{stroke:var(--track)}.nud line.on{stroke:var(--ms)}
+.nud .gt{stroke:var(--fg);stroke-width:3}.nud .ov{fill:none;stroke:var(--bad);stroke-width:3;stroke-linecap:round}.nud text{text-anchor:middle;fill:var(--muted);font:500 13px var(--font)}
+.nud .big{font:800 40px var(--font-num);fill:var(--fg);letter-spacing:-.02em}.nud .gl,.nud .ax{font-size:11px}.nud .gl{font-weight:600}.nud .lf{font-weight:700}.nud .lf.over{fill:var(--bad)}
+.nuw-row{display:flex;align-items:center;gap:12px;margin:0 14px;padding:10px 12px;border-radius:18px;background:color-mix(in srgb,var(--fg) 5%,transparent)}
+.nuw-row .tx{flex:1;min-width:0}.nuw-row .t{font-weight:600;font-size:16px}.nuw-row .mu{font-size:13px}
+.nuw-i{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--hl-sky)}.nuw-i .i{width:18px;height:18px}
+.nuw-r{position:absolute;inset:0;width:44px;height:44px}.nuw-r circle{fill:none;stroke-width:5}.nuw-r .tr{stroke:var(--track)}.nuw-r .a{stroke:var(--hl-sky);stroke-linecap:round}
+.nuw-p{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:var(--hl-sky);color:#fff;display:grid;place-items:center}.nuw-p .i{width:22px;height:22px}
+.nuw-c{display:flex;gap:8px;margin:12px 14px 14px}.nuw-c button{flex:1;min-width:0;height:40px;border:1px solid var(--line-2);border-radius:20px;background:none;color:var(--fg);font:600 14px var(--font);white-space:nowrap}
+.nuw-c button.on{background:color-mix(in srgb,var(--hl-sky) 18%,transparent);color:var(--hl-sky);border-color:transparent}
+.nus-ov{color:var(--bad)}.nus-ov .nus-dot{background:var(--bad)}
 .nus-mb{margin-top:12px}.nus-m{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;margin-top:6px;font-size:13px}
 .nus-t{height:8px;border-radius:4px;background:var(--track);overflow:hidden}.nus-t i{display:block;height:100%;border-radius:4px;background:var(--nu)}.nus-t.over i{background:var(--bad)}
 .nus-mv{font-weight:700;font-variant-numeric:tabular-nums}
@@ -14767,6 +14773,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
           weight: function (wb) { foodWeightSheet(date, j.weight, wb, function () { fresh(); load(); loadStats(); }); },
           add: function (ev) { foodAddSheet(date, ev.currentTarget, load); },
           scan: function (ev) { foodScanSheet(date, ev.currentTarget, load); },
+          water: function (ml) { waterAdd(date, j, ml, function () { render(j); }, function () { fresh(); load(); }); },
+          waterLast: function (b) { waterLastSheet(j, b, function () { fresh(); load(); }); },
           redraw: function () { render(j); } });
         swipe(out[0]);
         return add.apply(null, [clear(body)].concat(out));
@@ -14866,7 +14874,81 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     top.firstChild.appendChild(foodBtn('mtoday', 'scan-barcode', 'Сканер', h.scan));
     add(top, nuStack(j, src, kcal, goal), el('div', 'mu nusrc', kcal ? (nu ? 'из Bevel через Health' : 'из записей') : 'за этот день еды нет'),
       add(el('div', 'nuact'), wb));
-    return [top, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
+    return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
+  }
+  // «Вода» (docs/specs/water.md; his pick 31.10.2026 — «W2»): a row as Bevel's factor rows — the ring to the goal with a
+  // drop, «1,25 из 2 л · осталось 3 стакана», a round «+» (a glass, 250 мл); under it the portions and «другое». A tap on
+  // the row — the last one, to take it back.
+  var WATER_ML = [250, 330, 500];
+  function waterL(ml) { return String(Math.round(ml / 10) / 100).replace('.', ','); }
+  function nuWater(w, h) {
+    var c = mkCard('droplet', 'Вода'), goal = w.goal || 2000, f = Math.min(1, w.ml / goal), R = 18, L = 2 * Math.PI * R;
+    var left = goal - w.ml, n = Math.ceil(left / 250);
+    c.className += ' nuw';
+    var ring = svg('svg', { viewBox: '0 0 44 44', 'class': 'nuw-r', 'aria-hidden': 'true' });
+    ring.appendChild(svg('circle', { cx: 22, cy: 22, r: R, 'class': 'tr' }));
+    if (f > 0) ring.appendChild(svg('circle', { cx: 22, cy: 22, r: R, 'class': 'a', transform: 'rotate(-90 22 22)', 'stroke-dasharray': (f * L).toFixed(1) + ' ' + L.toFixed(1) }));
+    var head = waterL(w.ml) + ' из ' + waterL(goal) + ' л', sub = left > 0 ? 'осталось ' + n + ' ' + ['стакан', 'стакана', 'стаканов'][plural3(n)] : 'цель есть';
+    var row = add(el('div', 'nuw-row'), add(el('span', 'nuw-i'), ring, icon('droplet')), add(el('span', 'tx'), el('div', 't', head), el('div', 'mu', sub)));
+    sub = head + ', ' + sub;
+    if (w.last) {
+      row.setAttribute('aria-label', 'Вода: ' + sub + ' — последняя запись');
+      tap(row, function () { h.waterLast(row); });
+    }
+    var plus = add(el('button', 'nuw-p'), icon('plus'));
+    plus.type = 'button';
+    plus.setAttribute('aria-label', 'Добавить стакан, 250 мл');
+    plus.onclick = function (ev) { ev.stopPropagation(); h.water(250); };
+    row.appendChild(plus);
+    var chips = el('div', 'nuw-c');
+    WATER_ML.forEach(function (ml, i) {
+      var b = el('button', i ? '' : 'on', i ? String(ml) : ml + ' мл');
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Добавить ' + ml + ' мл');
+      b.onclick = function () { h.water(ml); };
+      chips.appendChild(b);
+    });
+    var other = el('button', '', 'другое');
+    other.type = 'button';
+    other.onclick = function () { waterOtherSheet(other, h.water); };
+    chips.appendChild(other);
+    return add(c, row, chips);
+  }
+  // A portion at once: the card shows it before the answer (back on a failure), «Вода +330 мл · Вернуть» for 10 s.
+  function waterAdd(date, j, ml, redraw, done) {
+    var at = date === foodToday() ? null : foodIso(date, '12:00');
+    haptic();
+    j.water.ml += ml;
+    redraw();
+    api('miniapp', { action: 'water_add' }, 15000, false, at ? { ml: ml, at: at } : { ml: ml }).then(function (r) {
+      backToast('Вода +' + ml + ' мл', function () {
+        api('miniapp', { action: 'water_delete' }, 15000, false, { id: r.id }).then(done, noop);
+      });
+      done();
+    }, function () { j.water.ml -= ml; redraw(); });
+  }
+  function waterOtherSheet(from, put) {
+    var v = el('input', 'fwin'), close = noop;
+    v.inputMode = 'numeric';
+    v.placeholder = '200';
+    v.setAttribute('aria-label', 'Вода, мл');
+    var ok = foodBtn('btn', 'check', 'Записать', function () {
+      var n = Math.round(foodNum(v.value));
+      if (!(n >= 10 && n <= 3000)) { toast('Вода — от 10 до 3000 мл'); v.focus(); return; }
+      close();
+      put(n);
+    });
+    close = legalSheet('Вода', [add(el('div', 'bar'), add(el('label', 'field'), icon('droplet'), v, el('span', 'mu', 'мл'))),
+      add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  function waterLastSheet(j, from, done) {
+    var w = j.water.last, close = noop;
+    var del = foodBtn('btn ghost', 'trash', 'Убрать', function () {
+      del.disabled = true;
+      api('miniapp', { action: 'water_delete' }, 15000, false, { id: w.id }).then(function () { close(); toast('Убрал ' + w.ml + ' мл', 'droplet'); done(); }, function () { del.disabled = false; });
+    });
+    close = legalSheet('Последняя запись', [el('div', 'mu msrc', foodTime(w.at) + ' · ' + w.ml + ' мл. За день — ' + waterL(j.water.ml) + ' л, ' + j.water.n + ' ' + ['запись', 'записи', 'записей'][plural3(j.water.n)] + '.'),
+      add(el('div', 'bar mact mstick'), del)], from);
   }
   // «Таймлайн питания»: the day's entries under a head as «Таймлайн» on «Сегодня».
   function nuTimeline(n) {
@@ -14878,42 +14960,18 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // with «62 / 120 г». Over the goal the bar is the eaten and the goal a marker inside it.
   var NU_MEAL_CLS = { breakfast: 'nus-breakfast', lunch: 'nus-lunch', dinner: 'nus-dinner', snack: 'nus-snack' };
   function nuStack(j, src, kcal, goal) {
-    var box = el('div', 'nus'), left = goal - kcal, scale = Math.max(goal, kcal, 1);
-    add(box, add(el('div', 'nus-top'), add(el('div'), el('span', 'nus-big', grouped(kcal)), el('span', 'mu', ' ккал')),
-      add(el('div', 'mu'), document.createTextNode('цель '), el('b', 'nus-g', grouped(goal)))));
+    var box = el('div', 'nus'), left = goal - kcal;
     var es = (j.entries || []).filter(function (e) { return Number(e.kcal) > 0; }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
     var segs = es.map(function (e) { return { kcal: Math.round(Number(e.kcal)), cls: NU_MEAL_CLS[e.meal] || 'nus-snack', label: (FOOD_RU[e.meal] || 'еда').toLowerCase(), at: e.at }; });
     var rest = kcal - segs.reduce(function (a, x) { return a + x.kcal; }, 0);
     if (rest > 0 && kcal) segs.push({ kcal: rest, cls: 'nus-other', label: 'без записи' });
-    var bar = el('div', 'nus-bar' + (left < 0 ? ' over' : '')), x = 0;
-    segs.forEach(function (sg) {
-      var w = sg.kcal / scale * 100, i = add(el('i', 'nus-seg ' + sg.cls));
-      i.style.left = x.toFixed(2) + '%';
-      i.style.width = Math.max(0, w - 0.3).toFixed(2) + '%';
-      i.title = sg.label + ' · ' + grouped(sg.kcal) + ' ккал';
-      bar.appendChild(i);
-      x += w;
-    });
-    var gm = el('i', 'nus-goal');
-    gm.style.left = (goal / scale * 100).toFixed(2) + '%';
-    bar.appendChild(gm);
-    bar.setAttribute('role', 'img');
-    bar.setAttribute('aria-label', grouped(kcal) + ' из ' + grouped(goal) + ' ккал' + (left >= 0 ? ', осталось ' + grouped(left) : ', сверх цели ' + grouped(-left)) +
-      (segs.length ? ': ' + segs.map(function (sg) { return sg.label + ' ' + grouped(sg.kcal); }).join(', ') : ''));
-    var ax = add(el('div', 'nus-ax'), el('span', 'mu', '0'), el('span', 'mu nus-end', grouped(goal)));
-    // The eaten's number under its end, unless it would sit on «0» or on the goal.
-    if (kcal && kcal / scale > 0.1 && kcal / scale < 0.78) {
-      var mk = el('b', 'nus-at', grouped(kcal));
-      mk.style.left = (kcal / scale * 100).toFixed(2) + '%';
-      ax.appendChild(mk);
-    }
-    add(box, bar, ax);
+    box.appendChild(nuDial(segs, kcal, goal));
     // The legend: a meal a chip in the day's order (the same meal twice — summed), then what is left.
     var byMeal = [], seen = {};
     segs.forEach(function (sg) { var k = sg.cls; if (seen[k] == null) { seen[k] = byMeal.length; byMeal.push({ cls: k, label: sg.label, kcal: 0 }); } byMeal[seen[k]].kcal += sg.kcal; });
     var lg = el('div', 'nus-lg');
     byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
-    lg.appendChild(add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode(left >= 0 ? 'осталось ' + grouped(left) : 'сверх цели ' + grouped(-left))));
+    lg.appendChild(add(el('span', left < 0 ? 'nus-ov' : ''), el('i', 'nus-dot nus-rest'), document.createTextNode(left >= 0 ? 'осталось ' + grouped(left) : 'сверх цели ' + grouped(-left))));
     box.appendChild(lg);
     // Б · Ж · У thin bars against their goals.
     var mb = el('div', 'nus-mb');
@@ -14928,6 +14986,35 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       mb.appendChild(row);
     });
     box.appendChild(mb);
+    return box;
+  }
+  // The kcal dial (his pick 31.10.2026 of five variants — «B · риски, как циферблат Bevel»): 60 ticks on a 270° arc from 0
+  // to a round scale (the eaten or 1,25 × the goal, up to 500), lit up to the eaten in the colour of the meal that tick
+  // falls in, the rest the track; the goal a long tick with «цель»; past it a red arc outside the ticks. In the middle
+  // the eaten, «ккал · цель N» and what is left — or «+N сверх цели» in red.
+  function nuDial(segs, kcal, goal) {
+    var N = 60, max = Math.ceil(Math.max(kcal, goal * 1.25, 1) / 500) * 500, cx = 120, cy = 118, r1 = 78, r2 = 96;
+    var box = svg('svg', { viewBox: '0 0 240 206', 'class': 'nud', role: 'img' }), left = goal - kcal;
+    function ang(v) { return (-225 + Math.min(1, v / max) * 270) * Math.PI / 180; }
+    function pt(a, r) { return [(cx + r * Math.cos(a)).toFixed(1), (cy + r * Math.sin(a)).toFixed(1)]; }
+    function cls(v) { var c = 0; for (var i = 0; i < segs.length; i++) { c += segs[i].kcal; if (v < c) return segs[i].cls; } return segs.length ? segs[segs.length - 1].cls : ''; }
+    for (var i = 0; i < N; i++) {
+      var v = (i + 0.5) / N * max, a = (-225 + i / (N - 1) * 270) * Math.PI / 180, p1 = pt(a, r1), p2 = pt(a, r2);
+      box.appendChild(svg('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], 'class': v <= kcal ? 'on ' + cls(v) : 'off' }));
+    }
+    var ga = ang(goal), g1 = pt(ga, 70), g2 = pt(ga, 104), gl = pt(ga, 117), co = Math.cos(ga);
+    if (kcal > goal) {
+      var o1 = pt(ga, 103), o2 = pt(ang(kcal), 103);
+      box.appendChild(svg('path', { d: 'M' + o1.join(' ') + ' A103 103 0 ' + (ang(kcal) - ga > Math.PI ? 1 : 0) + ' 1 ' + o2.join(' '), 'class': 'ov' }));
+    }
+    add(box, svg('line', { x1: g1[0], y1: g1[1], x2: g2[0], y2: g2[1], 'class': 'gt' }),
+      svg('text', { x: gl[0], y: (Number(gl[1]) - 3).toFixed(1), 'class': 'gl', style: 'text-anchor:' + (co > 0.4 ? 'end' : co < -0.4 ? 'start' : 'middle') }, 'цель'),
+      svg('text', { x: cx, y: cy, 'class': 'big' }, grouped(kcal)),
+      svg('text', { x: cx, y: cy + 22, 'class': 'sub' }, 'ккал · цель ' + grouped(goal)),
+      svg('text', { x: cx, y: cy + 54, 'class': left < 0 ? 'lf over' : 'lf' }, left < 0 ? '+' + grouped(-left) + ' сверх цели' : 'осталось ' + grouped(left)),
+      svg('text', { x: pt(ang(0), 88)[0], y: 200, 'class': 'ax' }, '0'), svg('text', { x: pt(ang(max), 88)[0], y: 200, 'class': 'ax' }, grouped(max)));
+    box.setAttribute('aria-label', grouped(kcal) + ' из ' + grouped(goal) + ' ккал' + (left >= 0 ? ', осталось ' + grouped(left) : ', сверх цели ' + grouped(-left)) +
+      (segs.length ? ': ' + segs.map(function (sg) { return sg.label + ' ' + grouped(sg.kcal); }).join(', ') : ''));
     return box;
   }
   // A card with the app's head (the icon, the title), what goes beside it, an arrow to more.
