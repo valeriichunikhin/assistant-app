@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 20:48">
+<meta name="published" content="2026-10-31 21:21">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -14888,9 +14888,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var ring = svg('svg', { viewBox: '0 0 44 44', 'class': 'nuw-r', 'aria-hidden': 'true' });
     ring.appendChild(svg('circle', { cx: 22, cy: 22, r: R, 'class': 'tr' }));
     if (f > 0) ring.appendChild(svg('circle', { cx: 22, cy: 22, r: R, 'class': 'a', transform: 'rotate(-90 22 22)', 'stroke-dasharray': (f * L).toFixed(1) + ' ' + L.toFixed(1) }));
-    var head = waterL(w.ml) + ' из ' + waterL(goal) + ' л', sub = left > 0 ? 'осталось ' + n + ' ' + ['стакан', 'стакана', 'стаканов'][plural3(n)] : 'цель есть';
-    var row = add(el('div', 'nuw-row'), add(el('span', 'nuw-i'), ring, icon('droplet')), add(el('span', 'tx'), el('div', 't', head), el('div', 'mu', sub)));
-    sub = head + ', ' + sub;
+    var head = waterL(w.ml) + ' из ' + waterL(goal) + ' л', sub = left > 0 ? 'осталось ' + n + ' ' + ['стакан', 'стакана', 'стаканов'][plural3(n)] : 'цель есть',
+      dr = w.drinks_ml > 0 ? 'из них напитки ' + waterL(w.drinks_ml) + '\u00a0л' : '';
+    var row = add(el('div', 'nuw-row'), add(el('span', 'nuw-i'), ring, icon('droplet')), add(el('span', 'tx'), el('div', 't', head), el('div', 'mu', sub), dr ? el('div', 'mu', dr) : null));
+    sub = head + ', ' + sub + (dr ? ', ' + dr : '');
     if (w.last) {
       row.setAttribute('aria-label', 'Вода: ' + sub + ' — последняя запись');
       tap(row, function () { h.waterLast(row); });
@@ -16549,7 +16550,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
         el('div', 'mu hsec-s', cur === 'recovery' ? 'Обычный день — 75 %; каждая часть сдвигает вверх или вниз.' :
           cur === 'sleep' ? 'Цель — 100 %; каждая часть показывает, сколько отняла.' : stress ? 'Обычный день — 50; ВСР ниже нормы и пульс покоя выше поднимают стресс.' :
-          'Сегодня против обычной недели за 28 дней; цель — сколько добрать сегодня, чтобы неделя была в норме.'));
+          'Растёт с 0 % за день: тренировки по зонам пульса, пульс вне них и шаги; цель — по восстановлению. Без потолка.'));
       if (!s) {
         parts.appendChild(el('div', 'mu', cur === 'recovery' ? 'Нужны ВСР и пульс во сне хотя бы за 5 дней.' :
           cur === 'sleep' ? 'Сна за этот день нет.' : stress ? 'Нужны ВСР или пульс покоя и их норма.' : 'Пока нет базы: нужна неделя тренировок.'));
@@ -16578,8 +16579,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32)), ring = cur;
       hlSeries(cur, 30, j.date).then(function (sj) {
         if (n !== seq) return;
-        // The load rarely nears 100: its axis to the next ten over the top (at least 60), the others 0–100.
-        var top = ring === 'load' ? Math.min(100, Math.max(60, Math.ceil((Math.max.apply(null, sj.points.map(function (p) { return p.v; }).concat([0])) + 8) / 10) * 10)) : 100;
+        // The load has no cap: its axis to the next ten over the top (at least 60), the others 0–100.
+        var top = ring === 'load' ? Math.max(60, Math.ceil((Math.max.apply(null, sj.points.map(function (p) { return p.v; }).concat([0])) + 8) / 10) * 10) : 100;
         add(clear(chart), sj.points.length ? hlChart(sj.points, { W: W, from: sj.from, to: sj.to, days: 30, zones: sj.zones, dots: true, hi: top,
           label: HL_NAMES[ring] + ' за 30 дней', unit: '%', tick: function (v) { return String(Math.round(v)); },
           dotCls: function (p) {
@@ -17817,14 +17818,15 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       });
     }, noop);
   }
-  // «Нагрузка этой тренировки» as a ring, Bevel's «Физическая нагрузка 26 — низкая»: the workout's TRIMP as % of his
-  // usual week (workout_get's load) in the ring, the word by it — under 15 % low, to 35 % medium, above high.
-  function woLoadWord(pct) { return pct < 15 ? 'Низкая' : pct <= 35 ? 'Средняя' : 'Высокая'; }
+  // «Нагрузка этой тренировки» as a ring, Bevel's «Физическая нагрузка 26 — низкая»: the workout's own number on
+  // Bevel's activity scale (workout_get's load.pct, no cap) in the ring, the word by it — under 30 low, under 60
+  // medium, above high.
+  function woLoadWord(pct) { return pct < 30 ? 'Низкая' : pct < 60 ? 'Средняя' : 'Высокая'; }
   function woLoadRing(load) {
     var p = load.pct, word = p == null ? null : woLoadWord(p);
     var c = add(el('div', 'wring'), hlRing(p, 'hl-load', 64), add(el('div', 'wrt'), el('div', 'wrh', 'Нагрузка этой тренировки'),
-      el('div', 'mu', word ? word + ' нагрузка — ' + p + ' % обычной недели' : grouped(load.trimp) + ' ед.; обычной недели для сравнения пока нет')));
-    c.setAttribute('aria-label', 'Нагрузка этой тренировки: ' + (word ? word.toLowerCase() + ', ' + p + ' % обычной недели' : grouped(load.trimp) + ' ед.'));
+      el('div', 'mu', word ? word + ' нагрузка от этой активности' : 'нет длительности — не посчитать')));
+    c.setAttribute('aria-label', 'Нагрузка этой тренировки: ' + (word ? p + ', ' + word.toLowerCase() : 'нет данных'));
     return c;
   }
   // «Разбивка тренировки»: muscles against cardio (workout_get's split, _shared/workouts.ts workoutSplit — each load
