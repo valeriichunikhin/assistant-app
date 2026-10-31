@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 10:43">
+<meta name="published" content="2026-10-31 10:59">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1257,17 +1257,20 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .lch .vl{fill:var(--fg);font:700 11px var(--font-num)}.lch .tl{fill:var(--muted);font:10px var(--font-num)}
 .lhist>.mu{margin:0 0 6px}
 .hgg>.mu{font-size:12px}
-.hfr{padding:0 14px 12px}.hfh{font-weight:600;margin:0 0 8px}.hfr-g{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
-.hfr1{min-width:0}.hfr1 .tx{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hfr1 .hfs{display:block;margin:1px 0 5px;font-size:12px;font-weight:600;color:var(--st,var(--muted))}
-.hfd{display:flex;gap:3px}.hfd i{width:8px;height:12px;border-radius:4px;background:var(--track)}.hfd i.on{background:var(--st,var(--mark))}
+.hfr{padding:0 14px 12px}.hfh{font-weight:600;margin:0 0 8px}.hfr-g{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.hfr1{min-width:0;display:flex;align-items:center;gap:8px}.hfr-t{flex:1;min-width:0}.hfr1 .tx{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hfr1 .hfs{display:block;margin:1px 0 5px;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msil{flex:none;width:48px;height:48px;fill:var(--line-2);color:var(--st,var(--muted));-webkit-mask-image:radial-gradient(closest-side,#000 78%,transparent);mask-image:radial-gradient(closest-side,#000 78%,transparent)}
+.hfd{display:flex;gap:3px}.hfd i{flex:0 1 8px;min-width:5px;height:12px;border-radius:4px;background:var(--track)}.hfd i.on{background:var(--st,var(--mark))}
+.hfd i.now{background:color-mix(in srgb,var(--st,var(--mark)) 62%,#000)}
 .hfadv{padding:0 14px 12px}.hfadv .hadv{margin-top:0}
 .hfh-go{display:flex;align-items:center;justify-content:space-between;cursor:pointer;border-radius:8px}.hfh-go .i{width:16px;height:16px;color:var(--muted)}
 .hms-p{margin-top:12px;font-size:14px;line-height:1.4}.hms-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.hms-h .mu{font-size:13px}
 .hms-sort{min-width:44px;height:36px;padding:0 10px}.hms{margin-top:2px}
 .hms-r{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.hms-r:last-child{border-bottom:0}.hms-m{flex:1;min-width:0}
 .hms-n{font-weight:700}.hms-s{display:block;font-size:13px;color:var(--st,var(--muted))}.hms-s b{color:var(--fg)}
-.hms-pl{flex:none;display:flex;gap:4px}.hms-pl i{width:9px;height:18px;border-radius:5px;background:var(--track)}.hms-pl i.on{background:var(--st,var(--mark))}
+.hms-r .msil{width:64px;height:64px}.hms-r .hfd{margin-top:6px;gap:4px}.hms-r .hfd i{flex-basis:10px;height:16px;border-radius:5px}
+.hms-per{width:max-content;margin:-8px 0 0}.hms-per button{min-width:64px}.hms-per[hidden]{display:none}.hms-cr{margin:14px 0 4px;font-size:12px;color:var(--muted)}
 @media (min-width:900px){.hfr-g{grid-template-columns:repeat(4,1fr)}}
 .row.hbr{gap:12px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .tx .mu{font-size:12px}.hbv{font:800 19px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
 .hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
@@ -1829,6 +1832,20 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
 <symbol id="i-dna" viewBox="0 0 24 24"><path d="m10 16 1.5 1.5"/><path d="m14 8-1.5-1.5"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m16.5 10.5 1 1"/><path d="m17 6-2.891-2.891"/><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="m20 9 .891.891"/><path d="M3.109 14.109 4 15"/><path d="m6.5 12.5 1 1"/><path d="m7 18 2.891 2.891"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-person-standing" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></symbol><symbol id="i-audio-waveform" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol><symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+</svg>
+<!-- Muscle silhouettes: react-body-highlighter 2.0.5 (MIT, (c) 2020 GV79), docs/specs/bevel-gap.md -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<path id="mb-a" d="M51.8 41.6 51 55.1 58 58 67.8 55.5 70.6 47.3 62 41.6zM29.8 46.5 31.4 55.5 40.8 58 48.2 55.1 47.8 42 37.6 42zM68.6 63.3 67.3 57.1 58.8 59.6 60 64.1 60.4 83.3 65.7 78.8 66.5 69.8zM33.9 78.4 33.1 71.8 31 63.3 32.2 57.1 40.8 59.2 39.2 63.3 39.2 83.7zM56.3 59.2 58 64.1 58.4 78 58.4 92.7 56.3 98.4 55.1 104.1 51.4 107.8 51 84.5 50.6 67.3 51 57.1zM43.7 58.8 48.6 57.1 49 67.3 48.6 84.5 48.2 107.3 44.5 103.7 40.8 91.4 40.8 78.4 41.2 64.5zM16.7 68.2 18 71.4 22.9 66.1 29 53.9 27.8 49.4 20.4 55.9zM71.4 49.4 70.2 54.7 76.3 66.1 81.6 71.8 82.9 69 78.8 55.5zM69.4 55.5 69.4 61.6 75.9 72.7 77.6 70.2 75.5 67.3zM22.4 69.4 29.8 55.5 29.8 60.8 22.9 73.1zM55.5 23.7 50.6 33.5 50.6 39.2 61.6 40 70.6 44.9 69.4 36.7 63.3 35.1 58.4 30.6zM29 44.9 30.2 37.1 36.3 35.1 41.2 30.2 44.5 24.5 49 33.9 48.6 39.2 38 39.6zM78.4 53.1 79.6 47.8 79.2 41.2 75.9 38 71 36.3 72.2 42.9 71.4 47.3zM28.2 47.3 21.2 53.1 20 47.8 20.4 40.8 24.5 37.1 28.6 37.1 26.9 43.3zM42.4 2.9 40 11.8 42 19.6 46.1 23.3 49.8 25.3 54.7 22.4 57.6 19.2 59.2 10.2 57.1 2.4 49.8 0zM52.7 110.2 54.3 124.9 60 110.2 62 100 64.9 94.3 60 92.7 56.7 104.5zM47.8 110.6 44.9 125.3 42 115.9 40.4 113.1 39.6 107.3 38 102.4 34.7 93.9 39.6 92.2 41.6 99.2 43.7 105.3zM34.7 98.8 37.1 108.2 37.1 127.8 34.3 137.1 31 132.7 29.4 120 28.2 111.4 29.4 100.8 32.2 94.7zM63.3 105.7 64.5 100 66.9 94.7 70.2 101.2 71 111.8 68.2 133.1 65.3 137.6 62.4 128.6 62 111.4zM38.8 129.4 38.4 112.2 41.2 118.4 44.5 129.4 42.9 135.1 40 146.1 36.3 146.5 35.5 140zM59.6 145.7 55.5 129 60.8 113.9 61.2 130.2 64.1 139.6 62.9 146.5zM32.7 138.4 26.5 145.7 25.7 136.7 25.7 127.3 26.9 114.3 29.4 133.5zM71.8 113.1 73.9 124.1 73.9 140.4 72.7 145.7 66.5 138.4 70.2 133.5zM33.9 140 34.7 143.3 35.5 147.3 36.3 151 35.1 156.7 29.8 156.7 27.3 152.7 27.3 147.3 30.2 144.1zM65.7 140 72.2 147.8 72.2 152.2 69.8 157.1 64.9 156.7 62.9 151zM71.4 160.4 73.5 153.5 76.7 161.2 79.6 167.8 78.4 187.8 79.6 195.5 74.7 195.5zM24.9 194.7 27.8 164.9 28.2 160.4 26.1 154.3 24.9 157.6 22.4 161.6 20.8 167.8 22 188.2 20.8 195.5zM72.7 195.1 69.8 159.2 65.3 158.4 64.1 162.4 64.1 165.3 65.7 177.1zM35.5 158.4 35.9 162.4 35.9 166.9 35.1 172.2 35.1 176.7 32.2 182 30.6 187.3 26.9 194.7 27.3 187.8 28.2 180.4 28.6 175.5 29 169.8 29.8 164.1 30.2 158.8zM6.1 88.6 10.2 75.1 14.7 70.2 16.3 74.3 19.2 73.5 4.5 97.6 0 100zM84.5 69.8 83.3 73.5 80 73.1 95.1 98.4 100 100.4 93.5 89.4 89.8 76.3zM77.6 72.2 77.6 77.6 80.4 84.1 85.3 89.8 92.2 101.2 94.7 99.6zM6.9 101.2 13.5 90.6 18.8 84.1 21.6 77.1 21.2 71.8 4.9 98.8z"/>
+<path id="mb-p" d="M50.6 0 46 0.9 40.9 5.5 40.4 12.8 45.1 20 55.7 20 59.1 13.6 59.6 4.7 55.7 1.3zM44.7 21.7 47.7 21.7 47.2 38.3 47.7 64.7 38.3 53.2 35.3 40.9 31.1 36.6 39.1 33.2 43.8 27.2zM52.3 21.7 55.7 21.7 56.6 27.2 60.9 32.8 68.9 36.6 64.7 40.4 61.7 53.2 52.3 64.7 53.2 38.3zM29.4 37 23 39.1 17.4 44.3 18.3 53.6 24.3 49.4 27.2 46.4zM71.1 37 78.3 39.6 82.6 44.7 81.7 53.6 74.9 48.9 72.3 45.1zM31.1 38.7 28.1 48.9 28.5 55.3 34 75.3 47.2 71.1 47.2 66.4 36.6 54 33.6 41.3zM68.9 38.7 71.9 49.4 71.5 56.2 66 75.3 52.8 71.1 52.8 66.4 63.4 54.5 66.4 41.7zM26.8 49.8 17.9 55.7 14.5 72.3 16.6 81.7 21.7 63.8 26.8 55.7zM73.6 50.2 82.1 55.7 86 73.2 83.4 82.1 77.9 63 73.2 55.7zM26.8 58.3 26.8 68.5 23 75.3 19.1 77.4 22.6 65.5zM72.8 58.3 77 64.7 80.4 77.4 76.6 75.3 72.8 68.9zM47.7 72.8 34.5 77 35.3 83.4 49.4 102.1 46.8 83zM52.3 72.8 65.5 77 64.7 83.4 50.6 102.1 53.2 83.8zM86.4 75.7 91.1 83.4 93.2 94 100 106.4 96.2 104.3 88.1 89.4 84.3 83.8zM13.6 75.7 8.9 83.8 6.8 93.6 0 106.4 3.8 104.3 12.3 88.5 15.7 83zM81.3 79.6 77.4 77.9 79.1 84.7 91.1 103.8 93.2 108.9 94.5 104.7zM18.7 79.6 22.1 77.9 20.9 84.3 9.4 103 6.8 108.5 5.1 104.7zM44.7 99.6 30.2 108.5 29.8 118.7 31.5 126 47.2 121.3 49.4 114.9zM55.3 99.1 51.1 114.5 52.3 120.9 68.1 126 69.8 119.1 69.4 108.5zM48.1 123 44.7 123 41.3 125.5 45.1 144.3 48.5 135.7 48.9 129.4zM51.9 122.6 55.7 123.4 59.1 126 54.9 144.3 51.9 136.2 51.1 129.4zM28.9 122.1 31.1 129.4 36.6 126 35.3 135.3 34.5 150.2 29.4 158.3 28.9 146.8 27.7 141.3 27.2 131.5zM71.5 121.7 69.4 128.9 63.8 126 65.5 136.6 66.4 150.2 71.1 158.3 71.5 147.7 72.8 142.1 73.6 131.9zM38.7 125.5 44.3 146 40.4 166.8 36.2 152.8 37 135.3zM61.7 125.5 63.4 136.2 64.3 153.2 60 166.8 56.2 146.4zM34.5 153.2 31.1 159.1 33.6 166.4 37.4 162.6zM66.4 153.6 63 163 66.8 166.4 69.4 159.1zM29.4 160.4 28.5 167.2 24.7 179.6 23.8 192.8 25.5 197 28.5 193.2 29.8 180 31.9 171.1 31.9 166.8zM37.4 165.1 35.3 167.7 33.2 171.9 31.1 180.4 30.2 191.9 34 200 38.7 190.6 39.1 168.9zM63 165.1 61.3 168.5 61.7 190.6 66.4 199.6 70.6 191.9 68.9 179.6 66.8 170.2zM70.6 160.4 72.3 168.5 75.7 179.1 76.6 192.8 74.5 196.6 72.3 193.6 70.6 179.6 68.1 168.1zM28.5 195.7 30.2 195.7 33.6 201.7 30.6 220 28.5 213.6 26.8 198.3zM69.8 195.7 71.9 195.7 73.6 198.3 71.9 213.2 70.2 219.6 67.2 202.1z"/></defs>
+<symbol id="m-chest" viewBox="12 20 76 76"><use href="#mb-a"/><path fill="currentColor" d="M51.8 41.6 51 55.1 58 58 67.8 55.5 70.6 47.3 62 41.6zM29.8 46.5 31.4 55.5 40.8 58 48.2 55.1 47.8 42 37.6 42z"/></symbol>
+<symbol id="m-shoulders" viewBox="12 20 76 76"><use href="#mb-a"/><path fill="currentColor" d="M78.4 53.1 79.6 47.8 79.2 41.2 75.9 38 71 36.3 72.2 42.9 71.4 47.3zM28.2 47.3 21.2 53.1 20 47.8 20.4 40.8 24.5 37.1 28.6 37.1 26.9 43.3z"/></symbol>
+<symbol id="m-biceps" viewBox="12 20 76 76"><use href="#mb-a"/><path fill="currentColor" d="M16.7 68.2 18 71.4 22.9 66.1 29 53.9 27.8 49.4 20.4 55.9zM71.4 49.4 70.2 54.7 76.3 66.1 81.6 71.8 82.9 69 78.8 55.5z"/></symbol>
+<symbol id="m-core" viewBox="20 50 60 64"><use href="#mb-a"/><path fill="currentColor" d="M56.3 59.2 58 64.1 58.4 78 58.4 92.7 56.3 98.4 55.1 104.1 51.4 107.8 51 84.5 50.6 67.3 51 57.1zM43.7 58.8 48.6 57.1 49 67.3 48.6 84.5 48.2 107.3 44.5 103.7 40.8 91.4 40.8 78.4 41.2 64.5zM68.6 63.3 67.3 57.1 58.8 59.6 60 64.1 60.4 83.3 65.7 78.8 66.5 69.8zM33.9 78.4 33.1 71.8 31 63.3 32.2 57.1 40.8 59.2 39.2 63.3 39.2 83.7z"/></symbol>
+<symbol id="m-quads" viewBox="20 90 60 64"><use href="#mb-a"/><path fill="currentColor" d="M34.7 98.8 37.1 108.2 37.1 127.8 34.3 137.1 31 132.7 29.4 120 28.2 111.4 29.4 100.8 32.2 94.7zM63.3 105.7 64.5 100 66.9 94.7 70.2 101.2 71 111.8 68.2 133.1 65.3 137.6 62.4 128.6 62 111.4zM38.8 129.4 38.4 112.2 41.2 118.4 44.5 129.4 42.9 135.1 40 146.1 36.3 146.5 35.5 140zM59.6 145.7 55.5 129 60.8 113.9 61.2 130.2 64.1 139.6 62.9 146.5zM32.7 138.4 26.5 145.7 25.7 136.7 25.7 127.3 26.9 114.3 29.4 133.5zM71.8 113.1 73.9 124.1 73.9 140.4 72.7 145.7 66.5 138.4 70.2 133.5z"/></symbol>
+<symbol id="m-back" viewBox="12 18 76 76"><use href="#mb-p"/><path fill="currentColor" d="M31.1 38.7 28.1 48.9 28.5 55.3 34 75.3 47.2 71.1 47.2 66.4 36.6 54 33.6 41.3zM68.9 38.7 71.9 49.4 71.5 56.2 66 75.3 52.8 71.1 52.8 66.4 63.4 54.5 66.4 41.7zM44.7 21.7 47.7 21.7 47.2 38.3 47.7 64.7 38.3 53.2 35.3 40.9 31.1 36.6 39.1 33.2 43.8 27.2zM52.3 21.7 55.7 21.7 56.6 27.2 60.9 32.8 68.9 36.6 64.7 40.4 61.7 53.2 52.3 64.7 53.2 38.3z"/></symbol>
+<symbol id="m-triceps" viewBox="12 18 76 76"><use href="#mb-p"/><path fill="currentColor" d="M26.8 49.8 17.9 55.7 14.5 72.3 16.6 81.7 21.7 63.8 26.8 55.7zM73.6 50.2 82.1 55.7 86 73.2 83.4 82.1 77.9 63 73.2 55.7zM26.8 58.3 26.8 68.5 23 75.3 19.1 77.4 22.6 65.5zM72.8 58.3 77 64.7 80.4 77.4 76.6 75.3 72.8 68.9z"/></symbol>
+<symbol id="m-glutes" viewBox="20 84 60 52"><use href="#mb-p"/><path fill="currentColor" d="M44.7 99.6 30.2 108.5 29.8 118.7 31.5 126 47.2 121.3 49.4 114.9zM55.3 99.1 51.1 114.5 52.3 120.9 68.1 126 69.8 119.1 69.4 108.5z"/></symbol>
+<symbol id="m-calves" viewBox="18 150 64 74"><use href="#mb-p"/><path fill="currentColor" d="M29.4 160.4 28.5 167.2 24.7 179.6 23.8 192.8 25.5 197 28.5 193.2 29.8 180 31.9 171.1 31.9 166.8zM37.4 165.1 35.3 167.7 33.2 171.9 31.1 180.4 30.2 191.9 34 200 38.7 190.6 39.1 168.9zM63 165.1 61.3 168.5 61.7 190.6 66.4 199.6 70.6 191.9 68.9 179.6 66.8 170.2zM70.6 160.4 72.3 168.5 75.7 179.1 76.6 192.8 74.5 196.6 72.3 193.6 70.6 179.6 68.1 168.1zM28.5 195.7 30.2 195.7 33.6 201.7 30.6 220 28.5 213.6 26.8 198.3zM69.8 195.7 71.9 195.7 73.6 198.3 71.9 213.2 70.2 219.6 67.2 202.1z"/></symbol>
 </svg>
 <div id="app"></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -15975,18 +15992,36 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     close = legalSheet(WEEK[wd(day)] + ', ' + Number(day.slice(8, 10)) + ' ' + MONTHS_G[Number(day.slice(5, 7)) - 1], rows.concat([
       add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))]), from);
   }
+  // A muscle group's status (docs/specs/bevel-gap.md, «Ответы Bevel о свежести мышц»): the server's — calibration under
+  // 3 training days in 6 weeks — or, for a cached answer without it, by the value.
+  var HFR_ST = { fresh: ['Восстановлены', 'productive'], tired: ['Утомлены', 'low'], exhausted: ['Истощены', 'overtrain'],
+    calibration: ['Калибровка', 'calibration'] };
+  function hfrSt(g) { return HFR_ST[g.status] || HFR_ST[g.value >= 8 ? 'fresh' : g.value >= 4 ? 'tired' : 'exhausted']; }
+  // The group's silhouette from the second sprite (react-body-highlighter, MIT — Bevel's sample, where the icons' rule
+  // yields), the group in the status colour.
+  function msil(group) { return add(svg('svg', { 'class': 'msil', 'aria-hidden': 'true' }), svg('use', { href: '#m-' + group })); }
+  // The 10 dots: the group's load against the most loaded group's (Bevel: relative fill, at least one when it worked),
+  // lit in the status colour, the last lit darker when it worked today.
+  function hfrDots(rel, today) {
+    var n = rel > 0 ? Math.max(1, Math.round(rel * 10)) : 0, dots = el('span', 'hfd');
+    for (var i = 0; i < 10; i++) dots.appendChild(el('i', i < n ? (today && i === n - 1 ? 'on now' : 'on') : ''));
+    return dots;
+  }
   // «Мышечные группы» (docs/specs/bevel-gap.md, 11a; docs/bevel/muscles-*.png): the segments Свежесть · Подходы · Объём
-  // (the last two over 28 days), a phrase about the groups, the sort toggle, a row a group — the name, the word with
-  // the per cent (or the sets / the kg with the last time), five pills lit by the value. No body map: own drawings
-  // are not ours to make (the icons' rule, 03.09).
-  var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём']];
+  // (the last two over 7 or 30 days, the period's segment under them), a phrase about the groups, the sort toggle, a
+  // row a group — its silhouette, the name, the word with the per cent (or the sets / the kg with the last time), the
+  // 10 dots (the load as on the card; the sets or the kg against the most).
+  var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём']], HMS_PER = [[7, '7 д'], [30, '30 д']];
   function hlMusclesSheet(j, from) {
-    var ms = j.muscles || [], mode = 'fresh', desc = true, close = noop;
-    var rows = (j.freshness || []).map(function (g) {
-      var m = ms.filter(function (x) { return x.group === g.group; })[0] || {};
-      return { group: g.group, label: g.label, fresh: g.value, sets: m.sets || 0, volume: m.volume_kg || 0, last: m.last_at || null };
-    });
-    var seg = el('div', 'seg'), head = el('div', 'hms-h'), note = el('div', 'mu'), phrase = el('div', 'hms-p'), list = el('div', 'hms');
+    var mode = 'fresh', per = 30, desc = true, close = noop;
+    function rowsOf(ms) {
+      return (j.freshness || []).map(function (g) {
+        var m = ms.filter(function (x) { return x.group === g.group; })[0] || {};
+        return { group: g.group, label: g.label, fresh: g.value, st: hfrSt(g), sets: m.sets || 0, volume: m.volume_kg || 0, last: m.last_at || null,
+          rel: m.load_rel || 0, today: !!m.today };
+      });
+    }
+    var seg = el('div', 'seg'), perSeg = el('div', 'seg hms-per'), head = el('div', 'hms-h'), note = el('div', 'mu'), phrase = el('div', 'hms-p'), list = el('div', 'hms');
     seg.setAttribute('role', 'group');
     seg.setAttribute('aria-label', 'Что показать');
     HMS_MODES.forEach(function (m) {
@@ -15995,24 +16030,35 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       b.onclick = function () { if (mode === m[0]) return; mode = m[0]; haptic(); draw(); };
       seg.appendChild(b);
     });
+    perSeg.setAttribute('role', 'group');
+    perSeg.setAttribute('aria-label', 'Период');
+    HMS_PER.forEach(function (d) {
+      var b = el('button', d[0] === per ? 'on' : '', d[1]);
+      b.type = 'button';
+      b.onclick = function () { if (per === d[0]) return; per = d[0]; haptic(); draw(); };
+      perSeg.appendChild(b);
+    });
     var sortB = foodBtn('btn ghost hms-sort', 'arrow-up-down', '', function () { desc = !desc; haptic(); draw(); });
     sortB.setAttribute('aria-label', 'Порядок');
     add(head, note, sortB);
-    function fword(v) { return v >= 8 ? ['Восстановлены', 'productive'] : v >= 4 ? ['Утомлены', 'low'] : ['Истощены', 'overtrain']; }
     function val(r) { return mode === 'fresh' ? r.fresh : mode === 'sets' ? r.sets : r.volume; }
     function draw() {
       seg.querySelectorAll('button').forEach(function (b, i) { b.className = HMS_MODES[i][0] === mode ? 'on' : ''; });
+      perSeg.querySelectorAll('button').forEach(function (b, i) { b.className = HMS_PER[i][0] === per ? 'on' : ''; });
+      perSeg.hidden = mode === 'fresh';
+      // A cached answer without the periods: the 28 days'.
+      var rows = rowsOf(mode === 'fresh' ? j.muscles || [] : j['muscles_' + per] || j.muscles || []);
       var sorted = rows.slice().sort(function (a, b) { return desc ? val(b) - val(a) : val(a) - val(b); }), max = Math.max.apply(null, rows.map(val).concat([1]));
-      note.textContent = mode === 'fresh' ? 'сейчас' : 'за 28 дней';
+      var during = j['muscles_' + per] ? 'за ' + per + ' дней' : 'за 28 дней';
+      note.textContent = mode === 'fresh' ? 'сейчас' : during;
       clear(list);
       sorted.forEach(function (r) {
-        var w = fword(r.fresh), cls = mode === 'fresh' ? 'hl-st-' + w[1] : 'hl-st-maintain';
+        var w = r.st, cls = mode === 'fresh' ? 'hl-st-' + w[1] : 'hl-st-maintain';
         var sub = mode === 'fresh' ? add(el('span', 'hms-s'), document.createTextNode(w[0] + ' · '), el('b', '', r.fresh * 10 + ' %'))
           : add(el('span', 'hms-s'), el('b', '', mode === 'sets' ? r.sets + ' ' + plural(r.sets, ['подход', 'подхода', 'подходов']) : grouped(r.volume) + ' кг'),
             document.createTextNode(r.last ? ' · ' + WEEK[wd(foodDay(r.last))] + ' ' + dm(foodDay(r.last)) : ' · не было'));
-        var pills = el('span', 'hms-pl'), lit = mode === 'fresh' ? Math.round(r.fresh / 2) : Math.round(5 * val(r) / max);
-        for (var i = 0; i < 5; i++) pills.appendChild(el('i', i < lit ? 'on' : ''));
-        var row = add(el('div', 'hms-r ' + cls), add(el('div', 'hms-m'), el('div', 'hms-n', r.label), sub), pills);
+        var dots = mode === 'fresh' ? hfrDots(r.rel, r.today) : hfrDots(val(r) / max, false);
+        var row = add(el('div', 'hms-r ' + cls), msil(r.group), add(el('div', 'hms-m'), el('div', 'hms-n', r.label), sub, dots));
         row.setAttribute('role', 'listitem');
         row.setAttribute('aria-label', r.label + ': ' + (mode === 'fresh' ? w[0].toLowerCase() + ', ' + r.fresh * 10 + ' %' : sub.textContent));
         list.appendChild(row);
@@ -16024,11 +16070,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       else {
         var top = sorted.slice().sort(function (a, b) { return val(b) - val(a); }).filter(function (r) { return val(r) > 0; });
         phrase.textContent = top.length ? (mode === 'sets' ? 'Больше всего подходов: ' : 'Больше всего объёма: ') + top.slice(0, 3).map(function (r) {
-          return r.label.toLowerCase() + ' ' + (mode === 'sets' ? r.sets : grouped(r.volume) + ' кг'); }).join(', ') + '.' : 'За 28 дней силовых не было.';
+          return r.label.toLowerCase() + ' ' + (mode === 'sets' ? r.sets : grouped(r.volume) + ' кг'); }).join(', ') + '.' : 'За ' + during.slice(3) + ' нагрузки не было.';
       }
     }
     draw();
-    close = legalSheet('Мышечные группы', [seg, phrase, head, list, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+    close = legalSheet('Мышечные группы', [seg, perSeg, phrase, head, list, el('div', 'hms-cr', 'Силуэты: react-body-highlighter (MIT)'),
+      add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
   }
   // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout in the sport's colour, a moon for rest;
   // a day with workouts opens them), the two gauges, the muscles' freshness. Nothing to show (no workout in 28 days,
@@ -16062,16 +16109,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
       var f = add(el('div', 'hfr'), tap(fh, function () { haptic(); hlMusclesSheet(j, fh); })), grid = el('div', 'hfr-g');
       fr.forEach(function (g) {
-        // The word and the colour by the value: 8+ recovered (green), 4–7 fatigued (orange), under 4 depleted (red);
-        // the ovals lit to the value in that colour, paler at the start.
-        var st = g.value >= 8 ? ['Восстановлены', 'productive'] : g.value >= 4 ? ['Утомлены', 'low'] : ['Истощены', 'overtrain'];
-        var dots = el('span', 'hfd');
-        for (var i = 0; i < 10; i++) {
-          var dot = dots.appendChild(el('i', i < g.value ? 'on' : ''));
-          if (i < g.value) dot.style.background = 'color-mix(in srgb,var(--st) ' + (45 + i * 55 / 9).toFixed(0) + '%,var(--track))';
-        }
-        var r = add(el('div', 'hfr1 hl-st-' + st[1]), el('span', 'tx', g.label), el('span', 'hfs', st[0]), dots);
-        r.setAttribute('aria-label', g.label + ': ' + st[0].toLowerCase() + ', свежесть ' + g.value + ' из 10');
+        // Bevel's cell (fitness-5): the silhouette with the group in the status colour (recovered green, fatigued
+        // orange, depleted red, calibration grey), the name, the word, the 10 dots of the 28 days' load.
+        var st = hfrSt(g), m = (j.muscles || []).filter(function (x) { return x.group === g.group; })[0] || {};
+        var r = add(el('div', 'hfr1 hl-st-' + st[1]), msil(g.group), add(el('div', 'hfr-t'), el('span', 'tx', g.label), el('span', 'hfs', st[0]),
+          hfrDots(m.load_rel || 0, m.today)));
+        r.setAttribute('aria-label', g.label + ': ' + st[0].toLowerCase() + ', свежесть ' + g.value * 10 + ' %' + (m.today ? ', сегодня нагрузка' : ''));
         grid.appendChild(r);
       });
       f.appendChild(grid);
