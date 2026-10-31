@@ -65,6 +65,21 @@
   "name": "KFC"
  },
  {
+  "slug": "tedi",
+  "re": "\\btedi\\b",
+  "name": "TEDi"
+ },
+ {
+  "slug": "dealz",
+  "re": "\\bdealz\\b|warszawafort",
+  "name": "Dealz"
+ },
+ {
+  "slug": "cityfit",
+  "re": "city ?fit",
+  "name": "CityFit"
+ },
+ {
   "slug": "ubereats",
   "re": "uber ?\\*? ?eats",
   "name": "Uber Eats"
