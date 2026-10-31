@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 15:20">
+<meta name="published" content="2026-10-31 15:25">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -17630,7 +17630,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     });
     return [['timer', 'Время', x.minutes ? woDur(x.minutes) : null, ''], ['weight', 'Объём', vol ? grouped(Math.round(vol)) : null, 'кг'],
       ['biceps-flexed', 'Подходы', n ? String(n) : null, ''], ['flame', 'Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null, ''],
-      ['heart-pulse', 'Пульс', x.avg_hr && x.max_hr ? x.avg_hr + ' / ' + x.max_hr : x.avg_hr || x.max_hr || null, x.avg_hr && x.max_hr ? 'ср./макс.' : '']].filter(function (t) {
+      ['heart-pulse', x.avg_hr && x.max_hr ? 'Пульс ср./макс.' : 'Пульс', x.avg_hr && x.max_hr ? x.avg_hr + ' / ' + x.max_hr : x.avg_hr || x.max_hr || null, '']].filter(function (t) {
       return t[2] != null;
     }).map(function (t) {
       var c = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(t[0]), el('span', '', t[1])),
@@ -17666,7 +17666,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     if (hr && hr.hr != null) {
       var drop = hr.rest_hr != null ? hr.hr - hr.rest_hr : null, good = drop != null && drop >= 10;
       var line = add(el('div', 'wgh' + (drop == null ? '' : good ? ' good' : ' warn')),
-        icon('heart-pulse'), el('span', '', hr.rest_hr != null ? 'на подходе ' + hr.hr + ' → в отдыхе ' + hr.rest_hr : 'на подходе ' + hr.hr));
+        icon('heart-pulse'), el('span', '', hr.rest_hr != null ? 'пик ' + hr.hr + ' → отдых ' + hr.rest_hr : 'на подходе ' + hr.hr));
       if (hr.rest_hr != null) {
         var bar = add(el('span', 'wgb'), el('i', ''));
         bar.firstChild.style.width = Math.max(8, Math.min(100, Math.round(hr.rest_hr / hr.hr * 100))) + '%';
@@ -19029,7 +19029,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // the pulse by minute with the sets as dots, each exercise's pulse on its sets and at the end of its rests, and the
   // heavy day's hint when the pulse did not come down. hr: the Watch's pulse by minute (null — no chart).
   function gymHrLine(e) {
-    return [e.hr != null ? 'пульс на подходе ~' + e.hr : '', e.rest_hr != null ? 'к концу отдыха ~' + e.rest_hr : ''].filter(Boolean).join(' · ');
+    return [e.hr != null ? 'пик пульса ~' + e.hr : '', e.rest_hr != null ? 'в отдыхе до ~' + e.rest_hr : ''].filter(Boolean).join(' · ');
   }
   function gymWatchCard(w, hr, day) {
     var c = mkCard('heart-pulse', 'Пульс', w.line || null);
