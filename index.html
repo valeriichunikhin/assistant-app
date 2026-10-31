@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 00:13">
+<meta name="published" content="2026-11-01 00:34">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1348,7 +1348,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fsw{font-size:11px;color:var(--muted)}.fsn{font:600 14px var(--font-num);font-variant-numeric:tabular-nums}
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
 .fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 11px var(--font);letter-spacing:-.04em}
-.fsc .i{width:14px;height:14px}
+.fsc .i{width:14px;height:14px}.fsc{position:relative}
+.fsq{position:absolute;top:-5px;right:-6px;min-width:14px;height:14px;padding:0 3px;border-radius:7px;background:var(--wo);color:var(--solid);font:700 9px/14px var(--font-num);letter-spacing:0;text-align:center}
 .fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
 .fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
 .fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
@@ -1415,7 +1416,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .bio-wl .ln{fill:none;stroke:var(--mark);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}.bio-wl .dt{fill:var(--mark);stroke:var(--surface);stroke-width:2}
 .bio-wl .cal{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:3 4;opacity:.55}
 .bio-wl .gap.yg{fill:color-mix(in srgb,var(--ring-recovery) 12%,transparent)}.bio-wl .gap.old{fill:color-mix(in srgb,var(--ring-load-2) 14%,transparent)}
-.nus-dot.bio-lg-b{--ms:var(--mark)}
+.nus-dot.bio-lg-b{--ms:var(--mark)}.nus-dot.bio-lg-h{--ms:var(--ring-load-2)}
+.bio-wl .hab{fill:none;stroke:var(--ring-load-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;opacity:.9}
 .bio-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px 14px 0}.bio-tiles[hidden]{display:none}
 .bio-tile{min-width:0;padding:10px;border-radius:var(--r-b);background:var(--surface-2);cursor:pointer}
 .bio-tile .h{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);white-space:nowrap}.bio-tile .h .i{width:14px;height:14px;flex:none}
@@ -17075,6 +17077,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var lead = add(el('div', 'bio-lead'), top, bio == null || age == null || span < 2 ? null : bioWeeksLine(hs, age));
     if (lead.childNodes.length > 1) {
       lead.appendChild(add(el('div', 'nus-lg'), add(el('span'), el('i', 'nus-dot bio-lg-b'), document.createTextNode('биологический по неделям')),
+        hs.filter(function (h) { return h.habits != null; }).length > 1 ? add(el('span'), el('i', 'nus-dot bio-lg-h'), document.createTextNode('привычки')) : null,
         add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('паспорт ' + woNum(age)))));
     }
     c.appendChild(tap(lead, function () { haptic(); bioAgeSheet(j, lead); }));
@@ -17099,7 +17102,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // the last week a dot; the two numbers in the right gutter (pushed apart when close), the first and last week under.
   function bioWeeksLine(hs, age) {
     var W = 330, H = 120, L = 6, R = 40, T = 10, B = 22, last = hs[hs.length - 1];
-    var vs = hs.map(function (h) { return h.bio; }).concat([age]), lo = Math.floor(Math.min.apply(null, vs) - 1), hi = Math.ceil(Math.max.apply(null, vs) + 1);
+    // His «с линией красиво» (01.11.2026): the habits' age a thin line of its own — the bio age holds still between
+    // labs, the habits move week to week.
+    var hab = hs.filter(function (h) { return h.habits != null; }).length > 1;
+    var vs = hs.map(function (h) { return h.bio; }).concat([age], hab ? hs.filter(function (h) { return h.habits != null; }).map(function (h) { return Number(h.habits); }) : []), lo = Math.floor(Math.min.apply(null, vs) - 1), hi = Math.ceil(Math.max.apply(null, vs) + 1);
     var t0 = Date.parse(hs[0].week_start), t1 = Date.parse(last.week_start);
     function X(d) { return L + (Date.parse(d) - t0) / Math.max(1, t1 - t0) * (W - L - R); }
     function Y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
@@ -17108,6 +17114,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var pts = hs.map(function (h) { return X(h.week_start).toFixed(1) + ',' + Y(h.bio).toFixed(1); }).join(' '), ya = Y(age), yb = Y(last.bio), xe = W - R;
     box.appendChild(svg('polygon', { 'class': 'gap ' + (last.bio <= age ? 'yg' : 'old'), points: X(hs[0].week_start).toFixed(1) + ',' + ya.toFixed(1) + ' ' + pts + ' ' + xe.toFixed(1) + ',' + ya.toFixed(1) }));
     box.appendChild(svg('line', { x1: L, x2: xe, y1: ya.toFixed(1), y2: ya.toFixed(1), 'class': 'cal' }));
+    if (hab) box.appendChild(svg('polyline', { 'class': 'hab', points: hs.filter(function (h) { return h.habits != null; })
+      .map(function (h) { return X(h.week_start).toFixed(1) + ',' + Y(Number(h.habits)).toFixed(1); }).join(' ') }));
     box.appendChild(svg('polyline', { points: pts, 'class': 'ln' }));
     box.appendChild(svg('circle', { cx: xe.toFixed(1), cy: yb.toFixed(1), r: 5, 'class': 'dt' }));
     var la = ya + 4, lb = yb + 4;
@@ -19446,6 +19454,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
+      // More than one on the day (his 01.11.2026): the first one's icon and the count, as «Месяц» draws it.
+      var n = D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length;
+      if (n > 1 && (w || pl)) c.appendChild(el('span', 'fsq', String(n)));
       return c;
     }
     function what(d) {
