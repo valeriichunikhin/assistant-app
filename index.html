@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 15:34">
+<meta name="published" content="2026-10-31 16:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1190,7 +1190,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 .row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 /* A workout's detail sheet (docs/specs/workout-map.md): six tiles three across, the map 240 px tall (from 900 px beside
-   the tiles, the sheet widened), the pulse on its zones' bands — one hue (--ring-load) deepening with the zone, the line
+   the tiles, the sheet widened), the pulse over its zones' dashed bounds — one hue (--ring-load) deepening with the zone, the line
    in --mark so both accents carry it; in the dark each tile inverted by the spec's filter (on the tile pane WebKit does
    not draw it), the route not. */
 .tsum .sub.wdsub{padding:0 0 12px;color:var(--muted);font-size:13px}
@@ -1210,9 +1210,45 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .wgh{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;min-width:0;color:var(--muted)}.wgh .i{flex:none;width:14px;height:14px}.wgh>span:not(.wgb){min-width:0}
 .wgh.good{color:var(--good)}.wgh.warn{color:var(--warn)}.wgb{flex:none;width:44px;height:5px;border-radius:3px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden}.wgb i{display:block;height:100%;border-radius:3px;background:currentColor}
 .wline{margin:8px 0 0;font-size:12px}.wchart{margin:14px 0 0}.wchart .hfh,.wex .hfh{margin:0 0 4px}.wex{margin:14px 0 0}.wex .wl{display:block}
-.wload{display:flex;align-items:center;gap:8px;margin:14px 0 0;padding:10px 12px;border-radius:var(--r-b);background:var(--accent-soft);font-weight:600;font-size:13px}
-.wload .i{flex:none;width:18px;height:18px;color:var(--mark)}
 .wdet .wside{margin:14px 0 0}
+/* Bevel's sheet (docs/specs/gym-week.md, «Bevel: месяц тренировок и лист тренировки»; docs/bevel/workout-detail-1…7.png):
+   the load's ring over the tiles, then cards — «Разбивка» (muscles --ring-load, cardio --ring-sleep, as Bevel's orange
+   and violet), «Воспринимаемая нагрузка» (10 dots in the accent), «Нагрузка на мышцы» (silhouettes in the muscles'
+   colour), the zones' table and «Кардиофокус» (bars in one hue deepening with the zone), «Восстановление ЧСС» (the
+   five steps, the reached one red / amber / green). */
+.wring{display:flex;align-items:center;gap:14px;margin:0 0 10px;padding:12px;border-radius:var(--r-b);background:var(--surface-2)}
+.wring .hring{flex:none}.wrt{min-width:0}.wrh{font:700 15px/1.3 var(--font)}.wrt .mu{margin-top:2px;font-size:13px;line-height:1.35}
+.wcard{margin:14px 0 0;padding:12px;border-radius:var(--r-b);background:var(--surface-2);min-width:0}
+.wch{font:600 13px/1.3 var(--font);color:var(--muted)}.wchr{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-8px 0 -6px}
+.wsplit{display:flex;align-items:center;justify-content:space-between;gap:12px}.wst{min-width:0}
+.wsn{display:flex;gap:24px;margin-top:6px;font-size:14px;font-weight:600}.wsn b{display:block;font:800 22px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
+.wsn b.mus{color:var(--ring-load)}.wsn b.car{color:var(--ring-sleep)}
+.wdn{flex:none;display:block}.wdn circle{fill:none}.wdn .tr{stroke:var(--track)}.wdn .mus{stroke:var(--ring-load)}.wdn .car{stroke:var(--ring-sleep)}
+.wrpe{display:flex;margin:4px -4px 0}.wrd{flex:1;min-width:0;height:44px;display:grid;place-items:center;padding:0;border:0;background:none;color:inherit}
+.wrd i{display:block;width:20px;height:20px;border-radius:50%;border:2px solid var(--line-2);transition:background .12s,border-color .12s}
+.wrd.on i{background:var(--mark);border-color:var(--mark)}.wrd:active i{transform:scale(.9)}
+.wrpl{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}.wrpl .wrpw{color:var(--fg);font-weight:700;font-size:13px}.wrpl .mu{text-align:center}
+.wmall{flex-direction:row-reverse;min-height:44px;padding:0 4px 0 8px;gap:2px;font-size:13px}
+.wmg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}
+.wmc{--st:var(--ring-load);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;text-align:center}
+.wmc .msil{width:56px;height:56px}.wmn{font-size:12px;line-height:1.25;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto}.wmc b{font:700 14px var(--font-num);font-variant-numeric:tabular-nums}
+.wzt,.wft{margin-top:4px}
+.wzr,.wfr{display:grid;align-items:center;gap:8px;min-height:38px;border-bottom:1px solid var(--line);font-size:13px}
+.wzr{grid-template-columns:16px minmax(0,1fr) 40px 58px 64px}.wfr{grid-template-columns:minmax(0,1.5fr) minmax(32px,1fr) 42px 34px}
+.wzr:last-child,.wfr:last-child{border-bottom:0}.wzr.wzh,.wfr.wzh{min-height:22px;border-bottom:0;font-size:11px;color:var(--muted)}
+.wzr .n,.wfr .n{font-family:var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.wzr.off,.wfr.off{color:var(--muted)}
+.wzr .n:last-child{text-align:right}.wfr .n:last-child{text-align:right}.wfl{font-weight:600;line-height:1.25}
+.wzb{display:block;height:8px;border-radius:4px;background:var(--track);overflow:hidden}.wzb i{display:block;height:100%;border-radius:4px;background:var(--ring-load)}
+.wzb .z0{opacity:.3}.wzb .z1{opacity:.45}.wzb .z2{opacity:.6}.wzb .z3{opacity:.75}.wzb .z4{opacity:.88}.wzb .z5{opacity:1}
+.wzb .f-low{opacity:.5}.wzb .f-high{opacity:.75}.wzb .f-anaerobic{opacity:1}
+.whrr{margin-top:6px}.whrr .wtv{font-size:24px}.whrr>.mu{font-size:12px}
+.whrn{margin:6px 0 0;font-size:13px}.whrn.c{padding:16px 8px 8px;text-align:center;font-weight:600}
+.whs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.whsg{display:flex;flex-direction:column;gap:4px;min-width:0}.whsg span{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.whsg i{position:relative;display:block;height:8px;border-radius:4px;background:var(--track)}.whs.off .whsg span{opacity:.6}
+.whsg.l0{color:var(--bad)}.whsg.l1{color:var(--warn)}.whsg.l2,.whsg.l3,.whsg.l4{color:var(--good)}.whsg.on i{background:currentColor}
+.whm{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--solid);border:3px solid currentColor}
+.whrf{margin-top:8px;font-size:12px;text-align:center}
 .wmap{position:relative;z-index:0;height:240px;border-radius:var(--r-b);overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
 .wmap.off{display:grid;place-items:center;padding:16px;color:var(--muted);font-size:13px;text-align:center}
 .wmap.leaflet-container{font:11px/1.4 var(--font);background:var(--surface-2)}
@@ -1223,8 +1259,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .wmap path.wpt{stroke:var(--mark);fill:var(--solid);fill-opacity:1}.wmap path.wpt.wfin{fill:var(--mark);stroke:var(--solid)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wmap .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.9)}}
 :root[data-theme="dark"] .wmap .leaflet-tile{filter:invert(1) hue-rotate(180deg) brightness(.9)}
-.chart.whr .wz{fill:var(--ring-load)}.chart.whr .wz1{fill-opacity:.06}.chart.whr .wz2{fill-opacity:.1}.chart.whr .wz3{fill-opacity:.15}
-.chart.whr .wz4{fill-opacity:.21}.chart.whr .wz5{fill-opacity:.28}
+.chart.whr .wzl{stroke:var(--ring-load);stroke-width:1;stroke-dasharray:3 3}.chart.whr .wzl1{stroke-opacity:.3}.chart.whr .wzl2{stroke-opacity:.45}
+.chart.whr .wzl3{stroke-opacity:.6}.chart.whr .wzl4{stroke-opacity:.78}.chart.whr .wzl5{stroke-opacity:.95}
 .chart.whr .wln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .chart.whr .war{fill:var(--mark);fill-opacity:.1}
 @media (min-width:900px){.tsum>div:has(.wdet.wmapd){max-width:1040px}
@@ -1314,6 +1350,20 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .row.fsr2{align-items:center;gap:12px}.row.fsr2>.i{flex:none;color:var(--muted)}.fsr2 .fss{font-size:12px;font-weight:600}
 /* A colour per sport (30.10.2026): the gym in his accent, volleyball orange, the run green, the bike sky, swimming teal,
    the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
+/* «Месяц» over the strip (gym-week, fitness-month-calendar.png): the month's name and the calendar button; the sheet's
+   grid of the strip's circles, the date alone on an empty day, the count's badge in the sport's colour, today ringed. */
+.fsm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}.fsml{font:700 17px/1.2 var(--font)}
+.fsmb,.fmb{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg)}
+.fsmb .i,.fmb .i{width:20px;height:20px}
+.fmh{display:flex;align-items:center;justify-content:space-between;gap:8px}.fmt{margin:0;font:700 20px/1.2 var(--font)}
+.fmw,.fmg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.fmw{margin-top:10px;padding-bottom:6px;border-bottom:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted)}
+.fmg{row-gap:4px;margin-top:8px;padding-bottom:8px}
+.fmd{position:relative;display:grid;place-items:center;min-width:0;height:52px;padding:0;border:0;background:none;color:var(--fg);font:inherit}
+.fmd .fsc{margin:0;width:42px;height:42px}.fmd .fsc .i{width:21px;height:21px}
+.fmd .fsc.fmn{background:none;color:var(--fg);font:500 15px var(--font-num);letter-spacing:0}.fmd .fsc.fmn.ld{color:var(--muted)}
+.fmd.today .fsc{box-shadow:0 0 0 2px var(--mark)}.fmd.sel::after{content:"";position:absolute;bottom:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--mark)}
+.fmc{position:absolute;top:1px;right:max(0px,calc(50% - 27px));min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--wo);color:var(--solid);font:700 11px/18px var(--font-num);text-align:center}
+.fmd:active .fsc{transform:scale(.94)}
 .k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}.k-walk{--wo:var(--hl-bio)}.k-tennis{--wo:var(--nu-carbs)}
 .frow .lead.kd{color:var(--wo)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 14px}.hgsh{padding:0 14px 8px;font-weight:600}
@@ -17519,10 +17569,13 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     return c;
   }
   // A workout's detail sheet (docs/specs/workout-map.md), Bevel's: the kind's emoji and name, the day and the time from
-  // start to end; six tiles (Минуты · Ккал · Ср. пульс · Макс · Дистанция · Темп — «Скорость» on a ride), «—» for what
-  // is not known; the route's map (only with one; from 900 px beside the tiles), the pulse by minute over its zones, the
-  // zones' minutes and «Нагрузка этой тренировки» (workout_get's load: his usual week's share); the gym's exercises.
-  // Drawn at once from the row the day has, again with workout_get's answer. «Поправить» — the edit sheet (woSheet).
+  // start to end; «Нагрузка этой тренировки» as a ring (workout_get's load: his usual week's share); the tiles (Минуты ·
+  // Ккал · Всего ккал (active and basal, Bevel's «Общая энергия») · Ср. пульс · Мин. пульс · Макс · Дистанция · Темп — «Скорость» on a ride; the two new only when
+  // known), «—» for what is not known; the route's map (only with one; from 900 px beside the tiles); then, in Bevel's
+  // order (docs/specs/gym-week.md, «Bevel: месяц тренировок и лист тренировки»): «Разбивка тренировки», «Воспринимаемая
+  // нагрузка», «Нагрузка на мышцы», the gym's exercises, the pulse by minute over its zones' bounds, «Зоны сердечного
+  // ритма», «Кардиофокус», «Восстановление ЧСС». Drawn at once from the row the day has, again with workout_get's answer.
+  // «Поправить» — the edit sheet (woSheet).
   var WO_EMOJI = { gym: '🏋️', volleyball: '🏐', run: '🏃', bike: '🚴', swim: '🏊', other: '💪' };
   function woDetailSheet(w, from, done) {
     var d = foodDay(w.at), end = w.minutes ? foodTime(Date.parse(w.at) + w.minutes * 60000) : '', close = noop;
@@ -17531,21 +17584,27 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var edit = foodBtn('btn ghost', 'pen-line', 'Поправить', function () { close(); woSheet(w, from, done); });
     close = legalSheet((WO_EMOJI[w.kind] || WO_EMOJI.other) + ' ' + woLabel(w), [sub, body,
       add(el('div', 'bar mact mstick'), edit, foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
-    function draw(x, load, watch) {
-      var key = JSON.stringify([x, load, watch, gx]);
+    var rpe = w.rpe != null ? w.rpe : null;
+    function draw(x, load, watch, more) {
+      more = more || {};
+      var key = JSON.stringify([x, load, watch, gx, more.heart, more.split, more.muscles, rpe]);
       if (key === drawn || !body.isConnected) return;
       drawn = key;
       var km = x.distance_km != null ? Number(x.distance_km) : null, pace = x.pace_min_km != null ? Number(x.pace_min_km) : null;
       if (km == null) woParts(x).forEach(function (s) { if (/ км$/.test(s)) km = foodNum(s.replace(' км', '')); });
       if (pace == null && km >= 0.1 && x.minutes) pace = x.minutes / km;
-      // The tiles, then the map (from 900 px on the right, beside both), then the rest.
+      var hr = Array.isArray(x.hr_series) && x.hr_series.length > 1 ? x.hr_series : null;
+      var minHr = hr ? Math.min.apply(null, hr.map(function (p) { return p[1]; })) : null;
+      // The ring, the tiles, then the map (from 900 px on the right, beside both), then the rest in Bevel's order.
       var bike = x.kind === 'bike', top = el('div', 'wtop'), side = el('div', 'wside'), main2 = el('div', 'wmain');
       var es = (x.items || []).filter(woEx), gym = x.kind === 'gym' && es.length > 0, tiles = el('div', gym ? 'wgt' : 'wtiles');
-      if (gym) woGymTiles(x, es).forEach(function (t) { tiles.appendChild(t); });
+      if (load && load.trimp != null) top.appendChild(woLoadRing(load));
+      if (gym) woGymTiles(x, es, minHr).forEach(function (t) { tiles.appendChild(t); });
       else [['Минуты', x.minutes ? woDur(x.minutes) : null, ''], ['Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null, ''],
-        ['Ср. пульс', x.avg_hr, 'уд/мин'], ['Макс', x.max_hr, 'уд/мин'],
+        x.kcal_total != null ? ['Всего ккал', grouped(Math.round(x.kcal_total)), ''] : null,
+        ['Ср. пульс', x.avg_hr, 'уд/мин'], minHr != null ? ['Мин. пульс', minHr, 'уд/мин'] : null, ['Макс', x.max_hr, 'уд/мин'],
         ['Дистанция', km ? woNum(Math.round(km * 100) / 100) : null, 'км'],
-        bike ? ['Скорость', pace ? woNum(60 / pace) : null, 'км/ч'] : ['Темп', pace ? woPace(pace) : null, '/км']].forEach(function (t) {
+        bike ? ['Скорость', pace ? woNum(60 / pace) : null, 'км/ч'] : ['Темп', pace ? woPace(pace) : null, '/км']].filter(Boolean).forEach(function (t) {
         var none = t[1] == null, c = add(el('div', 'wtile'), el('div', 'mu', t[0]),
           add(el('div', 'wtv' + (none ? ' mu' : '')), document.createTextNode(none ? '—' : String(t[1])), !none && t[2] ? el('small', '', ' ' + t[2]) : null));
         c.setAttribute('aria-label', t[0] + ': ' + (none ? 'нет данных' : t[1] + (t[2] ? ' ' + t[2] : '')));
@@ -17563,18 +17622,20 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         side.appendChild(mapBox);
         woMap(mapBox, route);
       }
-      var hr = Array.isArray(x.hr_series) && x.hr_series.length > 1 ? x.hr_series : null;
-      if (hr) {
-        var mx = woMaxHr(d), wrap = add(el('div', 'wchart'), el('div', 'hfh', 'Пульс'));
-        main2.appendChild(wrap);
-        wrap.appendChild(woHrChart(hr, mx, Math.max(260, (main2.clientWidth || 340)), watch ? gymDots(watch) : null));
-        var zm = woZoneMinutes(hr, mx), zs = zm.map(function (m, i) { return m ? 'з' + i + ' ' + m + ' мин' : null; }).filter(Boolean);
-        if (zs.length) wrap.appendChild(el('div', 'mu wline', 'по зонам: ' + zs.join(' · ') + ' · зоны от максимального пульса ' + mx));
+      if (more.split) main2.appendChild(woSplitCard(more.split));
+      // «Воспринимаемая нагрузка» once the server has the row (its id): a tap saves it (workout_rpe), the same dot again
+      // clears it.
+      if (more.split !== undefined || x.rpe !== undefined) {
+        main2.appendChild(woRpeCard(rpe, function (v) {
+          var was = rpe;
+          rpe = v;
+          redraw();
+          api('miniapp', { action: 'workout_rpe' }, 15000, false, { id: w.id, rpe: v }).then(function (j) {
+            if (!j || !j.ok) { rpe = was; redraw(); }
+          }, function () { rpe = was; redraw(); });
+        }));
       }
-      if (load && load.trimp != null) {
-        main2.appendChild(add(el('div', 'wload'), icon('gauge'), el('span', '', 'Нагрузка этой тренировки: ' + grouped(load.trimp) + ' ед.' +
-          (load.pct != null ? ' — ' + load.pct + ' % обычной недели' : ''))));
-      }
+      if (more.muscles && more.muscles.length) main2.appendChild(woMusclesCard(more.muscles, d));
       if (gym) {
         // A gym session (docs/specs/gym-week.md, «Лист сделанной тренировки»): a card per exercise.
         var gex = add(el('div', 'wgex'), el('div', 'hfh', 'Упражнения')), wbyEx = {};
@@ -17593,28 +17654,163 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         if (watch && watch.hint) ex.appendChild(el('div', 'mu wl gtip', watch.hint));
         main2.appendChild(ex);
       }
+      // «Сердце», Bevel's order: the pulse chart, the zones' table, «Кардиофокус», «Восстановление ЧСС».
+      if (hr) {
+        var mx = (more.heart && more.heart.max_hr) || woMaxHr(d), wrap = add(el('div', 'wchart'), el('div', 'hfh', 'Пульс'));
+        main2.appendChild(wrap);
+        wrap.appendChild(woHrChart(hr, mx, Math.max(260, (main2.clientWidth || 340)), watch ? gymDots(watch) : null, Date.parse(x.at)));
+        main2.appendChild(woZonesCard(woZoneMinutes(hr, mx), mx));
+        if (more.heart) {
+          main2.appendChild(woFocusCard(more.heart.focus || []));
+          main2.appendChild(woRecoveryCard(more.heart.recovery));
+        }
+      }
       if (x.note) main2.appendChild(el('div', 'mu fnote', x.note));
     }
     var last = null;
-    draw(w, null, null);
+    function redraw() { if (last) draw(last.workout, last.load || null, last.watch || null, last); else draw(w, null, null, null); }
+    draw(w, null, null, null);
     api('miniapp', { action: 'workout_get' }, 15000, true, { id: w.id }).then(function (j) {
       if (!j || !j.workout) return;
       last = j;
-      draw(j.workout, j.load || null, j.watch || null);
+      if (j.workout.rpe !== undefined) rpe = j.workout.rpe;
+      redraw();
       var names = (j.workout.items || []).filter(woEx).map(function (e) { return e.exercise; });
       if (j.workout.kind !== 'gym' || !names.length) return;
       // The animations (plan_get has them for the plan's exercises) and the records: a set's weight that is his record
       // set on this very day is the day's «рекорд».
       api('miniapp', { action: 'plan_get' }, 15000, false, {}).then(function (p) {
-        if (p && p.gifs) { gx.gifs = p.gifs; draw(last.workout, last.load || null, last.watch || null); }
+        if (p && p.gifs) { gx.gifs = p.gifs; redraw(); }
       }, noop);
       names.forEach(function (n) {
         api('miniapp', { action: 'gym_progress' }, 15000, false, { exercise: n }).then(function (r) {
           var k = r && r.exercise && r.exercise.records && r.exercise.records.kg;
-          if (k && k.date === d) { gx.prs[n] = k.v; draw(last.workout, last.load || null, last.watch || null); }
+          if (k && k.date === d) { gx.prs[n] = k.v; redraw(); }
         }, noop);
       });
     }, noop);
+  }
+  // «Нагрузка этой тренировки» as a ring, Bevel's «Физическая нагрузка 26 — низкая»: the workout's TRIMP as % of his
+  // usual week (workout_get's load) in the ring, the word by it — under 15 % low, to 35 % medium, above high.
+  function woLoadWord(pct) { return pct < 15 ? 'Низкая' : pct <= 35 ? 'Средняя' : 'Высокая'; }
+  function woLoadRing(load) {
+    var p = load.pct, word = p == null ? null : woLoadWord(p);
+    var c = add(el('div', 'wring'), hlRing(p, 'hl-load', 64), add(el('div', 'wrt'), el('div', 'wrh', 'Нагрузка этой тренировки'),
+      el('div', 'mu', word ? word + ' нагрузка — ' + p + ' % обычной недели' : grouped(load.trimp) + ' ед.; обычной недели для сравнения пока нет')));
+    c.setAttribute('aria-label', 'Нагрузка этой тренировки: ' + (word ? word.toLowerCase() + ', ' + p + ' % обычной недели' : grouped(load.trimp) + ' ед.'));
+    return c;
+  }
+  // «Разбивка тренировки»: muscles against cardio (workout_get's split, _shared/workouts.ts workoutSplit — each load
+  // against his usual week of it), the two numbers and a small donut in the same two colours.
+  function woSplitCard(sp) {
+    var S = 64, sw = 10, r = (S - sw) / 2, C = 2 * Math.PI * r, h = S / 2;
+    var d = svg('svg', { viewBox: '0 0 ' + S + ' ' + S, width: S, height: S, 'class': 'wdn', 'aria-hidden': 'true' });
+    d.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
+    [['mus', 0, sp.muscle], ['car', sp.muscle, sp.cardio]].forEach(function (q) {
+      if (!q[2]) return;
+      var gap = sp.muscle && sp.cardio ? 1.5 : 0;
+      d.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': q[0], 'stroke-width': sw, transform: 'rotate(-90 ' + h + ' ' + h + ')',
+        'stroke-dasharray': Math.max(0.1, C * q[2] / 100 - gap).toFixed(1) + ' ' + C.toFixed(1), 'stroke-dashoffset': (-C * q[1] / 100).toFixed(1) }));
+    });
+    var c = add(el('div', 'wcard wsplit'), add(el('div', 'wst'), el('div', 'wch', 'Разбивка тренировки'),
+      add(el('div', 'wsn'), add(el('div', ''), el('div', '', 'Мышцы'), el('b', 'mus', sp.muscle + ' %')),
+        add(el('div', ''), el('div', '', 'Кардио'), el('b', 'car', sp.cardio + ' %')))), d);
+    c.setAttribute('aria-label', 'Разбивка тренировки: мышцы ' + sp.muscle + ' %, кардио ' + sp.cardio + ' %');
+    return c;
+  }
+  // «Воспринимаемая нагрузка»: 10 dots in a row, the ones up to his mark lit, the word under it.
+  var WO_RPE = ['Очень легко', 'Очень легко', 'Легко', 'Легко', 'Умеренно', 'Умеренно', 'Тяжело', 'Тяжело', 'Очень тяжело', 'Предел'];
+  function woRpeCard(v, set) {
+    var row = el('div', 'wrpe');
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', 'Воспринимаемая нагрузка от 1 до 10');
+    for (var i = 1; i <= 10; i++) (function (n) {
+      var b = el('button', 'wrd' + (v != null && n <= v ? ' on' : ''));
+      b.type = 'button';
+      b.setAttribute('aria-pressed', v === n ? 'true' : 'false');
+      b.setAttribute('aria-label', n + ' из 10 — ' + WO_RPE[n - 1].toLowerCase());
+      b.appendChild(el('i', ''));
+      b.onclick = function () { haptic(); set(v === n ? null : n); };
+      row.appendChild(b);
+    })(i);
+    return add(el('div', 'wcard'), el('div', 'wch', 'Воспринимаемая нагрузка'), row,
+      add(el('div', 'wrpl'), el('span', '', '1'), el('span', v == null ? 'mu' : 'wrpw', v == null ? 'Оцени, насколько тяжело было' : v + ' из 10 · ' + WO_RPE[v - 1]), el('span', '', '10')));
+  }
+  // «Нагрузка на мышцы»: the groups this workout loaded (workout_get's muscles), the top 4 — the silhouette, the name,
+  // its share of this workout's muscle load; «Все группы» opens «Мышечные группы» on the day's freshness (health_day).
+  function woMusclesCard(ms, day) {
+    var grid = el('div', 'wmg');
+    ms.slice(0, 4).forEach(function (m) {
+      var c = add(el('div', 'wmc'), msil(m.group), el('div', 'wmn', m.label), el('b', '', m.pct + ' %'));
+      c.setAttribute('aria-label', m.label + ': ' + m.pct + ' % нагрузки этой тренировки');
+      grid.appendChild(c);
+    });
+    var all = foodBtn('btn ghost wmall', 'chevron-right', 'Все группы', function (ev) {
+      var from = ev.currentTarget;
+      haptic();
+      api('miniapp', { action: 'health_day' }, 15000, true, { date: day }).then(function (j) { if (j && j.ok !== false) hlMusclesSheet(j, from); }, noop);
+    });
+    return add(el('div', 'wcard wmus'), add(el('div', 'wchr'), el('div', 'wch', 'Нагрузка на мышцы'), all), grid);
+  }
+  // «Зоны сердечного ритма», Bevel's table (docs/bevel/workout-detail-5,6.png): zone 5 down to 0 — the bar of its share,
+  // the per cent, the time as h:mm:ss, its bpm; an empty zone muted. zm: woZoneMinutes.
+  function woHms(min) { var sec = Math.round(min * 60), hh = Math.floor(sec / 3600), mm = Math.floor(sec % 3600 / 60), ss = sec % 60;
+    return hh + ':' + (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss; }
+  function woZonesCard(zm, mx) {
+    var total = zm.reduce(function (a, b) { return a + b; }, 0) || 1, t = el('div', 'wzt');
+    t.setAttribute('role', 'table');
+    t.appendChild(add(el('div', 'wzr wzh'), el('span', '', 'Зона'), el('span', ''), el('span', '', '%'), el('span', '', 'Время'), el('span', '', 'уд/мин')));
+    for (var z = 5; z >= 0; z--) {
+      var pct = Math.round(zm[z] / total * 100), lo = woZoneLo(z, mx), range = z === 0 ? '<' + woZoneLo(1, mx) : z === 5 ? '>' + (lo - 1) : lo + '–' + (woZoneLo(z + 1, mx) - 1);
+      var bar = add(el('span', 'wzb'), el('i', 'z' + z));
+      bar.firstChild.style.width = (zm[z] ? Math.max(4, pct) : 0) + '%';
+      var r = add(el('div', 'wzr' + (zm[z] ? '' : ' off')), el('b', '', String(z)), bar, el('span', 'n', pct + ' %'), el('span', 'n', woHms(zm[z])), el('span', 'n mu', range));
+      r.setAttribute('role', 'row');
+      r.setAttribute('aria-label', 'Зона ' + z + ', ' + range + ' уд/мин: ' + pct + ' %, ' + zm[z] + ' мин');
+      t.appendChild(r);
+    }
+    return add(el('div', 'wcard'), el('div', 'wch', 'Зоны сердечного ритма'), t);
+  }
+  // «Кардиофокус» (workout_get's heart.focus, _shared/health.ts cardioFocus): where the TRIMP points came from —
+  // anaerobic (zones 4–5), high aerobic (3), low aerobic (1–2): the bar, the share, the points.
+  var WO_FOCUS = { anaerobic: 'Анаэробная нагрузка', high: 'Высокая аэроб. нагр.', low: 'Низкая аэроб. нагр.' };
+  function woFocusCard(fs) {
+    var t = add(el('div', 'wft'), add(el('div', 'wfr wzh'), el('span', '', 'Зона'), el('span', ''), el('span', '', '%'), el('span', '', 'Очки')));
+    fs.forEach(function (f) {
+      var bar = add(el('span', 'wzb'), el('i', 'f-' + f.key));
+      bar.firstChild.style.width = (f.pct ? Math.max(4, f.pct) : 0) + '%';
+      var r = add(el('div', 'wfr' + (f.pts ? '' : ' off')), el('span', 'wfl', WO_FOCUS[f.key] || f.key), bar, el('span', 'n', f.pct + ' %'), el('span', 'n mu', '+' + f.pts));
+      r.setAttribute('aria-label', (WO_FOCUS[f.key] || f.key) + ': ' + f.pct + ' %, ' + f.pts + ' очк.');
+      t.appendChild(r);
+    });
+    return add(el('div', 'wcard'), el('div', 'wch', 'Кардиофокус'), t);
+  }
+  // «Восстановление ЧСС» (heart.recovery, _shared/health.ts hrRecovery), Bevel's (workout-detail-7.png): the drop in the
+  // first 2 minutes after the end on the five-step scale, only after a workout that reached zone 4; else Bevel's
+  // sentence over the empty scale. The 1 minute's drop beside it.
+  var WO_HRR = [[0, 'Плохо'], [15, 'Удовлетв.'], [32, 'Хорошо'], [40, 'Отлично'], [49, 'Превосх.']];
+  function woRecoveryCard(rc) {
+    var lv = rc && rc.reached && rc.level != null ? rc.level : null, v = lv != null ? rc.drop2 : null;
+    var head = add(el('div', 'whrr'), el('div', 'mu', 'Разница в ЧСС за 2 мин'),
+      add(el('div', 'wtv' + (v == null ? ' mu' : '')), document.createTextNode(v == null ? '—' : String(v)), el('small', '', ' уд/мин')));
+    var note = !rc || !rc.reached ? 'Для данных о восстановлении ЧСС нужно достичь зоны 4' : v == null ? 'Нужен пульс после тренировки — часы его не записали'
+      : rc.drop1 != null ? 'За первую минуту — ' + rc.drop1 + ' уд/мин' : null;
+    var scale = el('div', 'whs' + (lv == null ? ' off' : ''));
+    WO_HRR.forEach(function (q, i) {
+      var seg = add(el('div', 'whsg' + (lv === i ? ' on l' + i : '')), el('span', 'mu', q[1]), el('i', ''), el('span', 'n mu', q[0] + (i === 4 ? '+' : '')));
+      if (lv === i) {
+        // The marker inside its step: where the drop sits between the step's bound and the next (the last up to 60).
+        var top = i < 4 ? WO_HRR[i + 1][0] : 60, f = Math.max(0, Math.min(1, (v - q[0]) / (top - q[0])));
+        var m = el('b', 'whm');
+        m.style.left = (f * 100).toFixed(0) + '%';
+        seg.querySelector('i').appendChild(m);
+      }
+      scale.appendChild(seg);
+    });
+    var c = add(el('div', 'wcard'), el('div', 'wch', 'Восстановление ЧСС'), head, note ? el('div', 'mu whrn' + (lv == null ? ' c' : ''), note) : null, scale,
+      el('div', 'mu whrf', 'Диапазоны — как у Bevel для твоего возраста.'));
+    c.setAttribute('aria-label', 'Восстановление ЧСС: ' + (v == null ? 'нет данных' : v + ' уд/мин за 2 минуты, ' + WO_HRR[lv][1].toLowerCase()));
+    return c;
   }
   // The 1RM of a set as the server counts it (_shared/gym.ts oneRm): the RPE formula on RPE 7–10 and 1–12 reps, else Epley.
   function gymOneRm(kg, reps, rpe) {
@@ -17622,15 +17818,23 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var rir = rpe != null && rpe >= 7 && rpe <= 10 && reps <= 12 ? 10 - rpe : 0;
     return Math.round(kg * (1 + (reps + rir) / 30) * 2) / 2;
   }
-  // The finished gym session's tiles: time · volume · sets · kcal · pulse, only those that exist; warm-up sets count for nothing.
-  function woGymTiles(x, es) {
+  // The pulse's tile: «Пульс мин./ср./макс.» with what of the three is known (the lowest from the series).
+  function woPulseTile(mn, avg, mx) {
+    var ks = [], vs = [];
+    [['мин.', mn], ['ср.', avg], ['макс.', mx]].forEach(function (q) { if (q[1]) { ks.push(q[0]); vs.push(q[1]); } });
+    return ['heart-pulse', vs.length > 1 ? 'Пульс ' + ks.join('/') : 'Пульс', vs.length ? vs.join(' / ') : null, ''];
+  }
+  // The finished gym session's tiles: time · volume · sets · kcal · all kcal (active and basal) · the pulse (its lowest
+  // from the series, the average, the top), only those that exist; warm-up sets count for nothing.
+  function woGymTiles(x, es, minHr) {
     var vol = 0, n = 0;
     es.forEach(function (e) {
       (e.sets || []).forEach(function (s) { if (!s.warm) { n++; vol += (s.kg || 0) * (s.reps || 0); } });
     });
-    return [['timer', 'Время', x.minutes ? woDur(x.minutes) : null, ''], ['weight', 'Объём', vol ? grouped(Math.round(vol)) : null, 'кг'],
+    var out = [['timer', 'Время', x.minutes ? woDur(x.minutes) : null, ''], ['weight', 'Объём', vol ? grouped(Math.round(vol)) : null, 'кг'],
       ['biceps-flexed', 'Подходы', n ? String(n) : null, ''], ['flame', 'Ккал', x.kcal != null ? grouped(Math.round(x.kcal)) : null, ''],
-      ['heart-pulse', x.avg_hr && x.max_hr ? 'Пульс ср./макс.' : 'Пульс', x.avg_hr && x.max_hr ? x.avg_hr + ' / ' + x.max_hr : x.avg_hr || x.max_hr || null, '']].filter(function (t) {
+      ['flame', 'Всего ккал', x.kcal_total != null ? grouped(Math.round(x.kcal_total)) : null, ''],
+      woPulseTile(minHr, x.avg_hr, x.max_hr)].filter(function (t) {
       return t[2] != null;
     }).map(function (t) {
       var c = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(t[0]), el('span', '', t[1])),
@@ -17638,6 +17842,15 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       c.setAttribute('aria-label', t[1] + ': ' + t[2] + (t[3] ? ' ' + t[3] : ''));
       return c;
     });
+    // The pulse's tile, always last, fills the rest of its row and at least two cells, so «Пульс мин./ср./макс.» is
+    // whole: alone after a full row — the whole row; after two — the one before it takes the free cell.
+    var k = out.length - 1;
+    if (k >= 0 && out[k].getAttribute('aria-label').indexOf('Пульс') === 0) {
+      var col = k % 3;
+      out[k].style.gridColumn = 'span ' + (col === 1 ? 2 : 3);
+      if (col === 2) out[k - 1].style.gridColumn = 'span 2';
+    }
+    return out;
   }
   // One exercise of a done gym session as a card: the animation, the name, the «Как было?» chip, the weight when it is one
   // for every working set; the sets as «1 · 10» (« × 28 кг» only when the weights differ; a warm-up set muted with a flame,
@@ -17694,13 +17907,17 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     hr.forEach(function (p, i) { out[woZone(p[1], mx)] += i + 1 < hr.length ? Math.max(0, hr[i + 1][0] - p[0]) : 1; });
     return out;
   }
-  // The pulse by minute: one line in --mark over a faint wash, on the zones' bands (one hue, deeper with the zone, its
-  // name at the right edge where the band is tall enough); the top pulse a dot with its value; a few clean bpm ticks on
-  // the left, the minutes under it. A crosshair on hover or touch snaps to the minute and reads the pulse and its zone.
-  function woHrChart(hr, mx, W, dots) {
-    var H = 160, L = 30, R = 26, T = 12, B = 20;
+  // A zone's lowest whole bpm (woZone's bound rounded up): 98 · 117 · 137 · 156 · 176 at 195.
+  function woZoneLo(z, mx) { return Math.ceil(mx * WO_ZONES[z] / 100); }
+  // The pulse by minute: one line in --mark over a faint wash; the zones' lower bounds as thin dashed lines (one hue,
+  // deeper with the zone) with their bpm at the right edge, Bevel's (docs/bevel/workout-detail-5.png) — the range always
+  // holds zone 1's to zone 5's; the top pulse a dot with its value; under it the clock (t0, the start in ms) or the
+  // minutes. A crosshair on hover or touch snaps to the minute and reads the pulse and its zone.
+  function woHrChart(hr, mx, W, dots, t0) {
+    var H = 170, L = 6, R = 32, T = 12, B = 20;
     var vs = hr.map(function (p) { return p[1]; }), last = hr[hr.length - 1][0] || 1;
-    var lo = Math.max(30, Math.floor((Math.min.apply(null, vs) - 6) / 10) * 10), hi = Math.ceil((Math.max.apply(null, vs) + 6) / 10) * 10;
+    var lo = Math.max(30, Math.floor((Math.min(Math.min.apply(null, vs), mx * WO_ZONES[1] / 100) - 6) / 10) * 10);
+    var hi = Math.ceil((Math.max(Math.max.apply(null, vs), mx * WO_ZONES[5] / 100) + 6) / 10) * 10;
     var wrap = el('div', 'mch'), box = chartBox(W, H, 'Пульс по минутам'), tip = mtTip(wrap);
     box.classList.add('mchart');
     box.classList.add('whr');
@@ -17709,15 +17926,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     function y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
     WO_ZONES.forEach(function (p, z) {
       if (!z) return;
-      var a = Math.max(lo, mx * p / 100), b = Math.min(hi, z === 5 ? hi : mx * WO_ZONES[z + 1] / 100);
-      if (b <= a) return;
-      add(box, svg('rect', { x: L, y: y(b), width: W - L - R, height: y(a) - y(b), 'class': 'wz wz' + z }));
-      if (y(a) - y(b) >= 12) add(box, svg('text', { x: W - R + 5, y: (y(a) + y(b)) / 2 + 4, 'class': 'tk' }, 'з' + z));
+      var b = woZoneLo(z, mx);
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(b).toFixed(1), y2: y(b).toFixed(1), 'class': 'wzl wzl' + z }),
+        svg('text', { x: W - R + 5, y: y(b) + 4, 'class': 'tk' }, b));
     });
-    var st = hi - lo > 80 ? 40 : 20;
-    for (var v = Math.ceil(lo / st) * st; v <= hi; v += st) {
-      add(box, svg('text', { x: L - 6, y: y(v) + 4, 'class': 'tk', 'text-anchor': 'end' }, v));
-    }
     add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
     var pts = hr.map(function (p) { return x(p[0]).toFixed(1) + ',' + y(p[1]).toFixed(1); }).join(' ');
     add(box, svg('polygon', { 'class': 'war', points: x(hr[0][0]).toFixed(1) + ',' + (H - B) + ' ' + pts + ' ' + x(last).toFixed(1) + ',' + (H - B) }),
@@ -17727,7 +17939,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       if (d[0] >= 0 && d[0] <= last) add(box, svg('circle', { cx: x(d[0]), cy: y(Math.max(lo, Math.min(hi, d[1]))), r: 3.5, 'class': 'sdot' }));
     });
     [[0, 'start'], [Math.round(last / 2), 'middle'], [last, 'end']].forEach(function (t) {
-      add(box, svg('text', { x: x(t[0]), y: H - 5, 'class': 'tk', 'text-anchor': t[1] }, t[0] + (t[1] === 'end' ? ' мин' : '')));
+      add(box, svg('text', { x: x(t[0]), y: H - 5, 'class': 'tk', 'text-anchor': t[1] },
+        t0 ? foodTime(t0 + t[0] * 60000) : t[0] + (t[1] === 'end' ? ' мин' : '')));
     });
     var top = 0;
     hr.forEach(function (p, i) { if (p[1] > hr[top][1]) top = i; });
@@ -18840,8 +19053,84 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     sc.setAttribute('role', 'group');
     sc.setAttribute('aria-label', 'Дни');
     FIT.sel = date;
-    add(clear(box), add(el('div', 'fst'), sc, back), panel);
+    // Over the strip: the picked day's month and «Месяц» (the calendar), Bevel's (fitness-month-calendar.png).
+    var monL = el('span', 'fsml'), monB = foodBtn('fsmb', 'calendar', '', function (ev) { haptic(); monthSheet(FIT.sel.slice(0, 7), ev.currentTarget); });
+    monB.setAttribute('aria-label', 'Месяц тренировок');
+    add(clear(box), add(el('div', 'fsm'), monL, monB), add(el('div', 'fst'), sc, back), panel);
     function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function monName(ym) { return cap(MONTHS_N[+ym.slice(5, 7) - 1]) + ' ' + ym.slice(0, 4); }
+    // «Месяц»: the month's grid from Monday, a day — the strip's circle (the done workout's icon in its sport's colour,
+    // a planned one dashed), the date alone on a day with nothing, a badge with the count when more than one, today
+    // ringed; ‹ › for the months (fit_range, a month at most 31 days). A tap closes it and picks that day in the strip.
+    function monthSheet(ym, from) {
+      var close = noop, head = el('div', 'fmh'), grid = el('div', 'fmg'), cur = ym;
+      var prevB = foodBtn('fmb', 'chevron-left', '', function () { haptic(); go(-1); }), nextB = foodBtn('fmb', 'chevron-right', '', function () { haptic(); go(1); });
+      prevB.setAttribute('aria-label', 'Предыдущий месяц');
+      nextB.setAttribute('aria-label', 'Следующий месяц');
+      var title = el('h4', 'fmt');
+      add(head, prevB, title, nextB);
+      var wk = el('div', 'fmw');
+      WEEK.forEach(function (w) { wk.appendChild(el('span', '', cap(w))); });
+      grid.setAttribute('role', 'grid');
+      function days(m) { var y = +m.slice(0, 4), mo = +m.slice(5, 7); return new Date(Date.UTC(y, mo, 0)).getUTCDate(); }
+      function go(k) {
+        var y = +cur.slice(0, 4), m = +cur.slice(5, 7) - 1 + k;
+        y += Math.floor(m / 12);
+        m = (m % 12 + 12) % 12;
+        cur = y + '-' + (m < 9 ? '0' : '') + (m + 1);
+        draw();
+        load();
+      }
+      function cell(d) {
+        var D = FIT.days[d], b = el('button', 'fmd' + (d === today ? ' today' : '') + (d === FIT.sel ? ' sel' : ''));
+        b.type = 'button';
+        var n = D ? D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length : 0;
+        if (D && n) b.appendChild(circle(d));
+        else b.appendChild(el('span', 'fsc fmn' + (D ? '' : ' ld'), String(+d.slice(8, 10))));
+        if (n > 1) b.appendChild(el('span', 'fmc ' + ((b.firstChild.className.match(/\bk-[a-z]+/) || ['k-other'])[0]), String(n)));
+        b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + ': ' + (D ? what(d) : 'загружаю'));
+        b.onclick = function () { haptic(); close(); pickDay(d); };
+        return b;
+      }
+      function draw() {
+        title.textContent = monName(cur);
+        clear(grid);
+        var first = cur + '-01', lead = wd(first), n = days(cur);
+        for (var i = 0; i < lead; i++) grid.appendChild(el('span', 'fmd fmx'));
+        for (var k = 0; k < n; k++) grid.appendChild(cell(addDays(first, k)));
+      }
+      function load() {
+        var m = cur;
+        fetch(m + '-01', days(m)).then(function (j) {
+          if (!grid.isConnected) return;
+          merge(j);
+          if (m === cur) draw();
+        }, noop);
+      }
+      draw();
+      load();
+      close = legalSheet('Месяц тренировок', [head, wk, grid, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+    }
+    // A day from «Месяц»: picked in the strip as a swipe to it would; a past day out of the strip moves «Фитнес» to it,
+    // one ahead stretches the strip to it.
+    function pickDay(d) {
+      if (!pillAt(d)) {
+        if (d <= today) { FIT.sel = d; return goDay(d); }
+        var was = FIT.to;
+        FIT.to = addDays(d, 7);
+        drawPills();
+        fetch(addDays(was, 1), Math.min(31, Math.round((Date.parse(FIT.to) - Date.parse(was)) / 864e5))).then(function (j) {
+          if (!box.isConnected) return;
+          var x = sc.scrollLeft;
+          merge(j);
+          drawPills();
+          sc.scrollLeft = x;
+        }, noop);
+      }
+      center(d, false);
+      var p = pillAt(d);
+      if (p && p.pick) p.pick();
+    }
     function circle(d) {
       var D = FIT.days[d], c = el('span', 'fsc');
       if (!D) { c.className += ' ld'; return c; }
@@ -18937,7 +19226,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       if (sc.scrollLeft < 160) more(true);
       else if (sc.scrollLeft + sc.clientWidth > sc.scrollWidth - 160) more(false);
       clearTimeout(settle);
-      settle = setTimeout(function () { var x = underPointer(); if (x && x.pick) x.pick(); }, 180);
+      settle = setTimeout(function () { if (!sc.isConnected) return; var x = underPointer(); if (x && x.pick) x.pick(); }, 180);
     }, { passive: true });
     function row(lead, top, title, sub, onTap, lbl) {
       var r = add(el('div', 'row frow fsr2'), lead, add(el('span', 'tx'), el('div', 'mu fss', top), el('div', 't', title), sub ? el('div', 'mu', sub) : null),
@@ -18947,6 +19236,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     }
     function drawPanel() {
       var d = FIT.sel, D = FIT.days[d];
+      monL.textContent = monName(d.slice(0, 7));
       clear(panel);
       var add1 = d <= today ? foodBtn('fsadd', 'plus', '', function (ev) { woAddSheet(d, ev.currentTarget, refresh); }) : null;
       if (add1) add1.setAttribute('aria-label', 'Добавить тренировку');
