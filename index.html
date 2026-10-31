@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 02:14">
+<meta name="published" content="2026-10-31 10:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1175,10 +1175,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
 .hrl{font-size:12.5px;letter-spacing:-.01em;color:var(--muted);white-space:nowrap}
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
-.hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 8px;padding:12px 10px 14px;border-radius:var(--r-b);background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.06),inset 0 0 0 1px var(--line)}.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
+.hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 4px;padding:8px 0 10px}/* no tile, no frame (his 31.10.2026) */.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
 /* The advice's «шторка» (Bevel's home, 30.10.2026): translucent, hanging under the rings to the card's bottom edge. */
-.hcur{position:relative;z-index:1;margin:0 8px;padding:12px 14px 14px}/* Bevel's «шторка» (his 30–31.10.2026): one panel behind the whole rings tile, from the tile's top to below the advice (.hbody::before) — no edge inside the tile, so nothing shows through its translucent dark surface, and the side lines run all the way up */
-.hbody:has(>.hcur){position:relative}.hbody:has(>.hcur)::before{content:"";position:absolute;left:8px;right:8px;top:6px;bottom:14px;background:color-mix(in srgb,var(--surface) 55%,transparent);border:1px solid var(--line);border-radius:var(--r-b);z-index:0}
+.hcur{position:relative;z-index:1;margin:0 8px;padding:6px 14px 4px}/* the advice under the rings, no panel or frame (his 31.10.2026) */
+.hbody:has(>.hcur){position:relative}
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 /* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
@@ -15261,7 +15261,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
     vs.load_target = j.load_target;
-    var rings = hlRings(vs, 84, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
+    var rings = hlRings(vs, 100, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
     var adv = j.advice_model ? hlModel(j.advice_model, j.tip) : j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
       j.advice ? hlNb(hlAdvice(j.advice, today && today.kinds)) : (j.row ? 'Пока мало данных для совета.' : 'За этот день данных нет.'));
@@ -17232,7 +17232,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // The head's clock: «идёт 23 мин · 4 подхода»; before the first set the minutes alone, so the day's switch and its
   // badge fit beside it on a phone.
   function gymElapsed(s, now) {
-    var n = gymSets(s), m = 'идёт ' + Math.max(0, Math.round((now - Date.parse(s.started_at)) / 60000)) + ' мин';
+    // The running clock, to the second (his 31.10.2026): «⏱ 12:34», from an hour «⏱ 1:02:07».
+    var t = Math.max(0, Math.floor((now - Date.parse(s.started_at)) / 1000)), h = Math.floor(t / 3600), mm = Math.floor(t / 60) % 60;
+    var n = gymSets(s), m = '⏱ ' + (h ? h + ':' + ('0' + mm).slice(-2) : String(mm)) + ':' + ('0' + t % 60).slice(-2);
     return n ? m + ' · ' + n + ' ' + ['подход', 'подхода', 'подходов'][plural3(n)] : m;
   }
   function gymClock(ms) { var t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
