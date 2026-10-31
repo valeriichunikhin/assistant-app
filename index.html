@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 16:13">
+<meta name="published" content="2026-10-31 19:12">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -15281,12 +15281,27 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [F.EAN_13, F.EAN_8, F.UPC_A, F.UPC_E]);
         hints.set(Z.DecodeHintType.TRY_HARDER, true);
         reader.setHints(hints);
+        // Even frames: the middle horizontal band. Odd frames: the middle vertical band turned 90° — bottles carry the code
+        // standing up (bars across the bottle), which the horizontal band never covers whole.
+        var odd = false;
         return function (v) {
-          var w = v.videoWidth, h = v.videoHeight, sh = Math.round(h * 0.4), k = Math.min(1, 960 / (w || 1));
+          var w = v.videoWidth, h = v.videoHeight;
           if (!w || !h) return Promise.resolve(null);
-          cv.width = Math.round(w * k);
-          cv.height = Math.round(sh * k);
-          cx.drawImage(v, 0, Math.round((h - sh) / 2), w, sh, 0, 0, cv.width, cv.height);
+          odd = !odd;
+          cx.setTransform(1, 0, 0, 1, 0, 0);
+          if (odd) {
+            var sh = Math.round(h * 0.4), k = Math.min(1, 960 / w);
+            cv.width = Math.round(w * k);
+            cv.height = Math.round(sh * k);
+            cx.drawImage(v, 0, Math.round((h - sh) / 2), w, sh, 0, 0, cv.width, cv.height);
+          } else {
+            var sw = Math.round(w * 0.4), q = Math.min(1, 960 / h);
+            cv.width = Math.round(h * q);
+            cv.height = Math.round(sw * q);
+            cx.translate(cv.width, 0);
+            cx.rotate(Math.PI / 2);
+            cx.drawImage(v, Math.round((w - sw) / 2), 0, sw, h, 0, 0, cv.height, cv.width);
+          }
           try {
             return Promise.resolve(reader.decodeWithState(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText());
           } catch (e) { return Promise.resolve(null); }
