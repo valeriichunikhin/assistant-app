@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 19:12">
+<meta name="published" content="2026-10-31 19:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -15314,6 +15314,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var h = Number(wp(ts).hour);
     return h >= 5 && h < 11 ? 'breakfast' : h >= 11 && h < 16 ? 'lunch' : h >= 16 && h < 22 ? 'dinner' : 'snack';
   }
+  // A product's unit: «мл» for a drink (per '100ml'), else «г».
+  function foodUnit(pr) { return pr.per === '100ml' ? 'мл' : 'г'; }
   // «Скир (Piątnica)»: the brand after the name unless the name has it already; as the diary's item name.
   function foodProdName(pr) {
     var n = pr.name;
@@ -15373,7 +15375,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       var ps = (j && j.products) || [];
       if (closed || !ps.length) return;
       ps.forEach(function (pr) {
-        recent.appendChild(chip(pr.name + ' · ' + Math.round(pr.kcal) + ' ккал', false, pr.name + ', ' + Math.round(pr.kcal) + ' ккал на 100 г — записать',
+        recent.appendChild(chip(pr.name + ' · ' + Math.round(pr.kcal) + ' ккал', false, pr.name + ', ' + Math.round(pr.kcal) + ' ккал на 100 ' + foodUnit(pr) + ' — записать',
           function () { go(function () { foodProductSheet(date, pr, from, done); }); }));
       });
       rhead.hidden = recent.hidden = false;
@@ -15432,8 +15434,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     function m100(k) { return pr[k] == null ? '—' : n1(pr[k]); }
     g.inputMode = 'decimal';
     g.maxLength = 6;
-    g.value = n1(pr.package_g || 100);
-    g.setAttribute('aria-label', 'Граммы');
+    var U = foodUnit(pr), ml = U === 'мл';
+    g.value = n1(ml ? (pr.package_g && pr.package_g < 250 ? pr.package_g : 250) : pr.package_g || 100);
+    g.setAttribute('aria-label', ml ? 'Миллилитры' : 'Граммы');
     tm.type = 'time';
     tm.value = today ? p.hour + ':' + p.minute : '13:00';
     tm.setAttribute('aria-label', 'Время');
@@ -15450,14 +15453,17 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       [].forEach.call(seg.children, function (b, i) { b.classList.toggle('on', FOOD_MEALS[i][0] === meal); });
     }
     tm.onchange = paintMeal;
-    var opts = pr.package_g
+    var opts = ml
+      ? [[250, '250 мл'], [330, '330 мл'], [500, '500 мл']].concat(pr.package_g && [250, 330, 500].indexOf(pr.package_g) < 0
+        ? [[pr.package_g, n1(pr.package_g) + ' мл']] : [])
+      : pr.package_g
       ? [[100, '100 г'], [pr.package_g, 'Упаковка · ' + n1(pr.package_g) + ' г'], [pr.package_g / 2, '½ · ' + n1(pr.package_g / 2) + ' г']]
       : [[50, '50 г'], [100, '100 г'], [200, '200 г']];
     opts = opts.filter(function (o, i) { return opts.findIndex(function (x) { return x[0] === o[0]; }) === i; });
     function item() {
       var n = foodNum(g.value);
       if (!(n > 0 && n <= 3000)) return null;
-      return { name: foodProdName(pr), amount: n1(n) + ' г', kcal: Math.round(per('kcal', n)), protein: Math.round(per('protein', n) * 10) / 10,
+      return { name: foodProdName(pr), amount: n1(n) + ' ' + U, kcal: Math.round(per('kcal', n)), protein: Math.round(per('protein', n) * 10) / 10,
         carbs: Math.round(per('carbs', n) * 10) / 10, fat: Math.round(per('fat', n) * 10) / 10 };
     }
     function paint() {
@@ -15467,14 +15473,14 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         chips.appendChild(chip(o[1], n === Math.round(o[0] * 10) / 10, null, function () { g.value = n1(o[0]); paint(); haptic(); }));
       });
       add(clear(live), el('span', 'fpr-k', it ? '≈ ' + grouped(it.kcal) + ' ккал' : '— ккал'),
-        el('span', 'mu', it ? 'Б ' + n1(it.protein) + ' · Ж ' + n1(it.fat) + ' · У ' + n1(it.carbs) : 'граммы — число до 3000'));
+        el('span', 'mu', it ? 'Б ' + n1(it.protein) + ' · Ж ' + n1(it.fat) + ' · У ' + n1(it.carbs) : (ml ? 'миллилитры' : 'граммы') + ' — число до 3000'));
     }
     g.oninput = paint;
     paint();
     paintMeal();
     var ok = foodBtn('btn', 'check', 'Записать', function () {
       var it = item();
-      if (!it) { toast('Граммы — число от 1 до 3000'); g.focus(); return; }
+      if (!it) { toast((ml ? 'Миллилитры' : 'Граммы') + ' — число от 1 до 3000'); g.focus(); return; }
       if (it.kcal > 5000 || it.protein > 500 || it.carbs > 500 || it.fat > 500) { toast('Слишком большая порция'); g.focus(); return; }
       if (!/^\d\d:\d\d$/.test(tm.value)) { toast('Время — ЧЧ:ММ'); return; }
       var at = foodIso(date, tm.value);
@@ -15490,8 +15496,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       }, function () { ok.disabled = false; });
     });
     close = legalSheet(pr.name, [pr.brand ? el('div', 'mu fpr-b', pr.brand) : null,
-      el('div', 'mu fpr-100', 'На 100 г: ' + grouped(Math.round(pr.kcal)) + ' ккал · Б ' + m100('protein') + ' · Ж ' + m100('fat') + ' · У ' + m100('carbs')),
-      add(el('div', 'bar'), add(el('label', 'field'), icon('scale'), g, el('span', 'mu', 'г'))), chips, live, seg,
+      el('div', 'mu fpr-100', 'На 100 ' + U + ': ' + grouped(Math.round(pr.kcal)) + ' ккал · Б ' + m100('protein') + ' · Ж ' + m100('fat') + ' · У ' + m100('carbs')),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('scale'), g, el('span', 'mu', U))), chips, live, seg,
       add(el('div', 'bar'), add(el('label', 'field'), icon('clock'), tm)), add(el('div', 'bar mact mstick'), ok)], from);
   }
   // Not found: the label's photo goes to the bot's private chat (the Mac's model reads it as any photo of food), or the
@@ -15516,19 +15522,38 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       hand.hidden = true;
       var nm = inp('Название', name), kc = inp('ккал на 100 г', '', true), pp = inp('Б, г', '', true), ff = inp('Ж, г', '', true),
         cc = inp('У, г', '', true), pk = inp('упаковка, г — если знаешь', '', true);
+      var perSeg = el('div', 'seg'), ml = false, perHead = el('div', 'tsh', 'На 100 г');
       nm.maxLength = 120;
+      // «г · мл»: the unit of the per-100 numbers and of the package (a drink is per 100 ml).
+      function paintPer() {
+        var u = ml ? 'мл' : 'г';
+        kc.setAttribute('aria-label', 'ккал на 100 ' + u);
+        pk.placeholder = 'упаковка, ' + u + ' — если знаешь';
+        pk.setAttribute('aria-label', pk.placeholder);
+        perHead.textContent = 'На 100 ' + u;
+        [].forEach.call(perSeg.children, function (b, i) { b.classList.toggle('on', (i === 1) === ml); });
+      }
+      perSeg.setAttribute('role', 'group');
+      perSeg.setAttribute('aria-label', 'Единица');
+      ['г', 'мл'].forEach(function (t, i) {
+        var b = el('button', '', t);
+        b.type = 'button';
+        b.onclick = function () { ml = i === 1; paintPer(); haptic(); };
+        perSeg.appendChild(b);
+      });
+      paintPer();
       var save = foodBtn('btn', 'check', 'Сохранить', function () {
-        var o = { code: c, name: nm.value.trim(), kcal: foodNum(kc.value) }, bad = '';
+        var u = ml ? 'мл' : 'г', o = { code: c, name: nm.value.trim(), kcal: foodNum(kc.value), per: ml ? '100ml' : '100g' }, bad = '';
         if (!o.name) bad = 'Нужно название';
-        else if (!kc.value.trim() || !(o.kcal >= 0 && o.kcal <= 900)) bad = 'Ккал на 100 г — число до 900';
+        else if (!kc.value.trim() || !(o.kcal >= 0 && o.kcal <= 900)) bad = 'Ккал на 100 ' + u + ' — число до 900';
         [['protein', pp], ['fat', ff], ['carbs', cc]].forEach(function (q) {
           if (!q[1].value.trim()) return;
           o[q[0]] = foodNum(q[1].value);
-          if (!(o[q[0]] >= 0 && o[q[0]] <= 100)) bad = bad || 'Б, Ж, У — граммы на 100 г, до 100';
+          if (!(o[q[0]] >= 0 && o[q[0]] <= 100)) bad = bad || 'Б, Ж, У — граммы на 100 ' + u + ', до 100';
         });
         if (pk.value.trim()) {
           o.package_g = foodNum(pk.value);
-          if (!(o.package_g >= 1 && o.package_g <= 5000)) bad = bad || 'Упаковка — от 1 до 5000 г';
+          if (!(o.package_g >= 1 && o.package_g <= 5000)) bad = bad || 'Упаковка — от 1 до 5000 ' + u;
         }
         if (bad) { toast(bad); return; }
         save.disabled = true;
@@ -15545,7 +15570,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         q[0].placeholder = '';  // the label beside it says it; «На 100 г» above
         nums.appendChild(add(el('label', 'field fnf'), el('span', 'mu', q[1]), q[0]));
       });
-      add(form, el('div', 'tsh', 'На 100 г'), add(el('div', 'bar'), add(el('label', 'field'), icon('pen-line'), nm)), nums,
+      add(form, perSeg, perHead, add(el('div', 'bar'), add(el('label', 'field'), icon('pen-line'), nm)), nums,
         add(el('div', 'bar'), add(el('label', 'field'), icon('scale'), pk)), add(el('div', 'bar mact mstick'), save));
       if (!(window.matchMedia && matchMedia('(pointer: coarse)').matches)) nm.focus();
     });
