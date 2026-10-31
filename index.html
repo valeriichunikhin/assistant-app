@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 23:51">
+<meta name="published" content="2026-10-31 23:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1359,9 +1359,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
 /* «Месяц» over the strip (gym-week, fitness-month-calendar.png): the month's name and the calendar button; the sheet's
    grid of the strip's circles, the date alone on an empty day, the count's badge in the sport's colour, today ringed. */
-.fsm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px}.fsml{font:700 17px/1.2 var(--font)}
-.fsmb,.fmb{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg)}
-.fsmb .i,.fmb .i{width:20px;height:20px}
+.fnav .mmonb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--fg)}
+.mmonb span{min-width:0;overflow:hidden;text-overflow:ellipsis}.mmonb .i{flex:none;width:16px;height:16px;color:var(--muted)}
+.fmb{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg)}
+.fmb .i{width:20px;height:20px}
 .fmh{display:flex;align-items:center;justify-content:space-between;gap:8px}.fmt{margin:0;font:700 20px/1.2 var(--font)}
 .fmw,.fmg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.fmw{margin-top:10px;padding-bottom:6px;border-bottom:1px solid var(--line);text-align:center;font-size:12px;color:var(--muted)}
 .fmg{row-gap:4px;margin-top:8px;padding-bottom:8px}
@@ -14727,6 +14728,15 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         MONTHS_G[Number(d.slice(5, 7)) - 1];
     }
     [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
+      if (!x[0] && seg === 'fitness') {
+        // «Фитнес»: the date is the month's button (31.10.2026, his «календарик … при нажатии на дату» — the row
+        // «Октябрь 2026 · 📅» over the strip is gone).
+        var mb = add(el('button', 'mmon mmonb'), el('span', '', dayName(date)), icon('calendar'));
+        mb.type = 'button';
+        mb.setAttribute('aria-label', dayName(date) + ' — месяц тренировок');
+        mb.onclick = function () { haptic(); if (FIT.month) FIT.month(FIT.sel.slice(0, 7), mb); };
+        return nav.appendChild(mb);
+      }
       if (!x[0]) return nav.appendChild(el('div', 'mmon', dayName(date)));
       var b = add(el('button'), icon(x[1]));
       b.type = 'button';
@@ -19243,10 +19253,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     sc.setAttribute('role', 'group');
     sc.setAttribute('aria-label', 'Дни');
     FIT.sel = date;
-    // Over the strip: the picked day's month and «Месяц» (the calendar), Bevel's (fitness-month-calendar.png).
-    var monL = el('span', 'fsml'), monB = foodBtn('fsmb', 'calendar', '', function (ev) { haptic(); monthSheet(FIT.sel.slice(0, 7), ev.currentTarget); });
-    monB.setAttribute('aria-label', 'Месяц тренировок');
-    add(clear(box), add(el('div', 'fsm'), monL, monB), add(el('div', 'fst'), sc, back), panel);
+    // «Месяц» (the calendar, Bevel's fitness-month-calendar.png) opens from the date over the strip: FIT.month.
+    FIT.month = monthSheet;
+    add(clear(box), add(el('div', 'fst'), sc, back), panel);
     function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
     function monName(ym) { return cap(MONTHS_N[+ym.slice(5, 7) - 1]) + ' ' + ym.slice(0, 4); }
     // «Месяц»: the month's grid from Monday, a day — the strip's circle (the done workout's icon in its sport's colour,
@@ -19426,7 +19435,6 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     }
     function drawPanel() {
       var d = FIT.sel, D = FIT.days[d];
-      monL.textContent = monName(d.slice(0, 7));
       clear(panel);
       var add1 = d <= today ? foodBtn('fsadd', 'plus', '', function (ev) { woAddSheet(d, ev.currentTarget, refresh); }) : null;
       if (add1) add1.setAttribute('aria-label', 'Добавить тренировку');
