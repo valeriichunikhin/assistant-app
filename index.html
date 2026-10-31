@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 21:55">
+<meta name="published" content="2026-10-31 22:02">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -2562,6 +2562,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // ([{env, name, muted}]) comes with prefs_get and home. The cached copy is read
   // now, so the rail and the bar are drawn without the hidden tabs from the first paint.
   var TAB_KEYS = ['home', 'shop', 'vb', 'genshin', 'wish', 'cinema', 'films', 'food', 'dela', 'money', 'tasks', 'cal', 'legal', 'li', 'inbox', 'feed'];
+  // What a bottom-bar button can be (prefs.tabs.bar, miniapp's BAR_KEYS): a tab, «Настройки», «Обновления», a segment of «Здоровье».
+  var BAR_KEYS = TAB_KEYS.concat(['settings', 'updates', 'nutrition', 'fitness', 'biology']);
   var HOME_KEYS = ['calendar', 'plan', 'morning', 'tasks', 'linkedin', 'money', 'card_debt', 'money_review', 'due', 'docs', 'courts', 'games', 'shows', 'vb', 'genshin', 'yesterday',
     'inbox', 'week', 'system'];
   // The cards whose content the phone's «Главная» shows as tiles (docs/specs/home-dashboard.md): not drawn there and not
@@ -2713,7 +2715,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   }
   function normPrefs(p) {
     var t = (p && p.tabs) || {}, m = p && p.muted, v = viewIn(p), w = p && p.views && p.views.wide;
-    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS) }, home: v.home,
+    return { tabs: { hidden: keysIn(t.hidden, TAB_KEYS), bar: keysIn(t.bar, BAR_KEYS).slice(0, 4) }, home: v.home,
       muted: Array.isArray(m) ? m.filter(function (k, i) { return typeof k === 'string' && m.indexOf(k) === i; }) : [],
       money: v.money, tiles: v.tiles, board: v.board, boards: v.boards, board_now: !(p && p.board_now === false),
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
@@ -2865,15 +2867,27 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // The bar's tabs: the stored keys that are still tabs, once each, four at most; nothing stored → BAR. A hidden
   // tab drops out and its place goes to the next shown tab of TABS that is not in the bar yet. A stored segment key
   // (list, picks, prices) stands for «Покупки».
-  function barTabs() {
+  // Since 31.10.2026 (his «почему ты каждый раз сбиваешь мои настройки нижнего меню?» — iOS can drop a Home Screen
+  // app's storage, and Safari's is another) the choice lives on the server, prefs.tabs.bar; the device's copy stays the
+  // fallback and is sent up once when the server has none (barUp).
+  function barLocal() {
     var v = null;
     try { v = JSON.parse(store('tabBar') || 'null'); } catch (e) {}
+    return v;
+  }
+  function barUp() {
+    var v = barLocal();
+    if (prefs.tabs.bar.length || !Array.isArray(v) || !v.length) return;
+    editPrefs({ tabs: { hidden: prefs.tabs.hidden, bar: v.filter(function (k) { return BAR_KEYS.indexOf(k) >= 0; }).slice(0, 4) } }, null, true);
+  }
+  function barTabs() {
+    var v = prefs.tabs.bar.length ? prefs.tabs.bar.slice() : barLocal();
     if (Array.isArray(v)) v = v.map(function (k) { return k === 'news' ? 'settings' : k; });
     var keys = !Array.isArray(v) ? null : v.filter(function (k, i) {
       return typeof k === 'string' && Object.prototype.hasOwnProperty.call(NAMES, k) && v.indexOf(k) === i;
     });
     // One-time (28.10.2026): a bar chosen before «Здоровье» became the first button gets it prepended, the last one dropped.
-    if (keys && keys.indexOf('food') < 0 && store('tabBarV') !== '2') {
+    if (keys && !prefs.tabs.bar.length && keys.indexOf('food') < 0 && store('tabBarV') !== '2') {
       keys = ['food'].concat(keys).slice(0, 4);
       store('tabBar', JSON.stringify(keys));
       store('tabBarV', '2');
@@ -13666,6 +13680,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         var gen = prefsGen;
         return api('miniapp', { action: 'prefs_get' }, 15000, true).then(function (j) {
           prefsLoaded = true;
+          if (gen === prefsGen && j && j.prefs) setTimeout(barUp, 0);
           return gen === prefsGen ? j : { prefs: prefs, modules: (j && j.modules) || modules };
         }, function (e) { if (e.login) throw e; return { prefs: prefs, modules: modules }; });
       },
@@ -13724,7 +13739,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         else {
           var on = hid.indexOf(k) < 0;
           row.appendChild(rowBtn(on ? 'check-square' : 'square', { label: t[2] + ': показывать', on: on }, 'tog', false, function () {
-            editPrefs({ tabs: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }) } }, ['tab', k, 'tog']);
+            editPrefs({ tabs: { hidden: on ? hid.concat([k]) : hid.filter(function (x) { return x !== k; }), bar: prefs.tabs.bar } }, ['tab', k, 'tog']);
           }));
         }
         row.k = k;
@@ -14349,6 +14364,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       haptic();
       store('tabBar', '');
       store('tabBarV', '2');
+      editPrefs({ tabs: { hidden: prefs.tabs.hidden, bar: [] } }, null, true);
       drawBar();
       paint('reset');
     };
@@ -14362,6 +14378,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       haptic();
       store('tabBar', JSON.stringify(keys));
       store('tabBarV', '2');
+      editPrefs({ tabs: { hidden: prefs.tabs.hidden, bar: keys } }, null, true);
       drawBar();
       paint(focus);
     }
@@ -14381,7 +14398,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         row.k = k;
         rows.appendChild(row);
       });
-      if (store('tabBar')) card.appendChild(foot);
+      if (store('tabBar') || prefs.tabs.bar.length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
       // The rows are new nodes: the keyboard stays on the button it pressed, or on its row's toggle.
       if (focus === 'reset') return rows.querySelector('button:not(:disabled)').focus();
