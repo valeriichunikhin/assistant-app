@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 01:35">
+<meta name="published" content="2026-10-31 02:14">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1597,6 +1597,31 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .crep[hidden]{display:none}.crep .field input[type=number]{width:3em;flex:none;text-align:center}
 @media (min-width:900px){.calw.calr{grid-template-columns:minmax(320px,.8fr) minmax(0,2.2fr)}
   .calrange{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start;margin-bottom:16px}.calrange>.card{margin:0}}
+/* Batch Г (docs/specs/calendar-2.md). В15: Poland's day — a holiday's date in the month and the week's strip in the theme's
+   red (--bad), its name in the cell's label; the feed's info row (all day, read-only) with the flag in that red, a trading
+   Sunday's in green, a short day's in amber. В11: the search — a magnifier at the month's head (filled while open), the
+   field over the feed in its place (on a phone the month steps aside, ✕ closes), the results a card per day with the feed's rows. В13: from 1400 px «3 дня» three
+   columns and «Неделя» four (seven from 1800 px — at 1400 seven were 100 px each), the month narrower beside them; in seven columns the timeline (C) packs tighter — a 40 px
+   time column, crossing items stacked, not side by side, the free line its hours alone (the dashes say «free»). */
+.cs-info{--cs:var(--bad)}.cs-info.k-trading{--cs:var(--good)}.cs-info.k-until14{--cs:var(--warn)}
+.cday.hol:not(.on) .cn{color:var(--bad)}
+.mnav button.csrch[aria-pressed="true"]{background:var(--accent-soft);color:var(--link)}
+@media (max-width:899px){.calw.csr .calg{display:none}}
+/* «Неделя» and «Список» were cut to «Неде…» beside the «today» pill on a phone (seen in batch Г's frames): tighter there */
+@media (max-width:599px){.mnav.calhd .seg button{padding:0 2px}.calhd .mtoday{width:40px}}
+.calsb{margin:0 0 8px}.calsn{margin:0 4px 8px;font-size:13px}.calsr>.card{margin-bottom:12px}
+@media (min-width:900px){.calsr{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start}.calsr>.card,.calsr>.state{margin:0}.calsr>.calsn,.calsr>.state{grid-column:1/-1}}
+@media (min-width:1400px){.calw.calr.cw7{grid-template-columns:minmax(300px,.5fr) minmax(0,2.5fr)}
+  .calrange.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .calrange.c7{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .c7 .cald .ch{padding-left:12px;padding-right:12px}.c7 .cald .ch h3{font-size:14px}
+  .c7 .ctl{padding-right:8px}.c7 .ctli{gap:6px}.c7 .ctli .ctt{width:40px;font-size:12px}.c7 .ctli .ctt small{font-size:11px}
+  .c7 .ctnow{left:52px}.c7 .ctnowl{right:calc(100% - 40px)}
+  .c7 .ctev{padding:6px 8px 5px 10px}.c7 .ctet{font-size:13px}.c7 .ctbx.ct2>.ctev{flex-basis:100%}
+  .c7 .ctf{font-size:11.5px}.c7 .ctf::before{flex-basis:0}.c7 .ctfx>span{display:none}
+  .c7 .crow{gap:8px;padding-left:12px;padding-right:12px}.c7 .crow .ctm{width:38px;font-size:13px}.c7 .crow .go{display:none}
+  .c7 .cwork,.c7 .ctk{margin-left:10px;margin-right:10px}.c7 .cnone,.c7 .cfree{padding-left:12px;padding-right:12px}}
+@media (min-width:1800px){.calrange.c7{grid-template-columns:repeat(7,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1737,7 +1762,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 <symbol id="i-utensils" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
 <symbol id="i-fork" viewBox="2 1 10 22"><path vector-effect="non-scaling-stroke" d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path vector-effect="non-scaling-stroke" d="M7 2v20"/></symbol>
 <symbol id="i-knife" viewBox="15 1 7 22"><path vector-effect="non-scaling-stroke" d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
-<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol><symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></symbol>
 <symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></symbol>
 <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
 <symbol id="i-train-front" viewBox="0 0 24 24"><path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/></symbol>
@@ -2362,13 +2387,15 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // 28.10.2026, docs/specs/health-v2.md: the three rings «Нагрузка · Восст. · Сон», the advice on m (home's health).
     ['body', 'Здоровье', 'activity', 'sm'],
     // 30.10.2026, docs/specs/calendar-2.md А3: today's next timed thing of «Календарь» (home's next).
-    ['next', 'Дальше', 'clock', 'sm']];
+    ['next', 'Дальше', 'clock', 'sm'],
+    // 31.10.2026, docs/specs/calendar-2.md В15: the next holiday, trading Sunday and long weekend (home's poland).
+    ['poland', 'Польша', 'flag', 'sm']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
-    ['Дела', ['tasks', 'days', 'next', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
+    ['Дела', ['tasks', 'days', 'next', 'poland', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
     ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
@@ -3407,7 +3434,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       gtoday: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), resin: !on('TELEGRAM_TOPIC_GENSHIN', 'genshin'), volley: !on('TELEGRAM_TOPIC_VOLLEYBALL', 'vb'), cinema: !on('TELEGRAM_TOPIC_CINEMA', 'cinema'), linkedin: !tabShown('li'),
       shoplist: !tabShown('shop'), deals: !on('TELEGRAM_TOPIC_GROCERIES', 'shop'), series: !tabShown('films'), wish: !on('TELEGRAM_TOPIC_WISHLIST', 'wish'),
       events: !on('TELEGRAM_TOPIC_EVENTS', 'feed'), news: !on('TELEGRAM_TOPIC_NEWS', 'feed'), parcels: !on('TELEGRAM_TOPIC_PARCELS', 'dela'),
-      food: !tabShown('food'), body: !tabShown('food'), next: !tabShown('cal') }[w] || false;
+      food: !tabShown('food'), body: !tabShown('food'), next: !tabShown('cal'), poland: !tabShown('cal') }[w] || false;
   }
   // The widget keys of a board, a stack's own among them.
   function boardKinds(bl) {
@@ -3799,6 +3826,26 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         big(on ? 'идёт' : mins < 60 ? 'через ' + mins + '\u00a0мин' : 'в ' + calHm(st), 'vs');
         note(x.emoji + ' ' + x.title + (x.place ? ' · ' + x.place : '') + (on && en > st ? ' · до ' + calHm(en) : ''));
         if (x.url && s === 'm') row('link', 'Открыть ссылку', null, function () { openLink(x.url); }, 'bnlink');
+      },
+      // «Польша» (docs/specs/calendar-2.md, В15): the next holiday's day big («завтра», «вс 01.11»), its name under it, the
+      // next trading Sunday; wide — the next long weekend with its bridge. «сейчас» on the holiday and its eve. A tap
+      // opens «Календарь» on the holiday.
+      poland: function () {
+        var pl = j.poland;
+        if (!pl) return quiet(preview ? 'нет данных' : j.morning === undefined ? 'загружаю…' : 'недоступно');
+        var h = pl.holiday, tm = addDays(today, 1);
+        function day(d) { return d === today ? 'сегодня' : d === tm ? 'завтра' : WEEK[wd(d)] + ' ' + dm(d); }
+        if (!h) return quiet('праздников нет');
+        r.go = function () { CAL.on = foodToday(); CAL.month = h.date.slice(0, 7); CAL.day = h.date; show('cal'); };
+        r.now = h.date === today || h.date === tm;
+        big(day(h.date), 'vs');
+        note(h.name);
+        if (pl.trading) line('торговое вс · ' + day(pl.trading), 'mu');
+        var lw = pl.long;
+        if (s === 'm' && lw) {
+          line('длинные · ' + dm(lw.from) + '–' + dm(lw.to) + ', ' + lw.days + '\u00a0' + plural(lw.days, ['день', 'дня', 'дней']) +
+            (lw.bridges && lw.bridges.length ? ' · мостик ' + lw.bridges.map(function (b) { return WEEK[wd(b)] + ' ' + dm(b); }).join(', ') : ''), 'mu');
+        }
       },
       // His next game (else today's next free one, taken/all); «сейчас» within three hours; wide — the one after too.
       vb: function () {
@@ -17866,11 +17913,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // CAL: the month and the day on screen (kept across the tab's redraws until the day changes), ev the month's own events
   // by id — the sheet takes the notes from there (cal_day's rows do not carry them).
   // task: the task objects of the day's rows opened in their sheet (by id) — one done or moved off the day hides its row.
-  var CAL = { month: null, day: null, on: null, ev: {}, task: {} };
-  var CAL_SRC = ['cal', 'task', 'game', 'show', 'workout', 'mail', 'apple'];
+  // q: the search's text while it is open (calendar-2, В11), null when closed; hol: the holidays of the months fetched
+  // (cal_month's holidays, В15), {date: name}.
+  var CAL = { month: null, day: null, on: null, ev: {}, task: {}, q: null, hol: {} };
+  var CAL_SRC = ['info', 'cal', 'task', 'game', 'show', 'workout', 'mail', 'apple'];
   var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
     ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane'], ['sport', 'Тренировка', 'dumbbell']];
-  var CAL_IC = { task: 'check-square', game: 'ball', show: 'film', apple: 'smartphone', mail: 'mail' };
+  // info: Poland's day (В15) — a holiday, a Sunday's shops, a short day; read-only.
+  var CAL_IC = { task: 'check-square', game: 'ball', show: 'film', apple: 'smartphone', mail: 'mail', info: 'flag' };
   var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
   var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
   // The reminder before an event (calendar-2, Б2) and its default by kind — the twin of REMIND_DEFAULT in _shared/calendar.ts.
@@ -17905,10 +17955,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     CAL.ev = {};
     if (CAL.on !== today) { CAL.on = today; CAL.month = today.slice(0, 7); CAL.day = today; }
     if (CAL.day.slice(0, 7) !== CAL.month) CAL.day = CAL.month === today.slice(0, 7) ? today : CAL.month + '-01';
-    var span = calSpan(), mode = calMode(), open = calGrid(), fixed = calWideQ && calWideQ.matches;
-    var m = CAL.month, wrap = el('div', 'calw' + (span > 1 ? ' calr' : '')), gcard = el('div', 'card calg' + (open ? '' : ' cfold')), nav = el('div', 'mnav'), wk = el('div', 'calwk');
+    var span = calSpan(), mode = calMode(), open = calGrid(), fixed = calWideQ && calWideQ.matches, sopen = CAL.q != null;
+    var m = CAL.month, wrap = el('div', 'calw' + (span > 1 || sopen ? ' calr' : '') + (span === 7 && !sopen ? ' cw7' : '') + (sopen ? ' csr' : '')), gcard = el('div', 'card calg' + (open ? '' : ' cfold')), nav = el('div', 'mnav'), wk = el('div', 'calwk');
     var grid = el('div', 'calgrid'), dcard = mkCard('calendar', ''), dtitle = dcard.querySelector('h3'), list = el('div'), cells = {};
-    var fcol = el('div', 'calf'), hd = el('div', 'mnav calhd'), seg = el('div', 'seg cspan'), mseg = el('div', 'seg'), rbox = el('div', 'calrange'), md = {};
+    var fcol = el('div', 'calf'), hd = el('div', 'mnav calhd'), seg = el('div', 'seg cspan'), mseg = el('div', 'seg'), rbox = el('div', 'calrange c' + span), md = {};
+    var sres = el('div', 'calsr');
     dcard.classList.add('cald');
     grid.setAttribute('role', 'group');
     grid.setAttribute('aria-label', monthLabel(m));
@@ -17946,8 +17997,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       mseg.appendChild(b);
     });
     var addB = add(el('div', 'foot cfoot'), foodBtn('btn', 'plus', 'Событие', function (ev) { calSheet(null, CAL.day, ev.currentTarget, after); }));
-    add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, add(hd, seg, mseg),
-      span > 1 ? rbox : add(dcard, list, addB), span > 1 ? addB : null)));
+    // The search open (В11): its field and results in the feed's place.
+    if (sopen) add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, searchBar(), sres)));
+    else {
+      add(main, add(wrap, add(gcard, nav, wk, grid), add(fcol, add(hd, seg, mseg),
+        span > 1 ? rbox : add(dcard, list, addB), span > 1 ? addB : null)));
+    }
     // A month or a day by the arrows, «Сегодня» and a day of the next month's edge: the tab drawn again on it.
     function goTo(month, day) {
       haptic();
@@ -17979,6 +18034,58 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       b.onclick = function () { if (open) goTo(monthStep(m, x[0])); else stepTo(addDays(CAL.day, 7 * x[0])); };
       nav.appendChild(b);
     });
+    // The search (В11) at the head's end: opens the field over the feed, again — closes it.
+    var sbtn = add(el('button', 'csrch'), icon('search'));
+    sbtn.type = 'button';
+    sbtn.setAttribute('aria-pressed', String(sopen));
+    sbtn.setAttribute('aria-label', sopen ? 'Закрыть поиск' : 'Поиск по календарю');
+    sbtn.onclick = function () { haptic(); CAL.q = sopen ? null : ''; clear(main); calView(); };
+    nav.appendChild(sbtn);
+    // The field: from two letters a search a moment after the typing stops (Enter at once), Escape or ✕ closes it.
+    function searchBar() {
+      var input = el('input'), clr = add(el('button', 'fclr'), icon('x')), tm = null;
+      input.type = 'text';
+      input.enterKeyHint = 'search';
+      input.placeholder = 'Событие, место, заметка, задача';
+      input.value = CAL.q || '';
+      input.setAttribute('aria-label', 'Поиск по календарю и задачам');
+      clr.type = 'button';
+      clr.setAttribute('aria-label', 'Закрыть поиск');
+      clr.onclick = function () { haptic(); CAL.q = null; clear(main); calView(); };
+      input.oninput = function () { CAL.q = input.value; clearTimeout(tm); tm = setTimeout(searchRun, 350); };
+      input.onkeydown = function (e) {
+        if (e.key === 'Escape') clr.onclick();
+        else if (e.key === 'Enter') { clearTimeout(tm); searchRun(); input.blur(); }
+      };
+      if (!CAL.q) requestAnimationFrame(function () { if (input.isConnected) input.focus({ preventScroll: true }); });
+      return add(el('div', 'bar calsb'), add(el('label', 'field'), icon('search'), input, clr));
+    }
+    // cal_search {q} (В11): a card per day, the feed's rows and taps; the answer of an older text is dropped.
+    var sseq = 0;
+    function searchRun() {
+      var q = (CAL.q || '').trim(), my = ++sseq;
+      clear(sres);
+      if (Array.from(q).length < 2) return void sres.appendChild(el('div', 'mu calsn', 'События, места, заметки и открытые задачи за ±90 дней — от двух букв'));
+      sres.appendChild(el('div', 'mu calsn', 'Ищу…'));
+      api('miniapp', { action: 'cal_search' }, 15000, true, { q: q }).then(function (j) {
+        if (my !== sseq || !sres.isConnected) return;
+        clear(sres);
+        var ds = (j && j.days) || [], n = 0;
+        ds.forEach(function (d) { n += (d.items || []).length; });
+        if (!n) return void sres.appendChild(state('search', 'Ничего не нашлось за ±90 дней'));
+        sres.appendChild(el('div', 'mu calsn', n >= 30 ? 'Первые 30, ближайшие к сегодня' : 'Нашлось: ' + n));
+        ds.forEach(function (d) {
+          var c = add(el('div', 'card cald'), add(el('div', 'ch'), el('h3', '', calDayName(d.date) + (d.date.slice(0, 4) !== today.slice(0, 4) ? ' ' + d.date.slice(0, 4) : '') +
+            (d.date === today ? ' · сегодня' : d.date === addDays(today, 1) ? ' · завтра' : ''))));
+          (d.items || []).forEach(function (x) { c.appendChild(row(x, d.date)); });
+          sres.appendChild(c);
+        });
+      }, function () {
+        if (my !== sseq || !sres.isConnected) return;
+        clear(sres);
+        sres.appendChild(state('triangle-alert', 'Поиск сейчас недоступен', 'Ещё раз', searchRun));
+      });
+    }
     // The «‹ ›» that stepped the span gave their place to «Список · Часы» (В7): the swipe on the feed steps it (В9).
     // «Сегодня» in the day's head, away from today only: the month's strip never moves.
     // The label in a span: on a phone the head's pill is icon-only (.calhd .mtoday span{display:none}) — a bare text node
@@ -18002,11 +18109,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       cells = {};
       for (var i = 0; i < total; i++) {
         var d = addDays(first, i - lead0), out = open && d.slice(0, 7) !== m, has = out ? [] : (dots[d] || []);
-        var srcs = CAL_SRC.filter(function (s) { return has.indexOf(s) >= 0; }).slice(0, 3);
-        var c = add(el('button', 'cday' + (out ? ' out' : '') + (d === today ? ' today' : '')), el('span', 'cn', String(Number(d.slice(8, 10)))),
+        var srcs = CAL_SRC.filter(function (s) { return has.indexOf(s) >= 0; }).slice(0, 3), hol = !out && CAL.hol[d];
+        var c = add(el('button', 'cday' + (out ? ' out' : '') + (d === today ? ' today' : '') + (hol ? ' hol' : '')), el('span', 'cn', String(Number(d.slice(8, 10)))),
           add.apply(null, [el('span', 'cdots')].concat(srcs.map(function (s) { return el('i', 'cs-' + s); }))));
         c.type = 'button';
-        c.setAttribute('aria-label', calDayName(d) + (d === today ? ', сегодня' : '') + (srcs.length ? ', есть дела' : ''));
+        c.setAttribute('aria-label', calDayName(d) + (d === today ? ', сегодня' : '') + (hol ? ', выходной: ' + hol : '') + (srcs.length ? ', есть дела' : ''));
         if (d === today) c.setAttribute('aria-current', 'date');
         c.onclick = (function (d, out) { return function () { if (out) goTo(d.slice(0, 7), d); else stepTo(d); }; })(d, out);
         if (!out) cells[d] = c;
@@ -18023,6 +18130,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       }
     }
     function pick(d) {
+      // A day tapped while searching: the search closes on that day.
+      if (sopen) { haptic(); CAL.day = d; CAL.q = null; clear(main); return calView(); }
       if (d === CAL.day) return;
       haptic();
       var week = addDays(CAL.day, -wd(CAL.day));
@@ -18032,6 +18141,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       loadFeed();
     }
     function isWorkX(x) { return x.src === 'cal' && x.kind === 'work'; }
+    function isInfo(x) { return x.src === 'info'; }
     function isUntimedTask(x) { return x.src === 'task' && x.all_day; }
     // The day's untimed tasks as one row; its unfolded state per day lives in memory only (folded by default).
     var foldOpen = {};
@@ -18075,7 +18185,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // A «Зал …» of ours says its plan day instead (gym-week §2): «Сб · тяжёлая · 7 упражнений» — the place and the series
     // are in its sheet.
     function subOf(x) { return x.gym && x.gym.name ? calGymLine(x.gym) : [x.place, CAL_SUB[x.src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · '); }
-    function csOf(x) { return 'cs-' + (CAL_SRC.indexOf(x.src) >= 0 ? x.src : 'apple') + (x.src === 'cal' ? ' k-' + calKind(x.kind)[0] : ''); }
+    function csOf(x) { return 'cs-' + (CAL_SRC.indexOf(x.src) >= 0 ? x.src : 'apple') + (x.src === 'cal' ? ' k-' + calKind(x.kind)[0] : x.src === 'info' ? ' k-' + x.kind : ''); }
     // A planned workout, plan vs fact: done (true) — the check on its icon, skipped (false) — dimmed; null — not known.
     function doneOf(x) { return x.src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null; }
     // What a tap on the item r stands for opens: our event — its sheet, a task — the task's, a screening — «Кино», a
@@ -18120,10 +18230,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     // One day's lines into box: the work bands, the rows («ничего не запланировано» for none), «Свободно: …» under
     // them (В1), muted, none when the day has no window.
+    // Poland's day (В15) goes first, under the bands, and is not «something planned».
     function fill(box, date, items, free) {
       if (mode === 'hours') return span > 1 ? hours(box, date, items, free) : dayGrid(box, date, items);
       items.filter(isWorkX).forEach(function (x) { box.appendChild(band(x, date)); });
-      var rest = items.filter(function (x) { return !isWorkX(x); });
+      items.filter(isInfo).forEach(function (x) { box.appendChild(row(x, date)); });
+      var rest = items.filter(function (x) { return !isWorkX(x) && !isInfo(x); });
       if (!rest.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
       var folded = rest.filter(isUntimedTask), foldAt = rest.filter(function (x) { return !isUntimedTask(x) && x.all_day; }).length;
       rest = rest.filter(function (x) { return !isUntimedTask(x); });
@@ -18165,7 +18277,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       });
       es.sort(function (p, q) { return p.a - q.a; });
       if (date === foodToday()) { var np = wp(Date.now()); now = Number(np.hour) * 60 + Number(np.minute); }
-      if (!all.length && !timed.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
+      if (!all.filter(function (x) { return !isInfo(x); }).length && !timed.length) box.appendChild(el('div', 'cnone', 'ничего не запланировано'));
       // The rows in time order: a cluster of crossing items is one row, a task its own.
       var rows = [], cl = null;
       es.forEach(function (p) {
@@ -18402,6 +18514,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
           fetch: function () { return api('miniapp', { action: 'cal_month' }, 15000, true, { ym: mm }); },
           render: function (j) {
             (j.events || []).forEach(function (e) { CAL.ev[e.id] = e; });
+            Object.assign(CAL.hol, j.holidays || {});
             md[mm] = j.dots || {};
             drawGrid();
           }, retry: load, fail: noop });
@@ -18420,7 +18533,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         fetch: function () { return api('miniapp', { action: 'cal_day' }, 15000, true, { date: d }); },
         render: drawDay, retry: load });
     }
-    function load() { loadMonth(); loadFeed(); }
+    function load() { loadMonth(); if (sopen) searchRun(); else loadFeed(); }
     // After a save or a delete: the days, ranges and months it touched are fetched again (the one on screen at once,
     // cache-first); a saved event off the days on screen takes the screen there.
     function after(ev, was) {
@@ -18435,6 +18548,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (ev && ev.repeat) { cacheDrop('cal:d'); cacheDrop('cal:m'); }
       var to = ev && ev.starts_at ? foodDay(ev.starts_at) : null;
       if (current !== 'cal') return;
+      // Saved from the search's results: the results and the month again, the search stays.
+      if (sopen) return load();
       if (to && (to < CAL.day || to >= addDays(CAL.day, span))) return goTo(to.slice(0, 7), to);
       load();
     }
@@ -18451,6 +18566,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         cacheDrop('cal:m:' + t.due_date.slice(0, 7));
       }
       if (current === 'cal' && grid.isConnected) loadMonth();
+      if (sopen) { if (current === 'cal' && sres.isConnected) searchRun(); return; }
       if (span > 1) { if (current === 'cal' && rbox.isConnected) loadFeed(); return; }
       if (!lastDay || !lastDay.items) return;
       lastDay.items.forEach(function (x) {
@@ -18458,7 +18574,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         x.all_day = !t.due_time;
         x.starts_at = foodIso(lastDay.date, t.due_time || '00:00');
       });
-      lastDay.items.sort(function (a, b) { return Number(!!b.all_day) - Number(!!a.all_day) || Date.parse(a.starts_at) - Date.parse(b.starts_at); });
+      lastDay.items.sort(function (a, b) { return Number(isInfo(b)) - Number(isInfo(a)) || Number(!!b.all_day) - Number(!!a.all_day) || Date.parse(a.starts_at) - Date.parse(b.starts_at); });
       if (current === 'cal' && CAL.day === lastDay.date && list.isConnected) {
         drawDay(lastDay);
         // The sheet gave focus back to a row the redraw has just replaced: the task's new row, else (done or moved) the day's heading.
