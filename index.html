@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 13:00">
+<meta name="published" content="2026-10-31 13:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1261,12 +1261,12 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    done sport filled in its colour, a plan as a dashed ring (grey once missed), «Zz» for rest (dashed ahead); the edges
    fade; «→» back to today floats on the right. Under it the day's card: its date, «+», the plans and the workouts. */
 .fstrip{margin:0 0 12px}
-.fst{position:relative;margin:0 -16px}
-.fsx{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 16px 6px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+.fst{position:relative;margin:0 -16px}.fst::before{content:"";position:absolute;z-index:2;top:-1px;left:50%;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top:9px solid var(--mark);border-bottom:0;pointer-events:none}/* the pointer stays in the middle; the day under it is the day shown (his 31.10.2026) */
+.fsx{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px calc(50% - 25px) 6px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
 .fsx::-webkit-scrollbar{display:none}
 .fsd{position:relative;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;width:50px;padding:16px 0 8px;border:1px solid var(--card-line);border-radius:25px;background:var(--surface);color:var(--fg);font:inherit;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .fsk{position:absolute;top:-2px;left:50%;width:1px;height:7px;margin-left:-.5px;background:var(--line-2)}
-.fsd.on .fsk{top:-3px;width:0;height:0;margin-left:-6px;border:6px solid transparent;border-top:8px solid var(--mark);border-bottom:0;background:none}
+.fsd.on .fsk{opacity:0}
 .fsw{font-size:13px;color:var(--muted)}.fsn{font:600 18px var(--font-num);font-variant-numeric:tabular-nums}
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
 .fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:38px;height:38px;margin-top:6px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 13px var(--font);letter-spacing:-.04em}
@@ -18270,7 +18270,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       b.setAttribute('aria-pressed', d === FIT.sel ? 'true' : 'false');
       b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + ': ' + what(d));
       add(b, el('span', 'fsk'), el('span', 'fsw', cap(WEEK[wd(d)])), el('span', 'fsn', String(+d.slice(8, 10))), circle(d));
-      b.onclick = function () {
+      b.onclick = function () { center(d, true); };
+      b.pick = function () {
+        if (d === FIT.sel) return;
         haptic();
         if (d <= today && d !== FOOD.date) { FIT.sel = d; return goDay(d); }
         FIT.sel = d;
@@ -18323,10 +18325,22 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         if (left) sc.scrollLeft = x0 + sc.scrollWidth - w0;
       }, function () { busy = false; });
     }
+    // The day under the pointer, once the strip has settled, is picked.
+    var settle = null;
+    function underPointer() {
+      var mid = sc.getBoundingClientRect().left + sc.clientWidth / 2, best = null, dist = 1e9;
+      sc.querySelectorAll('.fsd').forEach(function (x) {
+        var r = x.getBoundingClientRect(), dd = Math.abs(r.left + r.width / 2 - mid);
+        if (dd < dist) { dist = dd; best = x; }
+      });
+      return best;
+    }
     sc.addEventListener('scroll', function () {
       edge();
       if (sc.scrollLeft < 160) more(true);
       else if (sc.scrollLeft + sc.clientWidth > sc.scrollWidth - 160) more(false);
+      clearTimeout(settle);
+      settle = setTimeout(function () { var x = underPointer(); if (x && x.pick) x.pick(); }, 180);
     }, { passive: true });
     function row(lead, top, title, sub, onTap, lbl) {
       var r = add(el('div', 'row frow fsr2'), lead, add(el('span', 'tx'), el('div', 'mu fss', top), el('div', 't', title), sub ? el('div', 'mu', sub) : null),
