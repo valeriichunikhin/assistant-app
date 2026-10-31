@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 10:59">
+<meta name="published" content="2026-10-31 11:28">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1530,6 +1530,18 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    after row); the sheet's
    «Перенести» chips (four, two or one in a row) and the series' «каждые N · до» row. */
 .cs-show{--cs:var(--ring-sleep)}
+/* A night (calendar-2, В16) in the sleep ring's colour: in «Часы» a tinted block under the items — «Сон 6 ч 58 м», «в
+   кровати 7 ч 20 м · 87 %» and from 60 px a thin bar of its phases (deep · core · REM · awake, the sleep sheet's hph-*
+   colours); in «Список» and the cards of «3 дня» / «Неделя» one row (two lines at most on a phone). */
+.cs-sleep{--cs:var(--ring-sleep)}
+.chsl{position:absolute;left:0;right:0;overflow:hidden;padding:5px 8px 4px 10px;border-radius:8px;background:color-mix(in srgb,var(--cs) var(--hl-tint2),var(--solid));box-shadow:inset 3px 0 0 var(--cs);color:var(--fg)}
+.chsl.tap{cursor:pointer}.chsl .ctet{gap:5px;font-size:13px;line-height:1.3}.chsl .ctic .i{width:14px;height:14px}
+.chsl .mu{margin-top:1px;font:500 12px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cslph{display:flex;gap:2px;height:6px;margin-top:6px;border-radius:3px;overflow:hidden}.cslph i{min-width:2px;background:var(--ph)}
+.csl{display:flex;align-items:center;gap:8px;min-height:38px;margin:0 14px 8px;padding:8px 12px;border-radius:var(--r-s);background:color-mix(in srgb,var(--cs) 10%,transparent);color:var(--fg);font:600 13px/1.3 var(--font);font-variant-numeric:tabular-nums}
+.csl>.i{flex:none;width:16px;height:16px;color:var(--cs)}.csl>span{flex:1;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.csl .go{flex:none;width:16px;height:16px;color:var(--muted-2)}.csl.tap{cursor:pointer}
+.ctli .csl{flex:1;min-width:0;margin:3px 0}
 .calhd{gap:6px;margin:0 0 8px}.calhd .seg{flex:1;min-width:0;margin:0}.calhd .seg.cspan{flex:1.5}
 .mnav.calhd .seg button{flex:1;display:block;width:auto;height:auto;min-height:38px;padding:0 6px;border-radius:var(--r-s)}.calhd .mtoday[hidden]{display:none}
 .calhd .mtoday{width:44px;padding:0;justify-content:center}.calhd .mtoday span{display:none}
@@ -17976,11 +17988,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // q: the search's text while it is open (calendar-2, В11), null when closed; hol: the holidays of the months fetched
   // (cal_month's holidays, В15), {date: name}.
   var CAL = { month: null, day: null, on: null, ev: {}, task: {}, q: null, hol: {}, work: {} };
-  var CAL_SRC = ['info', 'cal', 'task', 'game', 'show', 'workout', 'mail', 'apple'];
+  var CAL_SRC = ['info', 'cal', 'task', 'game', 'show', 'workout', 'mail', 'apple', 'sleep'];
   var CAL_KINDS = [['event', 'Событие', 'calendar'], ['call', 'Созвон', 'phone'], ['work', 'Работа', 'briefcase-business'],
     ['health', 'Здоровье', 'steth'], ['trip', 'Поездка', 'plane'], ['sport', 'Тренировка', 'dumbbell']];
-  // info: Poland's day (В15) — a holiday, a Sunday's shops, a short day; read-only.
-  var CAL_IC = { task: 'check-square', game: 'ball', show: 'film', apple: 'smartphone', mail: 'mail', info: 'flag' };
+  // info: Poland's day (В15) — a holiday, a Sunday's shops, a short day; read-only. sleep: a night (В16), read-only.
+  var CAL_IC = { task: 'check-square', game: 'ball', show: 'film', apple: 'smartphone', mail: 'mail', info: 'flag', sleep: 'moon' };
   var CAL_SUB = { apple: 'Apple', mail: 'из почты' };
   var CAL_DUR = [[30, '30 мин'], [45, '45 мин'], [60, '60 мин'], [90, '90 мин'], [120, '2 ч']];
   // The reminder before an event (calendar-2, Б2) and its default by kind — the twin of REMIND_DEFAULT in _shared/calendar.ts.
@@ -18204,6 +18216,28 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     function isWorkX(x) { return x.src === 'cal' && x.kind === 'work'; }
     function isInfo(x) { return x.src === 'info'; }
     function isUntimedTask(x) { return x.src === 'task' && x.all_day; }
+    function isSleepX(x) { return x.src === 'sleep'; }
+    // A night (В16): «6 ч 58 м» of sleep, «в кровати 7 ч 20 м» — from the item's minutes, never broken inside (nbsp).
+    function slHm(n) { n = Math.round(n || 0); return [Math.floor(n / 60) ? Math.floor(n / 60) + '\u00a0ч' : '', n % 60 ? n % 60 + '\u00a0м' : ''].filter(Boolean).join('\u00a0') || '0\u00a0м'; }
+    function slBed(x) { var s = x.sleep || {}; return s.in_bed_min ? 'в\u00a0кровати ' + slHm(s.in_bed_min) : ''; }
+    // Its one row in «Список»: «Сон 00:58–08:08 · 6 ч 58 м · в кровати 7 ч 20 м»; in the cards' timeline (C, bare) the
+    // times stand in the ruler's column, the row without them.
+    function sleepRow(x, date, bare) {
+      var s = x.sleep || {}, dur = s.asleep_min != null ? slHm(s.asleep_min) : '';
+      var t = (bare ? ['Сон' + (dur ? '\u00a0' + dur : ''), slBed(x)] : ['Сон\u00a0' + calHm(x.starts_at) + '–' + calHm(x.ends_at), dur, slBed(x)]).filter(Boolean).join(' · ');
+      var r = add(el('div', 'csl cs-sleep'), icon('moon'), el('span', '', t), icon('chevron-right', 'go'));
+      r.setAttribute('aria-label', t + (s.score != null ? ', оценка ' + s.score + ' %' : '') + ' — открыть');
+      return tap(r, actOf(x, date, r));
+    }
+    // A tap on a night: the sleep ring's sheet of «Здоровье» for its morning's day (health_day of that date).
+    function sleepOpen(x, r) {
+      if (r.busy) return;
+      r.busy = true;
+      api('miniapp', { action: 'health_day' }, 15000, false, { date: x.ref }).then(function (j) {
+        r.busy = false;
+        if (j && j.date) hlRingSheet('sleep', j, r);
+      }, function () { r.busy = false; });
+    }
     // A work day (В14, his 31.10.2026: «FBA красный с розовым, Pomoc голубой, вертикально слева») is a strip at the left
     // edge in its firm's colour, told by the title: «FBA» → fba, «Pomoc» → pomoc, else a neutral work.
     function workCo(t) { return /fba/i.test(t || '') ? 'fba' : /pomoc/i.test(t || '') ? 'pomoc' : 'work'; }
@@ -18326,11 +18360,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // A planned workout, plan vs fact: done (true) — the check on its icon, skipped (false) — dimmed; null — not known.
     function doneOf(x) { return x.src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null; }
     // What a tap on the item r stands for opens: our event — its sheet, a task — the task's, a screening — «Кино», a
-    // workout — its sheet; a game, Apple and the mail nothing (null).
+    // workout — its sheet, a night — the sleep ring's (В16); a game, Apple and the mail nothing (null).
     function actOf(x, day, r) {
       return x.src === 'cal' && x.editable !== false ? function () { openCal(x, day, r); }
         : x.src === 'task' && x.ref != null ? function () { calTaskSheet(x, day, r, taskAfter); }
         : x.src === 'show' ? function () { show('cinema'); }
+        : x.src === 'sleep' ? function () { sleepOpen(x, r); }
         : x.src === 'workout' && x.ref != null ? function () {
           if (r.busy) return;
           r.busy = true;
@@ -18368,12 +18403,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         var sk = workSink(box, date, wa ? [] : ws), put = function (x, node) { sk.put(node, x && !x.all_day ? dayMin(x.starts_at, date) : null); };
         items.filter(isInfo).forEach(function (x) { put(x, row(x, date)); });
         var rest = items.filter(function (x) { return !isWorkX(x) && !isInfo(x); });
-        if (!rest.length) put(null, el('div', 'cnone', 'ничего не запланировано'));
+        // A night (В16) is not something planned.
+        if (!rest.filter(function (x) { return !isSleepX(x); }).length) put(null, el('div', 'cnone', 'ничего не запланировано'));
         var folded = rest.filter(isUntimedTask), foldAt = rest.filter(function (x) { return !isUntimedTask(x) && x.all_day; }).length;
         rest = rest.filter(function (x) { return !isUntimedTask(x); });
         if (folded.length && !foldAt) put(null, taskFold(date, folded));
         rest.forEach(function (x, i) {
-          put(x, row(x, date));
+          put(x, isSleepX(x) ? sleepRow(x, date) : row(x, date));
           if (folded.length && foldAt && i === foldAt - 1) put(null, taskFold(date, folded));
         });
         sk.done();
@@ -18400,7 +18436,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     function hours(box, date, items, free, ws) {
       var wt = ws.filter(function (w) { return !w.all; });
       var all = items.filter(function (x) { return x.all_day && !isWorkX(x); });
-      var timed = items.filter(function (x) { return !x.all_day && !isWorkX(x); });
+      var timed = items.filter(function (x) { return !x.all_day && !isWorkX(x) && !isSleepX(x); });
       shelf(box, date, items);
       // Minutes of this day: a start on the day before is 0, an end on the day after 1440.
       function mOf(ts, end) {
@@ -18423,6 +18459,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         rows.push(cl = { a: p.a, b: p.b, e: p.e, xs: [p] });
       });
       var lines = rows.map(function (r) { return { m: r.a, k: 0, r: r }; });
+      // A night (В16): its one line at its start in this day (the night before — on top, tonight's — at the bottom).
+      items.filter(isSleepX).forEach(function (x) { lines.push({ m: mOf(x.starts_at), k: 3, x: x }); });
       (free || []).forEach(function (s) {
         var a = Number(s.from.slice(0, 2)) * 60 + Number(s.from.slice(3)), b = Number(s.to.slice(0, 2)) * 60 + Number(s.to.slice(3));
         es.forEach(function (p) {
@@ -18454,6 +18492,11 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
             el('b', '', calMin(ln.f[0]) + '–' + calMin(ln.f[1])), el('span', '', ' · ' + calDur(ln.f[1] - ln.f[0]))))), ln.m);
         }
         if (ln.k === 1) return nowMark(sk.put(li('ctnowr', null, false, null), ln.m));
+        if (ln.k === 3) {
+          var stm = el('span', 'ctt', calHm(ln.x.starts_at));
+          stm.appendChild(el('small', '', calHm(ln.x.ends_at)));
+          return sk.put(li('cs-sleep', stm, false, sleepRow(ln.x, date, true)), ln.m);
+        }
         var r = ln.r, p0 = r.xs[0], tm = el('span', 'ctt', calMin(r.a));
         if (r.b > r.a) tm.appendChild(el('small', '', calMin(r.b)));
         // A timed task: a thin outlined pill, not a block.
@@ -18505,6 +18548,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // from the grid's start, and to 22:00) a muted «свободно · 3 ч» in its middle; today the «now» line with the accent
     // pill in the gutter, moved once a minute. The work day (В14): a strip right of the gutter from its start to its end
     // (all day — the whole grid) and its hours faintly tinted across; the items start right of it, no «свободно» inside.
+    // A night (В16): a block under the items on its hours, the grid from its hour (00:00 for one begun the day before);
+    // the opening scroll takes the first item that is not a night.
     var HG = 52, nowTick = null, gridKeep = null;
     function dayGrid(box, date, items) {
       clearInterval(nowTick);
@@ -18514,14 +18559,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         var d = foodDay(ts), p = wp(ts);
         return d < date ? 0 : d > date ? (end ? 1440 : 0) : Number(p.hour) * 60 + Number(p.minute);
       }
-      var es = [];
+      // The nights (В16) apart: a block under the items, not in their columns; the grid starts at a night's hour.
+      var es = [], sl = [];
       items.forEach(function (x) {
         if (x.all_day || isWorkX(x)) return;
         var a = mOf(x.starts_at), b = x.ends_at && x.ends_at !== x.starts_at ? mOf(x.ends_at, true) : a;
+        if (isSleepX(x)) { if (b > a) sl.push({ x: x, a: a, b: b, e: b, task: false }); return; }
         es.push({ x: x, a: a, b: b, e: b > a ? b : Math.min(a + 60, 1440), task: x.src === 'task' });
       });
       es.sort(function (p, q) { return p.a - q.a || q.e - p.e; });
-      var t0 = es.length ? Math.min(360, Math.floor(es[0].a / 60) * 60) : 360, t1 = 1440;
+      var t0 = Math.min.apply(null, [360].concat(es.concat(sl).map(function (p) { return Math.floor(p.a / 60) * 60; }))), t1 = 1440;
       function y(t) { return (t - t0) * HG / 60; }
       var sc = el('div', 'chgs'), g = el('div', 'chg'), area = el('div', 'chga'), labels = [], ws = workSpans(date, items);
       g.style.height = y(t1) + 'px';
@@ -18560,6 +18607,24 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         end = Math.max(end, p.e);
       });
       if (cur.length) cols(cur);
+      // A night: «Сон 6 ч 58 м», under it «в кровати 7 ч 20 м · 87 %», from 60 px its phases as a thin bar.
+      sl.forEach(function (p) {
+        var x = p.x, s = x.sleep || {}, ht = Math.max(26, y(p.e) - y(p.a) - 2), top = Math.min(y(p.a) + 1, y(t1) - ht);
+        var c = add(el('div', 'chsl cs-sleep'), add(el('div', 'ctet'), add(el('span', 'ctic'), icon('moon')),
+          el('span', 'ctn', s.asleep_min != null ? 'Сон ' + slHm(s.asleep_min) : 'Сон')));
+        c.style.cssText = 'top:' + top + 'px;height:' + ht + 'px';
+        var sub = [slBed(x), s.score != null ? s.score + ' %' : ''].filter(Boolean).join(' · ');
+        if (ht >= 40 && sub) c.appendChild(el('div', 'mu', sub));
+        var ph = [['deep', s.deep], ['core', s.core], ['rem', s.rem], ['awake', s.awake]].filter(function (q) { return q[1] > 0; });
+        if (ht >= 60 && ph.length) {
+          var bar = el('div', 'cslph');
+          bar.setAttribute('aria-hidden', 'true');
+          ph.forEach(function (q) { var i = bar.appendChild(el('i', 'hph-' + q[0])); i.style.flex = q[1] + ' 1 0'; });
+          c.appendChild(bar);
+        }
+        c.setAttribute('aria-label', calHm(x.starts_at) + '–' + calHm(x.ends_at) + ', ' + x.title + (s.score != null ? ', оценка ' + s.score + ' %' : '') + ' — открыть');
+        area.appendChild(tap(c, actOf(x, date, c)));
+      });
       es.forEach(function (p) {
         var x = p.x, c, lbl;
         if (p.task) {
@@ -18594,12 +18659,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       function freeOut(a, b, ta, tb) {
         cutWork(a, b, ws, 60).forEach(function (q) { freeAt(q[0], q[1], ta && q[0] === a, tb && q[1] === b); });
       }
+      // A night is no free time on screen either (no «свободно» across it).
       var last = t0, lastTask = false, empty = null;
-      es.forEach(function (p) {
+      es.concat(sl).sort(function (p, q) { return p.a - q.a; }).forEach(function (p) {
         if (p.a - last >= 60) freeOut(last, p.a, lastTask, p.task);
         if (p.task) { if (p.a >= last) { last = p.a; lastTask = true; } } else if (p.e > last) { last = p.e; lastTask = false; }
       });
-      if (!es.length && !ws.length) empty = area.appendChild(el('span', 'chgf', 'свободно · весь день'));
+      if (!es.length && !ws.length && !sl.length) empty = area.appendChild(el('span', 'chgf', 'свободно · весь день'));
       else if (1320 - last >= 60) freeOut(last, 1320, lastTask, false);
       add(box, add(sc, add(g, area)));
       // Today the «now» line, an hour's label it would touch hidden; once a minute it moves, gone with the grid or the day.
