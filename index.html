@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 15:25">
+<meta name="published" content="2026-10-31 15:34">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1198,7 +1198,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .wtile{min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
 .wtile .mu{font-size:12px}.wtv{font:800 17px/1.25 var(--font-num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wtv.mu{font-weight:500}
 .wtv small{font:500 11px var(--font);color:var(--muted)}.wmain>:first-child{margin-top:14px}
-.wgt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wgt .hft-v{font-size:19px}
+.wgt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.wgt>.hftl:last-child:nth-child(3n+2){grid-column:span 2}/* a lone pair on the last row: the last tile takes the free cell, so «Пульс ср./макс.» is not cut (his 31.10.2026) */.wgt .hft-v{font-size:19px}
 .wgex{margin:14px 0 0;display:flex;flex-direction:column;gap:8px}.wgex .hfh{margin:0 0 -2px}.wgex .gtip{margin-top:0}
 .wgx{padding:12px;border-radius:var(--r-b);background:var(--surface-2);min-width:0}.wgx .gxh{gap:10px}.wgx .gthumb{width:44px;height:44px;border-radius:10px}
 .wgn{font:700 15px/1.25 var(--font);overflow-wrap:anywhere}.wgk{flex:none;font:700 14px var(--font-num);font-variant-numeric:tabular-nums}
@@ -17569,7 +17569,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         main2.appendChild(wrap);
         wrap.appendChild(woHrChart(hr, mx, Math.max(260, (main2.clientWidth || 340)), watch ? gymDots(watch) : null));
         var zm = woZoneMinutes(hr, mx), zs = zm.map(function (m, i) { return m ? 'з' + i + ' ' + m + ' мин' : null; }).filter(Boolean);
-        if (zs.length) wrap.appendChild(el('div', 'mu wline', 'по зонам: ' + zs.join(' · ') + ' (максимум ' + mx + ')'));
+        if (zs.length) wrap.appendChild(el('div', 'mu wline', 'по зонам: ' + zs.join(' · ') + ' · зоны от максимального пульса ' + mx));
       }
       if (load && load.trimp != null) {
         main2.appendChild(add(el('div', 'wload'), icon('gauge'), el('span', '', 'Нагрузка этой тренировки: ' + grouped(load.trimp) + ' ед.' +
