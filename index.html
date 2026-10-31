@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 14:17">
+<meta name="published" content="2026-10-31 14:27">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1304,15 +1304,23 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    colour of «Монитор» (норма green, выше sky, ниже orange), the value and its pill; «Прочее» folded. The history sheet —
    the dates as dots on a line over the band, a value label on each. */
 .seg.hseg{margin-bottom:12px}
-.card.hbage{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) var(--hl-tint2),transparent),transparent 120px),var(--surface);--star:color-mix(in srgb,var(--fg) 70%,transparent);overflow:hidden}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}}
-:root[data-theme="light"] .card.hbage{--star:color-mix(in srgb,var(--mark) 40%,transparent)}
-.bac{cursor:pointer;padding:0 12px 2px}.bac>svg.bas-stars{top:-50px;height:480px}.bac .bas-d{margin-top:6px}.bac .bas-gz{max-width:360px;margin-top:0}
-.bac .bas-big{font-size:52px}.bac .bas-dp{margin-top:10px;padding:6px 8px 6px 10px;font-size:12px;max-width:min(100%,230px)}.bac .bas-nu{margin:2px 0 12px;font-size:14px}
-.bac-r{margin:0 0 6px;padding:7px 12px 7px 8px;border-radius:26px}.bac-r .hmini,.bac-r .hmini>svg.hring{width:42px;height:42px}.bac-r .bmini>.i{width:16px;height:16px}.bac-r .hpr-n{font-size:15px;font-weight:600}.bac-r .hpr-n b{font:800 15px var(--font-num)}
-.bac-r .bas-w{font-size:13px;margin:0}
-@media (max-width:389px){.bac{padding:0 8px 2px}.bac-r{gap:8px}.bac-r .hpr-n,.bac-r .hpr-n b{font-size:13px}.bac-r .bas-w{font-size:12px}.bac-r .hmini,.bac-r .hmini>svg.hring{width:36px;height:36px}.bac-r .bmini>.i{width:14px;height:14px}.bac-r{padding-right:8px}}
-.bac-r .hpr-n{white-space:nowrap}
+.card.hbage{background:linear-gradient(180deg,color-mix(in srgb,var(--accent) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
+/* Variant A (his pick 31.10.2026): the lead as «Фитнес»'s — the number left, the compact ruler right, the week's change and
+   the next update under them; «Факторы» as «Монитор»'s tiles, each scale with a line at the calendar age; «Тренды» compact.
+   «Цели» on the light lime: the accent's dark variant (--link), the lime itself is unreadable on white. */
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .hbage .ch .mtoday{color:var(--link)}}
+:root[data-theme="light"] .hbage .ch .mtoday{color:var(--link)}
+.bio-lead{display:flex;align-items:flex-end;gap:10px;padding:2px 14px 6px;cursor:pointer}
+.bio-l{flex:1;min-width:0}.bio-l>.mu{font-size:12px}.bio-l .bas-w{font-size:14px}
+.bio-big{font:800 52px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em;margin:2px 0 4px}
+.bio-rl{flex:none;display:block;overflow:visible;padding-bottom:2px}.bio-rl .bas-gl{font-size:10px}.bio-rl .bas-bl,.bio-rl .bas-cl{font-size:11px}
+.bio-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:6px 14px 14px}
+.bio-foot .mu{margin-left:auto;font-size:12px}.bio-foot .mu b{color:var(--fg)}
+.pill.bio-dp{height:24px;gap:4px;padding:0 9px}.pill.bio-dp .i{width:12px;height:12px}
+@media (max-width:389px){.bio-foot{gap:6px}.bio-foot .mu,.pill.bio-dp{font-size:11px}.pill.bio-dp{padding:0 7px}}
+.bio-mon .hmt.tap{cursor:pointer}.htrk .cal{fill:color-mix(in srgb,var(--fg) 70%,transparent)}
+.bio-mon .hmt.hs-cal{--st:var(--muted);background:none;box-shadow:inset 0 0 0 1px var(--line)}.bio-mon .hmt.hs-cal .htrk .halo{display:none}
+.row.hbr.bio-tr{min-height:0;padding:8px 14px}.row.hbr.bio-tr .hbv{font-size:17px}.row.hbr.bio-tr .tx .mu{font-size:11.5px}
 .bnote{padding:0 14px 12px}
 .bxb{flex:none;display:block;margin:0 8px}.bxb .tr{fill:var(--track)}.bxb .mid{fill:var(--line-2)}
 .bxb .neg{fill:var(--ring-recovery)}.bxb .pos{fill:var(--ring-load)}
@@ -16370,10 +16378,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     box.appendChild(svg('circle', { cx: x(l.day).toFixed(1), cy: y(l.v).toFixed(1), r: 3.5, 'class': 'dot' }));
     return box;
   }
-  // «Биология»: a row a measure — its name, the last value large, the change with an arrow and a word; the 30 days as
+  // «Тренды»: a compact row a measure — its name, the last value, the change with an arrow and a word; the 30 days as
   // a sparkline on the right.
   function hlBio(j, box) {
-    var c = mkCard('trending', 'Биология', 'за 30 дней'), s = j.series || {}, any = false;
+    var c = mkCard('trending', 'Тренды', 'за 30 дней'), s = j.series || {}, any = false;
     c.className += ' hbio';
     var W = Math.max(80, Math.min(200, ((box && box.clientWidth) || 360) - 190));
     [['weight', 'Вес', 'кг', 1], ['body_fat', 'Жир', '%', 1], ['hrv', 'ВСР', 'мс', 1], ['resting_hr', 'Пульс покоя', 'уд/мин', -1], ['vo2max', 'VO2max', '', 1]].forEach(function (m) {
@@ -16381,7 +16389,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       if (p.length) any = true;
       var d = x.delta, dv = d == null || d === 0 ? '' : (d > 0 ? '+' : '−') + woNum(Math.abs(d));
       var tr = d == null || !p.length ? '' : d > 0 ? '↑ ' + dv + ' · растёт' : d < 0 ? '↓ ' + dv + ' · снижается' : '→ ровно';
-      var r = add(el('div', 'row hbr'), add(el('span', 'tx'), el('div', 'mu', m[1]),
+      var r = add(el('div', 'row hbr bio-tr'), add(el('span', 'tx'), el('div', 'mu', m[1]),
         add(el('div', 'hbv'), document.createTextNode(last == null ? '—' : woNum(last)), last != null && m[2] ? el('small', '', ' ' + m[2]) : null),
         tr ? el('div', 'mu', tr) : null), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'));
       tap(r, function () { hlSeriesSheet(m[0], HL_BIO_KEYS, r); });
@@ -16421,7 +16429,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     function loadAge() {
       swr({ key: 'body:bioage', box: age, n: 1, live: live,
         fetch: function () { return api('miniapp', { action: 'bioage' }, 15000, true, {}); },
-        render: function (j) { add(clear(age), bioAgeCard(j, age, loadAge)); }, retry: loadAge });
+        render: function (j) { add(clear(age), bioAgeCard(j, age, loadAge), bioFactors(j)); }, retry: loadAge });
     }
     loadAge();
     swr({ key: 'body:bio', box: bio, n: 1, live: live,
@@ -16451,35 +16459,92 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     });
     gb.setAttribute('aria-label', 'Дата рождения и рост');
     c.firstChild.appendChild(gb);
-    // A compact preview of the full-screen sheet: the same gradient and stars, the week's number, the pill of the change, the
-    // gauge, the next update and the five rows of «Биомаркеры возраста»; a tap anywhere (the chevrons too) opens bioAgeSheet.
-    // No score (or no age) — the empty line alone: no number, no ruler.
+    // The lead as «Фитнес»'s (variant A, his pick 31.10.2026): the week's date over the number, the word under it, the
+    // compact ruler on the right; a tap opens the full-screen sheet (bioAgeSheet). Under it the change against last week
+    // (a tap — the 12 weeks) and the next update. No score (or no age) — the empty line alone: no number, no ruler.
     var cur = j.current, bio = bioNum(cur ? cur.bio : j.overall), age = bioNum(j.age), day = cur ? cur.week_start : null;
-    var w = bioWord(bio == null || age == null ? null : bio - age);
-    var center = add(el('div', 'bas-c'), bio == null ? null : el('div', 'bas-big', woNum(bio)), el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), pill = el('div', 'bas-c bas-pl');
-    if (bioNum(j.delta) != null) {
-      pill.appendChild(add(el('div', 'bas-dp'), add(el('span', 'bas-dpi ' + (j.delta > 0 ? 'old' : j.delta < 0 ? 'yg' : '')), icon(j.delta > 0 ? 'arrow-up' : j.delta < 0 ? 'arrow-down' : 'circle-dot')),
-        el('span', '', (j.delta > 0 ? '+' : j.delta < 0 ? '−' : '±') + woNum(Math.abs(j.delta)) + ' по сравнению с прошлой неделей'), icon('chevron-right')));
+    var w = bioWord(bio == null || age == null ? null : bio - age), when = day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас';
+    var lead = add(el('div', 'bio-lead'), add(el('div', 'bio-l'), el('div', 'mu', when), bio == null ? null : el('div', 'bio-big', woNum(bio)),
+      el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), bio == null || age == null ? null : bioRuler(bio, age));
+    c.appendChild(tap(lead, function () { haptic(); bioAgeSheet(j, lead); }));
+    lead.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + (bio == null ? '' : ', ' + w[0]) + ' — подробно');
+    var foot = el('div', 'bio-foot'), d = bioNum(j.delta), n = bioNum(j.next_update_days);
+    if (d != null) {
+      var dp = add(el('button', 'pill hst bio-dp ' + (d > 0.04 ? 'hs-below' : d < -0.04 ? 'hs-norm' : 'hs-same')), icon(d > 0 ? 'arrow-up' : d < 0 ? 'arrow-down' : 'circle-dot'),
+        document.createTextNode((d > 0 ? '+' : d < 0 ? '−' : '±') + woNum(Math.abs(d)) + ' к прошлой неделе'));
+      dp.type = 'button';
+      dp.setAttribute('aria-label', 'Изменение к прошлой неделе ' + bioSigned(d) + ' — по неделям');
+      dp.onclick = function () { haptic(); bioWeeksSheet(j, dp); };
+      foot.appendChild(dp);
     }
-    // A row as the sheet's (bioGroupOf over the same bioRowsOf): the ring, the name with the years, the word — grey
-    // «нет данных» without them.
-    // A row's own tap opens that group's sheet from the bottom (his ask 30.10.2026 — not the full-screen one the
-    // rest of the card opens); the click stays in the row.
-    function prow(r) {
-      var g = bioGroupOf(r, j), v = bioNum(r.years), wd = bioWord(v == null ? null : bioNum(r.delta));
-      var row = add(el('div', 'hpr bas-r bac-r'), bioRing(bioShare(g, j), g.ic, v == null ? null : r.delta),
-        add(el('div', 'hpr-m'), add(el('div', 'hpr-n'), document.createTextNode(r.label + ' '), v == null ? null : el('b', '', woNum(v))),
-          el('div', 'bas-w ' + wd[1], v == null || r.delta == null ? wd[0] : r.line || bioDelta(r.delta))),
-        add(el('span', 'hpr-go'), icon('chevron-right')));
-      row.setAttribute('aria-label', r.label + ': ' + (v == null ? 'нет данных' : wd[0]) + ' — подробно');
-      return tap(row, function (ev) { if (ev && ev.stopPropagation) ev.stopPropagation(); haptic(); bioFactorSheet(g, j, row); });
+    if (n != null) foot.appendChild(add(el('span', 'mu'), document.createTextNode('обновление через '), el('b', '', n + ' ' + ['день', 'дня', 'дней'][plural3(n)])));
+    if (foot.firstChild) c.appendChild(foot);
+    return c;
+  }
+  // The lead's compact ruler: a tick each two years, a label each ten, the span between the two ages filled in the
+  // accent, the biological age's dot in the accent and the calendar's in the text colour, each with its number above;
+  // two numbers too close for both part to either side.
+  function bioRuler(bio, age) {
+    var W = 150, H = 70, x0 = 8, x1 = 142, top = 37;
+    var lo = Math.floor(Math.min(18, bio - 2, age - 2) / 2) * 2, hi = Math.max(lo + 20, Math.ceil((Math.max(bio, age) + 8) / 2) * 2);
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'bio-rl', role: 'img',
+      'aria-label': 'Шкала: биологический ' + woNum(bio) + ', календарный ' + woNum(age) });
+    function X(t) { return +(x0 + (t - lo) / (hi - lo) * (x1 - x0)).toFixed(1); }
+    var xb = X(bio), xa = X(age), near = Math.abs(xa - xb) < 30;
+    if (Math.abs(xa - xb) > 0.1) box.appendChild(svg('rect', { x: Math.min(xa, xb), y: top - 3, width: Math.abs(xa - xb), height: 6, rx: 3, 'class': 'bas-span' }));
+    for (var t = lo; t <= hi; t += 2) {
+      var maj = !(t % 10), x = X(t);
+      box.appendChild(svg('line', { x1: x, y1: top + 5, x2: x, y2: top + (maj ? 15 : 10), 'class': 'bas-tk' + (maj ? ' maj' : '') }));
+      if (maj) box.appendChild(svg('text', { x: x, y: top + 27, 'class': 'bas-gl', 'text-anchor': 'middle' }, String(t)));
     }
-    var body = add(el('div', 'bas bac'), bioStars(), el('div', 'mu bas-d', day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас'),
-      add(el('div', 'bas-gz'), center, bio == null || age == null ? null : bioGauge(bio, age), pill), bioNext(j));
-    // The server's five rows (Сон · Физическая активность · Фитнес · Стиль жизни · Кровь), the sheet's very rows.
-    bioRowsOf(j).forEach(function (r) { body.appendChild(prow(r)); });
-    body.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + ' — подробно');
-    c.appendChild(tap(body, function () { bioAgeSheet(j, body); }));
+    // Each label centred over its dot, pushed inward at the ends; two near ones turned away from each other.
+    function lab(x, other) {
+      var a = near ? (x <= other ? 'end' : 'start') : x < 16 ? 'start' : x > W - 16 ? 'end' : 'middle';
+      return { x: a === 'end' ? Math.min(W, x + 5) : a === 'start' ? Math.max(0, x - 5) : x, a: a };
+    }
+    var lb = lab(xb, xa), la = lab(xa, xb);
+    box.appendChild(svg('circle', { cx: xb, cy: top, r: 5.5, 'class': 'bas-bd' }));
+    box.appendChild(svg('text', { x: lb.x, y: top - 11, 'class': 'bas-bl', 'text-anchor': lb.a }, woNum(bio)));
+    box.appendChild(svg('circle', { cx: xa, cy: top, r: 5.5, 'class': 'bas-cd' }));
+    box.appendChild(svg('text', { x: la.x, y: top - 11, 'class': 'bas-cl', 'text-anchor': la.a }, woNum(age)));
+    return box;
+  }
+  // «Факторы» as «Монитор»'s tiles: a group a tile — its short name, its age in years, the change against the calendar
+  // age in a pill (younger green, older orange) and a thin scale on the left: ±10 years around a line at the calendar
+  // age, the group's dot on it; a tap — the group's sheet (bioFactorSheet). The sixth tile is the calendar age itself,
+  // the line every scale is drawn against. No group with data and no age — one line instead of empty tiles.
+  var BIO_SHORT = { act: 'Активность' };
+  function bioTrack(d, cal) {
+    var H = 64, W = 16, span = 10, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htrk', 'aria-hidden': 'true' });
+    function y(z) { return +((H - 14) * (1 - (Math.max(-span, Math.min(span, z)) + span) / (2 * span)) + 7).toFixed(1); }
+    box.appendChild(svg('rect', { x: 6, y: 0, width: 4, height: H, rx: 2, 'class': 'tr' }));
+    if (cal) box.appendChild(svg('rect', { x: 3, y: y(0) - 1.2, width: 10, height: 2.4, rx: 1.2, 'class': 'cal' }));
+    if (d != null) {
+      box.appendChild(svg('circle', { cx: 8, cy: y(d), r: 7, 'class': 'halo' }));
+      box.appendChild(svg('circle', { cx: 8, cy: y(d), r: 4, 'class': 'dot' }));
+    }
+    return box;
+  }
+  function bioFactors(j) {
+    var c = mkCard('layers', 'Факторы', 'возраст каждого против календарного'), g = el('div', 'hmon bio-mon'), age = bioNum(j.age), any = age != null;
+    bioRowsOf(j).forEach(function (r) {
+      var gr = bioGroupOf(r, j), v = bioNum(r.years), d = v == null ? null : bioNum(r.delta), name = BIO_SHORT[r.key] || r.label;
+      if (v != null) any = true;
+      var tile = add(el('div', 'hmt' + (d == null ? '' : d < -0.04 ? ' hs-norm' : d > 0.04 ? ' hs-below' : ' hs-same')), bioTrack(d, age != null),
+        add(el('div', 'hmx'), el('div', 'mu hml', name), add(el('div', 'hmv'), document.createTextNode(v == null ? '—' : woNum(v)), v == null ? null : el('small', '', ' лет')),
+          d == null ? el('div', 'mu hmn', 'нет данных') : pill(bioSigned(d) + ' г.', 'hst')));
+      tap(tile, function () { haptic(); bioFactorSheet(gr, j, tile); });
+      tile.setAttribute('aria-label', r.label + ': ' + (v == null ? 'нет данных' : woNum(v) + ' лет' + (d == null ? '' : ', ' + bioWord(d)[0])) + ' — подробно');
+      g.appendChild(tile);
+    });
+    if (age != null) {
+      var ct = add(el('div', 'hmt hs-cal'), bioTrack(0, true), add(el('div', 'hmx'), el('div', 'mu hml', 'Календарный'),
+        add(el('div', 'hmv'), document.createTextNode(woNum(age)), el('small', '', ' лет')), pill('черта', 'hst')));
+      ct.setAttribute('role', 'group');
+      ct.setAttribute('aria-label', 'Календарный возраст ' + woNum(age) + ' лет — черта на каждой шкале');
+      g.appendChild(ct);
+    }
+    c.appendChild(any ? g : el('div', 'mu bnote', 'Нет данных: привычки считаются при 20 днях из 28, кровь — по анализу.'));
     c.appendChild(el('div', 'mu msrc bnote', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
     return c;
   }
