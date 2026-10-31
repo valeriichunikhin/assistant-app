@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 11:28">
+<meta name="published" content="2026-10-31 13:00">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -626,7 +626,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
    the search over the spends; a split's mark and the receipt's clip in a row; a person's and a goal's sheet. */
 .pos{color:var(--good)}.neg{color:var(--bad)}.minc b.pos{color:var(--good)}.minc b.neg{color:var(--bad)}
 .macts{display:flex;gap:8px;margin-top:12px}.macts{flex-wrap:wrap}.macts .btn{flex:1 1 0;min-width:max-content;height:44px;padding:0 12px}.macts .btn:last-child{flex-grow:1.4}.btn.mplus{flex:0 0 56px;padding:0}.btn.mplus .i{margin:0}
-.minc{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.4}
+.minc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.4}.minc .mic{display:flex;flex-direction:column;gap:2px;min-width:0}.minc .mic span{font-size:12px;color:var(--muted)}.minc .mic b{white-space:nowrap;font-variant-numeric:tabular-nums}
 .minc b{color:var(--fg);font:600 13px/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
 .row.mcat .pr.mbal{font:600 15px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.row.macc .pr.mbal{min-width:min(6em,40%)}.mdqb .row.macc .pr.mbal{min-width:0}
 /* «свободно N», «осталось N»: the line may wrap, the amount never breaks or is cut. */
@@ -1060,41 +1060,22 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .wplan{display:grid;grid-template-columns:1fr 1.2fr auto;gap:6px}.wplan .seg{margin:0}.wplan .seg button{flex:none;padding:0 10px}
 .wday{margin:0 0 16px;padding:12px 0 0;border-top:1px solid var(--line)}.wday:first-child{border-top:0;padding-top:0}
 /* «Зал» and «Тренировка» (docs/specs/gym.md): the card's weight row with its sparkline and «Начать зал»; the workout
-   screen full-screen as «Биологический возраст» — large taps for a phone held between sets: the steppers 64 px, the
-   kg and the reps 34 px, «Сделал» 64 px, the rest's countdown 88 px; the current exercise marked in the list. */
+   screen full-screen as «Биологический возраст» (its Bevel form — below, gym-week). */
 .row.gwt{align-items:center}.row.gwt .t b{font:800 18px var(--font-num);font-variant-numeric:tabular-nums}.row.gwt .hspk{margin-left:8px}
 .btn.gstart{min-height:52px;font-size:16px;font-weight:700}
-.gym .ghead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;min-height:44px}
-.gym .gday{font:800 20px var(--font)}.gym .gel{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}.gym .gdw~.gel{white-space:nowrap}
 .gym .gdays{margin:0;flex:0 1 auto}.gym .gdays button{min-width:48px;height:44px;font-weight:700}
 .gym .card{margin-bottom:12px}
-.gcur{padding:16px 14px 12px}.gname{font:800 22px/1.2 var(--font)}.gset{margin-top:4px;font-weight:600;font-size:15px}
 .ggif{display:flex;justify-content:center;box-sizing:border-box;height:180px;margin:-4px 0 12px;border-radius:16px;background:#fff;overflow:hidden;border:1px solid color-mix(in srgb,var(--fg) 8%,transparent)}
 .ggif img,.ggif video{height:100%;width:auto;max-width:100%;object-fit:contain;display:block}.ggif[hidden]{display:none}
 .gattr{margin:-4px 0 10px;text-align:center;font-size:12px}
 .gwhy{margin-top:6px;font-size:13px;line-height:1.35}
-.gst{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:10px;margin-top:14px}
-.gst-b{height:64px;padding:0;border:0;border-radius:var(--r-b);background:var(--accent-soft);color:var(--mark);font:800 18px var(--font-num);font-variant-numeric:tabular-nums}
-.gst-b:active{transform:scale(.97)}
-.gst-c{display:flex;flex-direction:column;align-items:center;min-width:0}.gst-c .mu{font-size:12px;margin-top:-2px}
-.gst-v{width:100%;min-width:0;height:48px;padding:0;border:0;background:none;color:var(--fg);font:800 34px var(--font-num);font-variant-numeric:tabular-nums;text-align:center}
-.gst-v:focus{outline:2px solid var(--mark);outline-offset:2px;border-radius:12px}
-.gdone{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.gdone .pill{height:28px;padding:0 10px;font-size:13px;font-variant-numeric:tabular-nums}
-.btn.gok{min-height:64px;margin-top:14px;font-size:18px;font-weight:800}.btn.gok .i{width:22px;height:22px}
-.gacts{margin:10px 0 0}.gacts .btn{flex:1 1 0;min-width:0;min-height:48px}
 .galts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.galts .pill{height:44px;padding:0 14px;font-size:14px;color:var(--fg);white-space:normal;text-align:left}
-.grest{display:flex;flex-direction:column;align-items:center;padding:18px 14px 14px;text-align:center}
-.gclock{margin:4px 0 2px;font:800 88px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--mark)}
-.grest .gacts{align-self:stretch;margin-top:14px}
-.row.gex.on{box-shadow:inset 3px 0 0 var(--mark);background:var(--accent-soft)}
-.gfin .btn{min-height:52px;font-size:16px;font-weight:700}
 /* «Зал по неделе» (docs/specs/gym-week.md): the intensity badge beside a day's name; the rest under the set line; a
    hold's countdown; the Watch's sets as hollow dots on the pulse; «План» a card a day — the day to do ringed in the
    accent, the meta (badge, minutes) at the head's right, the muscle chips, a row an exercise with its animation 48 px. */
 .pill.glv{height:22px;padding:0 9px;font-size:12px;font-weight:700;vertical-align:2px}
-.gym .gday .pill.glv{vertical-align:4px}.gym .gdw{display:flex;align-items:center;gap:8px;min-width:0}
+.gym .gdw{display:flex;align-items:center;gap:8px;min-width:0}
 .gsub .pill.glv{margin-left:2px}
-.gym .grs{margin-top:2px;font-size:13px;font-variant-numeric:tabular-nums}
 .gtip{margin-top:8px}.card>.sub.gtip,.wex .wl.gtip{color:var(--warn)}
 .wex .whrl{margin-top:-2px;font-size:12px}
 .chart.whr .sdot{fill:var(--solid);stroke:var(--mark);stroke-width:2}
@@ -1112,6 +1093,82 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .hft.gsum{padding:0;margin:0 0 12px}
 .gym .btn.wide,.gwt~.foot .btn.wide{width:100%;margin:0}
 @media (max-width:899px){.tsum.bfull .gym .bar.mact.mstick{bottom:-24px;margin-bottom:-24px;padding-bottom:24px}}
+/* «Тренировка» in Bevel's form (docs/specs/gym-week.md, «Экран тренировки как у Bevel»; docs/bevel/workout-1…4.png):
+   the clock large and «Завершить» as a soft red pill; a card an exercise — the animation 48 px, the name, a row a set
+   (🔥 · кг · повторы · RPE · ▶/✓ round), the rest's pill on a hairline between sets (dark while it counts), the made
+   sets green; «Прогресс | + Добавить сет» split under the card; the warm-up's stopwatch; the mini-player a glass pill
+   and a round button over the bottom. The tap targets 44 px (the rest's pill by its padding). */
+.gtop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 14px}.gtt{min-width:0}
+.gbig{font:800 50px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.gdl{margin-top:6px;font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gdl .pill.glv{vertical-align:1px}
+.btn.gend{flex:none;min-height:48px;margin-top:2px;padding:0 20px;border:1px solid color-mix(in srgb,var(--bad) 24%,transparent);border-radius:24px;background:var(--bad-bg);color:var(--bad);font-size:16px;font-weight:700}
+.gym .gdw{margin:0 0 12px}
+.card.gex{padding:14px 14px 0;overflow:hidden}.card.gex.cur{box-shadow:inset 0 0 0 2px var(--mark),var(--shadow)}.card.gex.skip{opacity:.62}
+.gxh{display:flex;align-items:center;gap:12px}.gxt{flex:1;min-width:0}.gxn{font:700 18px/1.25 var(--font);overflow-wrap:anywhere}
+.gxs{margin-top:3px;font-size:13px;font-variant-numeric:tabular-nums}.gxs .pill{height:20px;padding:0 8px;font-size:11px;vertical-align:1px}
+.gxm{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:12px;background:none;color:var(--muted)}
+.gex .gwhy{margin-top:8px}.gex .galts{margin-top:10px}
+.gsr{display:grid;grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr) 44px;gap:6px;align-items:center;margin-top:8px}
+.gsr.gsh{margin-top:12px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);text-align:center}
+.gf{box-sizing:border-box;width:100%;min-width:0;height:44px;padding:0 4px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface-2);color:var(--fg);font:700 17px var(--font-num);font-variant-numeric:tabular-nums;text-align:center;display:grid;place-items:center}
+.gf:focus{outline:2px solid var(--mark);outline-offset:1px}.gf:disabled{color:var(--muted-2);-webkit-text-fill-color:var(--muted-2);opacity:1}.gf::placeholder{color:var(--muted-2);font-weight:500;font-size:13px}
+.gf.grpe{font-size:16px}.gf.live{color:var(--mark)}
+.gw,.gb{box-sizing:border-box;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line-2);border-radius:50%;background:none;color:var(--muted-2)}
+.gw .i,.gb .i{width:18px;height:18px}.gw.on{border-color:transparent;background:var(--warn-bg);color:var(--warn)}
+.gb{color:var(--fg)}.gb.go .i,.gmp-b.go .i{fill:currentColor}.gb:disabled{opacity:.35}
+.gsr.act .gb{border-color:var(--fg);border-width:2px}.gsr.act .gf{border-color:var(--fg)}
+.gsr.ok .gf{border-color:transparent;background:var(--good-bg);color:var(--good);-webkit-text-fill-color:var(--good)}
+.gsr.ok .gb,.gb.ok{border-color:var(--good);background:var(--good);color:#fff}.gsr.ok .gw:not(.on){border-color:transparent;background:var(--good-bg);color:var(--good)}
+.grl{position:relative;display:flex;justify-content:center;margin:8px 0 0}
+.grl::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line)}
+.grp{position:relative;min-width:64px;height:28px;padding:0 10px;border:1px solid var(--line-2);border-radius:9px;background:var(--solid);color:var(--fg);font:600 14px var(--font-num);font-variant-numeric:tabular-nums}
+.grp::after{content:"";position:absolute;inset:-8px -6px}
+.grp.ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.grp.run{border-color:var(--fg);background:var(--fg);color:var(--solid)}
+.gre{display:flex;gap:8px;margin:10px 0 2px}.gre .btn{flex:1;min-width:0;min-height:44px}
+.gxf{display:grid;grid-template-columns:1fr 1fr;margin:12px -14px 0;border-top:1px solid var(--line)}
+.gxb{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 6px;border:0;background:none;color:var(--fg);font:600 15px var(--font)}
+.gxb+.gxb{border-left:1px solid var(--line)}.gxb .i{width:18px;height:18px;color:var(--muted)}.gxb:active{background:var(--press)}
+.gwu .gthumb.none{background:var(--warn-bg);color:var(--warn)}.card.gex.gwu{padding-bottom:14px}
+.gwrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 0}
+.gwt{font:800 42px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.btn.gwdone{flex:none;min-height:48px;padding:0 22px;font-size:16px;font-weight:700}
+.tsum .bar.mact.mstick.gmp{display:flex;align-items:center;gap:10px;border-top:0;background:linear-gradient(to top,var(--solid) 55%,transparent)}
+.gmp-i{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;height:60px;padding:0 20px;border:1px solid var(--line);border-radius:30px;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow)}
+.gmp-n{display:flex;align-items:center;gap:8px;min-width:0;font:700 16px var(--font)}.gmp-n span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gmp-n .i{flex:none;width:16px;height:16px;color:var(--mark)}
+.gmp-t{font:600 14px var(--font-num);font-variant-numeric:tabular-nums;color:var(--muted)}.gmp-t.rest{color:var(--mark)}
+.gmp-b{flex:none;display:grid;place-items:center;width:60px;height:60px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow);color:var(--fg)}
+.gmp-b .i{width:26px;height:26px}
+.tsum .bar.mact.mstick.gmp{flex-direction:column;align-items:stretch}.gmp-r{display:flex;align-items:center;gap:10px}
+.gmp-z{flex:none;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:22px;background:var(--glass);color:var(--fg);font:600 14px var(--font)}
+.glat{display:flex;align-items:center;gap:8px;max-width:100%;overflow-x:auto;scrollbar-width:none;align-self:flex-start;padding:4px 4px 4px 14px;border:1px solid var(--line);border-radius:24px;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow);box-sizing:border-box}.glat::-webkit-scrollbar{display:none}.glat>.mu{flex:none;font-size:13px}
+.glat .pill{flex:none;height:36px;padding:0 12px;color:var(--fg);font-size:14px}
+.card.gex.later{opacity:.75}.gex.later .gxs .pill{color:var(--muted)}.gre.glt{margin:12px 0 14px}
+.gsrw .gre{margin:8px 0 2px}.btn.gdel{color:var(--bad)}
+.geff{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}.geff>.mu{margin-right:4px;font-size:13px}
+.geff .pill{height:44px;padding:0 14px;color:var(--fg);font-size:14px}
+.pill.on.e-easy{border-color:transparent;background:var(--good-bg);color:var(--good)}.pill.on.e-ok{border-color:transparent;background:var(--accent-soft);color:var(--mark)}
+.pill.on.e-hard{border-color:transparent;background:var(--warn-bg);color:var(--warn)}.pill.on.e-max{border-color:transparent;background:var(--bad-bg);color:var(--bad)}
+.geffs{margin:0 0 12px}.geffs .pill{height:26px;padding:0 10px;font-size:13px}
+.gdt.kg.e-easy,.gld.e-easy{fill:var(--good);background:var(--good)}.gdt.kg.e-hard,.gld.e-hard{fill:var(--warn);background:var(--warn)}.gdt.kg.e-max,.gld.e-max{fill:var(--bad);background:var(--bad)}
+.gleg .gld{display:inline-block;width:8px;height:8px;border-radius:50%}
+.gwsum{margin:0 0 12px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-b)}.gwsum .lead{color:var(--warn)}
+/* «Прогресс» (gym-week §3): the legend over the lines (the working weight solid in the accent, the 1RM dashed in a
+   quiet ink, dots with a surface ring), the columns, the records; the card's week large. */
+.gleg{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 6px;font-size:12px;color:var(--muted)}.gleg span{display:inline-flex;align-items:center;gap:6px}
+.gleg i{display:inline-block;width:18px;height:0;border-top:2px solid var(--mark)}.gleg i.rm{border-top:2px dashed color-mix(in srgb,var(--fg) 45%,transparent)}
+.gpl .hln.kg{stroke:var(--mark)}.gpl .hln.rm{stroke:color-mix(in srgb,var(--fg) 45%,transparent);stroke-dasharray:5 4}
+.gdt.kg{fill:var(--mark);stroke:var(--solid);stroke-width:2}.gdt.rm{fill:var(--solid);stroke:color-mix(in srgb,var(--fg) 45%,transparent);stroke-width:2}
+.hsh-st.gup{--st:var(--good)}.hsh-st.gdn{--st:var(--warn)}.hsh-st.geq{--st:var(--muted)}
+.gprog .card{margin-top:12px}.gpr{font-weight:700;font-variant-numeric:tabular-nums}.gpnote{margin:12px 2px 4px;font-size:12px;line-height:1.4}
+.gpw{padding:0 14px 6px}.gpw-v{font:800 30px/1.1 var(--font-num);font-variant-numeric:tabular-nums}.gpw-v small{font-size:15px;font-weight:600;color:var(--muted)}
+.gpc{padding:0 14px 10px}.row.gpl1{align-items:center;gap:10px}.row.gpl1 .hspk{flex:none}.row.gpl1 .pr b{font-variant-numeric:tabular-nums}
+/* The workout on every screen (his ask 31.10.2026): a glass pill over the tab bar, the page making room for it. */
+.gpill{position:fixed;z-index:4;left:50%;bottom:calc(var(--bar) + env(safe-area-inset-bottom) + 10px);transform:translateX(-50%);display:flex;align-items:center;gap:8px;max-width:calc(100% - 32px);height:48px;padding:0 18px 0 14px;border:1px solid var(--line);border-radius:24px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:var(--shadow);color:var(--fg);font:600 15px var(--font);white-space:nowrap}
+.gpill .i{flex:none;width:20px;height:20px;color:var(--mark)}.gpl-d{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.gpl-t{font-variant-numeric:tabular-nums;color:var(--muted)}.gpl-r{font-variant-numeric:tabular-nums;color:var(--mark)}.gpl-r[hidden]{display:none}
+body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-bottom))}
+@media (min-width:900px){.gpill{bottom:24px;left:calc(var(--rail) + (100% - var(--rail)) / 2)}body.gpill-on .main{padding-bottom:110px}}
 .wday>.bar{margin:0 0 10px}.fline .bar .btn.x+.btn.x{margin-left:-2px}
 .tsum select.wkind{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 .row select.wkind{flex:none;max-width:55%;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);color:var(--fg);font:16px var(--font)}
@@ -1199,18 +1256,37 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .card.hfit{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-peach) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .card.hnu{background:linear-gradient(180deg,color-mix(in srgb,var(--nu-carbs) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .card.hbio{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-teal) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
-.hwk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:2px 14px 14px}
-.hwd{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding-top:8px}.hwd>.mu{font-size:12px}.hwd.on>.mu{color:var(--fg);font-weight:700}
-.hwn{font:600 15px var(--font-num);font-variant-numeric:tabular-nums;margin:-2px 0 2px}.hwd.on>.hwn{color:var(--mark);font-weight:800}
-.hwd.on::before{content:"";position:absolute;top:0;left:50%;width:0;height:0;margin-left:-4px;border:4px solid transparent;border-top:5px solid var(--mark);border-bottom:0}
-.hwc{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--surface-2);color:var(--muted)}.hwc .i{width:18px;height:18px}
+/* «Фитнес»'s endless strip (docs/specs/gym-week.md, «Лента дней»; docs/bevel/fitness-strip-endless.png): pills sideways
+   with snap, a tick over each and the accent triangle over the day picked; today's date in the accent; the circle — the
+   done sport filled in its colour, a plan as a dashed ring (grey once missed), «Zz» for rest (dashed ahead); the edges
+   fade; «→» back to today floats on the right. Under it the day's card: its date, «+», the plans and the workouts. */
+.fstrip{margin:0 0 12px}
+.fst{position:relative;margin:0 -16px}
+.fsx{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 16px 6px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+.fsx::-webkit-scrollbar{display:none}
+.fsd{position:relative;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;width:50px;padding:16px 0 8px;border:1px solid var(--card-line);border-radius:25px;background:var(--surface);color:var(--fg);font:inherit;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fsk{position:absolute;top:-2px;left:50%;width:1px;height:7px;margin-left:-.5px;background:var(--line-2)}
+.fsd.on .fsk{top:-3px;width:0;height:0;margin-left:-6px;border:6px solid transparent;border-top:8px solid var(--mark);border-bottom:0;background:none}
+.fsw{font-size:13px;color:var(--muted)}.fsn{font:600 18px var(--font-num);font-variant-numeric:tabular-nums}
+.fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
+.fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:38px;height:38px;margin-top:6px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 13px var(--font);letter-spacing:-.04em}
+.fsc .i{width:19px;height:19px}
+.fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
+.fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
+.fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
+.fsc.zz{border:1.5px solid var(--line-2);background:none}.fsc.zz.fut{border-style:dashed}
+.fsc.ld{background:var(--surface-2);opacity:.5}
+.fsc.sm{width:44px;height:44px;margin:0}
+.fsd:active .fsc{transform:scale(.94)}.fsc{transition:transform .12s}
+.fsb{position:absolute;right:12px;top:50%;display:grid;place-items:center;width:44px;height:44px;margin-top:-16px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--glass);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--fg);box-shadow:var(--shadow)}
+.fsb.l{left:12px;right:auto}.fsb.l .i{transform:scaleX(-1)}.fsb[hidden]{display:none}
+.card.fsp{margin-top:12px;padding-bottom:4px}
+.fsh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 4px}.fsh h3{margin:0;font:700 19px var(--font)}
+.fsadd{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--surface-2);color:var(--fg)}
+.row.fsr2{align-items:center;gap:12px}.row.fsr2>.i{flex:none;color:var(--muted)}.fsr2 .fss{font-size:12px;font-weight:600}
 /* A colour per sport (30.10.2026): the gym in his accent, volleyball orange, the run green, the bike sky, swimming teal,
-   the rest gold; the strip's circles, today's ring and the «Спорт» rows' icons take it through --wo. */
-.hwc{--wo:var(--ring-load)}
+   the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
 .k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}
-.hwc.wo{background:color-mix(in srgb,var(--wo) 16%,transparent);color:var(--wo)}
-.hwd.on .hwc{outline:2px dashed var(--wo);outline-offset:2px}
-.hwd.tap{cursor:pointer;border-radius:12px}.hwd.tap:active .hwc{transform:scale(.94)}.hwc{transition:transform .12s}
 .frow .lead.kd{color:var(--wo)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 14px}.hgsh{padding:0 14px 8px;font-weight:600}
 .hgg{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center;padding:12px 8px 10px;border-radius:16px;background:var(--surface-2)}.hgh{font-weight:600;margin:0 0 2px}
@@ -1811,6 +1887,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 <symbol id="i-cloud-lightning" viewBox="0 0 24 24"><path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/></symbol>
 <symbol id="i-cloud-fog" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 17H7"/><path d="M17 21H9"/></symbol>
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
 <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
 <symbol id="i-party-popper" viewBox="0 0 24 24"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10"/><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17"/><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7"/><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z"/></symbol>
 <symbol id="i-flower-2" viewBox="0 0 24 24"><path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1"/><circle cx="12" cy="8" r="2"/><path d="M12 10v12"/><path d="M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z"/><path d="M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z"/></symbol>
@@ -3298,6 +3375,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     current = tab;
     busyGen++;
     busyN = 0;
+    // A workout running with its sheet closed follows him to every tab (gymPill).
+    gymPill();
     hdr.classList.remove('busy');
     // «Уведомления» is never the screen a plain start comes back to.
     if (tab !== 'notif') store('tab', tab);
@@ -10552,8 +10631,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   function moneyIncomeLine(j) {
     if (!(j.income > 0)) return null;
     var d = Math.round((j.income - (j.total || 0)) * 100) / 100;
-    return add(el('div', 'minc'), el('span', '', 'Доходы '), el('b', 'pos', moneyInt(j.income) + ' zł'), el('span', '', ' · Траты '),
-      el('b', '', moneyInt(j.total) + ' zł'), el('span', '', ' · Отложено '), el('b', d < 0 ? 'neg' : '', (d < 0 ? '−' : '') + moneyInt(d) + ' zł'));
+    // Three cells, each label over its number (his 31.10.2026: the one-line form wrapped «−895 zł» onto a line of its own).
+    function cell(k, v, c) { return add(el('div', 'mic'), el('span', '', k), el('b', c, v)); }
+    return add(el('div', 'minc'), cell('Доходы', moneyInt(j.income) + ' zł', 'pos'), cell('Траты', moneyInt(j.total) + ' zł', ''),
+      cell(d < 0 ? 'Перерасход' : 'Осталось', (d < 0 ? '−' : '') + moneyInt(Math.abs(d)) + ' zł', d < 0 ? 'neg' : ''));
   }
   function moneyEmpty() {
     var how = label(el('button', 'btn ghost'), 'smartphone', 'Как подключить iPhone');
@@ -14491,11 +14572,13 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     // day in short (the food's sums and entries) and «Спорт»; «Питание» — the day's food in full (Health's sums against
     // the goal, the weight, the entries) and «Неделя и месяц»; «Фитнес» — the week's strip, the load and the muscles'
     // freshness, the day's workouts and «Зал».
-    var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div');
+    var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div'), strip = el('div', 'fstrip');
     // The day's food_day and health_day answers: «Таймлайн» (from health_day) opens the meal's and the workout's sheets
     // from food_day's rows, and while it is drawn «Сегодня» leaves out the entries and «Спорт» it already lists.
     var FJ = null, HJ = null;
-    add.apply(null, [main].concat(seg === 'fitness' ? [nav, fit, body] : seg === 'nutrition' ? [nav, body, stats] : [nav, top, body]));
+    // «Прогресс» of «Фитнес» (gym-week §3): the 12 weeks' tonnage and the main lifts, after «Зал».
+    var prog = el('div');
+    add.apply(null, [main].concat(seg === 'fitness' ? [nav, strip, fit, body, prog] : seg === 'nutrition' ? [nav, body, stats] : [nav, top, body]));
     function fresh() { cacheDrop('food'); cacheDrop('home'); }
     function go(n) { goTo(n === 0 ? foodToday() : addDays(FOOD.date, n)); }
     // A day by its date (the arrows, «Сегодня»): never after today.
@@ -14600,7 +14683,8 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       // The day's workouts under its meals («Сегодня»), then «Зал» («Фитнес»: the next gym session by the plan, the same for
       // every day).
       var wo = woCard(j.workouts || [], date, function () { fresh(); load(); loadStats(); }, load);
-      if (seg === 'fitness') out = [wo].concat(j.gym ? [gymCard(j.gym, j.weight_4w, function () { fresh(); load(); })] : []);
+      // «Фитнес»: the day's workouts are the strip's day card now (gym-week, «Лента дней»), «Прогресс» after «Зал».
+      if (seg === 'fitness') out = j.gym ? [gymCard(j.gym, j.weight_4w, function () { fresh(); load(); })] : [];
       else if (!tl) out.push(wo);
       add.apply(null, [clear(body)].concat(out));
     }
@@ -14618,7 +14702,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       swr({ key: 'body:' + date, box: box, n: 1, live: function () { return current === 'food' && FOOD.date === date && healthSeg === seg; },
         fetch: function () { return api('miniapp', { action: 'health_day' }, 15000, true, { date: date }); },
         render: function (j) {
-          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j, function () { fresh(); load(); })].concat(hlFitTiles(j)));
+          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j)));
           var had = HJ && HJ.has_data;
           HJ = j;
           add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
@@ -14637,6 +14721,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       if (!hit) return x.type === 'meal' ? show('nutrition') : null;
       if (x.type === 'meal') foodSheet(hit, r, done);
       else woDetailSheet(hit, r, done);
+    }
+    function loadProg() {
+      swr({ key: 'gym:progress', box: prog, n: 0, live: function () { return current === 'food' && healthSeg === 'fitness'; },
+        fetch: function () { return api('miniapp', { action: 'gym_progress' }, 15000, true, {}); },
+        render: function (j) { add(clear(prog), gymProgressCard(j, main.clientWidth)); } });
+    }
+    function fitRefresh() { fresh(); load(); loadHealth(); fitStrip(strip, FOOD.date, goTo, fitRefresh); }
+    if (seg === 'fitness') {
+      fitStrip(strip, date, goTo, fitRefresh);
+      loadProg();
     }
     load();
     loadHealth();
@@ -15992,18 +16086,6 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %')) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
-  // A tap on the strip's day: one workout — its sheet; several — the day's list, a row each, to pick from.
-  function hlDayOpen(day, ws, from, done) {
-    if (ws.length === 1) return woDetailSheet(ws[0], from, done);
-    var close = noop, rows = ws.map(function (w) {
-      var r = add(el('div', 'row frow'), add(el('span', 'lead kd k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')),
-        add(el('span', 'tx'), el('div', 't', woLabel(w) + ' · ' + foodTime(w.at))), el('span', 'pr', woParts(w).join(' · ')));
-      r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
-      return tap(r, function () { close(); woDetailSheet(w, from, done); });
-    });
-    close = legalSheet(WEEK[wd(day)] + ', ' + Number(day.slice(8, 10)) + ' ' + MONTHS_G[Number(day.slice(5, 7)) - 1], rows.concat([
-      add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))]), from);
-  }
   // A muscle group's status (docs/specs/bevel-gap.md, «Ответы Bevel о свежести мышц»): the server's — calibration under
   // 3 training days in 6 weeks — or, for a cached answer without it, by the value.
   var HFR_ST = { fresh: ['Восстановлены', 'productive'], tired: ['Утомлены', 'low'], exhausted: ['Истощены', 'overtrain'],
@@ -16089,25 +16171,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     close = legalSheet('Мышечные группы', [seg, perSeg, phrase, head, list, el('div', 'hms-cr', 'Силуэты: react-body-highlighter (MIT)'),
       add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
   }
-  // «Фитнес»: the week's strip (a day: its weekday and the icon of its workout in the sport's colour, a moon for rest;
-  // a day with workouts opens them), the two gauges, the muscles' freshness. Nothing to show (no workout in 28 days,
-  // every group fresh) — null.
-  function hlFitness(j, done) {
+  // «Фитнес»: the day's advice, the two gauges, the muscles' freshness (the days' strip is fitStrip's above it since
+  // gym-week, «Лента дней»). Nothing to show (no workout in 28 days, every group fresh) — null.
+  function hlFitness(j) {
     var sc = j.scores || {}, fr = j.freshness || [], week = j.week || [];
     var any = sc.load || sc.muscle || week.some(function (d) { return d.kinds.length; }) || fr.some(function (g) { return g.value < 10; });
     if (!any) return null;
-    var c = mkCard('flame', 'Фитнес'), strip = el('div', 'hwk');
+    var c = mkCard('flame', 'Фитнес');
     c.className += ' hfit';
-    week.forEach(function (d) {
-      var k = d.kinds[0], ws = d.workouts || [], cell = add(el('div', 'hwd' + (d.day === j.date ? ' on' : '')), el('div', 'mu', WEEK[wd(d.day)]),
-        el('div', 'hwn', String(+d.day.slice(8, 10))),
-        add(el('span', 'hwc' + (k ? ' wo k-' + (WO_IC[k] ? k : 'other') : '')), icon(k ? WO_IC[k] || 'medal' : 'moon')));
-      cell.setAttribute('aria-label', WEEK[wd(d.day)] + ' ' + dm(d.day) + ': ' + (d.kinds.length ? d.kinds.map(function (x) { return WO_RU[x] || x; }).join(', ') : 'отдых') +
-        (ws.length ? ' — открыть' : ''));
-      if (ws.length) tap(cell, function () { haptic(); hlDayOpen(d.day, ws, cell, done || noop); });
-      strip.appendChild(cell);
-    });
-    c.appendChild(strip);
     var today = week.filter(function (d) { return d.day === j.date; })[0], kinds = today && today.kinds;
     if (j.tip || j.advice) c.appendChild(add(el('div', 'hfadv'), j.tip ? hlTip(j.tip, kinds) : el('div', 'hadv', hlNb(hlAdvice(j.advice, kinds)))));
     // «Кардио» against today's band, «Мышцы» — the 7 days' sets against the constant one (docs/specs/load-today.md).
@@ -17196,10 +17267,17 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     if (s.why === 'up' || s.why === 'down') return woNum(s.last_kg) + ' → ' + woNum(s.kg) + ' кг' + (s.why === 'down' ? ' (−5 %)' : '');
     return woNum(s.kg) + ' кг';
   }
+  // «Как было?» after an exercise's last set (his ask 31.10.2026): the key, the chip, what it means — the twin of
+  // _shared/gym.ts Effort (the server gives its RPE to the sets and nextStep reads it next time).
+  var GYM_EFFORT = [['easy', 'Легко', '4+ повтора в запасе'], ['ok', 'Норм', 'RPE 7–8'], ['hard', 'Тяжело', '1 повтор в запасе'], ['max', 'На пределе', 'до отказа']];
+  function gymEffortWord(k) { var e = GYM_EFFORT.filter(function (x) { return x[0] === k; })[0]; return e ? e[1] : ''; }
   // Why this weight, one line under the current exercise.
   function gymWhy(it) {
     var s = it.sg || {}, reps = (s.last_reps || []).join('/'), via = s.via ? ' По аналогу: ' + s.via + '.' : '';
     if (s.why === 'new') return 'Первый раз — подбери вес, чтобы последний повтор давался с трудом.';
+    if (s.effort === 'max') return 'В прошлый раз на пределе — сбавь на 5 %.' + via;
+    if (s.effort === 'hard') return s.why === 'down' ? 'В прошлый раз тяжело и ниже ' + gymRange(it.reps)[0] + ' — сбавь на 5 %.' + via : 'В прошлый раз тяжело — оставь вес.' + via;
+    if (s.effort === 'easy' && s.why === 'up') return 'В прошлый раз легко и все до верха — прибавь.' + via;
     if (s.why === 'restart') return 'Давно не делал — ' + s.pct + ' % от прошлых ' + woNum(s.last_kg) + ' кг, потом снова вверх.' + via;
     if (s.why === 'assist') return 'В прошлый раз ' + reps + ' — все до верха, противовес меньше.' + via;
     if (s.why === 'assist_more') return 'Не вышло дважды или был перерыв — противовес больше.' + via;
@@ -17221,7 +17299,9 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
   // The session lives in this phone's localStorage (gym:session) until «Закончить»: closed the app, came back — all
   // in place; every few sets it goes to the server too (gym_save), and a session the server kept opens on another phone.
   // An item: the plan's exercise, sets, reps, unit, rest and swaps; kg — the weight on the stepper, r — the reps; done —
-  // the sets made ({reps, kg, done_at}); skip — «Пропустить». rest — the end of the rest timer (ms) or null.
+  // the sets made ({reps, kg, done_at, warm?, rpe?}); rows — a set's own edits before it is made; skip —
+  // «Пропустить». rest — {n, k, end}: the rest after set k of item n; act — {n, from, end?}: the set on (end — a
+  // hold's); warm_s — the warm-up's seconds once closed; pushed — a rest's push waits in push_queue.
   var GYM_KEY = 'gym:session', GYM_SAVE_EVERY = 3;
   function gymLoad() {
     var s = null;
@@ -17238,8 +17318,6 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       r: u === 's' ? gymSecs(i.reps) : sg.reps_to || gymRange(i.reps)[1] || 10, sg: sg, done: [], skip: false };
   }
   // A new session of the day (gym_start's day) — or the server's draft of it taken over: its start and its sets.
-  // The exercise's animation from the day's map, or nothing; a load that fails (no net, a gone file) hides the tile.
-  function gymGif(s, name) { return gymMedia(s.gifs && s.gifs[name], name, 'ggif', true); }
   // The animation itself (docs/specs/gym-week.md §6): the smooth loop gym/<id>.mp4 the app ships (scripts/gym_media.py),
   // the GIF as its poster when asked; a browser that cannot play it, or a file that is not there, gets the GIF, and a
   // GIF that fails hides the tile. Only ExerciseDB's GIF addresses.
@@ -17282,32 +17360,44 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       var l = it.done[it.done.length - 1];
       if (l) { it.kg = l.kg; it.r = l.reps; }
     });
+    if (draft && draft.warmup_s != null) s.warm_s = draft.warmup_s;
     s.cur = gymNext(s, 0);
     return s;
   }
-  // The first unfinished, not skipped exercise from n on, round; −1 when none is left.
+  // The first unfinished, not skipped and not put off («Занято», later) exercise from n on, round; −1 when none is left.
   function gymNext(s, n) {
     for (var k = 0; k < s.items.length; k++) {
       var i = (n + k) % s.items.length, it = s.items[i];
-      if (!it.skip && it.done.length < it.sets) return i;
+      if (!it.skip && !it.later && it.done.length < it.sets) return i;
     }
     return -1;
   }
+  // The exercises put off while their machine is busy (his ask 31.10.2026), in the day's order.
+  function gymLater(s) {
+    return s.items.map(function (it, n) { return n; }).filter(function (n) { var it = s.items[n]; return it.later && !it.skip && it.done.length < it.sets; });
+  }
   function gymSets(s) { return s.items.reduce(function (a, it) { return a + it.done.length; }, 0); }
+  // The session as gym_save / gym_finish take it: the made sets (warm only when true, rpe when given) and the
+  // warm-up's seconds once it is closed.
   function gymBody(s) {
-    return { day: s.day, started_at: s.started_at, items: s.items.filter(function (it) { return it.done.length; }).map(function (it) {
-      return { exercise: it.exercise, sets: it.done };
+    var b = { day: s.day, started_at: s.started_at, items: s.items.filter(function (it) { return it.done.length; }).map(function (it) {
+      var e = { exercise: it.exercise, sets: it.done.map(function (d) {
+        var x = { reps: d.reps, kg: d.kg, done_at: d.done_at };
+        if (d.warm) x.warm = true;
+        if (d.rpe != null) x.rpe = d.rpe;
+        return x;
+      }) };
+      if (it.effort) e.effort = it.effort;
+      return e;
     }) };
+    if (s.warm_s != null) b.warmup_s = s.warm_s;
+    return b;
   }
-  // The head's clock: «идёт 23 мин · 4 подхода»; before the first set the minutes alone, so the day's switch and its
-  // badge fit beside it on a phone.
-  function gymElapsed(s, now) {
-    // The running clock, to the second (his 31.10.2026): «⏱ 12:34», from an hour «⏱ 1:02:07».
-    var t = Math.max(0, Math.floor((now - Date.parse(s.started_at)) / 1000)), h = Math.floor(t / 3600), mm = Math.floor(t / 60) % 60;
-    var n = gymSets(s), m = '⏱ ' + (h ? h + ':' + ('0' + mm).slice(-2) : String(mm)) + ':' + ('0' + t % 60).slice(-2);
-    return n ? m + ' · ' + n + ' ' + ['подход', 'подхода', 'подходов'][plural3(n)] : m;
+  // The workout's clock (Bevel's «00:44»), from an hour «1:02:07»; a countdown's «01:30».
+  function gymMmss(sec) {
+    var t = Math.max(0, Math.floor(sec)), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60;
+    return (h ? h + ':' : '') + ('0' + m).slice(-2) + ':' + ('0' + t % 60).slice(-2);
   }
-  function gymClock(ms) { var t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
   // The end of a rest or of a hold (docs/specs/gym-week.md §7): a buzz where the phone can, Telegram's haptic, and a
   // short beep — 880 Hz for 150 ms through WebAudio, whose context is made on the screen's first tap (iOS sounds a page
   // only after a gesture).
@@ -17338,11 +17428,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {}
     gymBeep();
   }
-  // «Тренировка»: the full-screen sheet (as «Биологический возраст») — the day (A/B/C, switchable before the first set),
-  // the time since the start, the current exercise as a card — set N of M against the target, why this weight, the kg
-  // with −2,5/+2,5, the reps with −/+, «Сделал» — then the rest timer large (vibrates at the end; «+15 с», «Дальше»),
-  // «Пропустить» and «Заменить» (the plan's swaps, their weight from gym_suggest); the list of the day's exercises (a tap
-  // makes one current); «Закончить» writes it (gym_finish) and opens the summary.
+  // «Тренировка» in Bevel's form (docs/specs/gym-week.md, «Экран тренировки как у Bevel»; docs/bevel/workout-1…4.png):
+  // the workout's clock large with the day under it and «Завершить»; the whole day as a scroll of cards — «Разминка»
+  // first (one item, «Поправка 31.10.2026»: a stopwatch from the start and «Готово», its time saved, never in the
+  // progression or the volume), then a card an exercise: its animation, name, «62,5 кг · 4 сета», why this weight, a
+  // row a set (🔥 warm-up set, кг, повторы or seconds, RPE, ▶ → ✓) with the rest's pill under it (counting down after
+  // ✓, a tap — ±15 с and «Дальше»), «Прогресс» and «+ Добавить сет»; at the bottom the mini-player: what runs now, its
+  // timer and ▶ / ✓. Supersets are not built. The rest's end rings the phone through gym_rest_push while the app is in
+  // the background (§2). «Завершить» writes it (gym_finish) and opens the summary.
   // day: the plan day to start (a «Зал …» event's, gym-week §2); left out — the server's day for today.
   function gymScreen(from, done, day) {
     var s = gymLoad();
@@ -17362,8 +17455,54 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       gymOpen(n, from, done);
     }, function () { from.disabled = false; });
   }
+  // A set row's values: a made set's own, else the open row's edits (rows[i] — the i-th open set's) over the
+  // exercise's weight and reps.
+  function gymOwn(it, k) { return k < it.done.length ? null : (it.rows || [])[k - it.done.length] || null; }
+  function gymRow(it, k) {
+    if (k < it.done.length) return it.done[k];
+    var r = gymOwn(it, k) || {};
+    return { kg: r.kg !== undefined ? r.kg : it.kg, reps: r.reps !== undefined ? r.reps : it.r, warm: !!r.warm, rpe: r.rpe != null ? r.rpe : null };
+  }
+  function gymRowSet(it, k, f, v) {
+    if (k < it.done.length) {
+      if (v == null || v === false) delete it.done[k][f]; else it.done[k][f] = v;
+      return;
+    }
+    it.rows = it.rows || [];
+    var i = k - it.done.length;
+    while (it.rows.length <= i) it.rows.push(null);
+    (it.rows[i] || (it.rows[i] = {}))[f] = v;
+  }
+  // The warm-up's minutes: «8:42».
+  function gymMin(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
+  // Is the warm-up's stopwatch running: never closed and no set made or started, or taken back after «Готово»
+  // (warm_from — when it went on again); its seconds so far.
+  function gymWarmOn(s) { return s.warm_from != null || (s.warm_s == null && !gymSets(s) && !s.act); }
+  function gymWarmSecs(s, now) {
+    return (s.warm_s || 0) + (gymWarmOn(s) ? (now - (s.warm_from != null ? s.warm_from : Date.parse(s.started_at))) / 1000 : 0);
+  }
+  // What the mini-player (and the pill on other screens) shows now: the warm-up, the set on (its elapsed time, a
+  // hold's countdown), the rest's countdown, the next set, or the end. kind: warm | set | rest | next | end.
+  function gymNow(s, now) {
+    var it = s.cur >= 0 ? s.items[s.cur] : null;
+    if (gymWarmOn(s)) return { kind: 'warm', name: 'Разминка', time: gymMmss(gymWarmSecs(s, now)) };
+    if (s.act && s.items[s.act.n]) {
+      var a = s.items[s.act.n];
+      return { kind: 'set', name: a.exercise, time: s.act.end ? gymMmss(Math.ceil((s.act.end - now) / 1000)) : gymMmss((now - s.act.from) / 1000),
+        sub: 'сет ' + (a.done.length + 1) + ' из ' + a.sets };
+    }
+    if (s.rest && s.rest.end > now) return { kind: 'rest', name: it ? it.exercise : 'Отдых', time: gymMmss(Math.ceil((s.rest.end - now) / 1000)), sub: 'отдых' };
+    if (it) return { kind: 'next', name: it.exercise, time: 'сет ' + (it.done.length + 1) + ' из ' + it.sets };
+    var lt = gymLater(s);
+    if (lt.length) return { kind: 'later', n: lt[0], name: 'Тренажёр освободился? ' + s.items[lt[0]].exercise, time: 'отложено: ' + lt.length };
+    return { kind: 'end', name: 'Всё сделано', time: 'нажми ✓ — запишу' };
+  }
   function gymOpen(s, from, done) {
-    var body = el('div', 'bas gym'), box = el('div'), close = noop, timer = null, alt = false, reset = false, lock = null, asking = false;
+    var body = el('div', 'bas gym'), box = el('div'), close = noop, timer = null, reset = false, lock = null, asking = false;
+    var menu = -1, edit = null, rowMenu = null;
+    // A session kept before this screen: its rest was a moment, a hold was s.work.
+    if (s.rest && typeof s.rest !== 'object') s.rest = null;
+    delete s.work;
     var top = add(el('div', 'bas-top'), foodBtn('bas-x', 'x', '', function () { close(); }));
     top.lastChild.setAttribute('aria-label', 'Свернуть — тренировка сохранится');
     add(body, top, box);
@@ -17384,148 +17523,310 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     }
     function unwake() {
       document.removeEventListener('visibilitychange', wake);
+      document.removeEventListener('visibilitychange', vis);
       try { if (lock) lock.release(); } catch (e) {}
       lock = null;
     }
     document.addEventListener('visibilitychange', wake);
+    document.addEventListener('visibilitychange', vis);
     function keep() { gymKeep(s); }
     function save() { api('miniapp', { action: 'gym_save' }, 15000, true, gymBody(s)).catch(noop); }
-    function stepper(val, step, cap, fmt, set, mode, lbl) {
-      var inp = el('input', 'gst-v');
-      inp.inputMode = mode;
-      inp.value = fmt(val);
-      inp.setAttribute('aria-label', lbl);
-      inp.oninput = function () { set(foodNum(inp.value)); };
-      function by(k) {
-        var v = foodNum(inp.value);
-        v = Math.max(0, Math.round(((isNaN(v) ? 0 : v) + k) * 10) / 10);
-        inp.value = fmt(v);
-        set(v);
-        haptic();
-      }
-      var m = foodBtn('gst-b', null, '−' + woNum(step), function () { by(-step); });
-      var p = foodBtn('gst-b', null, '+' + woNum(step), function () { by(step); });
-      m.setAttribute('aria-label', 'Меньше на ' + woNum(step));
-      p.setAttribute('aria-label', 'Больше на ' + woNum(step));
-      return add(el('div', 'gst'), m, add(el('label', 'gst-c'), inp, el('span', 'mu', cap)), p);
+    // «Отдых закончился» while the app is away (gym-week §2): the push queued for the rest's end when the app goes to
+    // the background, cancelled when it comes back or the rest is cut short.
+    function vis() {
+      if (document.visibilityState === 'hidden') {
+        var r = s.rest, nx = s.cur >= 0 ? s.items[s.cur] : null;
+        if (!r || r.end - Date.now() < 3000 || s.pushed) return;
+        s.pushed = true;
+        keep();
+        api('miniapp', { action: 'gym_rest_push' }, 8000, true, { at: new Date(r.end).toISOString(), title: 'Отдых закончился',
+          body: nx ? 'Дальше: ' + nx.exercise + ', сет ' + (nx.done.length + 1) + ' из ' + nx.sets : 'Пора к следующему сету' }).catch(noop);
+      } else unpush();
     }
-    // A set made: its reps (a hold's seconds) and kg with the moment, the next exercise when this one is done, the rest.
-    function record(it, r, kg) {
-      it.done.push({ reps: r, kg: kg ? Math.round(kg * 10) / 10 : null, done_at: new Date().toISOString() });
+    function unpush() {
+      if (!s.pushed) return;
+      s.pushed = false;
+      keep();
+      api('miniapp', { action: 'gym_rest_push' }, 8000, true, { cancel: true }).catch(noop);
+    }
+    // «Разминка» closed: its seconds so far; taken back (his ask 31.10.2026), the stopwatch goes on from them.
+    function warmClose() {
+      if (gymWarmOn(s)) {
+        s.warm_s = Math.max(0, Math.round(gymWarmSecs(s, Date.now())));
+        s.warm_from = null;
+      }
+      keep();
+    }
+    function warmUndo() {
+      s.warm_from = Date.now();
+      keep();
+      haptic();
+      draw();
+      backToast('Разминка снова идёт', function () { warmClose(); draw(); }, 'Отменить');
+    }
+    // ▶: the exercise's next set begins — a hold counts down its seconds and ends by itself, a set of reps runs until
+    // ✓. The warm-up closes, a rest still running is cut.
+    function start(n) {
+      var it = s.items[n], k = it.done.length;
+      if (k >= it.sets || it.skip) return;
+      it.later = false;
+      if (gymWarmOn(s)) warmClose();
+      gymSound();
+      if (s.rest) { s.rest = null; edit = null; unpush(); }
+      var now = Date.now(), secs = Math.round(gymRow(it, k).reps);
+      if (it.unit === 's' && !(secs >= 1 && secs <= 500)) return toast('Секунды — число');
+      s.act = it.unit === 's' ? { n: n, from: now, end: now + secs * 1000 } : { n: n, from: now };
+      s.cur = n;
+      keep();
+      haptic();
+      draw();
+    }
+    // ✓: the set made with its row's values (a hold — the seconds held), the rest begins while sets are left.
+    function record(n, held) {
+      var it = s.items[n], k = it.done.length, v = gymRow(it, k), timed = it.unit === 's';
+      var r = Math.round(held != null ? held : v.reps), kg = it.unit === 'kg' ? v.kg : null;
+      if (!(r >= 1 && r <= 500)) { toast(timed ? 'Секунды — число' : 'Повторы — число'); return; }
+      if (kg != null && !(kg >= 0 && kg <= 500)) { toast('Вес — от 0 до 500 кг'); return; }
+      var d = { reps: r, kg: kg ? Math.round(kg * 10) / 10 : null, done_at: new Date().toISOString() };
+      if (v.warm) d.warm = true;
+      if (v.rpe != null) d.rpe = v.rpe;
+      it.done.push(d);
+      if (it.rows) it.rows.shift();
+      s.act = null;
       s.sent = (s.sent || 0) + 1;
-      var n = s.items.indexOf(it);
-      if (it.done.length >= it.sets) s.cur = gymNext(s, n + 1);
-      s.rest = s.cur >= 0 ? Date.now() + (it.rest_s || 75) * 1000 : null;
-      alt = false;
+      s.cur = it.done.length >= it.sets ? gymNext(s, n + 1) : n;
+      unpush();
+      s.rest = s.cur >= 0 || gymLater(s).length ? { n: n, k: k, end: Date.now() + (it.rest_s || 75) * 1000 } : null;
+      menu = -1;
+      edit = null;
       keep();
       if (s.sent % GYM_SAVE_EVERY === 0) save();
       haptic();
       draw();
     }
-    function draw() {
-      clear(box);
-      var any = gymSets(s) > 0, it = s.cur >= 0 ? s.items[s.cur] : null, now = Date.now();
-      // The head: the day (a switch before the first set), the time since the start.
-      var head = add(el('div', 'ghead'));
-      if (!any && (s.days || []).length > 1) {
-        var seg = el('div', 'seg gdays');
-        seg.setAttribute('role', 'group');
-        seg.setAttribute('aria-label', 'Тренировка');
-        s.days.forEach(function (n) {
-          var b = el('button', n === s.day ? 'on' : '', gymShort(n));
-          b.type = 'button';
-          b.setAttribute('aria-label', n);
-          b.onclick = function () {
-            if (n === s.day) return;
-            haptic();
-            api('miniapp', { action: 'gym_start' }, 15000, false, { day: n }).then(function (j) {
-              var k = gymNew(j, null);
-              k.days = s.days;
-              k.started_at = s.started_at;
-              s = k;
-              keep();
-              draw();
-            }, noop);
-          };
-          seg.appendChild(b);
-        });
-        head.appendChild(add(el('div', 'gdw'), seg, gymBadge(gymLevelOf(s.day))));
-      } else head.appendChild(add(el('div', 'gday'), document.createTextNode('Зал ' + gymShort(s.day || '') + ' '), gymBadge(gymLevelOf(s.day))));
-      head.appendChild(el('div', 'mu gel', gymElapsed(s, now)));
-      box.appendChild(head);
-      if (s.work && it && s.work.n === s.cur) {
-        // A hold for time (unit s): its countdown large; it ends the set by itself, «Стоп» ends it early with the
-        // seconds held.
-        var wc = add(el('div', 'card grest gwork'), el('div', 'mu', it.exercise + ' · подход ' + (it.done.length + 1) + ' из ' + it.sets),
-          el('div', 'gclock', gymClock(s.work.end - now)), el('div', 'mu', 'держи — закончится само'),
-          add(el('div', 'bar gacts'), foodBtn('btn', 'check', 'Стоп', function () {
-            var held = Math.max(1, Math.round((Date.now() - s.work.from) / 1000));
-            s.work = null;
-            record(it, Math.min(held, it.r), null);
-          })));
-        wc.setAttribute('role', 'timer');
-        wc.setAttribute('aria-label', 'Подход на время');
-        box.appendChild(wc);
-      } else if (s.rest && s.rest > now) {
-        // The rest: the countdown large, what comes next, «+15 с» and «Дальше».
-        var nx = it ? it.exercise + ', подход ' + (it.done.length + 1) + ' из ' + it.sets : '';
-        var rc = add(el('div', 'card grest'), el('div', 'mu', 'Отдых'), el('div', 'gclock', gymClock(s.rest - now)), nx ? el('div', 'mu', 'дальше: ' + nx) : null,
-          add(el('div', 'bar gacts'), foodBtn('btn ghost', 'timer', '+15 с', function () { s.rest += 15000; keep(); haptic(); draw(); }),
-            foodBtn('btn', 'arrow-right', 'Дальше', function () { s.rest = null; keep(); haptic(); draw(); })));
-        rc.setAttribute('role', 'timer');
-        rc.setAttribute('aria-label', 'Отдых');
-        box.appendChild(rc);
-      } else if (it) {
-        var timed = it.unit === 's', sec = timed || /\(сек\)|сек\b/i.test(it.exercise), top2 = gymRange(it.reps);
-        var lo = timed ? gymSecs(it.reps) : top2[0];
-        var cur = add(el('div', 'card gcur'), gymGif(s, it.exercise), el('div', 'gname', it.exercise),
-          el('div', 'gset', 'Подход ' + (it.done.length + 1) + ' из ' + it.sets + ' · цель ' + it.reps + (sec && !/\sс$/.test(it.reps) ? ' сек' : '')),
-          el('div', 'mu grs', 'отдых ' + (it.rest_s || 75) + ' с'),
-          it.exercise === it.orig && gymWhy(it) ? el('div', 'mu gwhy', gymWhy(it)) : null);
-        if (it.unit === 'kg') cur.appendChild(stepper(it.kg, 2.5, 'кг', function (v) { return v == null || isNaN(v) ? '' : woNum(v); },
-          function (v) { it.kg = isNaN(v) ? it.kg : v; keep(); }, 'decimal', 'Вес, кг'));
-        cur.appendChild(stepper(it.r, timed ? 5 : 1, sec ? 'сек' : 'повторов', function (v) { return v == null || isNaN(v) ? '' : String(Math.round(v)); },
-          function (v) { it.r = isNaN(v) ? it.r : Math.round(v); keep(); }, 'numeric', sec ? 'Секунды' : 'Повторы'));
-        if (it.done.length) {
-          cur.appendChild(add.apply(null, [el('div', 'gdone')].concat(it.done.map(function (x) {
-            return pill(x.reps + (timed ? ' с' : '') + (x.kg ? ' × ' + woNum(x.kg) : ''), x.reps >= lo ? 'good' : 'warn');
-          }))));
+    function complete(n) {
+      var a = s.act;
+      if (!a || a.n !== n) return;
+      if (a.end) return record(n, Math.max(1, Math.min(Math.round((a.end - a.from) / 1000), Math.round((Date.now() - a.from) / 1000))));
+      record(n);
+    }
+    // A made set back to open (his ask 31.10.2026, «забыл, сделал или нет»): out of the made ones, its values onto the
+    // first open row, the exercise's rest gone; «Отменить» in the toast makes it again as it was.
+    function unmake(n, k) {
+      var it = s.items[n], d = it.done.splice(k, 1)[0];
+      it.rows = it.rows || [];
+      it.rows.unshift({ kg: d.kg, reps: d.reps, warm: !!d.warm, rpe: d.rpe != null ? d.rpe : null });
+      if (s.rest && s.rest.n === n) { s.rest = null; edit = null; unpush(); }
+      if (s.act && s.act.n === n) s.act = null;
+      s.cur = n;
+      it.skip = false;
+      rowMenu = null;
+      keep();
+      haptic();
+      draw();
+      backToast('Вернул подход', function () {
+        if (k > it.done.length || it.done.length >= it.sets) return;
+        it.done.splice(k, 0, d);
+        it.rows.shift();
+        if (it.done.length >= it.sets && s.cur === n) s.cur = gymNext(s, n + 1);
+        keep();
+        draw();
+      }, 'Отменить');
+    }
+    // «Удалить сет» (a swipe to the left on the row, or its context menu): the set gone, made or not; one set stays.
+    function dropSet(n, k) {
+      var it = s.items[n];
+      if (it.sets <= 1) return toast('Последний сет — пропусти упражнение в «⋯»');
+      var made = k < it.done.length, d = made ? it.done.splice(k, 1)[0] : null, r = null, i = k - it.done.length;
+      it.rows = it.rows || [];
+      if (!made && i < it.rows.length) r = it.rows.splice(i, 1)[0];
+      it.sets--;
+      if (s.rest && s.rest.n === n) { s.rest = null; edit = null; unpush(); }
+      if (s.act && s.act.n === n && !made) s.act = null;
+      if (it.done.length >= it.sets && s.cur === n) s.cur = gymNext(s, n + 1);
+      rowMenu = null;
+      keep();
+      haptic();
+      draw();
+      backToast('Удалил сет', function () {
+        it.sets++;
+        if (made) it.done.splice(Math.min(k, it.done.length), 0, d);
+        else if (r) { while (it.rows.length < i) it.rows.push(null); it.rows.splice(i, 0, r); }
+        if (s.cur < 0) s.cur = n;
+        keep();
+        draw();
+      }, 'Отменить');
+    }
+    // «Занято»: the exercise waits («занято · вернусь»), the next one not done becomes current; back — current again.
+    function defer(n) {
+      var it = s.items[n];
+      it.later = true;
+      if (s.act && s.act.n === n) s.act = null;
+      if (s.cur === n) s.cur = gymNext(s, n + 1);
+      menu = -1;
+      keep();
+      haptic();
+      draw();
+    }
+    function resume(n) {
+      s.items[n].later = false;
+      s.cur = n;
+      keep();
+      haptic();
+      draw();
+      var c = box.querySelectorAll('.gex:not(.gwu)')[n];
+      if (c) try { c.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {}
+    }
+    function skipRest() { s.rest = null; edit = null; unpush(); keep(); haptic(); draw(); }
+    // The rest of an exercise ±15 s (15 s – 10 min); a rest running moves with it.
+    function shift(it, d) {
+      it.rest_s = Math.max(15, Math.min(600, (it.rest_s || 75) + d));
+      if (s.rest && s.items[s.rest.n] === it && s.rest.end > Date.now()) s.rest.end = Math.max(Date.now() + 1000, s.rest.end + d * 1000);
+      keep();
+      haptic();
+      draw();
+    }
+    function addSet(it, n) {
+      if (it.sets >= 10) return toast('Не больше 10 сетов');
+      it.sets++;
+      it.skip = false;
+      if (s.cur < 0) s.cur = n;
+      keep();
+      haptic();
+      draw();
+    }
+    // A field of a set's row: the value committed when it is left (no redraw — the next field keeps the focus).
+    function field(val, mode, lbl, commit, cls) {
+      var f = el('input', 'gf' + (cls ? ' ' + cls : ''));
+      f.inputMode = mode;
+      f.value = val;
+      f.setAttribute('aria-label', lbl);
+      f.onchange = function () { commit(f); keep(); };
+      return f;
+    }
+    function kgText(v) { return v == null || isNaN(v) ? '' : woNum(v); }
+    function setRow(c, it, n, k, now) {
+      var v = gymRow(it, k), made = k < it.done.length, nextK = k === it.done.length, act = nextK && s.act && s.act.n === n;
+      var timed = it.unit === 's', r = el('div', 'gsr' + (made ? ' ok' : act ? ' act' : '')), no = ' ' + (k + 1);
+      var w = foodBtn('gw' + (v.warm ? ' on' : ''), 'flame', '', function () { gymRowSet(it, k, 'warm', !v.warm); keep(); haptic(); draw(); });
+      w.setAttribute('aria-pressed', v.warm ? 'true' : 'false');
+      w.setAttribute('aria-label', 'Разминочный сет' + no);
+      var kg;
+      if (it.unit === 'kg') {
+        kg = field(kgText(v.kg), 'decimal', 'Вес, кг, сет' + no, function (f) {
+          var x = foodNum(f.value);
+          if (isNaN(x) || x < 0 || x > 500) { f.value = kgText(gymRow(it, k).kg); return toast('Вес — от 0 до 500 кг'); }
+          x = Math.round(x * 10) / 10;
+          if (made || !nextK) return gymRowSet(it, k, 'kg', x);
+          // The next set's weight is the exercise's: the rows after it without their own follow.
+          it.kg = x;
+          if (gymOwn(it, k)) delete gymOwn(it, k).kg;
+          c.querySelectorAll('input.gkg').forEach(function (g) {
+            var j = +g.getAttribute('data-k'), o = gymOwn(it, j);
+            if (j > k && !(o && o.kg !== undefined)) g.value = kgText(x);
+          });
+        }, 'gkg');
+        kg.setAttribute('data-k', k);
+      } else {
+        kg = el('input', 'gf');
+        kg.value = '—';
+        kg.disabled = true;
+        kg.setAttribute('aria-label', timed ? 'Без веса' : 'Свой вес');
+      }
+      var reps;
+      if (act && timed) {
+        reps = el('div', 'gf live', gymMmss(Math.ceil((s.act.end - now) / 1000)));
+        reps.setAttribute('role', 'timer');
+      } else {
+        reps = field(v.reps == null ? '' : String(v.reps), 'numeric', (timed ? 'Секунды' : 'Повторы') + ', сет' + no, function (f) {
+          var x = foodNum(f.value);
+          if (!(x >= 1 && x <= 500)) { f.value = String(gymRow(it, k).reps); return toast(timed ? 'Секунды — число' : 'Повторы — число'); }
+          x = Math.round(x);
+          if (made || !nextK) return gymRowSet(it, k, 'reps', x);
+          it.r = x;
+          if (gymOwn(it, k)) delete gymOwn(it, k).reps;
+          c.querySelectorAll('input.grep').forEach(function (g) {
+            var j = +g.getAttribute('data-k'), o = gymOwn(it, j);
+            if (j > k && !(o && o.reps !== undefined)) g.value = String(x);
+          });
+        }, 'grep');
+        reps.setAttribute('data-k', k);
+      }
+      // RPE (1–10, halves; «1ПМ и прибавка»): optional, empty — none.
+      var rpe = field(v.rpe != null ? woNum(v.rpe) : '', 'decimal', 'RPE, сет' + no, function (f) {
+        var x = f.value.trim() === '' ? null : foodNum(f.value);
+        if (x != null && !(x >= 1 && x <= 10 && Math.round(x * 2) === x * 2)) {
+          f.value = v.rpe != null ? woNum(v.rpe) : '';
+          return toast('RPE — от 1 до 10');
         }
-        var ok = timed ? foodBtn('btn wide gok', 'timer', 'Старт · ' + Math.round(it.r) + ' с', function () {
-          var r = Math.round(it.r);
-          if (!(r >= 1 && r <= 500)) return toast('Секунды — число');
-          gymSound();
-          s.work = { n: s.cur, from: Date.now(), end: Date.now() + r * 1000 };
-          alt = false;
-          keep();
-          haptic();
-          draw();
-        }) : foodBtn('btn wide gok', 'check', 'Сделал', function () {
-          var r = Math.round(it.r), kg = it.unit === 'kg' ? it.kg : null;
-          if (!(r >= 1 && r <= 500)) return toast(sec ? 'Секунды — число' : 'Повторы — число');
-          if (kg != null && !(kg >= 0 && kg <= 500)) return toast('Вес — от 0 до 500 кг');
-          record(it, r, kg);
-        });
-        cur.appendChild(ok);
-        var acts = add(el('div', 'bar gacts'), foodBtn('btn ghost', 'arrow-right', 'Пропустить', function () {
-          it.skip = true;
-          s.work = null;
-          s.cur = gymNext(s, s.cur + 1);
-          alt = false;
-          keep();
-          haptic();
-          draw();
-        }));
-        if (it.alts.length || it.exercise !== it.orig) acts.appendChild(foodBtn('btn ghost', 'repeat', 'Заменить', function () { alt = !alt; haptic(); draw(); }));
-        cur.appendChild(acts);
-        if (alt) {
-          var ch = el('div', 'chips galts');
+        gymRowSet(it, k, 'rpe', x);
+      }, 'grpe');
+      var b;
+      if (made) {
+        b = foodBtn('gb', 'check', '', function () { unmake(n, k); });
+        b.setAttribute('aria-label', 'Сет' + no + ' сделан — вернуть');
+      } else if (act) {
+        b = foodBtn('gb', 'check', '', function () { complete(n); });
+        b.setAttribute('aria-label', 'Сет' + no + ' готов');
+      } else {
+        b = foodBtn('gb go', 'play', '', function () { start(n); });
+        b.disabled = !nextK || it.skip;
+        b.setAttribute('aria-label', 'Начать сет' + no);
+      }
+      add(r, w, kg, reps, rpe, b);
+      // A swipe to the left (or the context menu) opens the row's «Удалить сет».
+      var x0 = null, y0 = 0;
+      r.addEventListener('touchstart', function (e) { x0 = e.touches.length === 1 ? e.touches[0].clientX : null; if (x0 !== null) y0 = e.touches[0].clientY; }, { passive: true });
+      r.addEventListener('touchend', function (e) {
+        if (x0 === null || !e.changedTouches.length) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        x0 = null;
+        if (dx < -40 && Math.abs(dx) > Math.abs(dy)) { rowMenu = n + ':' + k; haptic(); draw(); }
+      }, { passive: true });
+      r.addEventListener('contextmenu', function (e) { e.preventDefault(); rowMenu = n + ':' + k; draw(); });
+      if (rowMenu !== n + ':' + k) return r;
+      return add(el('div', 'gsrw'), r, add(el('div', 'gre'), foodBtn('btn ghost gdel', 'trash', 'Удалить сет', function () { dropSet(n, k); }),
+        foodBtn('btn ghost', null, 'Отмена', function () { rowMenu = null; draw(); })));
+    }
+    // The rest's pill under a set: the exercise's rest, counting down after the set; a tap — ±15 с and «Дальше».
+    function restLine(it, n, k, now) {
+      var r = s.rest, live = r && r.n === n && r.k === k && r.end > now, key = n + ':' + k;
+      var p = el('button', 'grp' + (live ? ' run' : k < it.done.length ? ' ok' : ''), live ? gymMmss(Math.ceil((r.end - now) / 1000)) : gymMmss(it.rest_s || 75));
+      p.type = 'button';
+      p.setAttribute('aria-label', (live ? 'Отдых идёт' : 'Отдых ' + (it.rest_s || 75) + ' с') + ' — изменить');
+      p.setAttribute('aria-expanded', edit === key ? 'true' : 'false');
+      p.onclick = function () { edit = edit === key ? null : key; haptic(); draw(); };
+      var line = add(el('div', 'grl'), p);
+      if (edit !== key) return line;
+      return add(el('div'), line, add(el('div', 'gre'), foodBtn('btn ghost', null, '−15 с', function () { shift(it, -15); }),
+        foodBtn('btn ghost', null, '+15 с', function () { shift(it, 15); }), live ? foodBtn('btn', 'arrow-right', 'Дальше', skipRest) : null));
+    }
+    function exCard(it, n, now) {
+      var timed = it.unit === 's', c = el('div', 'card gex' + (n === s.cur && !gymWarmOn(s) ? ' cur' : '') + (it.skip ? ' skip' : '') + (it.later ? ' later' : ''));
+      var what = timed ? gymSecs(it.reps) + ' с' : it.unit === 'bw' ? 'свой вес' : it.kg != null ? woNum(it.kg) + ' кг' : 'вес на выбор';
+      var why = it.exercise === it.orig && !it.done.length ? gymWhy(it) : '';
+      var more = foodBtn('gxm', 'ellipsis', '', function () { menu = menu === n ? -1 : n; haptic(); draw(); });
+      more.setAttribute('aria-label', 'Заменить или пропустить: ' + it.exercise);
+      more.setAttribute('aria-expanded', menu === n ? 'true' : 'false');
+      c.appendChild(add(el('div', 'gxh'), gymThumb(s.gifs && s.gifs[it.exercise], it.exercise),
+        add(el('div', 'gxt'), el('div', 'gxn', it.exercise), add(el('div', 'mu gxs'), document.createTextNode(what + ' · ' + it.sets + ' ' + ['сет', 'сета', 'сетов'][plural3(it.sets)] +
+          ' · цель ' + it.reps + (timed && !/\sс$/.test(it.reps) ? ' с' : '') + ' '), it.skip ? pill('пропущено') : it.later ? pill('занято · вернусь') : null)), more));
+      // Put off: the card folded to its head and «Вернуться».
+      if (it.later && menu !== n) {
+        c.appendChild(add(el('div', 'gre glt'), foodBtn('btn ghost', 'undo-2', 'Вернуться', function () { resume(n); })));
+        return c;
+      }
+      if (why) c.appendChild(el('div', 'mu gwhy', why));
+      if (menu === n) {
+        var ch = el('div', 'chips galts');
+        if (it.alts.length || it.exercise !== it.orig) {
           [it.orig].concat(it.alts).filter(function (a) { return a !== it.exercise; }).forEach(function (a) {
             var b = el('button', 'pill', a);
             b.type = 'button';
+            b.setAttribute('aria-label', 'Заменить на ' + a);
             b.onclick = function () {
               it.exercise = a;
-              alt = false;
+              menu = -1;
               haptic();
               keep();
               draw();
@@ -17540,36 +17841,142 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
             };
             ch.appendChild(b);
           });
-          cur.appendChild(ch);
         }
-        box.appendChild(cur);
-      } else {
-        box.appendChild(add(el('div', 'card grest'), el('div', 'gname', 'Всё сделано'), el('div', 'mu', 'Нажми «Закончить» — запишу и посчитаю итог.')));
-      }
-      // The day's exercises: done ✓, skipped, the current one marked; a tap makes one current.
-      var list = mkCard('clipboard-list', 'Упражнения');
-      s.items.forEach(function (x, n) {
-        var st = x.done.length >= x.sets ? pill('✓ ' + x.done.length, 'good') : x.skip ? pill('пропущено') : x.done.length ? pill(x.done.length + ' из ' + x.sets) : null;
-        var h = x.done.length ? x.done.map(function (d) { return d.reps; }).join('/') + (x.done[x.done.length - 1].kg ? ' · ' + woNum(x.done[x.done.length - 1].kg) + ' кг' : '')
-          : x.sets + '×' + x.reps + (x.exercise === x.orig && gymHint({ suggest: x.sg, unit: x.unit, progress: x.progress }) ? ' · ' + gymHint({ suggest: x.sg, unit: x.unit, progress: x.progress }) : '');
-        var r = add(el('div', 'row frow gex' + (n === s.cur ? ' on' : '')), add(el('span', 'tx'), el('div', 't', x.exercise), el('div', 'mu', h)), add(el('span', 'pr'), st));
-        r.setAttribute('aria-label', x.exercise + (n === s.cur ? ', сейчас' : '') + ' — сделать текущим');
-        list.appendChild(tap(r, function () {
-          s.cur = n; x.skip = false; s.rest = null; s.work = null; alt = false; keep(); haptic(); draw();
-          // The picked exercise's card is at the top: the sheet back to its top (the list sits under the card).
-          for (var e = body.parentNode; e && e !== document.body; e = e.parentNode) if (e.scrollTop) e.scrollTop = 0;
+        if (!it.later && !it.skip && it.done.length < it.sets) ch.appendChild(foodBtn('btn ghost', null, 'Занято — позже', function () { defer(n); }));
+        if (it.sets > 1) ch.appendChild(foodBtn('btn ghost gdel', 'trash', 'Удалить сет ' + it.sets, function () { menu = -1; dropSet(n, it.sets - 1); }));
+        ch.appendChild(foodBtn('btn ghost', it.skip ? 'undo-2' : 'arrow-right', it.skip ? 'Вернуть' : 'Пропустить', function () {
+          it.skip = !it.skip;
+          if (s.act && s.act.n === n) s.act = null;
+          if (it.skip && s.cur === n) s.cur = gymNext(s, n + 1);
+          else if (!it.skip && s.cur < 0) s.cur = n;
+          menu = -1;
+          keep();
+          haptic();
+          draw();
         }));
+        c.appendChild(ch);
+      }
+      c.appendChild(add(el('div', 'gsr gsh'), el('span'), el('span', '', 'кг'), el('span', '', timed ? 'сек' : 'повт.'), el('span', '', 'RPE'), el('span')));
+      for (var k = 0; k < it.sets; k++) {
+        c.appendChild(setRow(c, it, n, k, now));
+        c.appendChild(restLine(it, n, k, now));
+      }
+      // «Как было?» once the last set is made: one tap, skippable, changed later the same way.
+      if (it.done.length >= it.sets && !it.skip) {
+        var er = add(el('div', 'geff'), el('span', 'mu', 'Как было?'));
+        er.setAttribute('role', 'group');
+        er.setAttribute('aria-label', 'Как было: ' + it.exercise);
+        GYM_EFFORT.forEach(function (e) {
+          var b = el('button', 'pill' + (it.effort === e[0] ? ' on e-' + e[0] : ''), e[1]);
+          b.type = 'button';
+          b.setAttribute('aria-pressed', it.effort === e[0] ? 'true' : 'false');
+          b.setAttribute('aria-label', e[1] + ' — ' + e[2]);
+          b.onclick = function () { it.effort = it.effort === e[0] ? null : e[0]; keep(); haptic(); draw(); };
+          er.appendChild(b);
+        });
+        c.appendChild(er);
+      }
+      var pg = foodBtn('gxb', 'chart-line', 'Прогресс', function () { gymProgressSheet(it.exercise, pg); });
+      c.appendChild(add(el('div', 'gxf'), pg, foodBtn('gxb', 'plus', 'Добавить сет', function () { addSet(it, n); })));
+      return c;
+    }
+    // «Разминка»: one item without exercises (his word 31.10.2026) — the stopwatch from the start and «Готово»; then
+    // its time, «Разминка · 8:42».
+    function warmCard(now) {
+      var on = gymWarmOn(s), c = el('div', 'card gex gwu' + (on ? ' cur' : ' ok'));
+      c.appendChild(add(el('div', 'gxh'), add(el('span', 'gthumb none'), icon('flame')), add(el('div', 'gxt'), el('div', 'gxn', 'Разминка'),
+        el('div', 'mu gxs', on ? 'как привык — время идёт в тренировку' : s.warm_s != null ? gymMin(s.warm_s) + ' · готово' : 'без секундомера')),
+        on ? null : foodBtn('gb ok', 'check', '', warmUndo)));
+      if (!on) c.querySelector('.gb').setAttribute('aria-label', 'Разминка сделана — вернуть');
+      if (on) {
+        var t = el('div', 'gwt', gymMmss(gymWarmSecs(s, now)));
+        t.setAttribute('role', 'timer');
+        t.setAttribute('aria-label', 'Разминка идёт');
+        c.appendChild(add(el('div', 'gwrow'), t, foodBtn('btn gwdone', 'check', 'Готово', function () {
+          warmClose();
+          s.cur = gymNext(s, 0);
+          haptic();
+          draw();
+          var cur = box.querySelector('.gex.cur');
+          if (cur) try { cur.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {}
+        })));
+      }
+      return c;
+    }
+    // The mini-player: what runs now and its timer, ▶ for the next set, ✓ for the one on (and the warm-up, and the end).
+    function player(now) {
+      var p = gymNow(s, now), ic = { warm: 'flame', set: 'dumbbell', rest: 'timer', next: 'dumbbell', later: 'dumbbell', end: 'check' }[p.kind];
+      var go = p.kind === 'warm' ? function () { warmClose(); s.cur = gymNext(s, 0); haptic(); draw(); }
+        : p.kind === 'set' ? function () { complete(s.act.n); }
+        : p.kind === 'end' ? finish
+        : p.kind === 'later' ? function () { start(p.n); }
+        : function () { if (s.cur >= 0) start(s.cur); else skipRest(); };
+      var play = p.kind === 'rest' || p.kind === 'next' || p.kind === 'later', b = foodBtn('gmp-b' + (play ? ' go' : ''), play ? 'play' : 'check', '', go);
+      b.setAttribute('aria-label', { warm: 'Разминка готова', set: 'Сет готов', rest: 'Начать следующий сет', next: 'Начать сет', later: 'Начать отложенное', end: 'Завершить' }[p.kind]);
+      var t = el('span', 'gmp-t' + (p.kind === 'rest' ? ' rest' : ''), (p.kind === 'rest' ? 'отдых ' : '') + p.time);
+      t.setAttribute('role', 'timer');
+      // «Занято» for the exercise up next (not while a set is on).
+      var busy = (p.kind === 'next' || p.kind === 'rest') && s.cur >= 0 ? foodBtn('gmp-z', null, 'Занято', function () { defer(s.cur); }) : null;
+      if (busy) busy.setAttribute('aria-label', 'Тренажёр занят — ' + s.items[s.cur].exercise + ' позже');
+      // «Отложено (N)»: the put-off exercises over the player, a tap makes one current.
+      var lt = gymLater(s), strip = null;
+      if (lt.length) {
+        strip = add(el('div', 'glat'), el('span', 'mu', 'Отложено (' + lt.length + ')'));
+        lt.forEach(function (n) {
+          var c = el('button', 'pill', s.items[n].exercise);
+          c.type = 'button';
+          c.setAttribute('aria-label', 'Вернуться к упражнению ' + s.items[n].exercise);
+          c.onclick = function () { resume(n); };
+          strip.appendChild(c);
+        });
+      }
+      return add(el('div', 'bar mact mstick gmp'), strip, add(el('div', 'gmp-r'), add(el('div', 'gmp-i'), add(el('div', 'gmp-n'), icon(ic), el('span', '', p.name)), t), busy, b));
+    }
+    function daySwitch() {
+      var seg = el('div', 'seg gdays');
+      seg.setAttribute('role', 'group');
+      seg.setAttribute('aria-label', 'Тренировка');
+      s.days.forEach(function (n) {
+        var b = el('button', n === s.day ? 'on' : '', gymShort(n));
+        b.type = 'button';
+        b.setAttribute('aria-label', n);
+        b.onclick = function () {
+          if (n === s.day) return;
+          haptic();
+          api('miniapp', { action: 'gym_start' }, 15000, false, { day: n }).then(function (j) {
+            var k = gymNew(j, null);
+            k.days = s.days;
+            k.started_at = s.started_at;
+            k.warm_s = s.warm_s;
+            s = k;
+            keep();
+            draw();
+          }, noop);
+        };
+        seg.appendChild(b);
       });
-      box.appendChild(list);
+      return add(el('div', 'gdw'), seg);
+    }
+    function draw() {
+      clear(box);
+      var now = Date.now();
+      var end = foodBtn('btn gend', reset ? 'trash' : null, reset ? 'Точно сбросить?' : 'Завершить', finish);
+      var clock = el('div', 'gbig', gymMmss((now - Date.parse(s.started_at)) / 1000));
+      clock.setAttribute('role', 'timer');
+      clock.setAttribute('aria-label', 'Идёт тренировка');
+      box.appendChild(add(el('div', 'gtop'), add(el('div', 'gtt'), clock,
+        add(el('div', 'gdl'), document.createTextNode(gymShort(s.day || 'Зал') + ' '), gymBadge(gymLevelOf(s.day)))), end));
+      if (!gymSets(s) && !s.act && (s.days || []).length > 1) box.appendChild(daySwitch());
+      box.appendChild(warmCard(now));
+      s.items.forEach(function (it, n) { box.appendChild(exCard(it, n, now)); });
       if (s.gifs && Object.keys(s.gifs).length) box.appendChild(el('div', 'mu gattr', 'Анимации: ExerciseDB · AscendAPI'));
-      var all = s.cur < 0;
-      var fin = foodBtn('btn wide' + (all ? '' : ' ghost'), reset ? 'trash' : 'check', reset ? 'Точно сбросить?' : 'Закончить', finish);
-      box.appendChild(add(el('div', 'bar mact mstick gfin'), fin));
+      box.appendChild(player(now));
     }
     function finish(ev) {
       var b = ev.currentTarget;
       if (!gymSets(s)) {
         if (!reset) { reset = true; draw(); return; }
+        unpush();
         gymDrop();
         close();
         toast('Тренировка сброшена', 'dumbbell');
@@ -17577,8 +17984,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
       }
       b.disabled = true;
       haptic();
+      if (gymWarmOn(s)) warmClose();
       api('miniapp', { action: 'gym_finish' }, 20000, false, gymBody(s)).then(function (j) {
         unwake();
+        unpush();
         gymDrop();
         cacheDrop('food');
         cacheDrop('home');
@@ -17595,8 +18004,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
     if (z) z.classList.add('bfull');
     tabbar.classList.remove('hid');
     tabbar.addEventListener('click', function () { close(); }, { capture: true, once: true });
-    // The clock: the countdown and the minutes; the rest's end buzzes and brings the set back. However the sheet went
-    // (✕, Escape, Back, the scrim, a tab), once it is gone the card under it is redrawn («Продолжить» or the new day).
+    gymPill();
+    // The clock: the workout's time, the warm-up's, the set's and the rest's; a hold's end makes its set, the rest's
+    // end buzzes. However the sheet went (✕, Escape, Back, the scrim, a tab), once it is gone the card under it is
+    // redrawn («Продолжить» or the new day) and the pill shows on the other screens.
     wake();
     timer = setInterval(function () {
       if (!body.isConnected) {
@@ -17605,22 +18016,365 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         // The same day's answer is not drawn again (swr): the card's button learns the session's fate here.
         var k = gymLoad();
         if (from.isConnected && from.classList.contains('gstart')) label(from, 'dumbbell', k ? 'Продолжить · ' + (k.day || 'зал') : 'Начать зал');
+        gymPill();
         done();
         return;
       }
-      var c = box.querySelector('.gclock'), e = box.querySelector('.gel');
-      if (s.work && Date.now() >= s.work.end) {
-        // The hold's time is up: the set is made with its seconds, and the rest begins.
-        var w = s.work, hi = s.items[w.n];
-        s.work = null;
+      var now = Date.now();
+      if (s.act && s.act.end && now >= s.act.end) {
+        var a = s.act;
         gymBuzz();
-        if (hi) record(hi, Math.round((w.end - w.from) / 1000), null); else { keep(); draw(); }
+        record(a.n, Math.round((a.end - a.from) / 1000));
         return;
       }
-      if (s.rest && Date.now() >= s.rest) { s.rest = null; keep(); gymBuzz(); draw(); return; }
-      if (c) text(c, gymClock((s.work ? s.work.end : s.rest) - Date.now()));
-      if (e) text(e, gymElapsed(s, Date.now()));
+      if (s.rest && now >= s.rest.end) { s.rest = null; edit = null; keep(); gymBuzz(); draw(); return; }
+      function put(sel, v) { var e = box.querySelector(sel); if (e && e.textContent !== v) text(e, v); }
+      put('.gbig', gymMmss((now - Date.parse(s.started_at)) / 1000));
+      if (gymWarmOn(s)) put('.gwt', gymMmss(gymWarmSecs(s, now)));
+      if (s.rest) put('.grp.run', gymMmss(Math.ceil((s.rest.end - now) / 1000)));
+      if (s.act && s.act.end) put('.gf.live', gymMmss(Math.ceil((s.act.end - now) / 1000)));
+      var p = gymNow(s, now);
+      put('.gmp-t', (p.kind === 'rest' ? 'отдых ' : '') + p.time);
     }, 250);
+  }
+  // The workout on every screen (his ask 31.10.2026, Bevel's mini-player): while a session runs and its sheet is not
+  // open, a pill over the tab bar — the dumbbell, the day, the running clock and, during a rest, its countdown in the
+  // accent; a tap opens the workout where he left it. Gone once the session is finished or dropped (gymLoad, so it
+  // survives a reload); it ticks only while the page is visible; the page gets bottom room while it shows.
+  var GYM_PILL = null;
+  function gymPill() {
+    var s = gymLoad(), open = !!document.querySelector('.bas.gym');
+    if (!s || open) {
+      if (GYM_PILL) {
+        clearInterval(GYM_PILL.t);
+        GYM_PILL.b.remove();
+        GYM_PILL = null;
+        document.body.classList.remove('gpill-on');
+      }
+      return;
+    }
+    if (!GYM_PILL) {
+      var b = el('button', 'gpill');
+      b.type = 'button';
+      add(b, icon('dumbbell'), el('span', 'gpl-d'), el('span', 'gpl-t'), el('span', 'gpl-r'));
+      b.onclick = function () { haptic(); gymScreen(b, noop); };
+      document.body.appendChild(b);
+      GYM_PILL = { b: b, t: null };
+      document.body.classList.add('gpill-on');
+    }
+    var p = GYM_PILL;
+    clearInterval(p.t);
+    p.t = document.visibilityState === 'visible' ? setInterval(gymPillTick, 250) : null;
+    gymPillTick();
+  }
+  function gymPillTick() {
+    var p = GYM_PILL, s = gymLoad();
+    if (!p) return;
+    if (!s) return gymPill();
+    var now = Date.now(), r = s.rest && typeof s.rest === 'object' && s.rest.end > now ? Math.ceil((s.rest.end - now) / 1000) : null;
+    var d = p.b.children[1], t = p.b.children[2], q = p.b.children[3], tv = gymMmss((now - Date.parse(s.started_at)) / 1000), rv = r == null ? '' : 'отдых ' + gymMin(r);
+    if (d.textContent !== (s.day || 'Зал')) text(d, s.day || 'Зал');
+    if (t.textContent !== tv) text(t, tv);
+    if (q.textContent !== rv) text(q, rv);
+    q.hidden = r == null;
+    p.b.setAttribute('aria-label', 'Тренировка ' + (s.day || '') + ', идёт ' + tv + (rv ? ', ' + rv : '') + ' — открыть');
+  }
+  document.addEventListener('visibilitychange', function () { if (GYM_PILL) gymPill(); });
+
+  // --- «Прогресс» (docs/specs/gym-week.md, «Следующая партия зала» §3, «1ПМ и прибавка») ---
+  // The 1RM is the server's: Epley, or the RPE formula when a set has RPE 7–10 (gym.ts oneRm); warm-up sets count for
+  // nothing. The charts: one kg axis, the 1RM dashed beside the working weight's solid line, a legend and the last
+  // values labelled; a crosshair reads a day, a column its workout.
+  function gymKg(v) { return v == null ? '—' : woNum(v) + ' кг'; }
+  function gymSigned(v) { return (v > 0 ? '+' : v < 0 ? '−' : '±') + woNum(Math.abs(v)); }
+  // The best working weight and the 1RM by date.
+  function gymLines(ds, W) {
+    var H = 190, L = 4, R = 44, T = 14, B = 22, a = ds.filter(function (d) { return d.kg != null; }), b = ds.filter(function (d) { return d.one_rm != null; });
+    var vs = a.map(function (d) { return d.kg; }).concat(b.map(function (d) { return d.one_rm; }));
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), pad = (hi - lo) * 0.18 || hi * 0.08 || 1;
+    lo = Math.max(0, lo - pad);
+    hi += pad;
+    var t0 = Date.parse(ds[0].date + 'T12:00:00Z'), t1 = Date.parse(ds[ds.length - 1].date + 'T12:00:00Z');
+    function x(d) { return t1 === t0 ? L + (W - L - R) / 2 : L + (Date.parse(d + 'T12:00:00Z') - t0) / (t1 - t0) * (W - L - R); }
+    function y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
+    var wrap = el('div', 'mch hchw gpl'), box = chartBox(W, H, 'Рабочий вес и 1ПМ по датам'), tip = mtTip(wrap);
+    box.classList.add('mchart', 'hch');
+    wrap.appendChild(box);
+    [lo + (hi - lo) * 0.15, (lo + hi) / 2, hi - (hi - lo) * 0.15].forEach(function (t) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(t).toFixed(1), y2: y(t).toFixed(1), 'class': 'gl' }));
+    });
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
+    add(box, svg('text', { x: L, y: H - 6, 'class': 'tk' }, hlShort(ds[0].date)));
+    if (t1 !== t0) add(box, svg('text', { x: W - R, y: H - 6, 'class': 'tk', 'text-anchor': 'end' }, hlShort(ds[ds.length - 1].date)));
+    function line(pts, f, cls) {
+      if (pts.length > 1) add(box, svg('polyline', { 'class': 'hln ' + cls, points: pts.map(function (d) { return x(d.date).toFixed(1) + ',' + y(f(d)).toFixed(1); }).join(' ') }));
+      pts.forEach(function (d) { add(box, svg('circle', { cx: x(d.date).toFixed(1), cy: y(f(d)).toFixed(1), r: 4, 'class': 'gdt ' + cls + (cls === 'kg' && d.effort ? ' e-' + d.effort : '') })); });
+    }
+    line(b, function (d) { return d.one_rm; }, 'rm');
+    line(a, function (d) { return d.kg; }, 'kg');
+    // The last values beside the ends, pushed apart when they meet.
+    var ya = a.length ? y(a[a.length - 1].kg) : null, yb = b.length ? y(b[b.length - 1].one_rm) : null;
+    if (ya != null && yb != null && Math.abs(ya - yb) < 13) { var mid = (ya + yb) / 2; ya = mid + (ya >= yb ? 7 : -7); yb = mid + (ya >= yb ? -7 : 7); }
+    if (ya != null) add(box, svg('text', { x: W - R + 6, y: (ya + 4).toFixed(1), 'class': 'tk strong' }, woNum(a[a.length - 1].kg)));
+    if (yb != null) add(box, svg('text', { x: W - R + 6, y: (yb + 4).toFixed(1), 'class': 'tk' }, woNum(b[b.length - 1].one_rm)));
+    var xh = svg('line', { x1: 0, x2: 0, y1: T, y2: H - B, 'class': 'xh' }), k = ds.length - 1;
+    xh.style.display = 'none';
+    var hit = svg('rect', { x: L, y: T, width: W - L - R, height: H - T - B, 'class': 'hit', tabindex: '0', role: 'img',
+      'aria-label': 'Рабочий вес и 1ПМ: ' + ds.length + ' тренировок, последняя ' + hlShort(ds[k].date) + ' — ' + gymKg(ds[k].kg) + ', 1ПМ ' + gymKg(ds[k].one_rm) });
+    add(box, xh, hit);
+    function at(i) {
+      k = Math.min(Math.max(i, 0), ds.length - 1);
+      var d = ds[k], xx = x(d.date);
+      xh.setAttribute('x1', xx);
+      xh.setAttribute('x2', xx);
+      xh.style.display = '';
+      tip.show(box, W, xx, y(d.kg != null ? d.kg : d.one_rm || lo), gymKg(d.kg) + (d.reps ? ' × ' + d.reps : ''), hlDay(d.date) + (d.one_rm != null ? ' · 1ПМ ≈ ' + gymKg(d.one_rm) : '') +
+        (d.effort ? ' · ' + gymEffortWord(d.effort).toLowerCase() : ''));
+    }
+    function fromEvent(e) {
+      var r = box.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width, best = 0;
+      ds.forEach(function (d, i) { if (Math.abs(x(d.date) - px) < Math.abs(x(ds[best].date) - px)) best = i; });
+      at(best);
+    }
+    hit.addEventListener('pointermove', fromEvent);
+    hit.addEventListener('pointerdown', fromEvent);
+    hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { xh.style.display = 'none'; tip.hide(); } });
+    hit.addEventListener('focus', function () { at(ds.length - 1); });
+    hit.addEventListener('blur', function () { xh.style.display = 'none'; tip.hide(); });
+    hit.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); at(k + (e.key === 'ArrowLeft' ? -1 : 1)); }
+    });
+    var leg = add(el('div', 'gleg'), add(el('span', ''), el('i', 'kg'), document.createTextNode('рабочий вес')), add(el('span', ''), el('i', 'rm'), document.createTextNode('1ПМ, оценка')));
+    // The days he rated: their dot in the rating's colour, named here.
+    if (ds.some(function (d) { return d.effort; })) {
+      GYM_EFFORT.forEach(function (e) { if (e[0] !== 'ok') leg.appendChild(add(el('span', ''), el('b', 'gld e-' + e[0]), document.createTextNode(e[1].toLowerCase()))); });
+    }
+    return add(el('div'), leg, wrap);
+  }
+  // Columns a period: the workouts' volume, or the weeks' tonnage; the last one in the accent, the others quieter.
+  function gymCols(rows, W, lab, title) {
+    var H = 120, L = 4, R = 4, T = 16, B = 22, n = rows.length, step = (W - L - R) / Math.max(1, n), bw = Math.max(4, Math.min(22, step - 6));
+    var max = Math.max.apply(null, rows.map(function (r) { return r.v; }).concat([1]));
+    var wrap = el('div', 'mch gcol'), box = chartBox(W, H, title), tip = mtTip(wrap);
+    box.classList.add('mchart');
+    wrap.appendChild(box);
+    add(box, svg('line', { x1: L, x2: W - R, y1: H - B, y2: H - B, 'class': 'ax' }));
+    rows.forEach(function (r, i) {
+      var h = r.v / max * (H - T - B), cx = L + (i + 0.5) * step;
+      var g = mtBar(box, { x: L + i * step, y: T, w: step, h: H - T - B }, cx - bw / 2, H - B - h, bw, h, i === n - 1 ? '' : 'dim', lab(r) + ': ' + grouped(Math.round(r.v)) + ' кг');
+      mtHover(g, tip, box, W, cx, H - B - h, grouped(Math.round(r.v)) + ' кг', lab(r), true);
+    });
+    if (n) {
+      add(box, svg('text', { x: L, y: H - 6, 'class': 'tk' }, lab(rows[0])));
+      if (n > 1) add(box, svg('text', { x: W - R, y: H - 6, 'class': 'tk', 'text-anchor': 'end' }, lab(rows[n - 1])));
+      var top = rows[n - 1];
+      if (top.v > 0) add(box, svg('text', { x: Math.min(W - R, L + (n - 0.5) * step), y: Math.max(11, H - B - top.v / max * (H - T - B) - 5), 'class': 'tk strong', 'text-anchor': n > 1 ? 'end' : 'middle' }, grouped(Math.round(top.v))));
+    }
+    return wrap;
+  }
+  // «Прогресс» of an exercise: the last best set large with its 1RM and «+7,5 кг за месяц», the working weight and the
+  // 1RM by date, the volume a workout, the records with their dates.
+  function gymProgressSheet(name, from) {
+    var box = add(el('div', 'gprog'), skeleton(2)), close = noop;
+    close = legalSheet('Прогресс', [el('div', 'sub wdsub', name), box, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+    api('miniapp', { action: 'gym_progress' }, 15000, false, { exercise: name }).then(function (j) {
+      if (!box.isConnected) return;
+      var x = j.exercise || {}, ds = x.days || [], last = ds[ds.length - 1], rec = x.records || {};
+      var W = Math.max(260, Math.min(680, box.clientWidth || 340));
+      clear(box);
+      if (!ds.length) return box.appendChild(state('chart-line', 'Пока нет сделанных сетов этого упражнения — после первой тренировки здесь будет график.'));
+      var g = x.gain;
+      box.appendChild(hlHead(last.kg != null ? woNum(last.kg) : String(last.reps || '—'), last.kg != null ? 'кг' + (last.reps ? ' × ' + last.reps : '') : 'повт.',
+        'лучший сет ' + hlDay(last.date), g == null ? null : gymSigned(g) + ' кг за месяц', g > 0 ? 'gup' : g < 0 ? 'gdn' : 'geq', null,
+        last.one_rm != null ? '1ПМ ≈ ' + gymKg(last.one_rm) : null));
+      if (ds.some(function (d) { return d.kg != null || d.one_rm != null; })) box.appendChild(add(el('div', 'hsec'), el('div', 'hsec-h', 'Рабочий вес и 1ПМ'), gymLines(ds, W)));
+      var vol = ds.slice(-16).map(function (d) { return { v: d.volume, d: d.date }; });
+      if (vol.some(function (r) { return r.v > 0; })) {
+        box.appendChild(add(el('div', 'hsec'), el('div', 'hsec-h', 'Объём за тренировку'), el('div', 'mu hsec-s', 'вес × повторы рабочих сетов'),
+          gymCols(vol, W, function (r) { return hlShort(r.d); }, 'Объём за тренировку')));
+      }
+      var rc = mkCard('award', 'Личные рекорды');
+      [['Макс. вес', rec.kg, gymKg], ['Макс. 1ПМ', rec.one_rm, gymKg], ['Макс. объём', rec.volume, function (v) { return grouped(Math.round(v)) + ' кг'; }]].forEach(function (r) {
+        if (!r[1]) return;
+        rc.appendChild(add(el('div', 'row frow'), add(el('span', 'tx'), el('div', 't', r[0]), el('div', 'mu', hlDay(r[1].date))), el('span', 'pr gpr', r[2](r[1].v))));
+      });
+      if (rc.children.length > 1) box.appendChild(rc);
+      box.appendChild(el('div', 'mu gpnote', '1ПМ — по Эпли: вес × (1 + повторы / 30); с RPE 7–10 — по RPE (повторы в запасе). Разминочные сеты не считаются.'));
+    }, function () { if (box.isConnected) add(clear(box), state('chart-line', 'Не загрузилось — открой ещё раз.')); });
+  }
+  // «Прогресс» in «Фитнес»: the 12 weeks' tonnage as columns with this week against the last, the main lifts' 1RM
+  // trend a row each (a tap — the exercise's «Прогресс»). Nothing without a gym in the 12 weeks.
+  function gymProgressCard(j, W) {
+    var ws = j.weeks || [], lifts = j.lifts || [];
+    if (!ws.some(function (w) { return w.kg > 0; }) && !lifts.length) return null;
+    var c = mkCard('chart-line', 'Прогресс', 'за 12 недель'), n = ws.length, cur = n ? ws[n - 1].kg : 0, prev = n > 1 ? ws[n - 2].kg : 0;
+    c.className += ' gpcard';
+    W = Math.max(240, Math.min(640, (W || 360) - 28));
+    c.appendChild(add(el('div', 'gpw'), add(el('div', 'gpw-v'), document.createTextNode(grouped(Math.round(cur))), el('small', '', ' кг')),
+      el('div', 'mu', 'тоннаж этой недели' + (prev > 0 ? ' · ' + gymSigned(Math.round((cur / prev - 1) * 100)) + ' % к прошлой' : ''))));
+    c.appendChild(add(el('div', 'gpc'), gymCols(ws.map(function (w) { return { v: w.kg, d: w.week }; }), W, function (r) { return 'с ' + hlShort(r.d); }, 'Тоннаж за неделю')));
+    if (lifts.length) {
+      c.appendChild(el('div', 'hgsh', 'Главные упражнения · 1ПМ'));
+      lifts.forEach(function (l) {
+        var pts = l.points.map(function (p) { return { day: p.date, v: p.v }; });
+        var r = add(el('div', 'row frow gpl1'), add(el('span', 'tx'), el('div', 't', l.exercise), el('div', 'mu', l.points.length + ' ' + ['тренировка', 'тренировки', 'тренировок'][plural3(l.points.length)])),
+          hlSpark(pts, pts[0].day, pts[pts.length - 1].day > pts[0].day ? pts[pts.length - 1].day : addDays(pts[0].day, 1), 72),
+          add(el('span', 'pr'), el('b', '', woNum(l.last) + ' кг'), l.gain ? el('span', 'mu', ' ' + gymSigned(l.gain)) : null));
+        r.setAttribute('aria-label', l.exercise + ': 1ПМ ' + woNum(l.last) + ' кг' + (l.gain ? ', ' + gymSigned(l.gain) + ' за 12 недель' : '') + ' — прогресс');
+        c.appendChild(tap(r, function () { haptic(); gymProgressSheet(l.exercise, r); }));
+      });
+    }
+    return c;
+  }
+
+  // --- «Фитнес»'s endless strip (docs/specs/gym-week.md, «Лента дней «Фитнеса» как у Bevel»; fitness-strip-endless.png) ---
+  // Days sideways without end: a pill a day — the weekday, the date (today's in the accent), its circle: the done
+  // workout's icon in its sport's colour, a planned one (our sport events, his booked games) as a dashed ring, «Zz» for
+  // rest (dashed ahead); the triangle over the day picked. 14 more days load at each end as it scrolls (fit_range);
+  // «→» back to today when today is off the strip. Under it the picked day: its plans with «Пропущено» /
+  // «Запланировано», its workouts (a tap — the workout's sheet), «+» for one more. A day up to today moves the whole
+  // «Фитнес» to it; a day ahead only the card.
+  var FIT = { days: {}, from: null, to: null, sel: null };
+  var FIT_PAGE = 14;
+  function fitStrip(box, date, goDay, refresh) {
+    var today = foodToday(), sc = el('div', 'fsx'), panel = el('div', 'card fsp'), busy = false;
+    var back = foodBtn('fsb', 'arrow-right', '', function () { haptic(); center(today, true); });
+    back.setAttribute('aria-label', 'К сегодняшнему дню');
+    sc.setAttribute('role', 'group');
+    sc.setAttribute('aria-label', 'Дни');
+    FIT.sel = date;
+    add(clear(box), add(el('div', 'fst'), sc, back), panel);
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function circle(d) {
+      var D = FIT.days[d], c = el('span', 'fsc');
+      if (!D) { c.className += ' ld'; return c; }
+      var w = D.workouts[0], pl = D.planned.filter(function (p) { return p.status !== 'done' || !p.workout_id; })[0];
+      if (w) { c.className += ' wo k-' + (WO_IC[w.kind] ? w.kind : 'other'); c.appendChild(icon(WO_IC[w.kind] || 'medal')); }
+      else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
+      else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
+      else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
+      return c;
+    }
+    function what(d) {
+      var D = FIT.days[d];
+      if (!D) return '';
+      var ws = D.workouts.map(function (w) { return woLabel(w); }), ps = D.planned.filter(function (p) { return !p.workout_id; }).map(function (p) {
+        return p.title + (p.status === 'missed' ? ' — пропущено' : p.status === 'planned' ? ' — запланировано' : '');
+      });
+      return ws.concat(ps).join(', ') || (d > today ? 'ничего не запланировано' : 'отдых');
+    }
+    function pillOf(d) {
+      var b = el('button', 'fsd' + (d === FIT.sel ? ' on' : '') + (d === today ? ' today' : '') + (d > today ? ' fut' : ''));
+      b.type = 'button';
+      b.setAttribute('data-d', d);
+      b.setAttribute('aria-pressed', d === FIT.sel ? 'true' : 'false');
+      b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + ': ' + what(d));
+      add(b, el('span', 'fsk'), el('span', 'fsw', cap(WEEK[wd(d)])), el('span', 'fsn', String(+d.slice(8, 10))), circle(d));
+      b.onclick = function () {
+        haptic();
+        if (d <= today && d !== FOOD.date) { FIT.sel = d; return goDay(d); }
+        FIT.sel = d;
+        sc.querySelectorAll('.fsd').forEach(function (x) {
+          var on = x.getAttribute('data-d') === d;
+          x.classList.toggle('on', on);
+          x.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        drawPanel();
+      };
+      return b;
+    }
+    function drawPills() {
+      clear(sc);
+      for (var d = FIT.from; d <= FIT.to; d = addDays(d, 1)) sc.appendChild(pillOf(d));
+      edge();
+    }
+    function pillAt(d) { return sc.querySelector('.fsd[data-d="' + d + '"]'); }
+    function center(d, smooth) {
+      var p = pillAt(d);
+      if (!p) return;
+      var left = p.offsetLeft - (sc.clientWidth - p.offsetWidth) / 2;
+      try { sc.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' }); } catch (e) { sc.scrollLeft = left; }
+    }
+    // «→» shows while today is off the strip, pointing its way.
+    function edge() {
+      var p = pillAt(today), r = sc.getBoundingClientRect(), q = p && p.getBoundingClientRect();
+      var off = !p || q.right < r.left + 8 || q.left > r.right - 8;
+      back.hidden = !off;
+      back.classList.toggle('l', !!(p && q.right < r.left + 8) || (!p && FIT.from > today));
+    }
+    function merge(j) {
+      (j.days || []).forEach(function (x) { FIT.days[x.date] = { workouts: x.workouts || [], planned: x.planned || [] }; });
+    }
+    function fetch(from, n) {
+      return api('miniapp', { action: 'fit_range' }, 15000, true, { from: from, days: n });
+    }
+    // More days at an end: the strip keeps its place when they come in on the left.
+    function more(left) {
+      if (busy || !box.isConnected) return;
+      busy = true;
+      var from = left ? addDays(FIT.from, -FIT_PAGE) : addDays(FIT.to, 1);
+      fetch(from, FIT_PAGE).then(function (j) {
+        busy = false;
+        if (!box.isConnected) return;
+        merge(j);
+        var w0 = sc.scrollWidth, x0 = sc.scrollLeft;
+        if (left) FIT.from = from; else FIT.to = addDays(from, FIT_PAGE - 1);
+        drawPills();
+        if (left) sc.scrollLeft = x0 + sc.scrollWidth - w0;
+      }, function () { busy = false; });
+    }
+    sc.addEventListener('scroll', function () {
+      edge();
+      if (sc.scrollLeft < 160) more(true);
+      else if (sc.scrollLeft + sc.clientWidth > sc.scrollWidth - 160) more(false);
+    }, { passive: true });
+    function row(lead, top, title, sub, onTap, lbl) {
+      var r = add(el('div', 'row frow fsr2'), lead, add(el('span', 'tx'), el('div', 'mu fss', top), el('div', 't', title), sub ? el('div', 'mu', sub) : null),
+        onTap ? icon('chevron-right') : null);
+      r.setAttribute('aria-label', lbl);
+      return onTap ? tap(r, onTap) : r;
+    }
+    function drawPanel() {
+      var d = FIT.sel, D = FIT.days[d];
+      clear(panel);
+      var add1 = d <= today ? foodBtn('fsadd', 'plus', '', function (ev) { woAddSheet(d, ev.currentTarget, refresh); }) : null;
+      if (add1) add1.setAttribute('aria-label', 'Добавить тренировку');
+      panel.appendChild(add(el('div', 'fsh'), el('h3', '', cap(WEEK[wd(d)]) + ', ' + +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1]), add1));
+      if (!D) return panel.appendChild(el('div', 'mu wempty', 'Загружаю…'));
+      var ids = D.workouts.map(function (w) { return w.id; });
+      D.planned.filter(function (p) { return !(p.workout_id && ids.indexOf(p.workout_id) >= 0); }).forEach(function (p) {
+        var word = { missed: 'Пропущено', planned: 'Запланировано', done: 'Сделано' }[p.status];
+        var t = foodTime(p.starts_at) + (p.ends_at ? '–' + foodTime(p.ends_at) : '');
+        panel.appendChild(row(add(el('span', 'fsc plan sm k-' + p.sport + (p.status === 'missed' ? ' miss' : p.status === 'done' ? ' wo' : '')), icon(WO_IC[p.sport] || 'medal')),
+          word, p.title, [t, p.place].filter(Boolean).join(' · '), null, word + ': ' + p.title + ', ' + t));
+      });
+      D.workouts.forEach(function (w) {
+        var parts = woParts(w), km = w.distance_km != null ? Number(w.distance_km) : null;
+        if (km && !parts.some(function (s) { return / км$/.test(s); })) parts.push(woNum(km) + ' км');
+        if (w.kcal != null) parts.push(grouped(Math.round(w.kcal)) + ' ккал');
+        if (w.kind === 'gym' && w.title) parts.unshift(w.title);
+        var r = row(add(el('span', 'fsc wo sm k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')), foodTime(w.at), woLabel(w), parts.join(' · '),
+          function () { woDetailSheet(w, r, refresh); }, woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
+        panel.appendChild(r);
+      });
+      if (!D.workouts.length && !D.planned.length) panel.appendChild(el('div', 'mu wempty', d > today ? 'Ничего не запланировано.' : 'День отдыха.'));
+    }
+    // The strip around the day: what is known at once, then fit_range's 4 weeks around it.
+    if (!FIT.from || date < addDays(FIT.from, 7) || date > addDays(FIT.to, -7)) {
+      FIT.from = addDays(date, -FIT_PAGE);
+      FIT.to = addDays(date, FIT_PAGE);
+    }
+    drawPills();
+    drawPanel();
+    requestAnimationFrame(function () { center(date); edge(); });
+    fetch(addDays(date, -FIT_PAGE), 2 * FIT_PAGE + 1).then(function (j) {
+      if (!box.isConnected) return;
+      var x = sc.scrollLeft;
+      merge(j);
+      drawPills();
+      sc.scrollLeft = x;
+      drawPanel();
+    }, noop);
   }
   // The summary after «Закончить»: the minutes, the volume and the sets as tiles (with the change against the same day
   // last time), the new records, what did not go (the same weight next time), the line sent to the Claude topic.
@@ -17636,6 +18390,14 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
         add(el('div', 'hft-v'), document.createTextNode(x[2]), x[3] ? el('small', '', ' ' + x[3]) : null), el('div', 'mu hft-s', x[4])));
     });
     nodes.push(g);
+    // «Разминка · 8:42» (gym-week, «Поправка 31.10.2026»): its time, in the workout's minutes, not in the volume.
+    if (m.warmup_s != null) nodes.push(add(el('div', 'row frow gwsum'), add(el('span', 'lead kd'), icon('flame')), add(el('span', 'tx'), el('div', 't', 'Разминка · ' + gymMin(m.warmup_s)))));
+    // «Как было?» of the exercises he rated.
+    if ((m.efforts || []).length) {
+      nodes.push(add.apply(null, [el('div', 'hsec geffs'), el('div', 'hsec-h', 'Как было')].concat(m.efforts.map(function (e) {
+        return add(el('div', 'row frow'), add(el('span', 'tx'), el('div', 't', e.exercise)), add(el('span', 'pr'), pill(gymEffortWord(e.effort), 'on e-' + e.effort)));
+      }))));
+    }
     if (j.watch) nodes.push(gymWatchCard(j.watch, j.watch.hr_series, foodToday()));
     if ((m.prs || []).length) {
       var pc = mkCard('award', 'Новые максимумы');
