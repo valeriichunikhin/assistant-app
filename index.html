@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 00:35">
+<meta name="published" content="2026-11-01 00:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1349,8 +1349,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
 .fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 11px var(--font);letter-spacing:-.04em}
 .fsc .i{width:14px;height:14px}.fsc{position:relative}
-/* Bevel's (docs/bevel/fitness-strip-count.png): the count in the sport's colour, cut out of the circle by a ring of the pill's background */
-.fsq{position:absolute;top:-7px;right:-8px;display:grid;place-items:center;width:16px;height:16px;padding:0;border:2px solid var(--surface);border-radius:50%;box-sizing:content-box;background:var(--wo);color:var(--solid);font:700 10px/1 var(--font-num);letter-spacing:0}
+/* Several workouts a day: a dot each under the circle, in the sport's colour, inside the pill (his 01.11.2026). */
+.fsq{position:absolute;left:50%;bottom:-8px;display:flex;gap:2px;transform:translateX(-50%)}.fsq i{width:4px;height:4px;border-radius:50%;background:var(--wo)}
+.fsd{padding-bottom:9px}
 .fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
 .fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
 .fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
@@ -1368,7 +1369,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
 /* «Месяц» over the strip (gym-week, fitness-month-calendar.png): the month's name and the calendar button; the sheet's
    grid of the strip's circles, the date alone on an empty day, the count's badge in the sport's colour, today ringed. */
-.fnav .mmonb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--fg)}
+.fnav .mmonb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--fg);overflow:visible}
 /* The date centred as on the other segments, the icon hung beside it (31.10.2026: the text must not move between tabs). */
 .mmonb span{position:relative;min-width:0}.mmonb .i{position:absolute;left:100%;top:50%;width:16px;height:16px;margin:-8px 0 0 6px;color:var(--muted)}
 .fmb{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg)}
@@ -1382,6 +1383,26 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fmd.today .fsc{box-shadow:0 0 0 2px var(--mark)}.fmd.sel::after{content:"";position:absolute;bottom:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--mark)}
 .fmc{position:absolute;top:1px;right:max(0px,calc(50% - 27px));min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--wo);color:var(--solid);font:700 11px/18px var(--font-num);text-align:center}
 .fmd:active .fsc{transform:scale(.94)}
+/* «Месяц» of «Сегодня», «Питание», «Биология» (docs/specs/health-month.md, Bevel's calendar-recovery.jpg): the same
+   sheet, a day a pill — its small ring in the ring's colour with the number inside (a day without data the bare track,
+   the days ahead the date alone), the kcal's red arc past the goal; «Биология» the date with a dot for a weigh-in and
+   one for labs, the week's bio age in an eighth column with the arrow against the week before. */
+.fmg.hmg{row-gap:8px}.fmg.hmb,.fmw.hmb{grid-template-columns:repeat(7,minmax(0,1fr)) 44px}
+.fmd.hmd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:62px;margin:0 2px;border:1px solid var(--line);border-radius:21px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.hmd .hmn{font:600 13px/1 var(--font-num);font-variant-numeric:tabular-nums}.hmd.fut{background:none;box-shadow:none}.hmd.fut .hmn{color:var(--muted)}
+.fmd.hmd::after{display:none}.fmb:disabled{opacity:.35}.fmd.hmd.today{border:2px solid var(--mark)}.hmd.today .hmn{color:var(--mark);font-weight:800}.fmd.hmd.sel:not(.today){border-color:var(--fg)}
+button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
+.hmr{display:block;flex:none;width:32px;height:32px;overflow:visible}.hmr circle{fill:none;stroke-width:3.6;stroke-linecap:round}
+.hmr .tr{stroke:color-mix(in srgb,var(--hm) 22%,transparent)}.hmr.e .tr{stroke:var(--track)}.hmr .a{stroke:var(--hm)}.hmr .ov{stroke:var(--bad)}
+.hmr .hmv{fill:var(--fg);font:700 10px var(--font-num);letter-spacing:-.02em}
+.hm-load{--hm:var(--ring-load)}.hm-rec{--hm:var(--ring-recovery)}.hm-sleep{--hm:var(--ring-sleep)}.hm-kcal{--hm:var(--mark)}
+.hm-st-good{--hm:var(--ring-recovery)}.hm-st-mid{--hm:var(--ring-load-2)}.hm-st-bad{--hm:var(--bad)}
+.hmdots{display:flex;gap:3px;height:6px}.hmdots i{width:6px;height:6px;border-radius:50%}.hmdots .w{background:var(--hl-bio)}.hmdots .l{background:var(--hl-sky)}
+.hmy{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;font:700 13px/1 var(--font-num);font-variant-numeric:tabular-nums}
+.fmw .hmy{font:inherit}.hmy .i{width:14px;height:14px}.hmy .dn{color:var(--ring-recovery)}.hmy .up{color:var(--ring-load)}
+.hpills.hmp{margin:12px -16px 0}
+.hmf{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;padding:6px 2px 10px;font-size:13px}.hmf span{display:inline-flex;align-items:center;gap:6px}
+.hmf .hmdots i{display:block}.hmf .hmr{width:18px;height:18px}
 .k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}.k-walk{--wo:var(--hl-bio)}.k-tennis{--wo:var(--nu-carbs)}
 .frow .lead.kd{color:var(--wo)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 14px}.hgsh{padding:0 14px 8px;font-weight:600}
@@ -14723,7 +14744,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     // «Биология»: the series, the biological age and the lab results — the 30 days up to today and the week's age, not
     // of a day: the same day row as the other segments', today's, without the arrows.
     if (seg === 'biology') {
-      main.appendChild(add(el('div', 'mnav fnav fnav-st'), el('div', 'mmon', dayName(today))));
+      main.appendChild(add(el('div', 'mnav fnav fnav-st'), monthBtn(today)));
       return bioView();
     }
     // The day's segments (docs/specs/health-v2.md, «Навигация»): «Сегодня» — the rings and the advice, «Монитор», the
@@ -14752,17 +14773,21 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       return (d === t ? 'Сегодня' : d === addDays(t, -1) ? 'Вчера' : WEEK[wd(d)]) + ', ' + Number(d.slice(8, 10)) + ' ' +
         MONTHS_G[Number(d.slice(5, 7)) - 1];
     }
+    // The date is the month's button in every segment (31.10.2026, his «календарик … при нажатии на дату» in
+    // «Фитнес»; 01.11.2026 the others, docs/specs/health-month.md): «Фитнес» its workouts' month, the rest hmMonth.
+    function monthBtn(d) {
+      var mb = add(el('button', 'mmon mmonb'), add(el('span', '', dayName(d)), icon('calendar')));
+      mb.type = 'button';
+      mb.setAttribute('aria-label', dayName(d) + ' — месяц ' + ({ fitness: 'тренировок', nutrition: 'питания', biology: 'биологии' }[seg] || 'колец'));
+      mb.onclick = function () {
+        haptic();
+        if (seg !== 'fitness') hmMonth(seg, d.slice(0, 7), seg === 'biology' ? null : d, mb, goTo);
+        else if (FIT.month) FIT.month(FIT.sel.slice(0, 7), mb);
+      };
+      return mb;
+    }
     [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
-      if (!x[0] && seg === 'fitness') {
-        // «Фитнес»: the date is the month's button (31.10.2026, his «календарик … при нажатии на дату» — the row
-        // «Октябрь 2026 · 📅» over the strip is gone).
-        var mb = add(el('button', 'mmon mmonb'), add(el('span', '', dayName(date)), icon('calendar')));
-        mb.type = 'button';
-        mb.setAttribute('aria-label', dayName(date) + ' — месяц тренировок');
-        mb.onclick = function () { haptic(); if (FIT.month) FIT.month(FIT.sel.slice(0, 7), mb); };
-        return nav.appendChild(mb);
-      }
-      if (!x[0]) return nav.appendChild(el('div', 'mmon', dayName(date)));
+      if (!x[0]) return nav.appendChild(monthBtn(date));
       var b = add(el('button'), icon(x[1]));
       b.type = 'button';
       b.setAttribute('aria-label', x[2]);
@@ -19354,6 +19379,124 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     return c;
   }
 
+  // --- «Месяц» of «Сегодня», «Питание» and «Биология» (docs/specs/health-month.md; Bevel's calendar-recovery.jpg) ---
+  // The fitness month's sheet for the other segments: ‹ month ›, Mon–Sun, today ringed, the days ahead empty, one
+  // health_range a month. «Сегодня» — a pill a ring (remembered), a day its small ring in the ring's colour with the
+  // number inside (the stress in its zone's colour); «Питание» — the kcal against the goal, full past it with a red arc
+  // over; «Биология» — the week's bio age at its row's end with the arrow against the week before, dots on the days
+  // weighed and with labs. A tap: «Сегодня» and «Питание» go to that day (pick); «Биология» has no day — a weighed day
+  // opens the weight's sheet, a day of labs shows «Анализы».
+  var HM_RINGS = [['load', 'Нагрузка', 'hm-load'], ['recovery', 'Восстановление', 'hm-rec'], ['sleep', 'Сон', 'hm-sleep'], ['stress', 'Стресс']];
+  var HM_CACHE = {};
+  function hmRing(f, cls, txt, over) {
+    var r = 13, l = 2 * Math.PI * r, box = svg('svg', { viewBox: '0 0 32 32', 'class': 'hmr ' + cls, 'aria-hidden': 'true' });
+    function arc(k, c) { return svg('circle', { cx: 16, cy: 16, r: r, 'class': c, transform: 'rotate(-90 16 16)', 'stroke-dasharray': (l * Math.min(1, k)).toFixed(1) + ' ' + l.toFixed(1) }); }
+    box.appendChild(svg('circle', { cx: 16, cy: 16, r: r, 'class': 'tr' }));
+    if (f > 0) box.appendChild(arc(f, 'a'));
+    if (over > 0) box.appendChild(arc(over, 'ov'));
+    if (txt) box.appendChild(svg('text', { x: 16, y: 16.5, 'class': 'hmv', 'text-anchor': 'middle', 'dominant-baseline': 'central' }, txt));
+    return box;
+  }
+  function hmMonth(seg, ym, sel, from, pick) {
+    var today = foodToday(), close = noop, cur = ym, bio = seg === 'biology', key = store('hmRing');
+    var part = seg === 'nutrition' ? 'food' : bio ? 'bio' : 'rings';
+    if (!HM_RINGS.some(function (r) { return r[0] === key; })) key = 'recovery';
+    function cap(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+    var title = el('h4', 'fmt'), head = el('div', 'fmh'), wk = el('div', 'fmw' + (bio ? ' hmb' : '')), grid = el('div', 'fmg hmg' + (bio ? ' hmb' : '')), foot = el('div', 'mu hmf');
+    var prevB = foodBtn('fmb', 'chevron-left', '', function () { haptic(); go(-1); }), nextB = foodBtn('fmb', 'chevron-right', '', function () { haptic(); go(1); });
+    prevB.setAttribute('aria-label', 'Предыдущий месяц');
+    nextB.setAttribute('aria-label', 'Следующий месяц');
+    add(head, prevB, title, nextB);
+    WEEK.forEach(function (w) { wk.appendChild(el('span', '', cap(w))); });
+    if (bio) wk.appendChild(el('span', 'hmy', 'лет'));
+    grid.setAttribute('role', 'grid');
+    var pills = seg === 'today' ? hlPills(HM_RINGS.map(function (r) { return [r[0], r[1]]; }), key, function (k) { key = k; store('hmRing', k); draw(); }, 'hmp') : null;
+    function days(m) { return new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7), 0)).getUTCDate(); }
+    function go(k) {
+      var y = +cur.slice(0, 4), m = +cur.slice(5, 7) - 1 + k;
+      y += Math.floor(m / 12);
+      m = (m % 12 + 12) % 12;
+      cur = y + '-' + (m < 9 ? '0' : '') + (m + 1);
+      draw();
+      load();
+    }
+    // A day's pill: the ring segments' ring (or the bare track without data), biology's dots; the days ahead the date.
+    function cell(d, J) {
+      var by = J && J.by[d], n = +d.slice(8, 10), what = '', ring = null, dots = null, tapIt = null;
+      if (bio) dots = el('span', 'hmdots');
+      if (d > today) what = '';
+      else if (!J) { ring = bio ? null : hmRing(0, 'e', ''); what = 'загружаю'; }
+      else if (bio) {
+        var w = J.weights.indexOf(d) >= 0, lb = J.labs.indexOf(d) >= 0;
+        add(dots, w ? el('i', 'w') : null, lb ? el('i', 'l') : null);
+        what = [w ? 'взвешивание' : '', lb ? 'анализы' : ''].filter(Boolean).join(', ') || 'нет записей';
+        if (w) tapIt = function () { haptic(); close(); hlSeriesSheet('weight', HL_BIO_KEYS, from); };
+        else if (lb) tapIt = function () { haptic(); close(); var c = main.querySelector('.hlabs'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      } else if (seg === 'nutrition') {
+        var kc = by ? by.kcal : 0, g = J.goal || kcalGoal();
+        ring = kc > 0 ? hmRing(kc / g, 'hm-kcal', '', kc > g ? (kc - g) / g : 0) : hmRing(0, 'hm-kcal e', '');
+        what = kc > 0 ? grouped(kc) + ' из ' + grouped(g) + ' ккал' + (kc > g ? ', сверх цели ' + grouped(kc - g) : '') : 'нет записей';
+      } else {
+        var v = by ? by[key] : null, rg = HM_RINGS.filter(function (r) { return r[0] === key; })[0];
+        var cls = key === 'stress' ? 'hm-st-' + (v == null ? 'good' : hlStressZone(v)) : rg[2];
+        ring = v == null ? hmRing(0, cls + ' e', '') : hmRing(v / 100, cls, String(v));
+        what = rg[1].toLowerCase() + ' ' + (v == null ? 'нет данных' : v + (key === 'stress' ? '' : ' %'));
+      }
+      if (!bio && d <= today && J) tapIt = function () { close(); pick(d); };
+      var b = add(el(tapIt ? 'button' : 'span', 'fmd hmd' + (d === today ? ' today' : '') + (d === sel ? ' sel' : '') + (d > today ? ' fut' : '')), ring, el('span', 'hmn', String(n)), dots);
+      if (tapIt) { b.type = 'button'; b.onclick = tapIt; }
+      b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + (what ? ': ' + what : ''));
+      return b;
+    }
+    // Biology's eighth column: the week's bio age and its arrow against the week before (none when the same).
+    function weekEnd(mon, J) {
+      var box = el('span', 'hmy');
+      if (!J) return box;
+      var wv = J.weeks[mon], pv = J.weeks[addDays(mon, -7)];
+      if (wv == null) return box;
+      var dd = pv == null ? 0 : Math.round((wv - pv) * 10) / 10;
+      add(box, el('span', '', wv.toFixed(1).replace('.', ',')), dd ? add(el('span', dd < 0 ? 'dn' : 'up'), icon(dd < 0 ? 'arrow-down' : 'arrow-up')) : null);
+      box.setAttribute('aria-label', 'Биовозраст недели с ' + dm(mon) + ': ' + wv.toFixed(1).replace('.', ',') + (dd ? ', ' + (dd > 0 ? '+' : '−') + woNum(Math.abs(dd)) + ' к прошлой' : ''));
+      return box;
+    }
+    function draw() {
+      var J = HM_CACHE[part + ':' + cur], first = cur + '-01', n = days(cur), lead = wd(first);
+      title.textContent = cap(MONTHS_N[+cur.slice(5, 7) - 1]) + ' ' + cur.slice(0, 4);
+      nextB.disabled = cur >= today.slice(0, 7);
+      clear(grid);
+      for (var mon = addDays(first, -lead); mon <= addDays(first, n - 1); mon = addDays(mon, 7)) {
+        for (var i = 0; i < 7; i++) {
+          var d = addDays(mon, i);
+          grid.appendChild(d.slice(0, 7) === cur ? cell(d, J) : el('span', 'fmd fmx'));
+        }
+        if (bio) grid.appendChild(weekEnd(mon, J));
+      }
+      clear(foot);
+      if (bio) {
+        add(foot, add(el('span'), add(el('span', 'hmdots'), el('i', 'w')), document.createTextNode('вес')), add(el('span'), add(el('span', 'hmdots'), el('i', 'l')), document.createTextNode('анализы')),
+          el('span', '', 'справа — биовозраст недели'));
+      } else if (seg === 'nutrition') {
+        add(foot, add(el('span'), hmRing(0.7, 'hm-kcal', ''), document.createTextNode('цель ' + grouped((J && J.goal) || kcalGoal()) + ' ккал')),
+          add(el('span'), hmRing(1, 'hm-kcal', '', 0.3), document.createTextNode('сверх цели')));
+      }
+    }
+    function load() {
+      var m = cur, k = part + ':' + m;
+      if (m > today.slice(0, 7)) return;
+      api('miniapp', { action: 'health_range' }, 20000, true, { from: m + '-01', days: days(m), part: part }).then(function (j) {
+        var by = {}, weeks = {};
+        (j.days || []).forEach(function (x) { by[x.date] = x; });
+        (j.weeks || []).forEach(function (x) { weeks[x.week_start] = x.bio; });
+        HM_CACHE[k] = { by: by, goal: j.goal, weeks: weeks, weights: j.weights || [], labs: j.labs || [] };
+        if (grid.isConnected && m === cur) draw();
+      }, noop);
+    }
+    draw();
+    load();
+    close = legalSheet({ today: 'Месяц колец', nutrition: 'Месяц питания', biology: 'Месяц биологии' }[seg], [head, pills, wk, grid, foot.firstChild ? foot : null,
+      add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+  }
+
   // --- «Фитнес»'s endless strip (docs/specs/gym-week.md, «Лента дней «Фитнеса» как у Bevel»; fitness-strip-endless.png) ---
   // Days sideways without end: a pill a day — the weekday, the date (today's in the accent), its circle: the done
   // workout's icon in its sport's colour, a planned one (our sport events, his booked games) as a dashed ring, «Zz» for
@@ -19455,9 +19598,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
-      // More than one on the day (his 01.11.2026): the first one's icon and the count, as «Месяц» draws it.
-      var n = D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length;
-      if (n > 1 && (w || pl)) c.appendChild(el('span', 'fsq', String(n)));
+      // More than one on the day (his 01.11.2026, «внутри, не обязательно как Bevel»): a dot a workout under the
+      // circle, each in its sport's colour, inside the pill.
+      var ks = D.workouts.map(woKind).concat(D.planned.filter(function (p) { return !p.workout_id; }).map(function (p) { return p.sport; }));
+      if (ks.length > 1) c.appendChild(add.apply(null, [el('span', 'fsq')].concat(ks.slice(0, 4).map(function (k) { return el('i', 'k-' + k); }))));
       return c;
     }
     function what(d) {
