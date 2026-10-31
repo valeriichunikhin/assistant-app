@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 13:10">
+<meta name="published" content="2026-10-31 14:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1286,7 +1286,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .row.fsr2{align-items:center;gap:12px}.row.fsr2>.i{flex:none;color:var(--muted)}.fsr2 .fss{font-size:12px;font-weight:600}
 /* A colour per sport (30.10.2026): the gym in his accent, volleyball orange, the run green, the bike sky, swimming teal,
    the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
-.k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}
+.k-gym{--wo:var(--mark)}.k-volleyball{--wo:var(--ring-load)}.k-run{--wo:var(--ring-recovery)}.k-bike{--wo:var(--hl-sky)}.k-swim{--wo:var(--hl-teal)}.k-other{--wo:var(--wo-other)}.k-walk{--wo:var(--hl-bio)}
 .frow .lead.kd{color:var(--wo)}
 .hgs{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px 14px}.hgsh{padding:0 14px 8px;font-weight:600}
 .hgg{display:flex;flex-direction:column;align-items:center;min-width:0;text-align:center;padding:12px 8px 10px;border-radius:16px;background:var(--surface-2)}.hgh{font-weight:600;margin:0 0 2px}
@@ -1501,6 +1501,18 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .hsc-e{display:flex;align-items:center;gap:10px;margin:0 14px 14px;padding:12px 14px;border-radius:var(--r-b);background:var(--surface-2)}.hsc-e .i{width:18px;height:18px;color:var(--ring-recovery);flex:none}
 .hsc-et{flex:1;display:flex;gap:3px;height:18px;min-width:0}.hsc-et i{flex:1;border-radius:2px;background:var(--track)}.hsc-et i.on{background:var(--ring-recovery)}
 .hsc-e b{flex:none;font:800 16px var(--font-num);font-variant-numeric:tabular-nums}
+/* «Запас энергии» (docs/specs/health-energy.md): the two tiles, the day's curve (the line in the energy bar's green, the
+   night and the workouts as soft bands in their rings' colours), the uses' ±. */
+.hen-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 12px}.hen-c{padding:10px 12px;border-radius:16px;background:var(--surface-2)}
+.hen-c .mu{font-size:12px}.hen-c b{display:block;margin-top:2px;font:800 22px var(--font-num);font-variant-numeric:tabular-nums}
+.hen-up{color:var(--ring-recovery)}.hen-dn{color:var(--ring-load)}
+.hen-w{position:relative;touch-action:pan-y}.hen-ch{display:block;width:100%;height:auto;overflow:visible}.hen-ch .ge{font-size:10px;fill:var(--muted)}
+.hen-gl{stroke:var(--line);stroke-width:1}.hen-l{fill:none;stroke:var(--ring-recovery);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.hen-f{stroke:none}.hen-s0{stop-color:var(--ring-recovery);stop-opacity:.3}.hen-s1{stop-color:var(--ring-recovery);stop-opacity:0}.hen-dot{fill:var(--ring-recovery);stroke:var(--bg0,var(--surface));stroke-width:2}
+.hen-b-sleep{fill:var(--ring-sleep-soft)}.hen-b-workout{fill:var(--ring-load-soft)}.hen-x{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.hen-tip{position:absolute;top:0;width:90px;padding:3px 0;border-radius:8px;background:var(--surface-2);font:700 12px var(--font-num);text-align:center;pointer-events:none}
+.hen-r .hen-d{flex:none;font:800 16px var(--font-num);font-variant-numeric:tabular-nums}.hen-sleep .hmini{color:var(--ring-sleep);background:var(--ring-sleep-soft)}
+.hen-day .hmini{color:var(--muted);background:var(--track)}.hen-workout .hmini{color:var(--wo);background:color-mix(in srgb,var(--wo) 16%,transparent)}
 .hstr-h{font-size:12px}.hstr-w{font-size:12px;font-weight:700;color:color-mix(in srgb,var(--st) 72%,var(--fg))}
 .hstg{display:block;overflow:visible}.hstg circle{fill:none;stroke-linecap:round}.hstg .tr{stroke:color-mix(in srgb,var(--st) 18%,transparent)}
 .hstg .arc{stroke:var(--st);filter:var(--hl-glow)}.hstg .v{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums}
@@ -4070,7 +4082,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         if (s === 'm' && f.weight_today) add(line('', 'bkg'), icon('weight'), document.createTextNode(foodKg(f.weight_today) + ' кг'));
         // Today's last workout (docs/specs/workouts.md §5): «Зал · 55 мин».
         var wt = f.workout_today;
-        if (s === 'm' && wt) add(line('', 'bkg'), icon(WO_IC[wt.kind] || 'medal'), document.createTextNode(woLabel(wt) + (wt.minutes ? ' · ' + woDur(wt.minutes) : '')));
+        if (s === 'm' && wt) add(line('', 'bkg'), icon(woIcon(wt)), document.createTextNode(woLabel(wt) + (wt.minutes ? ' · ' + woDur(wt.minutes) : '')));
         var left = norm ? norm.kcal - k : null;
         var sub = left == null ? (k ? '' : 'сегодня записей нет') : left >= 0 ? 'осталось ' + (nu ? grouped(left) : foodK(left))
           : (nu ? 'сверх цели ' + grouped(-left) : 'сверх нормы ' + foodK(-left));
@@ -15463,8 +15475,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // «Стресс» as Bevel's «Стресс за сегодня» (his frame 30.10.2026, 11:03): the dot in the zone's colour and the name,
   // «→», «Последнее обновление: 10:34»; three numbers — the score with its word, the night's HRV and resting pulse
   // against their bases (green better, orange worse); on the right a full circle of ticks coloured low→high, lit to
-  // the value, the number and the word inside; under the card the energy bar — the recovery as lit ticks with «%».
-  // A tap on the card — the stress sheet; on the bar — the recovery's.
+  // the value, the number and the word inside; under the card the energy bar — «Запас энергии» (j.energy, the pulse
+  // model, docs/specs/health-energy.md) as lit ticks with «%», hidden without the day's pulse (never the recovery).
+  // A tap on the card — the stress sheet; on the bar — hlEnergySheet.
   function hlStressCard(j) {
     var sc = j.scores || {}, s = sc.stress;
     if (!s) return null;
@@ -15489,16 +15502,108 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), hlStressDial(s.value, word, z));
     body.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
     c.appendChild(tap(body, function () { haptic(); hlRingSheet('stress', j, body); }));
-    if (sc.recovery && sc.recovery.value != null) {
-      var e = sc.recovery.value, bar = el('div', 'hsc-e');
+    if (j.energy && j.energy.level != null) {
+      var e = j.energy.level, bar = el('div', 'hsc-e');
       bar.appendChild(icon('zap'));
       var ticks = el('div', 'hsc-et');
       for (var i = 0; i < 40; i++) ticks.appendChild(el('i', i < Math.round(e / 100 * 40) ? 'on' : ''));
       add(bar, ticks, el('b', '', e + ' %'));
-      bar.setAttribute('aria-label', 'Энергия (восстановление) ' + e + ' % — из чего');
-      c.appendChild(tap(bar, function () { haptic(); hlRingSheet('recovery', j, bar); }));
+      bar.setAttribute('aria-label', 'Запас энергии ' + e + ' %' + (j.energy.forecast_23 != null ? ', к 23:00 около ' + j.energy.forecast_23 + ' %' : '') + ' — подробно');
+      c.appendChild(tap(bar, function () { haptic(); hlEnergySheet(j.date, bar); }));
     }
     return c;
+  }
+  // «Запас энергии» as Bevel's (docs/specs/health-energy.md, his three frames 30.10): the battery's % large, the 23:00
+  // line, two tiles «Общий заряд» / «Расход энергии», the day's curve 0–100 with the night and the workouts shaded,
+  // «Использование энергии» — a row a use with its icon and ±%; the model's note under it. miniapp ?action=energy_day.
+  function hlEnergySheet(date, from) {
+    var body = el('div', 'hsh'), close = noop;
+    add(body, el('div', 'mu hsh-none', 'загружаю…'));
+    close = legalSheet('Запас энергии', [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
+    api('miniapp', { action: 'energy_day' }, 20000, true, { date: date }).then(function (r) {
+      var en = r.energy;
+      clear(body);
+      if (!en) {
+        add(body, el('div', 'mu hsh-none', 'Пульса за этот день нет — нужно 1–2 дня данных пульса.'), el('div', 'mu hsec-n', 'Модель по пульсу и сну, калибруется ~30 дней'));
+        return;
+      }
+      var f = en.forecast_23, ty = en.typical;
+      var line23 = f == null ? null : f > en.level ? 'восполнение до ' + f + ' % в 23:00' : 'к 23:00 — около ' + f + ' %';
+      var st = ty == null ? null : en.level > ty + 3 ? 'Выше типичного' : en.level < ty - 3 ? 'Ниже типичного' : 'Как обычно';
+      add(body, hlHead(String(en.level), '%', hlDay(date) + ' · ' + foodTime(en.at), st, st ? 'hz-st-' + (en.level >= ty - 3 ? 'good' : 'mid') : '',
+        ty == null ? null : 'типичный ' + ty + ' %', line23));
+      add(body, add(el('div', 'hen-g'),
+        add(el('div', 'hen-c'), el('div', 'mu', 'Общий заряд'), el('b', 'hen-up', '+' + en.charged + ' %')),
+        add(el('div', 'hen-c'), el('div', 'mu', 'Расход энергии'), el('b', 'hen-dn', '−' + en.drained + ' %'))));
+      body.appendChild(hlEnergyChart(en, Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32))));
+      var list = add(el('div', 'hsec'), el('div', 'hsec-h', 'Использование энергии'));
+      en.uses.slice().sort(function (a, b) { return Math.abs(b.delta) - Math.abs(a.delta); }).forEach(function (u) {
+        var ic = u.kind === 'sleep' ? 'moon' : u.kind === 'day' ? 'brain' : woIcon({ kind: u.sport, title: u.what });
+        var when = u.kind === 'day' ? 'покой, дела и стресс' : foodTime(u.from) + '–' + foodTime(u.to);
+        var d = u.delta > 0 ? '+' + u.delta : u.delta < 0 ? '−' + -u.delta : '0';
+        var row = add(el('div', 'hpr hen-r hen-' + u.kind + (u.kind === 'workout' ? ' k-' + woKind({ kind: u.sport, title: u.what }) : '')),
+          add(el('span', 'hmini'), icon(ic)), add(el('div', 'hpr-m'), el('div', 'hpr-n', u.what), el('div', 'mu', when)),
+          el('b', 'hen-d ' + (u.delta > 0 ? 'hen-up' : u.delta < 0 ? 'hen-dn' : ''), d + ' %'));
+        row.setAttribute('role', 'group');
+        row.setAttribute('aria-label', u.what + ', ' + when + ': ' + d + ' %');
+        list.appendChild(row);
+      });
+      add(body, list, el('div', 'mu hsec-n', 'Модель по пульсу и сну, калибруется ~30 дней'));
+    }, function () {
+      add(clear(body), el('div', 'mu hsh-none', 'Не загрузилось.'));
+    });
+  }
+  // The day's curve: 00–24 on x, 0–100 on y; the night and the workouts as soft bands under a thin line with a soft
+  // fill, the level now a dot; a crosshair reads the time and the level.
+  function hlEnergyChart(en, W) {
+    var H = 168, L = 4, R = 34, T = 10, B = 22, pw = W - L - R, ph = H - T - B;
+    var t0 = Date.parse(en.curve[0][0]), span = 864e5;
+    function x(t) { return L + Math.max(0, Math.min(1, (Date.parse(t) - t0) / span)) * pw; }
+    function y(v) { return T + (1 - v / 100) * ph; }
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hen-ch', role: 'img',
+      'aria-label': 'Запас энергии за день: сейчас ' + en.level + ' %' });
+    [0, 50, 100].forEach(function (v) {
+      box.appendChild(svg('line', { x1: L, x2: L + pw, y1: y(v), y2: y(v), 'class': 'hen-gl' }));
+      box.appendChild(svg('text', { x: W - 2, y: y(v) + 4, 'class': 'ge', 'text-anchor': 'end' }, v + ' %'));
+    });
+    en.uses.forEach(function (u) {
+      if (u.kind === 'day') return;
+      var a = x(u.from), b = x(u.to);
+      if (b - a > 0.5) box.appendChild(svg('rect', { x: a.toFixed(1), y: T, width: (b - a).toFixed(1), height: ph, 'class': 'hen-b hen-b-' + u.kind }));
+    });
+    var pts = en.curve.map(function (p) { return [x(p[0]), y(p[1])]; });
+    var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('');
+    var lastP = pts[pts.length - 1];
+    // The fill fades down from the line, so the shaded night and workouts read through it.
+    var gid = 'hen-g' + (hlEnergyChart.n = (hlEnergyChart.n || 0) + 1), gr = svg('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
+    gr.appendChild(svg('stop', { offset: 0, 'class': 'hen-s0' }));
+    gr.appendChild(svg('stop', { offset: 1, 'class': 'hen-s1' }));
+    box.appendChild(add(svg('defs', {}), gr));
+    box.appendChild(svg('path', { d: d + 'L' + lastP[0].toFixed(1) + ' ' + y(0) + 'L' + pts[0][0].toFixed(1) + ' ' + y(0) + 'Z', 'class': 'hen-f', fill: 'url(#' + gid + ')' }));
+    box.appendChild(svg('path', { d: d, 'class': 'hen-l' }));
+    box.appendChild(svg('circle', { cx: lastP[0].toFixed(1), cy: lastP[1].toFixed(1), r: 4.5, 'class': 'hen-dot' }));
+    [0, 6, 12, 18, 24].forEach(function (h) {
+      var px = L + h / 24 * pw;
+      box.appendChild(svg('text', { x: px.toFixed(1), y: H - 6, 'class': 'ge', 'text-anchor': h === 0 ? 'start' : h === 24 ? 'end' : 'middle' }, ('0' + h).slice(-2) + ':00'));
+    });
+    var cross = svg('line', { y1: T, y2: T + ph, 'class': 'hen-x' }), tip = el('div', 'hen-tip'), wrap = add(el('div', 'hsh-ch hen-w'), box, tip);
+    cross.style.display = 'none';
+    box.appendChild(cross);
+    function hide() { cross.style.display = 'none'; tip.hidden = true; }
+    tip.hidden = true;
+    box.addEventListener('pointermove', function (ev) {
+      var r = box.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = 0;
+      pts.forEach(function (p, i) { if (Math.abs(p[0] - px) < Math.abs(pts[best][0] - px)) best = i; });
+      var p = pts[best], c = en.curve[best];
+      cross.setAttribute('x1', p[0].toFixed(1)); cross.setAttribute('x2', p[0].toFixed(1));
+      cross.style.display = '';
+      tip.hidden = false;
+      tip.textContent = foodTime(c[0]) + ' · ' + c[1] + ' %';
+      tip.style.left = Math.max(0, Math.min(r.width - 90, p[0] * r.width / W - 45)) + 'px';
+    });
+    box.addEventListener('pointerleave', hide);
+    return wrap;
   }
   // The dial: 48 ticks round the circle, each in the colour of its place (green → yellow → red), lit to the value,
   // the rest faint; the number and the word in the middle.
@@ -16049,8 +16154,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // Bevel's load gauge (fitness-2.png): the name with a chevron, the status word in its colour, 270° of ticks lit
   // to the value, the target's green arc outside with a dot at the value, the number inside, «0» and «100» under the
   // open ends, «≡ 28–46» under it all (the margin of safety a paler arc on either side); a tap — the load's sheet.
+  // A score with no value (s {status: 'calibration', value: null} — no gym sets in 28 days) is calibrating: the word
+  // «Калибровка» in the calibration colour, the arc empty, no number and no «≡», still a chevron and a tap.
   function hlGauge(name, s, tgt, onTap, mg) {
-    var row = el('div', 'hgg hl-st-' + (s && s.day ? HL_DAY_CLS[s.day] : s && s.status || 'calibration')), v = s ? s.value : null;
+    var row = el('div', 'hgg hl-st-' + (s && s.day ? HL_DAY_CLS[s.day] : s && s.status || 'calibration')), v = s ? s.value : null, cal = !!s && v == null;
     var W = 140, H = 126, cx = 70, cy = 66, r = 46, N = 37;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
     function pt(f, rad) { var a = Math.PI * (0.75 + 1.5 * Math.max(0, Math.min(1, f))); return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; }
@@ -16061,11 +16168,11 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       if (on) tk.style.strokeOpacity = (0.45 + 0.55 * f).toFixed(2);
       box.appendChild(tk);
     }
-    if (mg) {
+    if (mg && !cal) {
       if (mg[0] < tgt[0]) box.appendChild(svg('path', { d: arc(mg[0] / 100, tgt[0] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
       if (mg[1] > tgt[1]) box.appendChild(svg('path', { d: arc(tgt[1] / 100, mg[1] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
     }
-    box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100, r + 14), 'class': 'zone', 'stroke-width': 5 }));
+    if (!cal) box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100, r + 14), 'class': 'zone', 'stroke-width': 5 }));
     if (v != null) {
       var m = pt(v / 100, r + 14);
       box.appendChild(svg('circle', { cx: m[0].toFixed(1), cy: m[1].toFixed(1), r: 9, 'class': 'mkh' }));
@@ -16073,7 +16180,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     }
     var t = svg('text', { x: cx, y: cy + 10, 'class': 'gv', 'text-anchor': 'middle', 'font-size': 30 }, v == null ? '—' : String(v));
     if (v != null) t.appendChild(svg('tspan', { 'class': 'gu', 'font-size': 13, dx: 2 }, '%'));
-    box.appendChild(t);
+    if (!cal) box.appendChild(t);
     var e0 = pt(0, r + 14), e1 = pt(1, r + 14);
     box.appendChild(svg('text', { x: (e0[0] + 2).toFixed(1), y: (e0[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '0'));
     box.appendChild(svg('text', { x: (e1[0] - 2).toFixed(1), y: (e1[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '100'));
@@ -16081,8 +16188,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var word = s && ((String(s.line || '').match(/— ([^:]+):/) || [])[1] || HL_LOAD_RU[s.status || 'calibration'].toLowerCase());
     word = word ? word.charAt(0).toUpperCase() + word.slice(1) : null;
     add(row, add(el('div', 'hgh'), document.createTextNode(name), onTap ? icon('chevron-right') : null), word ? el('div', 'hgst', word) : null, box,
-      el('div', 'hgt', rest ? '≡ отдых' : '≡ ' + tgt[0] + '–' + tgt[1]));
-    row.setAttribute('aria-label', name + ': ' + (v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where + ', цель ' +
+      cal ? null : el('div', 'hgt', rest ? '≡ отдых' : '≡ ' + tgt[0] + '–' + tgt[1]));
+    row.setAttribute('aria-label', name + ': ' + (cal ? 'калибровка' : v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where + ', цель ' +
       (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %')) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
@@ -16186,7 +16293,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     // Both open the load's sheet: the muscles' row is in it.
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
-      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle, [28, 46], sc.muscle ? open : null, [24, 52])));
+      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle || { status: 'calibration', value: null }, [28, 46],
+        // No sets in 28 days: «Калибровка», and the tap goes to «Мышечные группы» (which says what it waits for).
+        sc.muscle ? open : function (row) { hlMusclesSheet(j, row); }, [24, 52])));
     if (fr.length) {
       var fh = add(el('div', 'hfh hfh-go'), el('span', '', 'Свежесть мышц'), icon('chevron-right'));
       fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
@@ -16953,6 +17062,12 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     ['bike', 'Велосипед', 'bike'], ['swim', 'Плавание', 'waves'], ['other', 'Другое', 'medal']];
   var WO_RU = {}, WO_IC = {};
   WO_KINDS.forEach(function (k) { WO_RU[k[0]] = k[1]; WO_IC[k[0]] = k[2]; });
+  // A walk from Health is kind «other» with its title (his 31.10: a medal on «Ходьба» said nothing): the title first,
+  // then the kind; the medal is left to a truly unknown «Другое». woKind — the colour class (k-walk), woIcon — the icon.
+  WO_IC.walk = 'footprints';
+  var WO_WALK = /^(ходьба|прогулка|хайкинг|поход|walk(ing)?|hik(e|ing))$/i;
+  function woKind(w) { return w.kind === 'other' && WO_WALK.test(String(w.title || '').trim()) ? 'walk' : WO_IC[w.kind] ? w.kind : 'other'; }
+  function woIcon(w) { return WO_IC[woKind(w)] || 'medal'; }
   var WO_DIST = ['run', 'bike', 'swim'];
   function woNum(v) { v = Math.round(Number(v) * 10) / 10; return v % 1 ? v.toFixed(1).replace('.', ',') : String(v); }
   function woDur(m) { return m <= 60 ? m + ' мин' : Math.floor(m / 60) + ' ч' + (m % 60 ? ' ' + m % 60 + ' мин' : ''); }
@@ -16993,7 +17108,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       // The Watch's numbers on a gym row (gym-week §8): «с часов: 62 мин · 412 ккал · пульс ср. 118 / макс. 156».
       if (w.watch_line) tx.appendChild(el('div', 'mu wl', w.watch_line));
       if (w.note) tx.appendChild(el('div', 'mu fnote', w.note));
-      var r = add(el('div', 'row frow'), add(el('span', 'lead kd k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')), tx, el('span', 'pr', woParts(w).join(' · ')));
+      var r = add(el('div', 'row frow'), add(el('span', 'lead kd k-' + woKind(w)), icon(woIcon(w))), tx, el('span', 'pr', woParts(w).join(' · ')));
       r.setAttribute('aria-label', woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
       c.appendChild(tap(r, function () { woDetailSheet(w, r, done); }));
     });
@@ -18249,7 +18364,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       var D = FIT.days[d], c = el('span', 'fsc');
       if (!D) { c.className += ' ld'; return c; }
       var w = D.workouts[0], pl = D.planned.filter(function (p) { return p.status !== 'done' || !p.workout_id; })[0];
-      if (w) { c.className += ' wo k-' + (WO_IC[w.kind] ? w.kind : 'other'); c.appendChild(icon(WO_IC[w.kind] || 'medal')); }
+      if (w) { c.className += ' wo k-' + woKind(w); c.appendChild(icon(woIcon(w))); }
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
@@ -18367,7 +18482,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         if (km && !parts.some(function (s) { return / км$/.test(s); })) parts.push(woNum(km) + ' км');
         if (w.kcal != null) parts.push(grouped(Math.round(w.kcal)) + ' ккал');
         if (w.kind === 'gym' && w.title) parts.unshift(w.title);
-        var r = row(add(el('span', 'fsc wo sm k-' + (WO_IC[w.kind] ? w.kind : 'other')), icon(WO_IC[w.kind] || 'medal')), foodTime(w.at), woLabel(w), parts.join(' · '),
+        var r = row(add(el('span', 'fsc wo sm k-' + woKind(w)), icon(woIcon(w))), foodTime(w.at), woLabel(w), parts.join(' · '),
           function () { woDetailSheet(w, r, refresh); }, woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
         panel.appendChild(r);
       });
@@ -19128,7 +19243,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     }
     // An item's icon, its sub-line (place, source, series) and its source's colour class — the list's rows and the
     // timeline's cards alike.
-    function icOf(x) { return x.src === 'cal' ? calKind(x.kind)[2] : x.src === 'workout' ? WO_IC[x.kind] || 'dumbbell' : CAL_IC[x.src] || 'calendar'; }
+    function icOf(x) { return x.src === 'cal' ? calKind(x.kind)[2] : x.src === 'workout' ? woIcon(x) : CAL_IC[x.src] || 'calendar'; }
     // A «Зал …» of ours says its plan day instead (gym-week §2): «Сб · тяжёлая · 7 упражнений» — the place and the series
     // are in its sheet.
     function subOf(x) { return x.gym && x.gym.name ? calGymLine(x.gym) : [x.place, CAL_SUB[x.src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · '); }
