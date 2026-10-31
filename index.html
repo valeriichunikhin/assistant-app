@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 23:56">
+<meta name="published" content="2026-11-01 00:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1113,6 +1113,12 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .gthumb.none{background:var(--accent-soft);color:var(--mark);border-color:transparent}.gthumb.none .i{width:22px;height:22px}
 .ggif.gbig{height:260px;margin:0 0 12px}
 .gpch.gxch{padding:0 0 12px}
+/* «Зал» card rows (31.10.2026): the animation 56 px on the left, «3×10–12 · 55 кг», the why a smaller muted line or chip;
+   the exercise's sheet: this time's line bold, the why under it. */
+.row.gxrow{align-items:center;gap:12px}.gxrow .gthumb{width:56px;height:56px;border-radius:14px}
+.gxrow .gnt{margin-top:3px;font-size:12px;line-height:1.3}.gxrow .gnt .pill{height:20px;padding:0 8px;font-size:11.5px;font-weight:600}
+.gattr.gcattr{margin:8px 14px 0;font-size:11px}
+.gxw{margin:0 0 4px;font-size:16px}.gxw b{font-variant-numeric:tabular-nums}.gxw .mu{font-size:14px}.gxwhy{margin:0 0 10px;font-size:13px;line-height:1.35}
 .cgym{margin:0 0 14px}.cgym .btn.gstart{width:100%;margin:0}.cgyml{margin-top:8px;font-size:13px;line-height:1.4}
 .hft.gsum{padding:0;margin:0 0 12px}
 .gym .btn.wide,.gwt~.foot .btn.wide{width:100%;margin:0}
@@ -1333,15 +1339,16 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    fade; «→» back to today floats on the right. Under it the day's card: its date, «+», the plans and the workouts. */
 .fstrip{margin:0 0 12px}
 .fst{position:relative;margin:0 -16px}.fst::before{content:"";position:absolute;z-index:2;top:-1px;left:50%;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top:9px solid var(--mark);border-bottom:0;pointer-events:none}/* the pointer stays in the middle; the day under it is the day shown (his 31.10.2026) */
-.fsx{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px calc(50% - 25px) 6px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
+/* 30 % smaller (01.11.2026, his pick of three sizes): nine days in view */
+.fsx{display:flex;gap:5px;overflow-x:auto;scroll-snap-type:x mandatory;padding:3px calc(50% - 19px) 5px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent)}
 .fsx::-webkit-scrollbar{display:none}
-.fsd{position:relative;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;width:50px;padding:16px 0 8px;border:1px solid var(--card-line);border-radius:25px;background:var(--surface);color:var(--fg);font:inherit;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fsd{position:relative;flex:none;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;width:38px;padding:10px 0 6px;border:1px solid var(--card-line);border-radius:19px;background:var(--surface);color:var(--fg);font:inherit;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .fsk{position:absolute;top:-2px;left:50%;width:1px;height:7px;margin-left:-.5px;background:var(--line-2)}
 .fsd.on .fsk{opacity:0}
-.fsw{font-size:13px;color:var(--muted)}.fsn{font:600 18px var(--font-num);font-variant-numeric:tabular-nums}
+.fsw{font-size:11px;color:var(--muted)}.fsn{font:600 14px var(--font-num);font-variant-numeric:tabular-nums}
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
-.fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:38px;height:38px;margin-top:6px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 13px var(--font);letter-spacing:-.04em}
-.fsc .i{width:19px;height:19px}
+.fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 11px var(--font);letter-spacing:-.04em}
+.fsc .i{width:14px;height:14px}
 .fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
 .fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
 .fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
@@ -1360,7 +1367,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 /* «Месяц» over the strip (gym-week, fitness-month-calendar.png): the month's name and the calendar button; the sheet's
    grid of the strip's circles, the date alone on an empty day, the count's badge in the sport's colour, today ringed. */
 .fnav .mmonb{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--fg)}
-.mmonb span{min-width:0;overflow:hidden;text-overflow:ellipsis}.mmonb .i{flex:none;width:16px;height:16px;color:var(--muted)}
+/* The date centred as on the other segments, the icon hung beside it (31.10.2026: the text must not move between tabs). */
+.mmonb span{position:relative;min-width:0}.mmonb .i{position:absolute;left:100%;top:50%;width:16px;height:16px;margin:-8px 0 0 6px;color:var(--muted)}
 .fmb{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--fg)}
 .fmb .i{width:20px;height:20px}
 .fmh{display:flex;align-items:center;justify-content:space-between;gap:8px}.fmt{margin:0;font:700 20px/1.2 var(--font)}
@@ -1396,10 +1404,24 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    «Цели» on the light lime: the accent's dark variant (--link), the lime itself is unreadable on white. */
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .hbage .ch .mtoday{color:var(--link)}}
 :root[data-theme="light"] .hbage .ch .mtoday{color:var(--link)}
-.bio-lead{display:flex;align-items:flex-end;gap:10px;padding:2px 14px 6px;cursor:pointer}
-.bio-l{flex:1;min-width:0}.bio-l>.mu{font-size:12px}.bio-l .bas-w{font-size:14px}
-.bio-big{font:800 52px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em;margin:2px 0 4px}
-.bio-rl{flex:none;display:block;overflow:visible;padding-bottom:2px}.bio-rl .bas-gl{font-size:10px}.bio-rl .bas-bl,.bio-rl .bas-cl{font-size:11px}
+.bio-lead{padding:2px 14px 0;cursor:pointer}
+.bio-top{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.bio-l{flex:1;min-width:0}.bio-l>.mu{font-size:12px}.bio-l .bas-w{font-size:14px;font-weight:700}
+.bio-big{font:800 52px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.03em;margin:2px 0 4px}.bio-big small{font:600 17px var(--font);color:var(--muted);letter-spacing:0}
+.bio-r{flex:none;text-align:right;font-size:12px;line-height:1.35;color:var(--muted);padding-bottom:2px}.bio-r b{color:var(--fg);font-variant-numeric:tabular-nums}
+/* Variant B3 (31.10.2026): the weeks as a line against the dashed passport age, the gap shaded (younger green, older
+   orange), the last week a dot; the tiles «Анализы · Вес · ВСР» as «Монитор»'s, the status word in its colour. */
+.bio-wl{display:block;width:100%;height:auto;overflow:visible;margin-top:12px}.bio-wl text{font:500 11px var(--font-num);fill:var(--muted)}.bio-wl text.bv{fill:var(--mark);font-weight:700}
+.bio-wl .ln{fill:none;stroke:var(--mark);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}.bio-wl .dt{fill:var(--mark);stroke:var(--surface);stroke-width:2}
+.bio-wl .cal{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:3 4;opacity:.55}
+.bio-wl .gap.yg{fill:color-mix(in srgb,var(--ring-recovery) 12%,transparent)}.bio-wl .gap.old{fill:color-mix(in srgb,var(--ring-load-2) 14%,transparent)}
+.nus-dot.bio-lg-b{--ms:var(--mark)}
+.bio-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px 14px 0}.bio-tiles[hidden]{display:none}
+.bio-tile{min-width:0;padding:10px;border-radius:var(--r-b);background:var(--surface-2);cursor:pointer}
+.bio-tile .h{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);white-space:nowrap}.bio-tile .h .i{width:14px;height:14px;flex:none}
+.bio-tile .v{margin-top:4px;font:800 19px/1.15 var(--font-num);white-space:nowrap;letter-spacing:-.02em;font-variant-numeric:tabular-nums}.bio-tile .v small{font:500 11px var(--font);color:var(--muted);letter-spacing:0}
+.bio-tile .s{margin-top:2px;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.bio-tile[class*="hl-st-"] .s{color:color-mix(in srgb,var(--st) 75%,var(--fg))}
 .bio-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:6px 14px 14px}
 .bio-foot .mu{margin-left:auto;font-size:12px}.bio-foot .mu b{color:var(--fg)}
 .pill.bio-dp{height:24px;gap:4px;padding:0 9px}.pill.bio-dp .i{width:12px;height:12px}
@@ -14731,7 +14753,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       if (!x[0] && seg === 'fitness') {
         // «Фитнес»: the date is the month's button (31.10.2026, his «календарик … при нажатии на дату» — the row
         // «Октябрь 2026 · 📅» over the strip is gone).
-        var mb = add(el('button', 'mmon mmonb'), el('span', '', dayName(date)), icon('calendar'));
+        var mb = add(el('button', 'mmon mmonb'), add(el('span', '', dayName(date)), icon('calendar')));
         mb.type = 'button';
         mb.setAttribute('aria-label', dayName(date) + ' — месяц тренировок');
         mb.onclick = function () { haptic(); if (FIT.month) FIT.month(FIT.sel.slice(0, 7), mb); };
@@ -16999,19 +17021,21 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   function bioView() {
     var age = el('div'), bio = el('div'), labs = el('div');
     add(main, age, bio, labs);
+    // The lead's three tiles read «Тренды»'s and «Анализы»' answers: whichever comes last fills them (bioTiles).
+    var T = { box: null, stats: null, labs: null, labsBox: labs };
     function live() { return current === 'food' && healthSeg === 'biology'; }
     function loadAge() {
       swr({ key: 'body:bioage', box: age, n: 1, live: live,
         fetch: function () { return api('miniapp', { action: 'bioage' }, 15000, true, {}); },
-        render: function (j) { add(clear(age), bioAgeCard(j, age, loadAge), bioFactors(j)); }, retry: loadAge });
+        render: function (j) { add(clear(age), bioAgeCard(j, age, loadAge, T), bioFactors(j)); }, retry: loadAge });
     }
     loadAge();
     swr({ key: 'body:bio', box: bio, n: 1, live: live,
       fetch: function () { return api('miniapp', { action: 'health_stats' }, 15000, true, { days: 30 }); },
-      render: function (j) { add(clear(bio), hlBio(j, bio)); } });
+      render: function (j) { add(clear(bio), hlBio(j, bio)); T.stats = j; bioTiles(T); } });
     swr({ key: 'body:labs', box: labs, n: 1, live: live,
       fetch: function () { return api('miniapp', { action: 'labs_latest' }, 15000, true, {}); },
-      render: function (j) { add(clear(labs), labsCard(j, labs)); } });
+      render: function (j) { add(clear(labs), labsCard(j, labs)); T.labs = j; bioTiles(T); } });
   }
   function bioYears(v) { return v == null ? '—' : woNum(v); }
   // A number the card may print: finite, else null (a missing field, an answer cached before it).
@@ -17022,7 +17046,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     return n == null ? null : add(el('div', 'bas-nu'), document.createTextNode('Следующее обновление через '), el('b', '', n + ' ' + ['день', 'дня', 'дней'][plural3(n)]));
   }
   function bioDelta(d) { return d == null ? '' : (Math.abs(d) < 0.05 ? 'как по паспорту' : (d < 0 ? 'на ' + woNum(-d) + ' моложе' : 'на ' + woNum(d) + ' старше')); }
-  function bioAgeCard(j, box, reload) {
+  function bioAgeCard(j, box, reload, T) {
     var c = mkCard('dna', 'Биологический возраст');
     c.className += ' hbage';
     // A new birth date or height rewrites this week's number (bioage_recompute), then the card reloads.
@@ -17033,15 +17057,31 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     });
     gb.setAttribute('aria-label', 'Дата рождения и рост');
     c.firstChild.appendChild(gb);
-    // The lead as «Фитнес»'s (variant A, his pick 31.10.2026): the week's date over the number, the word under it, the
-    // compact ruler on the right; a tap opens the full-screen sheet (bioAgeSheet). Under it the change against last week
-    // (a tap — the 12 weeks) and the next update. No score (or no age) — the empty line alone: no number, no ruler.
+    // The lead as variant B3 (his pick 31.10.2026): the week's date over the number, «на N года моложе паспорта» under
+    // it, the change over the logged weeks on the right; the weeks as a line against the dashed passport line, the gap
+    // shaded, the last week a dot; a tap opens the full-screen sheet (bioAgeSheet). Then three tiles — «Анализы», «Вес»,
+    // «ВСР» (bioTiles, from «Тренды»' and «Анализы»' answers) — the change against last week (a tap — the weeks) and the
+    // next update. No score — the empty line alone; under two weeks — no line and no change.
     var cur = j.current, bio = bioNum(cur ? cur.bio : j.overall), age = bioNum(j.age), day = cur ? cur.week_start : null;
-    var w = bioWord(bio == null || age == null ? null : bio - age), when = day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас';
-    var lead = add(el('div', 'bio-lead'), add(el('div', 'bio-l'), el('div', 'mu', when), bio == null ? null : el('div', 'bio-big', woNum(bio)),
-      el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : w[0])), bio == null || age == null ? null : bioRuler(bio, age));
+    var dd = bio == null || age == null ? null : bio - age, w = bioWord(dd), when = day ? 'на ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1] : 'сейчас';
+    var hs = (j.history || []).filter(function (h) { return bioNum(h.bio) != null && /^\d{4}-\d{2}-\d{2}/.test(h.week_start || ''); });
+    var span = hs.length > 1 ? Math.round((Date.parse(hs[hs.length - 1].week_start) - Date.parse(hs[0].week_start)) / 6048e5) + 1 : 0;
+    var ch = span > 1 ? Math.round((hs[hs.length - 1].bio - hs[0].bio) * 10) / 10 : null;
+    var top = add(el('div', 'bio-top'), add(el('div', 'bio-l'), el('div', 'mu', when),
+      bio == null ? null : add(el('div', 'bio-big'), document.createTextNode(woNum(bio)), el('small', '', ' лет')),
+      el('div', 'bas-w ' + w[1], bio == null ? 'нужен анализ крови или VO2max' : dd != null && Math.abs(dd) >= 0.05 ? w[0] + ' паспорта' : w[0])),
+      ch == null ? null : add(el('div', 'bio-r'), el('div', '', span + ' ' + ['неделя', 'недели', 'недель'][plural3(span)]),
+        add(el('div'), el('b', '', bioSigned(ch)), document.createTextNode(' ' + bioYw(ch)))));
+    var lead = add(el('div', 'bio-lead'), top, bio == null || age == null || span < 2 ? null : bioWeeksLine(hs, age));
+    if (lead.childNodes.length > 1) {
+      lead.appendChild(add(el('div', 'nus-lg'), add(el('span'), el('i', 'nus-dot bio-lg-b'), document.createTextNode('биологический по неделям')),
+        add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('паспорт ' + woNum(age)))));
+    }
     c.appendChild(tap(lead, function () { haptic(); bioAgeSheet(j, lead); }));
-    lead.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + (bio == null ? '' : ', ' + w[0]) + ' — подробно');
+    lead.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + (bio == null ? '' : ', ' + w[0]) +
+      (ch == null ? '' : ', за ' + span + ' ' + ['неделю', 'недели', 'недель'][plural3(span)] + ' ' + bioSigned(ch)) + ' — подробно');
+    T.box = c.appendChild(el('div', 'bio-tiles'));
+    bioTiles(T);
     var foot = el('div', 'bio-foot'), d = bioNum(j.delta), n = bioNum(j.next_update_days);
     if (d != null) {
       var dp = add(el('button', 'pill hst bio-dp ' + (d > 0.04 ? 'hs-below' : d < -0.04 ? 'hs-norm' : 'hs-same')), icon(d > 0 ? 'arrow-up' : d < 0 ? 'arrow-down' : 'circle-dot'),
@@ -17055,33 +17095,66 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     if (foot.firstChild) c.appendChild(foot);
     return c;
   }
-  // The lead's compact ruler: a tick each two years, a label each ten, the span between the two ages filled in the
-  // accent, the biological age's dot in the accent and the calendar's in the text colour, each with its number above;
-  // two numbers too close for both part to either side.
-  function bioRuler(bio, age) {
-    var W = 150, H = 70, x0 = 8, x1 = 142, top = 37;
-    var lo = Math.floor(Math.min(18, bio - 2, age - 2) / 2) * 2, hi = Math.max(lo + 20, Math.ceil((Math.max(bio, age) + 8) / 2) * 2);
-    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'bio-rl', role: 'img',
-      'aria-label': 'Шкала: биологический ' + woNum(bio) + ', календарный ' + woNum(age) });
-    function X(t) { return +(x0 + (t - lo) / (hi - lo) * (x1 - x0)).toFixed(1); }
-    var xb = X(bio), xa = X(age), near = Math.abs(xa - xb) < 30;
-    if (Math.abs(xa - xb) > 0.1) box.appendChild(svg('rect', { x: Math.min(xa, xb), y: top - 3, width: Math.abs(xa - xb), height: 6, rx: 3, 'class': 'bas-span' }));
-    for (var t = lo; t <= hi; t += 2) {
-      var maj = !(t % 10), x = X(t);
-      box.appendChild(svg('line', { x1: x, y1: top + 5, x2: x, y2: top + (maj ? 15 : 10), 'class': 'bas-tk' + (maj ? ' maj' : '') }));
-      if (maj) box.appendChild(svg('text', { x: x, y: top + 27, 'class': 'bas-gl', 'text-anchor': 'middle' }, String(t)));
-    }
-    // Each label centred over its dot, pushed inward at the ends; two near ones turned away from each other.
-    function lab(x, other) {
-      var a = near ? (x <= other ? 'end' : 'start') : x < 16 ? 'start' : x > W - 16 ? 'end' : 'middle';
-      return { x: a === 'end' ? Math.min(W, x + 5) : a === 'start' ? Math.max(0, x - 5) : x, a: a };
-    }
-    var lb = lab(xb, xa), la = lab(xa, xb);
-    box.appendChild(svg('circle', { cx: xb, cy: top, r: 5.5, 'class': 'bas-bd' }));
-    box.appendChild(svg('text', { x: lb.x, y: top - 11, 'class': 'bas-bl', 'text-anchor': lb.a }, woNum(bio)));
-    box.appendChild(svg('circle', { cx: xa, cy: top, r: 5.5, 'class': 'bas-cd' }));
-    box.appendChild(svg('text', { x: la.x, y: top - 11, 'class': 'bas-cl', 'text-anchor': la.a }, woNum(age)));
+  // The logged weeks as a line (each week at its date) against the passport age dashed, the gap between them shaded,
+  // the last week a dot; the two numbers in the right gutter (pushed apart when close), the first and last week under.
+  function bioWeeksLine(hs, age) {
+    var W = 330, H = 120, L = 6, R = 40, T = 10, B = 22, last = hs[hs.length - 1];
+    var vs = hs.map(function (h) { return h.bio; }).concat([age]), lo = Math.floor(Math.min.apply(null, vs) - 1), hi = Math.ceil(Math.max.apply(null, vs) + 1);
+    var t0 = Date.parse(hs[0].week_start), t1 = Date.parse(last.week_start);
+    function X(d) { return L + (Date.parse(d) - t0) / Math.max(1, t1 - t0) * (W - L - R); }
+    function Y(v) { return T + (hi - v) / (hi - lo) * (H - T - B); }
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'bio-wl', role: 'img',
+      'aria-label': 'По неделям: ' + hs.map(function (h) { return hlShort(h.week_start) + ' ' + woNum(h.bio); }).join(', ') + '; паспорт ' + woNum(age) });
+    var pts = hs.map(function (h) { return X(h.week_start).toFixed(1) + ',' + Y(h.bio).toFixed(1); }).join(' '), ya = Y(age), yb = Y(last.bio), xe = W - R;
+    box.appendChild(svg('polygon', { 'class': 'gap ' + (last.bio <= age ? 'yg' : 'old'), points: X(hs[0].week_start).toFixed(1) + ',' + ya.toFixed(1) + ' ' + pts + ' ' + xe.toFixed(1) + ',' + ya.toFixed(1) }));
+    box.appendChild(svg('line', { x1: L, x2: xe, y1: ya.toFixed(1), y2: ya.toFixed(1), 'class': 'cal' }));
+    box.appendChild(svg('polyline', { points: pts, 'class': 'ln' }));
+    box.appendChild(svg('circle', { cx: xe.toFixed(1), cy: yb.toFixed(1), r: 5, 'class': 'dt' }));
+    var la = ya + 4, lb = yb + 4;
+    if (Math.abs(la - lb) < 13) { if (lb >= la) { lb = la + 13; } else { la = lb + 13; } }
+    box.appendChild(svg('text', { x: xe + 8, y: la.toFixed(1) }, woNum(age)));
+    box.appendChild(svg('text', { x: xe + 8, y: lb.toFixed(1), 'class': 'bv' }, woNum(last.bio)));
+    box.appendChild(svg('text', { x: L, y: H - 4 }, hlShort(hs[0].week_start)));
+    box.appendChild(svg('text', { x: xe, y: H - 4, 'text-anchor': 'end' }, hlShort(last.week_start)));
     return box;
+  }
+  // The lead's tiles: «Анализы» — in range / all of the latest tests and the first one out of range («вит. D ниже»),
+  // a tap scrolls to «Анализы»; «Вес» and «ВСР» — the last value and the change over «Тренды»' 30 days, a tap — its
+  // sheet. A tile without its data stays out; none — no row.
+  function bioTiles(T) {
+    if (!T.box) return;
+    var out = [], gs = T.labs && T.labs.groups || [], items = [];
+    gs.forEach(function (g) { items = items.concat(g.items || []); });
+    if (items.length) {
+      var off = items.filter(function (it) { return it.flag === 'high' || it.flag === 'low'; });
+      out.push(bioTile('test-tube', 'Анализы', (items.length - off.length) + '/' + items.length, '',
+        off.length ? bioLabShort(off[0].name) + ' ' + LAB_FLAG[off[0].flag] + (off.length > 1 ? ' · ещё ' + (off.length - 1) : '') : 'все в норме',
+        off.length ? 'hl-st-fatigue' : 'hl-st-productive', function () { haptic(); if (T.labsBox) T.labsBox.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+        'Анализы: в норме ' + (items.length - off.length) + ' из ' + items.length + (off.length ? ', ' + off[0].name + ' ' + LAB_FLAG[off[0].flag] : '')));
+    }
+    var st = T.stats && T.stats.series || {};
+    [['weight', 'weight', 'Вес', 'кг', 0], ['hrv', 'activity', 'ВСР', 'мс', 1]].forEach(function (m) {
+      var x = st[m[0]], p = x && x.points || [];
+      if (!p.length) return;
+      var last = p[p.length - 1].v, d = bioNum(x.delta), sign = d == null ? '' : bioSigned(d);
+      var cls = !m[4] || d == null || Math.abs(d) < 0.05 ? '' : d > 0 ? 'hl-st-productive' : 'hl-st-fatigue';
+      out.push(bioTile(m[1], m[2], woNum(last), m[3], d == null ? 'за 30 дн.' : sign + ' за 30 дн.', cls, function (ev) { haptic(); hlSeriesSheet(m[0], HL_BIO_KEYS, ev.currentTarget); },
+        m[2] + ' ' + woNum(last) + ' ' + m[3] + (d == null ? '' : ', за 30 дней ' + sign) + ' — график'));
+    });
+    clear(T.box).hidden = !out.length;
+    add.apply(null, [T.box].concat(out));
+  }
+  function bioTile(ic, h, v, u, sub, cls, fn, label) {
+    var t = add(el('div', 'bio-tile' + (cls ? ' ' + cls : '')), add(el('div', 'h'), icon(ic), el('span', '', h)),
+      add(el('div', 'v'), document.createTextNode(v), u ? el('small', '', ' ' + u) : null), el('div', 's', sub));
+    tap(t, fn);
+    t.setAttribute('aria-label', label);
+    return t;
+  }
+  // A test's name for a tile: «Витамин D» → «вит. D», else its first letter lower-cased (an abbreviation stays).
+  function bioLabShort(n) {
+    n = String(n || '').replace(/^витамин\s+/i, 'вит. ');
+    return /^\S\p{Ll}/u.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n;
   }
   // «Факторы» as «Монитор»'s tiles: a group a tile — its short name, its age in years, the change against the calendar
   // age in a pill (younger green, older orange) and a thin scale on the left: ±10 years around a line at the calendar
@@ -18236,15 +18309,28 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var d = g.last_at ? foodDay(g.last_at) : null;
     c.appendChild(add(el('div', 'sub gsub'), document.createTextNode('Следующая: ' + gymShort(g.name) + ' · ' + (g.up || (d ? 'прошлый раз ' + WEEK[wd(d)] + ' ' + dm(d) : 'ещё не было')) + ' '),
       gymBadge(gymLevelOf(g.name))));
+    // A row an exercise (his ask 31.10.2026, «чтобы были видео»): its looping animation 56 px, the name, «3×10–12 · 55 кг»,
+    // the why in a short muted line or chip; a tap — the exercise's sheet (gymExSheet: the animation large, this time's
+    // weight, the muscles, the swaps). Only the thumbnails in sight play (gymPlayInView).
+    var gifs = g.gifs || {}, mus = g.muscles || {}, vids = [];
     (g.items || []).forEach(function (i) {
-      var s = i.suggest || {}, h = gymHint(i);
-      var r = add(el('div', 'row frow wnx'), add(el('span', 'tx'), el('div', 't', i.exercise),
-        el('div', 'mu', i.sets + '×' + i.reps + (h ? ' · ' + h : ''))),
+      var s = i.suggest || {}, h = gymHint(i), m = gymMeta(i), th = gymThumb(gifs[i.exercise], i.exercise), v = th.querySelector('video');
+      if (v) vids.push(v);
+      var r = add(el('div', 'row frow wnx gxrow'), th, add(el('span', 'tx'), el('div', 't', i.exercise),
+        el('div', 'mu', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')),
+        m.chip ? add(el('div', 'gnt'), pill(m.chip, 'warn')) : m.note ? el('div', 'mu gnt', m.note) : null),
         add(el('span', 'pr'), s.why === 'up' && s.kg != null ? pill('↑ ' + woNum(s.kg), 'good') : s.why === 'up' && s.reps_to ? pill('↑ ' + s.reps_to, 'good')
           : s.why === 'down' ? pill('↓ ' + woNum(s.kg), 'warn') : null));
-      r.setAttribute('aria-label', i.exercise + ', ' + i.sets + ' по ' + i.reps + (h ? ', ' + h : ''));
-      c.appendChild(tap(r, function () { planSheet(r, done); }));
+      r.setAttribute('aria-label', i.exercise + ', ' + i.sets + ' по ' + i.reps + (h ? ', ' + h : '') + ' — как делать');
+      c.appendChild(tap(r, function () {
+        haptic();
+        var w = gymWhy({ sg: s, reps: i.reps });
+        gymExSheet(i, gifs, mus, r, [add(el('div', 'gxw'), el('b', '', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')), el('span', 'mu', ' · отдых ' + (i.rest_s || 75) + ' с')),
+          w ? el('div', 'mu gxwhy', w) : null]);
+      }));
     });
+    gymPlayInView(vids);
+    if (Object.keys(gifs).length) c.appendChild(el('div', 'mu gattr gcattr', 'Анимации: ExerciseDB · AscendAPI'));
     var pts = (w4 || []).map(function (x) { return { day: x.day, v: Number(x.kg) }; });
     if (pts.length) {
       var last = pts[pts.length - 1].v, dv = pts.length > 1 ? Math.round((last - pts[0].v) * 10) / 10 : null;
@@ -18258,6 +18344,28 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     var s = gymLoad(), go = foodBtn('btn wide gstart', 'dumbbell', s ? 'Продолжить · ' + (s.day || 'зал') : 'Начать зал', function () { gymScreen(go, done); });
     c.appendChild(add(el('div', 'foot'), go));
     return c;
+  }
+  // The card row's meta: the weight to lift as the main line («55 кг», «80 → 85 кг», «подбери вес»), the reason
+  // apart — after a break a chip «после перерыва −15 %» and the weight it starts from, a borrowed weight «по аналогу …».
+  function gymMeta(i) {
+    var s = i.suggest || {}, via = s.via ? 'по аналогу: ' + s.via : null;
+    if (s.why === 'restart' && s.kg != null && i.unit !== 'bw' && i.progress !== 'bw') {
+      return { main: woNum(s.kg) + ' кг', chip: s.pct != null && s.pct < 100 ? 'после перерыва −' + (100 - s.pct) + ' %' : 'после перерыва', note: via };
+    }
+    return { main: gymHintBase(i), chip: null, note: via };
+  }
+  // Only the animations in sight play: each video waits unloaded (preload none) until it scrolls in, then plays, and
+  // pauses when it leaves; without IntersectionObserver they autoplay as before.
+  function gymPlayInView(vs) {
+    if (!vs.length || !window.IntersectionObserver) return;
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var v = e.target;
+        if (!v.isConnected) { io.unobserve(v); return; }
+        if (e.isIntersecting) { v.preload = 'auto'; var p = v.play(); if (p && p.catch) p.catch(noop); } else v.pause();
+      });
+    });
+    vs.forEach(function (v) { v.removeAttribute('autoplay'); v.autoplay = false; v.preload = 'none'; io.observe(v); });
   }
   // The hint after an exercise's plan — the twin of _shared/gym.ts hintText: «80 → 85 кг», «80 кг», «80 → 75 кг (−5 %)»,
   // «подбери вес», «было 12 → 13», «было 12». Edit both together.
@@ -19735,10 +19843,12 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   }
   // An exercise of the plan: its animation large, the sets and the rest, its muscle groups, and its swaps — each a row
   // with its own animation, a tap opens it the same way (the sheet closes back to this one).
-  function gymExSheet(i, gifs, mus, from) {
+  // `lines` (the «Зал» card's) stand for the plan's line: this time's sets, weight and rest, and why that weight.
+  function gymExSheet(i, gifs, mus, from, lines) {
     var close = noop, alts = (i.alts || []).filter(Boolean), nodes = [];
     nodes.push(gymMedia(gifs[i.exercise], i.exercise, 'ggif gbig', true));
-    if (i.sets) nodes.push(el('div', 'sub', gymPlanLine(i)));
+    if (lines) nodes = nodes.concat(lines.filter(Boolean));
+    else if (i.sets) nodes.push(el('div', 'sub', gymPlanLine(i)));
     if ((mus[i.exercise] || []).length) nodes.push(add.apply(null, [el('div', 'chips gpch gxch')].concat(mus[i.exercise].map(function (g) { return pill(g); }))));
     if (alts.length) {
       var c = mkCard('repeat', 'Замены');
