@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-10-31 21:21">
+<meta name="published" content="2026-10-31 21:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1601,7 +1601,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .hen-w{position:relative;touch-action:pan-y}.hen-ch{display:block;width:100%;height:auto;overflow:visible}.hen-ch .ge{font-size:10px;fill:var(--muted)}
 .hen-gl{stroke:var(--line);stroke-width:1}.hen-l{fill:none;stroke:var(--ring-recovery);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .hen-f{stroke:none}.hen-s0{stop-color:var(--ring-recovery);stop-opacity:.3}.hen-s1{stop-color:var(--ring-recovery);stop-opacity:0}.hen-dot{fill:var(--ring-recovery);stroke:var(--bg0,var(--surface));stroke-width:2}
-.hen-b-sleep{fill:var(--ring-sleep-soft)}.hen-b-workout{fill:var(--ring-load-soft)}.hen-x{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.hen-b-sleep{fill:var(--ring-sleep-soft)}.hen-b-workout{fill:var(--ring-load-soft)}.hen-off{fill:url(#p-off);opacity:.55}.hen-ch .hen-off-i{width:12px;height:12px;color:var(--muted)}.hen-x{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
 .hen-tip{position:absolute;top:0;width:90px;padding:3px 0;border-radius:8px;background:var(--surface-2);font:700 12px var(--font-num);text-align:center;pointer-events:none}
 .hen-r .hen-d{flex:none;font:800 16px var(--font-num);font-variant-numeric:tabular-nums}.hen-sleep .hmini{color:var(--ring-sleep);background:var(--ring-sleep-soft)}
 .hen-day .hmini{color:var(--muted);background:var(--track)}.hen-workout .hmini{color:var(--wo);background:color-mix(in srgb,var(--wo) 16%,transparent)}
@@ -1614,6 +1614,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .htl-e{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;font-size:20px;line-height:1}
 .htl-meal{background:color-mix(in srgb,var(--nu-carbs) 16%,transparent)}.htl-workout{background:var(--ring-load-soft)}
 .htl-sleep{background:var(--ring-sleep-soft);color:var(--ring-sleep)}.htl-sleep .i{width:20px;height:20px}
+/* The watch off the wrist (docs/specs/watch-off.md): a muted row, no tap. */
+.htl-off{background:var(--track);color:var(--muted)}.htl-off .i{width:20px;height:20px}.htl-r.htl-ro .htl-n{color:var(--muted);font-weight:600}
+.hl-off{display:flex;align-items:center;gap:8px;margin:8px 0 0;font-size:12px}.hl-off .i{flex:none;width:16px;height:16px}
 .hslp{margin:14px 0 2px}.hslp-p{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px}
 .hslp-p .mu{display:inline-flex;align-items:center;gap:6px;font-size:13px}.hslp-p .i{width:16px;height:16px}.hslp-p b{font:800 17px var(--font-num);font-variant-numeric:tabular-nums}
 .hslp-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hslp-p+.hslp-p{margin-top:-4px}
@@ -1766,7 +1769,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .ctev.tap{cursor:pointer}.ctev.cskip>*{opacity:.5}
 .ctet{display:flex;align-items:center;gap:6px;min-width:0;font:700 14px/1.3 var(--font)}
 .ctic{position:relative;flex:none;display:flex;color:var(--cs)}.ctic .i{width:16px;height:16px}
-.ctic .cck{position:absolute;right:-5px;bottom:-4px;width:12px;height:12px;padding:2px;border-radius:50%;background:var(--good);color:var(--solid);stroke-width:3.2}
+/* Done (31.10.2026, his «налазит на картинку»): a green ✓ after the title, not a badge over the icon. */
+.ctet .cdn{flex:none;width:14px;height:14px;color:var(--good);stroke-width:3}
 .ctn{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ctev .mu{margin-top:1px;font:500 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ctbt{align-items:center;min-height:38px}
@@ -1844,7 +1848,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 <linearGradient id="g-bio-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hl-bio);stop-opacity:.22"/><stop offset="1" style="stop-color:var(--hl-bio);stop-opacity:0"/></linearGradient>
 <filter id="g-glow" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".4"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <filter id="g-glow-d" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feComponentTransfer in="b" result="s"><feFuncA type="linear" slope=".7"/></feComponentTransfer><feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<pattern id="p-load-band" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--ring-load);stroke-width:2.2"/></pattern></defs>
+<pattern id="p-load-band" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--ring-load);stroke-width:2.2"/></pattern>
+<pattern id="p-off" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" style="stroke:var(--muted);stroke-width:1.4"/></pattern></defs>
 <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
 <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
@@ -2022,6 +2027,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 <symbol id="i-grip-vertical" viewBox="0 0 24 24"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
 <symbol id="i-layout-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
 <symbol id="i-battery-charging" viewBox="0 0 24 24"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></symbol>
+<symbol id="i-plug-zap" viewBox="0 0 24 24"><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="m2 22 3-3"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m18 3-4 4h6l-4 4"/></symbol>
 <symbol id="i-gallery-horizontal-end" viewBox="0 0 24 24"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></symbol>
 <symbol id="i-ungroup" viewBox="0 0 24 24"><rect width="8" height="6" x="5" y="4" rx="1"/><rect width="8" height="6" x="11" y="14" rx="1"/></symbol>
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
@@ -16068,14 +16074,18 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     });
   }
   // The day's curve: 00–24 on x, 0–100 on y; the night and the workouts as soft bands under a thin line with a soft
-  // fill, the level now a dot; a crosshair reads the time and the level.
+  // fill, the level now a dot; a crosshair reads the time and the level. The watch off (en.off, docs/specs/watch-off.md):
+  // a hatched band the full height with the plug-zap at its foot, the line broken over it, the crosshair «нет данных».
   function hlEnergyChart(en, W) {
     var H = 168, L = 4, R = 34, T = 10, B = 22, pw = W - L - R, ph = H - T - B;
     var t0 = Date.parse(en.curve[0][0]), span = 864e5;
     function x(t) { return L + Math.max(0, Math.min(1, (Date.parse(t) - t0) / span)) * pw; }
     function y(v) { return T + (1 - v / 100) * ph; }
+    var offs = (en.off || []).map(function (o) { return { a: Date.parse(o.from), b: Date.parse(o.to), o: o }; });
+    function inOff(t) { var ms = Date.parse(t); return offs.some(function (g) { return ms > g.a && ms < g.b; }); }
+    function offWhen(g) { return foodTime(g.o.from) + '–' + foodTime(g.o.to); }
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hen-ch', role: 'img',
-      'aria-label': 'Запас энергии за день: сейчас ' + en.level + ' %' });
+      'aria-label': 'Запас энергии за день: сейчас ' + en.level + ' %' + offs.map(function (g) { return ', часы сняты ' + offWhen(g); }).join('') });
     [0, 50, 100].forEach(function (v) {
       box.appendChild(svg('line', { x1: L, x2: L + pw, y1: y(v), y2: y(v), 'class': 'hen-gl' }));
       box.appendChild(svg('text', { x: W - 2, y: y(v) + 4, 'class': 'ge', 'text-anchor': 'end' }, v + ' %'));
@@ -16085,15 +16095,35 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
       var a = x(u.from), b = x(u.to);
       if (b - a > 0.5) box.appendChild(svg('rect', { x: a.toFixed(1), y: T, width: (b - a).toFixed(1), height: ph, 'class': 'hen-b hen-b-' + u.kind }));
     });
+    offs.forEach(function (g) {
+      var a = x(g.o.from), b = x(g.o.to), ic = icon('plug-zap', 'hen-off-i');
+      box.appendChild(svg('rect', { x: a.toFixed(1), y: T, width: Math.max(2, b - a).toFixed(1), height: ph, 'class': 'hen-off' }));
+      ic.setAttribute('x', ((a + b) / 2 - 6).toFixed(1));
+      ic.setAttribute('y', (T + ph - 14).toFixed(1));
+      ic.setAttribute('width', 12);
+      ic.setAttribute('height', 12);
+      box.appendChild(ic);
+    });
     var pts = en.curve.map(function (p) { return [x(p[0]), y(p[1])]; });
-    var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('');
+    // The line in pieces: a point inside a gap of the watch is left out and the next one starts a new piece.
+    var segs = [], seg = null;
+    en.curve.forEach(function (c, i) {
+      if (inOff(c[0])) { seg = null; return; }
+      if (!seg) segs.push(seg = []);
+      seg.push(pts[i]);
+    });
+    function xy(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }
+    var d = segs.map(function (sg) { return sg.map(function (p, i) { return (i ? 'L' : 'M') + xy(p); }).join(''); }).join('');
+    var fill = segs.map(function (sg) {
+      return sg.map(function (p, i) { return (i ? 'L' : 'M') + xy(p); }).join('') + 'L' + sg[sg.length - 1][0].toFixed(1) + ' ' + y(0) + 'L' + sg[0][0].toFixed(1) + ' ' + y(0) + 'Z';
+    }).join('');
     var lastP = pts[pts.length - 1];
     // The fill fades down from the line, so the shaded night and workouts read through it.
     var gid = 'hen-g' + (hlEnergyChart.n = (hlEnergyChart.n || 0) + 1), gr = svg('linearGradient', { id: gid, x1: 0, y1: 0, x2: 0, y2: 1 });
     gr.appendChild(svg('stop', { offset: 0, 'class': 'hen-s0' }));
     gr.appendChild(svg('stop', { offset: 1, 'class': 'hen-s1' }));
     box.appendChild(add(svg('defs', {}), gr));
-    box.appendChild(svg('path', { d: d + 'L' + lastP[0].toFixed(1) + ' ' + y(0) + 'L' + pts[0][0].toFixed(1) + ' ' + y(0) + 'Z', 'class': 'hen-f', fill: 'url(#' + gid + ')' }));
+    box.appendChild(svg('path', { d: fill, 'class': 'hen-f', fill: 'url(#' + gid + ')' }));
     box.appendChild(svg('path', { d: d, 'class': 'hen-l' }));
     box.appendChild(svg('circle', { cx: lastP[0].toFixed(1), cy: lastP[1].toFixed(1), r: 4.5, 'class': 'hen-dot' }));
     [0, 6, 12, 18, 24].forEach(function (h) {
@@ -16106,14 +16136,16 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     function hide() { cross.style.display = 'none'; tip.hidden = true; }
     tip.hidden = true;
     box.addEventListener('pointermove', function (ev) {
-      var r = box.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = 0;
-      pts.forEach(function (p, i) { if (Math.abs(p[0] - px) < Math.abs(pts[best][0] - px)) best = i; });
-      var p = pts[best], c = en.curve[best];
-      cross.setAttribute('x1', p[0].toFixed(1)); cross.setAttribute('x2', p[0].toFixed(1));
+      var r = box.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = -1;
+      var g = offs.filter(function (q) { return px >= x(q.o.from) - 3 && px <= x(q.o.to) + 3; })[0];
+      pts.forEach(function (p, i) { if (!inOff(en.curve[i][0]) && (best < 0 || Math.abs(p[0] - px) < Math.abs(pts[best][0] - px))) best = i; });
+      var cx = g ? (x(g.o.from) + x(g.o.to)) / 2 : pts[best][0], tw = g ? 150 : 90;
+      cross.setAttribute('x1', cx.toFixed(1)); cross.setAttribute('x2', cx.toFixed(1));
       cross.style.display = '';
       tip.hidden = false;
-      tip.textContent = foodTime(c[0]) + ' · ' + c[1] + ' %';
-      tip.style.left = Math.max(0, Math.min(r.width - 90, p[0] * r.width / W - 45)) + 'px';
+      tip.style.width = tw + 'px';
+      tip.textContent = g ? offWhen(g) + ' · нет данных' : foodTime(en.curve[best][0]) + ' · ' + en.curve[best][1] + ' %';
+      tip.style.left = Math.max(0, Math.min(r.width - tw, cx * r.width / W - tw / 2)) + 'px';
     });
     box.addEventListener('pointerleave', hide);
     return wrap;
@@ -16149,10 +16181,14 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
   // latest first; a row — the emoji in a tinted circle, the time, the title, one line of what it was (a meal's kcal and
   // its Ж·У·Б dots, a workout's load share · length · kcal, the night's window · sleep · score); three rows and
   // «Показать таймлайн» for the rest; a tap — open(item, row). «Тренировка» under it (the day's «Спорт» is folded in).
+  // The watch off (docs/specs/watch-off.md): a muted row «Часы сняты · 13:26–14:16 · 50 мин», no tap.
   function hlTlRow(x) {
-    var lead = el('span', 'htl-e htl-' + x.type, x.type === 'sleep' ? null : x.emoji || ''), title = x.title, meta;
+    var off = x.type === 'off', lead = el('span', 'htl-e htl-' + x.type, x.type === 'sleep' || off ? null : x.emoji || ''), title = x.title, meta;
     if (x.type === 'sleep') lead.appendChild(icon('moon'));
-    if (x.type === 'meal') {
+    if (off) {
+      lead.appendChild(icon('plug-zap'));
+      meta = el('div', 'mu', [x.time + '–' + x.end_time, hlFmt('sleep_min', x.minutes), 'не в расчёте'].join(' · '));
+    } else if (x.type === 'meal') {
       title = x.title + (x.text ? ': ' + x.text : '');
       meta = nuMacroLine(x);
       meta.insertBefore(el('span', 'htl-k', grouped(Math.round(Number(x.kcal) || 0)) + ' ккал'), meta.firstChild);
@@ -16162,8 +16198,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         x.minutes ? hlVal('sleep_min', x.minutes) : null, x.score != null ? x.score + ' %' : null]).filter(Boolean).join(' · '));
     }
     meta.className += ' htl-m';
-    var r = add(el('div', 'row htl-r'), lead, add(el('span', 'tx'), el('div', 'mu htl-t', x.time || 'ночь'), el('div', 't htl-n', title), meta),
-      add(el('span', 'hpr-go'), icon('chevron-right')));
+    var r = add(el('div', 'row htl-r' + (off ? ' htl-ro' : '')), lead, add(el('span', 'tx'), el('div', 'mu htl-t', x.time || 'ночь'), el('div', 't htl-n', title), meta),
+      off ? null : add(el('span', 'hpr-go'), icon('chevron-right')));
     r.setAttribute('aria-label', (x.time ? x.time + ', ' : '') + title + ', ' + meta.textContent);
     return r;
   }
@@ -16174,7 +16210,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
     xs.forEach(function (x, i) {
       var r = hlTlRow(x);
       if (i >= 3) { r.hidden = true; more.push(r); }
-      c.appendChild(tap(r, function () { haptic(); open(x, r); }));
+      c.appendChild(x.type === 'off' ? r : tap(r, function () { haptic(); open(x, r); }));
     });
     if (!n) c.appendChild(el('div', 'mu wempty', 'Пока пусто: еда, тренировки и сон встанут сюда по времени.'));
     var foot = el('div', 'foot');
@@ -16568,6 +16604,9 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
           mr.setAttribute('aria-label', 'Мышечная нагрузка: ' + m.value + ' %');
           parts.appendChild(mr);
         }
+        // The watch's gaps of the day (docs/specs/watch-off.md): their pulse is not counted.
+        var offMin = (j.watch_off || []).reduce(function (a, o) { return a + o.min; }, 0);
+        if (offMin) parts.appendChild(add(el('div', 'mu hl-off'), icon('plug-zap'), el('span', '', 'Без часов ' + hlFmt('sleep_min', offMin) + ' — не в расчёте')));
       }
       body.appendChild(parts);
       if (cur === 'sleep') {
@@ -20305,7 +20344,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
         r.xs.forEach(function (p) {
           var x = p.x, sub = subOf(x), dn = doneOf(x), c = el('div', 'ctev ' + csOf(x) + (dn === false ? ' cskip' : ''));
           c.style.minHeight = h + 'px';
-          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x)), dn === true ? icon('check', 'cck') : null), el('span', 'ctn', x.title || 'Без названия')),
+          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x))), el('span', 'ctn', x.title || 'Без названия'), dn === true ? icon('check', 'cdn') : null),
             two ? el('div', 'mu', calHm(x.starts_at) + (p.b > p.a ? '–' + calHm(x.ends_at) : '')) : null, sub ? el('div', 'mu', sub) : null);
           var act = actOf(x, date, c);
           if (act) {
@@ -20430,7 +20469,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
           c = el('div', 'chge ' + csOf(x) + (dn === false ? ' cskip' : ''));
           c.style.cssText = 'top:' + (y(p.a) + 1) + 'px;height:' + ht + 'px;left:calc((100% + 4px) * ' + p.col + ' / ' + p.n +
             ');width:calc((100% + 4px) / ' + p.n + ' - 4px)';
-          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x)), dn === true ? icon('check', 'cck') : null), el('span', 'ctn', x.title || 'Без названия')));
+          add(c, add(el('div', 'ctet'), add(el('span', 'ctic'), icon(icOf(x))), el('span', 'ctn', x.title || 'Без названия'), dn === true ? icon('check', 'cdn') : null));
           // Its times and place under the title when there is room; in a column the place on a line of its own.
           if (ht >= 70 && p.n > 1 && sub) add(c, el('div', 'mu', tm), el('div', 'mu', sub));
           else if (ht >= 44) c.appendChild(el('div', 'mu', [tm, sub].filter(Boolean).join(' · ')));
