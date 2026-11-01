@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 17:19">
+<meta name="published" content="2026-11-01 17:59">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -866,6 +866,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 /* The widgets of 27.10.2026: the catalog's group headers, the weather, the goals' bars, the ＋ widgets, the countdown's pen. */
 .bcat .bcg{padding:16px 0 4px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}
 .bcat .bcg:first-child{padding-top:2px}
+/* The «Цели» sheet's groups (01.11.2026): the catalog's group header. */
+.fgsec{padding:14px 0 6px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}.fgsec:first-child{padding-top:0}
 .bv.bwx{display:flex;align-items:center;gap:8px}.bv.bwx .i{flex:none;width:30px;height:30px;stroke-width:1.75}
 .bsplit .bcol .bv.bwx{margin:0}.bcol>.mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bhrs{flex:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;width:58%}
@@ -2116,6 +2118,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+<symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
 <symbol id="i-cloud-sun" viewBox="0 0 24 24"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
 <symbol id="i-cloud-moon" viewBox="0 0 24 24"><path d="M13 16a3 3 0 0 1 0 6H7a5 5 0 1 1 4.9-6z"/><path d="M18.376 14.512a6 6 0 0 0 3.461-4.127c.148-.625-.659-.97-1.248-.714a4 4 0 0 1-5.259-5.26c.255-.589-.09-1.395-.716-1.248a6 6 0 0 0-4.594 5.36"/></symbol>
 <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></symbol>
@@ -2852,7 +2855,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // prefs.health (docs/specs/nutrition-health.md, docs/specs/labs.md): the kcal goal (a whole 500–6000), his birth date
   // and height (a whole 100–250 cm), the macro goals fat_g, carbs_g, protein_g (each a whole 5–1000 g, «Питание» как у
-  // Bevel), each optional; none of them — null. miniapp's healthPrefsIn is the twin.
+  // Bevel), the day's fiber_g (5–100), water_ml (500–6000) and sleep_min (240–720), each optional; none of them — null.
+  // miniapp's healthPrefsIn is the twin.
   function healthPrefsIn(h) {
     if (!h || typeof h !== 'object') return null;
     var o = {};
@@ -2861,6 +2865,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (typeof h.height_cm === 'number' && h.height_cm % 1 === 0 && h.height_cm >= 100 && h.height_cm <= 250) o.height_cm = h.height_cm;
     ['fat_g', 'carbs_g', 'protein_g'].forEach(function (k) {
       if (typeof h[k] === 'number' && h[k] % 1 === 0 && h[k] >= 5 && h[k] <= 1000) o[k] = h[k];
+    });
+    [['fiber_g', 5, 100], ['water_ml', 500, 6000], ['sleep_min', 240, 720]].forEach(function (g) {
+      var v = h[g[0]];
+      if (typeof v === 'number' && v % 1 === 0 && v >= g[1] && v <= g[2]) o[g[0]] = v;
     });
     return Object.keys(o).length ? o : null;
   }
@@ -14888,6 +14896,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // Health's food (docs/specs/nutrition-health.md): the day's kcal goal, prefs.health's or Bevel's 2 500.
   var KCAL_GOAL = 2500;
   function kcalGoal() { return (prefs.health && prefs.health.kcal_goal) || KCAL_GOAL; }
+  // The day's water, ml: prefs.health's (the «Цели» sheet), else 2 л — the server's WATER_GOAL.
+  var WATER_GOAL = 2000;
+  function waterGoal() { return (prefs.health && prefs.health.water_ml) || WATER_GOAL; }
   var FOOD_MEALS = [['breakfast', 'Завтрак'], ['lunch', 'Обед'], ['dinner', 'Ужин'], ['snack', 'Перекус']];
   var FOOD_RU = { breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус' };
   function foodToday() { var p = wp(Date.now()); return p.year + '-' + p.month + '-' + p.day; }
@@ -15184,7 +15195,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var WATER_ML = [250, 330, 500];
   function waterL(ml) { return String(Math.round(ml / 10) / 100).replace('.', ','); }
   function nuWater(w, h) {
-    var c = mkCard('droplet', 'Вода'), goal = w.goal || 2000, f = Math.min(1, w.ml / goal), R = 18, L = 2 * Math.PI * R;
+    var c = mkCard('droplet', 'Вода'), goal = waterGoal(), f = Math.min(1, w.ml / goal), R = 18, L = 2 * Math.PI * R;
     var left = goal - w.ml, n = Math.ceil(left / 250);
     c.className += ' nuw';
     var ring = svg('svg', { viewBox: '0 0 44 44', 'class': 'nuw-r', 'aria-hidden': 'true' });
@@ -15449,10 +15460,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     sodium: 'Натрий — это в основном соль: много соли поднимает давление и задерживает воду. До 2 300 мг в день — безопасный порог; выше снимается по доле, до −10 при 4 600 мг и больше. Натрий берётся из Health.',
     grains: 'Цельные злаки — овсянка, гречка, бурый рис, киноа, цельнозерновой и ржаной хлеб: медленные углеводы и клетчатка. Фактор даёт +10, если они есть в записях дня.',
     fats: 'Полезные жиры — авокадо, орехи, оливковое масло, семечки: ненасыщенные жиры для сердца и сытости. Фактор даёт +10, если они есть в записях дня.',
-    fiber: 'Клетчатка кормит кишечный микробиом, держит сытость и сглаживает сахар в крови. Цель — 25 г в день: +10 при 25 г и больше, меньше — по доле. Клетчатка берётся из Health.',
-    water: 'Вода за день: стаканы из журнала и напитки из записей, в дни без них — из Health. Цель — 2 л в день: +10 при 2 л и больше, меньше — по доле.'
+    fiber: 'Клетчатка кормит кишечный микробиом, держит сытость и сглаживает сахар в крови. Цель — {g} в день: +10 при {g} и больше, меньше — по доле. Клетчатка берётся из Health.',
+    water: 'Вода за день: стаканы из журнала и напитки из записей, в дни без них — из Health. Цель — {g} в день: +10 при {g} и больше, меньше — по доле.'
   };
   var NU_THR = { sugar: '50 г', sodium: '2 300 мг', fiber: '25 г', water: '2 л' };
+  // A factor's threshold in words: a plus one's goal as the server counted it (his, from «Цели»), a limit's fixed one.
+  function nuThr(f) { return f.kind === 'plus' && f.goal != null ? woNum(f.goal) + ' ' + f.unit : NU_THR[f.key]; }
   function nuPoints(f) { return f.points == null ? '—' : (f.kind === 'limit' ? '−' : '+') + woNum(Math.abs(f.points)); }
   // A factor's slider: the track; a plus filled to the dot, a limit with its safe threshold as a tick and what is past it
   // in orange; no data — the track alone.
@@ -15505,10 +15518,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function nuFactorSheet(f, from) {
     var said = f.found && f.found.length ? 'Сегодня в записях: ' + f.found.join(', ') + '.'
       : NU_THR[f.key] ? (f.value == null ? 'За этот день Health этого не прислал — фактор не считается.'
-        : 'За день ' + woNum(f.value) + ' ' + f.unit + ', ' + (f.kind === 'limit' ? 'безопасный порог ' : 'цель ') + NU_THR[f.key] + '.')
+        : 'За день ' + woNum(f.value) + ' ' + f.unit + ', ' + (f.kind === 'limit' ? 'безопасный порог ' : 'цель ') + nuThr(f) + '.')
         : 'В записях дня этого нет.';
     legalSheet(f.emoji + ' ' + f.name, [add(el('div', 'nuf'), el('span', 'nufn', 'Баллы за день'), nuSlider(f, 120),
-      el('span', 'nufp' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : ''), nuPoints(f))), el('p', 'nufx', NU_WHY[f.key] || ''),
+      el('span', 'nufp' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : ''), nuPoints(f))), el('p', 'nufx', (NU_WHY[f.key] || '').replace(/\{g\}/g, nuThr(f) || '')),
       el('div', 'mu msrc', said)], from);
   }
   // An entry's Ж·У·Б under its products on the timeline, a dot of each macro's colour.
@@ -15970,45 +15983,49 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu msrc', 'Код ' + c + (name ? ' · ' + name : '') + '. Фото этикетки уйдёт боту в личку — модель на Mac запишет еду за пару минут.'),
       add(el('div', 'bar fmiss-b'), photo, hand), form], from);
   }
-  // «Цели» (docs/specs/nutrition-health.md): the kcal of the day's Health bar, a whole 500–6000; empty — Bevel's 2 500.
-  // «Цели»: the kcal goal of Health's food, the macros' grams («Питание» как у Bevel: each a whole 5–1000; empty — Bevel's
-  // 89 / 212 / 213 g at 2 500 kcal, scaled to the kcal goal), his birth date and height (the biological age,
-  // docs/specs/labs.md); an empty field is its default (2 500 kcal, 25.11.2000, 180 cm).
+  // «Цели» (docs/specs/nutrition-health.md): every daily goal of «Здоровье» in one place (his ask 01.11.2026), in groups.
+  // «Питание» — the kcal of Health's food (a whole 500–6000), the macros' grams (each a whole 5–1000; empty — Bevel's
+  // 89 / 212 / 213 g at 2 500 kcal, scaled to the kcal goal) and fiber (a whole 5–100 г); «Вода» in litres (0,5–6, kept
+  // as water_ml); «Сон» in hours (4–12, kept as sleep_min); «Тело» — his birth date and height (the biological age,
+  // docs/specs/labs.md). An empty field is its default (2 500 kcal, 25 г, 2 л, 8 ч, 25.11.2000, 180 cm).
   function foodGoalSheet(from, done) {
-    var kc = el('input'), bd = el('input'), ht = el('input'), close = noop, h = prefs.health || {};
+    var kc = el('input'), fb = el('input'), wt = el('input'), sl = el('input'), bd = el('input'), ht = el('input'), close = noop;
+    var h = prefs.health || {};
+    function num(x, mode, ph, aria, v) { x.inputMode = mode; x.placeholder = ph; x.setAttribute('aria-label', aria); x.value = v; return x; }
+    function row(ic, x, unit) { return add(el('div', 'bar'), add(el('label', 'field'), ic, x, unit ? el('span', 'mu', unit) : null)); }
     var mac = NU_MACROS.map(function (m) {
-      var x = el('input');
-      x.inputMode = 'numeric';
-      x.placeholder = m[1].toLowerCase() + ', г — по умолчанию ' + nuDefault(m);
-      x.setAttribute('aria-label', m[1] + ', г в день');
-      x.value = h[m[3]] ? String(h[m[3]]) : '';
-      return x;
+      return num(el('input'), 'numeric', m[1].toLowerCase() + ' — по умолчанию ' + nuDefault(m), m[1] + ', г в день', h[m[3]] ? String(h[m[3]]) : '');
     });
-    kc.inputMode = 'numeric';
-    kc.placeholder = 'ккал в день, по умолчанию 2500';
-    kc.setAttribute('aria-label', 'Цель, ккал в день');
-    kc.value = h.kcal_goal ? String(h.kcal_goal) : '';
+    num(kc, 'numeric', 'по умолчанию 2500', 'Цель, ккал в день', h.kcal_goal ? String(h.kcal_goal) : '');
+    num(fb, 'numeric', 'клетчатка — по умолчанию 25', 'Клетчатка, г в день', h.fiber_g ? String(h.fiber_g) : '');
+    num(wt, 'decimal', 'по умолчанию 2', 'Вода, л в день', h.water_ml ? waterL(h.water_ml) : '');
+    num(sl, 'decimal', 'по умолчанию 8', 'Сон, часов за ночь', h.sleep_min ? String(Math.round(h.sleep_min / 60 * 100) / 100).replace('.', ',') : '');
     bd.type = 'date';
     bd.max = foodToday();
     bd.setAttribute('aria-label', 'Дата рождения');
     bd.value = h.birth_date || '2000-11-25';
-    ht.inputMode = 'numeric';
-    ht.placeholder = 'рост, см — по умолчанию 180';
-    ht.setAttribute('aria-label', 'Рост, см');
-    ht.value = h.height_cm ? String(h.height_cm) : '';
+    num(ht, 'numeric', 'рост — по умолчанию 180', 'Рост, см', h.height_cm ? String(h.height_cm) : '');
+    function val(x) { var t = x.value.trim(); return t ? foodNum(t) : null; }
     var ok = foodBtn('btn', 'check', 'Сохранить', function () {
-      var a = kc.value.trim(), k = a ? foodNum(a) : null, c = ht.value.trim(), cm = c ? foodNum(c) : null, b = bd.value;
+      var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), cm = val(ht), b = bd.value;
+      var ml = l === null ? null : Math.round(l * 1000), min = hr === null ? null : Math.round(hr * 60);
       if (k !== null && !(k % 1 === 0 && k >= 500 && k <= 6000)) { toast('Ккал — целое число от 500 до 6000'); return; }
+      if (f !== null && !(f % 1 === 0 && f >= 5 && f <= 100)) { toast('Клетчатка — целое число граммов от 5 до 100'); return; }
+      if (ml !== null && !(ml >= 500 && ml <= 6000)) { toast('Вода — от 0,5 до 6 л в день'); return; }
+      if (min !== null && !(min >= 240 && min <= 720)) { toast('Сон — от 4 до 12 часов'); return; }
       if (cm !== null && !(cm % 1 === 0 && cm >= 100 && cm <= 250)) { toast('Рост — целое число от 100 до 250 см'); return; }
       if (b && !(/^\d{4}-\d{2}-\d{2}$/.test(b) && b >= '1900-01-01' && b <= foodToday())) { toast('Дата рождения — не позже сегодня'); return; }
       var o = {}, bad = null;
       mac.forEach(function (x, i) {
-        var v = x.value.trim() ? foodNum(x.value.trim()) : null;
+        var v = val(x);
         if (v !== null && !(v % 1 === 0 && v >= 5 && v <= 1000)) bad = bad || NU_MACROS[i][1];
         else if (v !== null) o[NU_MACROS[i][3]] = v;
       });
       if (bad) { toast(bad + ' — целое число граммов от 5 до 1000'); return; }
       if (k !== null) o.kcal_goal = k;
+      if (f !== null) o.fiber_g = f;
+      if (ml !== null) o.water_ml = ml;
+      if (min !== null) o.sleep_min = min;
       if (b && b !== '2000-11-25') o.birth_date = b;
       if (cm !== null) o.height_cm = cm;
       close();
@@ -16017,13 +16034,15 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       cacheDrop('body:bioage');
       done();
     });
-    close = legalSheet('Цели', [add(el('div', 'bar'), add(el('label', 'field'), icon('target'), kc)),
-      el('div', 'mu msrc', 'Цель ккал в день для итогов из Health. Пусто — 2 500.'),
-      add.apply(null, [el('div')].concat(mac.map(function (x, i) {
-        return add(el('div', 'bar'), add(el('label', 'field'), el('i', 'nudot nu-' + NU_MACROS[i][0]), x));
-      }))),
-      el('div', 'mu msrc', 'Жиры, углеводы и белки в граммах в день. Пусто — 89 / 212 / 213 г при 2 500 ккал, по цели ккал.'),
-      add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), bd)), add(el('div', 'bar'), add(el('label', 'field'), icon('scale'), ht)),
+    close = legalSheet('Цели', [el('div', 'fgsec', 'Питание'), row(icon('target'), kc, 'ккал'),
+      add.apply(null, [el('div')].concat(mac.map(function (x, i) { return row(el('i', 'nudot nu-' + NU_MACROS[i][0]), x, 'г'); }))),
+      row(icon('leaf'), fb, 'г'),
+      el('div', 'mu msrc', 'Ккал — для итогов из Health. Жиры, углеводы, белки и клетчатка — граммы в день; пусто — 89 / 212 / 213\u00a0г при 2\u00a0500\u00a0ккал (по цели ккал) и 25\u00a0г клетчатки.'),
+      el('div', 'fgsec', 'Вода'), row(icon('droplet'), wt, 'л'),
+      el('div', 'mu msrc', 'Вода и напитки за день, в литрах — например 2,5. Пусто\u00a0— 2\u00a0л.'),
+      el('div', 'fgsec', 'Сон'), row(icon('moon'), sl, 'ч'),
+      el('div', 'mu msrc', 'Сколько спать за ночь, в часах — например 7,5. По этой цели считается кольцо сна. Пусто\u00a0— 8\u00a0ч.'),
+      el('div', 'fgsec', 'Тело'), row(icon('calendar'), bd), row(icon('scale'), ht, 'см'),
       el('div', 'mu msrc', 'Дата рождения и рост — для биологического возраста (возраст, безжировая масса к росту).'),
       add(el('div', 'bar mact mstick'), ok)], from);
   }
