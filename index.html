@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 01:33">
+<meta name="published" content="2026-11-01 10:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -409,7 +409,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .tboard>.card{margin:0}
 .tbl>.fi:first-child{border-top:1px solid var(--line)}
 .tboard .none{padding:4px 14px 12px;color:var(--muted)}
-.tdef{margin:0 0 12px}.tdef .pill{height:auto;min-height:32px;padding:6px 12px;font-size:13px;line-height:1.25;white-space:normal;text-align:left}
 .vbh{margin-top:2px;font-size:13px;line-height:1.35}.vbh.warn{color:var(--warn)}.vbh.good{color:var(--good)}.bl.vbh{white-space:normal}
 @media (min-width:1800px){
   .tboard{grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,.8fr);margin:0}
@@ -417,7 +416,6 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
   .tboard>.card{display:flex;flex-direction:column;max-height:calc(100dvh - var(--tb-top,160px) - 16px)}
   .tboard>.card>.ch{flex:none}
   .tboard .tbl{overflow-y:auto;min-height:0;overscroll-behavior:contain}
-  .tboard .fi>.row>.go{display:none}
 }
 @media (max-width:899px){body{font-size:15px}.seg.fit button{padding:0 2px;font-size:12px}.acts button.pill{height:44px;padding:0 12px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}
@@ -513,6 +511,18 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .ap{padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);font-size:12px;font-weight:500;white-space:nowrap}
 .row.ar{box-shadow:inset 3px 0 0 var(--ac)}
 .pill.acc.ar{border-color:color-mix(in srgb,var(--ac) 45%,transparent);background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
+/* «Задачи» by deadline (docs/specs/tasks-by-deadline.md): the segment with its counts; one-line rows, a ring in the area's
+   colour for the ✓; the red header of «Просрочено» with «→ на завтра»; a day's header; «Дальше недели» under the week. */
+.tseg button{flex:1 1 auto;padding:0 4px}.tseg .n{margin-left:5px;color:var(--muted-2);font-variant-numeric:tabular-nums}.tseg button.on .n{color:var(--link)}
+.row.tk1{gap:10px;padding-top:0;padding-bottom:0}.row.tk1.open{padding-top:8px;padding-bottom:8px}.row.tk1>.tb:first-child{margin:-4px -6px -4px -10px}
+.row.tk1 .t.tt{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row.tk1>.pr{flex:none;white-space:nowrap}
+.tring{display:grid;place-items:center;width:22px;height:22px;border:2px solid var(--ac,var(--muted));border-radius:50%;background:color-mix(in srgb,var(--ac,var(--muted)) 10%,transparent)}
+.tring.on{border-color:var(--ac,var(--mark));background:var(--ac,var(--mark));color:var(--solid)}.tring .i{width:14px;height:14px;stroke-width:3}
+.pill>.i.rp{flex:none;width:12px;height:12px;margin-right:4px}.pill>.i.rp:last-child{margin-right:0}.tseg[hidden]{display:none}
+.ch.tred h3,.ch.tred .ico{color:var(--bad)}.ch.tred .ico{border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.ch>.pill.mv{height:32px;gap:4px;padding:0 10px;font-size:12px;cursor:pointer}.ch>.pill.mv .i{width:14px;height:14px}
+.tdh{padding:12px 14px 6px;border-top:1px solid var(--line);color:var(--muted);font:700 13px/1.2 var(--font)}.tdh.now{color:var(--link)}
+.tlater{display:block;width:100%;min-height:44px;padding:0 4px;border:0;background:none;color:var(--muted);font:13px var(--font);text-align:left;cursor:pointer}
 /* Задачи v2 (docs/specs/tasks.md): the steps checklist (✓ · title · ▲ ▼ ×), the log, the «Сводка» sheet over the page. */
 .tsh{margin:12px 0 2px;color:var(--muted);font-size:12px;font-weight:600}
 .tst{display:flex;align-items:center;gap:2px;min-height:44px;border-top:1px solid var(--line)}.tst:first-child{border-top:0}
@@ -5890,8 +5900,12 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     return d;
   }
   // A task's row: its ✓ button (tick), the title, the caption, the steps pill, a red pill of the days it is late.
-  function taskLine(t, areas, today, tick) {
-    var ck = add(el('button', 'tb'), icon(t.done ? 'check-square' : 'square', 'mk' + (t.done ? ' on' : '')));
+  // With due (a pill or null) the row is the tab's one line (docs/specs/tasks-by-deadline.md): a ring in the area's colour
+  // for the ✓, no caption, and due in place of the late pill.
+  function taskLine(t, areas, today, tick, due) {
+    var one = due !== undefined;
+    var ck = add(el('button', 'tb'), one ? add(el('span', 'tring' + (t.done ? ' on' : '')), t.done ? icon('check') : null)
+      : icon(t.done ? 'check-square' : 'square', 'mk' + (t.done ? ' on' : '')));
     ck.type = 'button';
     ck.setAttribute('aria-label', 'Сделано: ' + t.title);
     ck.setAttribute('aria-pressed', String(!!t.done));
@@ -5900,7 +5914,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       haptic();
       tick();
     };
-    var late = !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = taskCaption(t, areas), sp = stepsPill(t);
+    var late = !one && !t.done && t.due_date && t.due_date < today ? days(t.due_date, today) : 0, cap = one ? null : taskCaption(t, areas),
+      sp = stepsPill(t), lp = one ? due : late > 0 ? pill(late + ' дн', 'bad') : null;
     // A task from a mail: its envelope opens the mail in Gmail.
     var ml = null;
     if (t.mail_url) {
@@ -5909,13 +5924,25 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       ml.setAttribute('aria-label', 'Открыть письмо: ' + t.title);
       ml.onclick = function (ev) { ev.stopPropagation(); openLink(t.mail_url); };
     }
-    return add(el('div', 'row tk' + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck, add(el('span', 'tx'), taskTitle(t), cap),
-      late > 0 || sp ? add(el('span', 'pr'), sp, late > 0 ? pill(late + ' дн', 'bad') : null) : null, ml);
+    return add(el('div', 'row tk' + (one ? ' tk1' : '') + (t.done ? ' done' : '') + (areaName(t.area, areas) ? ' ar a-' + t.area : '')), ck,
+      add(el('span', 'tx'), taskTitle(t), cap), lp || sp ? add(el('span', 'pr'), sp, lp) : null, ml);
   }
   // The next pt/sb/vs after today (w as wd(): 0 = Monday).
   function nextWd(today, w) { return addDays(today, (w - wd(today) + 6) % 7 + 1); }
+  // The day a task falls on (docs/specs/tasks-by-deadline.md): over, today, week (the next seven days), later, none.
+  function taskKind(t, today) {
+    if (!t.due_date) return 'none';
+    if (t.due_date < today) return 'over';
+    if (t.due_date === today) return 'today';
+    return t.due_date <= addDays(today, 7) ? 'week' : 'later';
+  }
+  // The segment of «Задачи» a kind is shown in; past the week only «Все» has it.
+  var TASK_SEG = { over: 'today', today: 'today', week: 'week', later: 'all', none: 'none' };
   function tasksView() {
     var tasks = [], areas = TASK_AREAS, opened = taskOpenId, refocus = taskOpenId, area = taskOpenId ? '' : store('taskArea') || '', more = {};
+    // The segment (docs/specs/tasks-by-deadline.md), remembered per device; picked: the first data has chosen it.
+    var seg = store('taskSeg'), picked = false;
+    if (['today', 'week', 'none', 'all'].indexOf(seg) < 0) seg = 'today';
     taskOpenId = null;
     var bar = el('form', 'bar'), input = el('input');
     input.placeholder = 'Новая задача…';
@@ -5927,25 +5954,24 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     var plus = add(el('button', 'btn'), icon('plus'));
     plus.type = 'submit';
     plus.setAttribute('aria-label', 'Добавить');
-    // Wide screen: the groups («Просрочено», «Сегодня», «Скоро»…) as a board (CSS .tboard).
-    var chips = el('div', 'hs tch'), body = el('div', wide() ? 'tboard' : '');
+    // A phone: «Сегодня · Неделя · Без срока · Все» (segBox) over the cards, the area chips in «Все» only. Wide screen:
+    // the groups («Просрочено», «Сегодня», «Скоро»…) as a board (CSS .tboard) under the chips, no segment.
+    var chips = el('div', 'hs tch'), body = el('div'), segBox = el('div', 'seg tseg');
+    segBox.setAttribute('role', 'group');
+    segBox.setAttribute('aria-label', 'Срок');
     chips.setAttribute('role', 'group');
     chips.setAttribute('aria-label', 'Метка');
     // feed: «Главная»'s calendar while it is hidden (calFeedCard), between the field and the list.
     var feed = el('div'), feedLast = null;
-    // From five overdue tasks: «Просрочено 23 · перенести всё на завтра» (docs/specs/one-system.md, seam 5), as the
-    // morning brief's button; a confirm sheet, then tasks_defer_overdue.
-    var defer = el('div', 'tdef');
-    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), feed, defer, chips, body);
-    function deferPaint(today) {
-      var late = tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date < today; });
-      clear(defer);
-      defer.hidden = late.length < 5;
-      if (defer.hidden) return;
-      var b = el('button', 'pill bad', 'Просрочено ' + late.length + ' · перенести всё на завтра');
+    add(main, add(bar, add(el('label', 'field'), icon('check-square'), input), plus), feed, segBox, body);
+    // «→ на завтра» in the header of «Просрочено» (docs/specs/one-system.md, seam 5: the morning brief's button): a confirm
+    // sheet, then tasks_defer_overdue, which moves every area's overdue tasks.
+    function deferPill(h, late, today) {
+      var b = label(el('button', 'pill bad mv'), 'arrow-right', 'на завтра');
       b.type = 'button';
+      b.setAttribute('aria-label', 'Перенести все просроченные на завтра');
       b.onclick = function () { deferSheet(late, today, b); };
-      defer.appendChild(b);
+      h.appendChild(b);
     }
     function deferSheet(late, today, from) {
       var tm = addDays(today, 1), close;
@@ -6068,7 +6094,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         if (pr && !pr.firstChild) pr.remove();
         return;
       }
-      if (!pr) pr = row.insertBefore(el('span', 'pr'), row.querySelector('.go'));
+      if (!pr) pr = row.insertBefore(el('span', 'pr'), row.querySelector('.ml, .go'));
       pr.insertBefore(sp, pr.firstChild);
     }
     function stepsBox(t, d) {
@@ -6459,13 +6485,37 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm)),
         rc, rv, ytPaid(t), stepsBox(t, d), add(el('div', 'acts'), mb, sm, rm));
     }
-    function item(t, today) {
+    // The pill at a row's right: «вчера» / «8 дн» red, today's time, else its day; ctx 'today' (the «Сегодня» cards) and
+    // 'day' (under a day's header) leave out what the header says. A repeating task's pill carries the repeat mark.
+    function duePill(t, today, ctx) {
+      if (t.done) return null;
+      var k = taskKind(t, today), tm = t.due_time ? String(t.due_time).slice(0, 5) : '', s = '', cls = '';
+      if (k === 'over') {
+        var n = days(t.due_date, today);
+        s = n === 1 ? 'вчера' : n + ' дн';
+        cls = ' bad';
+      } else if (k === 'today') {
+        s = ctx === 'today' ? tm : tm || 'сегодня';
+        cls = ' acc';
+      } else if (k !== 'none') s = ctx === 'day' && k === 'week' ? tm : WEEK[wd(t.due_date)] + (k === 'later' ? ' ' + dm(t.due_date) : '') + (tm ? ' ' + tm : '');
+      if (!s && !t.repeat) return null;
+      var p = el('span', 'pill' + cls);
+      if (t.repeat) {
+        p.appendChild(icon('repeat', 'rp'));
+        p.title = REPEAT_LABEL(t.repeat, t.repeat_every);
+      }
+      if (s) p.appendChild(document.createTextNode(s));
+      return p;
+    }
+    // One line (title, steps, the due pill); a tap unfolds it with the caption («пт 24.10 · еженедельно · Pomoc · из бота»).
+    function item(t, today, ctx) {
       var wrap = el('div', 'fi'), open = opened === t.id;
       var r = taskLine(t, areas, today, function () {
         markTask(t, render, function () { if (more[t.id] && !more[t.id].busy) delete more[t.id]; });
         if (t.done) backToast('Сделано', function () { markTask(t, render); });
-      });
-      var tx = r.querySelector('.tx');
+      }, duePill(t, today, ctx));
+      var tx = r.querySelector('.tx'), cap = open ? taskCaption(t, areas) : null;
+      if (cap) tx.appendChild(cap);
       function toggle() {
         // An opened task fetches its steps and log afresh, unless a save of them is still under way.
         if (!open && more[t.id] && !more[t.id].busy) delete more[t.id];
@@ -6482,7 +6532,6 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       };
       r.className += ' tap' + (open ? ' open' : '');
       r.onclick = toggle;
-      r.appendChild(icon('chevron-down', 'go'));
       wrap.tid = t.id;
       return add(wrap, r, open ? details(t, today) : null);
     }
@@ -6505,41 +6554,98 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         String(a.due_time || '99').localeCompare(String(b.due_time || '99')) ||
         String(a.created_at || '').localeCompare(String(b.created_at || ''));
     }
+    // Open tasks per segment, every area: «Сегодня» = overdue and today's.
+    function tally(today) {
+      var n = { today: 0, week: 0, none: 0, all: 0 };
+      tasks.forEach(function (t) {
+        if (t.done || t.status === 'dropped') return;
+        var k = TASK_SEG[taskKind(t, today)];
+        n.all++;
+        if (k !== 'all') n[k]++;
+      });
+      return n;
+    }
+    // The tab's first data: a task to open picks its segment; else an empty one gives way to the first with tasks.
+    function pickSeg() {
+      var today = warsawToday(), n = tally(today), t = tasks.filter(function (x) { return x.id === opened; })[0];
+      if (t) seg = t.done ? 'all' : TASK_SEG[taskKind(t, today)];
+      else if (!n[seg]) seg = ['today', 'week', 'none', 'all'].filter(function (k) { return n[k]; })[0] || seg;
+    }
+    function drawSeg(n) {
+      clear(segBox);
+      [['today', 'Сегодня'], ['week', 'Неделя'], ['none', 'Без срока'], ['all', 'Все']].forEach(function (x) {
+        var b = add(el('button', x[0] === seg ? 'on' : ''), document.createTextNode(x[1]), el('span', 'n', String(n[x[0]])));
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(x[0] === seg));
+        b.onclick = function () { goSeg(x[0]); };
+        segBox.appendChild(b);
+      });
+    }
+    function goSeg(k) {
+      if (seg === k) return;
+      seg = k;
+      store('taskSeg', seg);
+      opened = null;
+      render();
+    }
+    // «Завтра, пятница, 30 октября», «Воскресенье, 1 ноября».
+    function dayLabel(d, today) {
+      var w = WEEK_FULL[wd(d)], s = ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1];
+      return (days(today, d) === 1 ? 'Завтра, ' + w.toLowerCase() : w) + s;
+    }
     function render() {
       if (current !== 'tasks') return;
       if (!areas.some(function (a) { return a[0] === area; })) area = '';
       drawChips();
-      var today = warsawToday(), soon = addDays(today, 7), g = { over: [], today: [], soon: [], later: [], none: [], done: [] };
-      deferPaint(today);
+      var today = warsawToday(), board = wide(), n = tally(today), g = { over: [], today: [], week: [], later: [], none: [], done: [] };
       // The badge (docs/specs/home-dashboard.md) counts every area's overdue and today's, whatever the chip.
       setTaskBadge(tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date <= today; }).length);
+      var late = tasks.filter(function (t) { return !t.done && t.status !== 'dropped' && t.due_date && t.due_date < today; });
+      // An open task whose day was changed in its fields: the segment follows it, so it stays on screen.
+      var ot = !board && seg !== 'all' && tasks.filter(function (x) { return x.id === opened; })[0];
+      if (ot && !ot.done && ot.status !== 'dropped' && TASK_SEG[taskKind(ot, today)] !== seg) seg = TASK_SEG[taskKind(ot, today)];
+      // The area chips filter the board and «Все»; the other segments show every area.
+      var byArea = area && (board || seg === 'all');
       tasks.forEach(function (t) {
-        if (t.status === 'dropped' || (area && t.area !== area)) return;
-        if (t.done) g.done.push(t);
-        else if (!t.due_date) g.none.push(t);
-        else if (t.due_date < today) g.over.push(t);
-        else if (t.due_date === today) g.today.push(t);
-        else if (t.due_date <= soon) g.soon.push(t);
-        else g.later.push(t);
+        if (t.status === 'dropped' || (byArea && t.area !== area)) return;
+        g[t.done ? 'done' : taskKind(t, today)].push(t);
       });
+      ['over', 'today', 'week', 'later', 'none'].forEach(function (k) { g[k].sort(byDue); });
+      if (chips.parentNode) chips.remove();
       clear(body);
-      // A big screen: every group a column of the board, empty ones too, so the chain keeps its place (CSS .tboard).
-      var board = wide(), any = false;
+      body.className = board ? 'tboard' : '';
+      segBox.hidden = board;
+      if (board) main.insertBefore(chips, body);
+      else drawSeg(n);
       function rowsBox(c) { return board ? c.appendChild(el('div', 'tbl')) : c; }
-      // «Позже»: past the seven days of «Скоро», so no task is left out.
-      [['over', 'alert', 'Просрочено'], ['today', 'clock', 'Сегодня'], ['soon', 'calendar', 'Скоро'], ['later', 'layers', 'Позже'],
-        ['none', 'bookmark', 'Без срока']].forEach(function (k) {
-        var rows = g[k[0]].sort(byDue);
-        if (!rows.length && (!board || k[0] === 'later')) return;
-        if (rows.length) any = true;
-        var c = mkCard(k[1], k[2]), box = rowsBox(c);
-        c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
-        rows.forEach(function (t) { box.appendChild(item(t, today)); });
+      // A card of rows: its icon, title and count; cls on the header («tred» for «Просрочено»).
+      function group(ic, title, rows, ctx, cls) {
+        var c = card(ic, title, rows, cls), box = rowsBox(c);
+        rows.forEach(function (t) { box.appendChild(item(t, today, ctx)); });
         if (!rows.length) box.appendChild(el('div', 'none', '—'));
-        body.appendChild(c);
-      });
-      if (!any && !board) body.appendChild(state('check-square', area ? 'В «' + areaName(area, areas) + '» открытых задач нет' : 'Задач нет — напиши первую в поле выше'));
-      if (g.done.length || board) {
+        return c;
+      }
+      // Rows under a header per day (by 'day') or per month (by 'month'): «Воскресенье, 1 ноября · 1», «Декабрь · 3».
+      function dated(c, rows, by) {
+        var key = function (t) { return by === 'day' ? t.due_date : t.due_date.slice(0, 7); }, last = '';
+        rows.forEach(function (t) {
+          var k = key(t);
+          if (k !== last) {
+            last = k;
+            var cnt = rows.filter(function (x) { return key(x) === k; }).length, yr = k.slice(0, 4) !== today.slice(0, 4) ? ' ' + k.slice(0, 4) : '';
+            c.appendChild(el('div', 'tdh' + (by === 'day' && days(today, k) === 1 ? ' now' : ''),
+              (by === 'day' ? dayLabel(k, today) : MONTHS_RU[Number(k.slice(5, 7)) - 1] + yr) + ' · ' + cnt));
+          }
+          c.appendChild(item(t, today, by === 'day' ? 'day' : ''));
+        });
+      }
+      function card(ic, title, rows, cls) {
+        var c = mkCard(ic, title);
+        if (cls) c.firstChild.className += ' ' + cls;
+        c.firstChild.appendChild(el('span', 'mu', String(rows.length)));
+        return body.appendChild(c);
+      }
+      function doneCard() {
         var c = mkCard('check', 'Сделано'), h = c.firstChild, box = rowsBox(c);
         add(h, el('span', 'mu', String(g.done.length)), icon('chevron-down', 'go'));
         h.setAttribute('aria-expanded', String(taskDoneOpen));
@@ -6550,7 +6656,47 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         }
         body.appendChild(c);
       }
-      if (board) body.style.setProperty('--tb-top', Math.round(body.getBoundingClientRect().top + window.scrollY) + 'px');
+      var empty = 'Задач нет — напиши первую в поле выше';
+      if (board) {
+        // A big screen: every group a column of the board, empty ones too, so the chain keeps its place (CSS .tboard);
+        // «Позже»: past the seven days of «Скоро», so no task is left out.
+        [['over', 'alert', 'Просрочено', 'today'], ['today', 'clock', 'Сегодня', 'today'], ['week', 'calendar', 'Скоро'], ['later', 'layers', 'Позже'],
+          ['none', 'bookmark', 'Без срока']].forEach(function (k) {
+          if (!g[k[0]].length && k[0] === 'later') return;
+          var c = group(k[1], k[2], g[k[0]], k[3], k[0] === 'over' ? 'tred' : '');
+          if (k[0] === 'over' && late.length) deferPill(c.firstChild, late, today);
+        });
+        doneCard();
+        body.style.setProperty('--tb-top', Math.round(body.getBoundingClientRect().top + window.scrollY) + 'px');
+      } else if (seg === 'today') {
+        if (g.over.length) deferPill(group('alert', 'Просрочено', g.over, 'today', 'tred').firstChild, late, today);
+        if (g.today.length) group('clock', 'Сегодня', g.today, 'today');
+        if (!g.over.length && !g.today.length) body.appendChild(state('check-square', n.all ? 'На сегодня задач нет, просроченных тоже' : empty));
+      } else if (seg === 'week') {
+        if (g.week.length) dated(card('calendar', 'Следующие 7 дней', g.week), g.week, 'day');
+        else body.appendChild(state('calendar', n.all ? 'На ближайшие 7 дней задач нет' : empty));
+        // Past the week: how many and the nearest day; a tap opens «Все».
+        if (g.later.length) {
+          var f = el('button', 'tlater', 'Дальше недели: ' + g.later.length + ' (' + WEEK[wd(g.later[0].due_date)] + ' ' + dm(g.later[0].due_date) + ') — во «Все»');
+          f.type = 'button';
+          f.onclick = function () { goSeg('all'); };
+          body.appendChild(f);
+        }
+      } else if (seg === 'none') {
+        if (g.none.length) group('bookmark', 'Без срока', g.none);
+        else body.appendChild(state('bookmark', n.all ? 'Задач без срока нет' : empty));
+      } else {
+        body.appendChild(chips);
+        if (g.over.length) group('alert', 'Просрочено', g.over, 'today', 'tred');
+        if (g.today.length) group('clock', 'Сегодня', g.today, 'today');
+        if (g.week.length) dated(card('calendar', 'Следующие 7 дней', g.week), g.week, 'day');
+        if (g.later.length) dated(card('layers', 'Позже', g.later), g.later, 'month');
+        if (g.none.length) group('bookmark', 'Без срока', g.none);
+        if (!g.over.length && !g.today.length && !g.week.length && !g.later.length && !g.none.length) {
+          body.appendChild(state('check-square', area ? 'В «' + areaName(area, areas) + '» открытых задач нет' : empty));
+        }
+        if (g.done.length) doneCard();
+      }
       if (refocus != null) {
         var w = [].filter.call(body.querySelectorAll('.fi'), function (x) { return x.tid === refocus; })[0];
         refocus = null;
@@ -6565,6 +6711,10 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
           if (a.length) areas = a;
           tasks = (j.tasks || []).map(own);
           keepMarks(tasks, taskKey, 'done', render);
+          if (!picked) {
+            picked = true;
+            pickSeg();
+          }
           render();
         }, retry: load });
     }
