@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 18:10">
+<meta name="published" content="2026-11-01 18:18">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1771,7 +1771,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .lfold.lgf{color:var(--fg)}.lgf-n{font-weight:700}.lgf-c{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}.lgf>.i{color:var(--muted)}.lgr[hidden]{display:none}
 .bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
 .bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
-.bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk3 .htr-h,.bas-wk3 .htr-r{grid-template-columns:minmax(0,1fr) 60px 108px}.bas-wk3 .htr-h span:last-child{text-align:right}.bas-wl{margin:4px 0 8px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
+.bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk3 .htr-h,.bas-wk3 .htr-r{grid-template-columns:minmax(0,1fr) 60px 120px}.bas-wk .htr-r .go{flex:none;width:14px;height:14px;margin-left:2px;color:var(--muted-2)}.bas-wk .htr-r.tap{cursor:pointer;transition:background .12s}.bas-wk .htr-r.tap:active{background:var(--press)}.bas-wk3 .htr-h span:last-child{text-align:right}.bas-wl{margin:4px 0 8px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
+.bwk-s{font:700 16px/1.35 var(--font);margin:0 0 4px}.bwk-n{font-size:13px;font-variant-numeric:tabular-nums}
 /* «Календарь» (docs/specs/calendar.md, 30.10.2026): the month Monday-first, today ringed, the chosen day filled in the
    accent, under the number up to three dots in the sources' colours (--cs: ours the accent, a task pink — the sleep
    violet read as the accent's twin —, a game the volleyball's orange, a workout green — the gym's colour is the accent —,
@@ -18092,15 +18093,82 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('пунктир — твой возраст ' + woNum(age)))));
     }
     var t = add(el('div', 'htr bas-wk' + (hab ? ' bas-wk3' : '')), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Общий'), hab ? el('span', '', 'Привычки') : el('span', '', 'Изменение')));
+    var taps = 0;
     hs.slice().reverse().forEach(function (h, i, a) {
       var prev = a[i + 1], wk = prev && addDays(h.week_start, -7) === prev.week_start;
       var v = hab ? (h.habits == null ? null : Number(h.habits)) : h.bio, pv = !wk ? null : hab ? (prev.habits == null ? null : Number(prev.habits)) : prev.bio;
-      var d = v == null || pv == null ? null : Math.round((v - pv) * 10) / 10;
-      t.appendChild(add(el('div', 'htr-r ' + (d == null || Math.abs(d) < 0.05 ? 'hs-same' : d > 0 ? 'hs-below' : 'hs-norm')), el('span', 'mu', 'с ' + hlShort(h.week_start)),
+      var d = v == null || pv == null ? null : Math.round((v - pv) * 10) / 10, can = wk && h.factors && prev.factors;
+      var r = add(el('div', 'htr-r ' + (d == null || Math.abs(d) < 0.05 ? 'hs-same' : d > 0 ? 'hs-below' : 'hs-norm')), el('span', 'mu', 'с ' + hlShort(h.week_start)),
         el('span', 'htr-c', woNum(h.bio)),
-        add(el('span', 'htr-c bas-wd'), el('i', 'hdot'), document.createTextNode(hab ? (v == null ? '—' : woNum(v)) + (d == null ? '' : ' (' + bioSigned(d) + ')') : d == null ? '—' : bioSigned(d)))));
+        add(el('span', 'htr-c bas-wd'), el('i', 'hdot'), document.createTextNode(hab ? (v == null ? '—' : woNum(v)) + (d == null ? '' : ' (' + bioSigned(d) + ')') : d == null ? '—' : bioSigned(d)),
+          can ? icon('chevron-right', 'go') : null));
+      if (can) {
+        taps++;
+        r.setAttribute('aria-label', 'Неделя с ' + hlShort(h.week_start) + ': что сдвинулось');
+        tap(r, function () { bioWeekDiffSheet(h, prev, r); });
+      }
+      t.appendChild(r);
     });
-    add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'По неделям'), el('div', 'mu hsec-s', 'Пересчёт по понедельникам; ' + (hab ? 'у привычек ' : '') + 'младше — зелёным, старше — оранжевым.'), t));
+    add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'По неделям'), el('div', 'mu hsec-s', 'Пересчёт по понедельникам; ' + (hab ? 'у привычек ' : '') + 'младше — зелёным, старше — оранжевым' +
+      (taps ? '. Тап по неделе — что сдвинулось.' : '.')), t));
+  }
+  // A week against the one before (his «на эти штуки хотел бы кликать и понимать, что могло так повлиять», 01.11.2026):
+  // one sentence, the week's numbers, then a row a factor that moved by 0,1 year or more (the value then → now, the
+  // change as the bar from the middle), the factors that came into or fell out of the count, and the blood when its
+  // PhenoAge or its weight in the overall changed. h.factors / prev.factors — the server's slim parts (bioWeekOut).
+  function bioWeekDiffSheet(h, prev, from) {
+    var body = el('div', 'hsh'), close = noop, a = prev.factors || {}, b = h.factors || {}, rows = [], seen = {};
+    function r1(v) { return Math.round(v * 10) / 10; }
+    function low(s) { return /^.[a-zа-яё]/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+    // «11 524 в день» → «10 506 в день» reads «11 524 → 10 506 в день»: the main part (before « · »), the shared
+    // wordy tail said once; the same main value — «разница в десятых» (the mean moved under the rounding).
+    function then(x, y) {
+      var p = String(x || '').split(' · ')[0].split(' '), q = String(y || '').split(' · ')[0].split(' '), k = 0;
+      if (p.join(' ') === q.join(' ')) return q.join(' ') + ', разница в десятых';
+      while (k < p.length - 1 && k < q.length - 1 && p[p.length - 1 - k] === q[q.length - 1 - k] && !/\d/.test(p[p.length - 1 - k])) k++;
+      return p.slice(0, p.length - k).join(' ') + ' → ' + q.join(' ');
+    }
+    var was = {};
+    (a.lifestyle || []).forEach(function (f) { was[f.key] = f; });
+    (b.lifestyle || []).forEach(function (f) {
+      var o = was[f.key];
+      seen[f.key] = 1;
+      if (!o) rows.push([f.label, 'теперь считается · ' + f.value, r1(f.years), 1]);
+      else if (Math.abs(r1(f.years - o.years)) >= 0.1) rows.push([f.label, then(o.value, f.value), r1(f.years - o.years), 0]);
+    });
+    (a.lifestyle || []).forEach(function (f) { if (!seen[f.key]) rows.push([f.label, 'больше не считается — мало дней с данными', r1(-f.years), 1]); });
+    rows.sort(function (x, y) { return Math.abs(y[2]) - Math.abs(x[2]) || y[3] - x[3]; });
+    var dh = h.habits != null && prev.habits != null ? r1(h.habits - prev.habits) : null, db = r1(h.bio - prev.bio);
+    var d = dh != null ? dh : db, moved = rows.filter(function (x) { return Math.abs(x[2]) >= 0.1; });
+    var main = moved.filter(function (x) { return Math.abs(d) < 0.05 || (x[2] > 0) === (d > 0); }).slice(0, 2).map(function (x) { return low(x[0]); });
+    var what = dh != null ? 'По привычкам' : 'Общий', lead;
+    if (!rows.length) lead = 'Ни один фактор не сдвинулся больше чем на 0,1 года — неделя как предыдущая' + (Math.abs(db) >= 0.05 ? ', общий сдвинулся из-за крови.' : '.');
+    else if (Math.abs(d) < 0.05) lead = what + ' без изменений: сдвиги погасили друг друга.';
+    else lead = what + ' на ' + woNum(Math.abs(d)) + ' ' + bioYw(d) + (d > 0 ? ' старше' : ' моложе') + ', чем неделей раньше' +
+      (main.length ? ': главное — ' + main.join(' и ') + '.' : '.');
+    var nums = 'Общий ' + woNum(h.bio) + (Math.abs(db) >= 0.05 ? ' (' + bioSigned(db) + ')' : '') +
+      (h.habits != null ? ' · Привычки ' + woNum(h.habits) + (dh != null && Math.abs(dh) >= 0.05 ? ' (' + bioSigned(dh) + ')' : '') : '');
+    add(body, el('div', 'bwk-s', lead), el('div', 'mu bwk-n', nums));
+    if (rows.length) {
+      var sec = el('div', 'hsec'), max = Math.max.apply(null, rows.map(function (x) { return Math.abs(x[2]); }).concat([0.5]));
+      add(sec, el('div', 'hsec-h', 'Что сдвинулось'), el('div', 'mu hsec-s', 'Против недели с ' + hlShort(prev.week_start) + ', в годах; младше — зелёным, старше — оранжевым.'));
+      rows.forEach(function (x) {
+        var row = add(el('div', 'row hxr bxr'), add(el('span', 'tx'), el('div', 't', x[0]), el('div', 'mu', hlNb(x[1]))), bioBar(x[2], max),
+          el('span', 'pr ' + bioWord(x[2])[1], bioSigned(x[2])));
+        row.setAttribute('aria-label', x[0] + ': ' + x[1] + ', ' + bioSigned(x[2]) + ' ' + bioYw(x[2]));
+        sec.appendChild(row);
+      });
+      body.appendChild(sec);
+    }
+    var pa = a.pheno || {}, pb = b.pheno || {}, blood = [];
+    if (pa.age != null && pb.age != null && Math.abs(pb.age - pa.age) >= 0.05) blood.push('PhenoAge ' + woNum(pa.age) + ' → ' + woNum(pb.age) + ' — новый анализ.');
+    else if ((pa.age == null) !== (pb.age == null)) blood.push(pb.age != null ? 'Анализ крови вошёл в счёт.' : 'Анализ крови выпал из счёта.');
+    if (pa.weight != null && pb.weight != null && Math.round(pa.weight * 100) !== Math.round(pb.weight * 100))
+      blood.push('Вес крови в общем ' + Math.round(pa.weight * 100) + ' → ' + Math.round(pb.weight * 100) + ' %' +
+        (pb.weight < pa.weight ? ': анализ стареет, привычки весят больше.' : '.'));
+    if (blood.length) add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'Кровь'), el('div', 'mu hsec-s', blood.join(' '))));
+    close = legalSheet('Неделя с ' + hlShort(h.week_start), [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+    hlFrame(body);
   }
   // A group's sheet: its years large; a card a factor — the value, the threshold, the contribution as a bar from the
   // middle, the source; its 28 days (hlChart) when the factor has a series. The blood: the nine PhenoAge terms.
