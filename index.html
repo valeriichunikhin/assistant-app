@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 13:32">
+<meta name="published" content="2026-11-01 13:50">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1553,6 +1553,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hz-st-bad,.hz-bad,.hl-overtrain,.hl-st-overtrain{--hs:var(--bad);--st:var(--bad)}
 .hl-low,.hl-st-low{--hs:var(--ring-load);--st:var(--ring-load)}.hl-maintain,.hl-st-maintain{--hs:var(--ring-sleep);--st:var(--ring-sleep)}
 .hl-calibration,.hl-st-calibration{--hs:var(--muted);--st:var(--muted)}.hs-same{--st:var(--muted)}
+.hch .hgrid{stroke:var(--line);stroke-width:1}.hch .href{stroke:var(--fg);stroke-width:1.5;stroke-dasharray:3 4;opacity:.5}.hch .href-t{fill:var(--fg);font-weight:600}
 .chart.hch{padding:0}.hch .hband{fill:color-mix(in srgb,var(--mark) 16%,transparent)}.hch rect.hz{fill:color-mix(in srgb,var(--hs) 13%,transparent)}
 .hch .hln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hch .hln.q{stroke:color-mix(in srgb,var(--fg) 32%,transparent)}
 .hch .hdt{fill:var(--hs,var(--mark));stroke:var(--solid);stroke-width:1.5}.hch .hdt.end{stroke-width:2}.hch .hstrip{fill:var(--hs)}
@@ -16583,7 +16584,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     // A ring's axis from the ten under its lowest day (its empty zones under it cut off), to 100 or o.hi.
     if (o.zones) { lo = Math.max(0, Math.floor((Math.min.apply(null, vs) - 8) / 10) * 10); hi = o.hi || 100; }
     else {
-      var ext = vs.concat(o.band ? [o.band.low, o.band.high] : []);
+      var ext = vs.concat(o.band ? [o.band.low, o.band.high] : [], o.ref ? [o.ref.v] : []);
       lo = Math.min.apply(null, ext); hi = Math.max.apply(null, ext);
       var pad = (hi - lo) * 0.18 || Math.abs(hi) * 0.05 || 1;
       lo -= pad; hi += pad;
@@ -16607,6 +16608,20 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       ticks.push(o.band.low, o.band.high);
     }
     if (o.zones) ticks.push(lo, hi);
+    // o.grid — a scale behind the line: faint lines at round values (a step for 3–5 of them) with their labels; o.ref —
+    // a dashed line of its own (the bio age's calendar age), labelled. His «чтобы понимать, какой это возраст» (01.11.2026).
+    if (o.grid) {
+      var gs = [1, 2, 5, 10, 20, 50].filter(function (st) { return (hi - lo) / st <= 5; })[0] || 100;
+      for (var g = Math.ceil(lo / gs) * gs; g < hi; g += gs) {
+        if (o.ref && Math.abs(y(g) - y(o.ref.v)) <= 12) continue;
+        add(box, svg('line', { x1: L, x2: W - R, y1: y(g).toFixed(1), y2: y(g).toFixed(1), 'class': 'hgrid' }));
+        ticks.push(g);
+      }
+    }
+    if (o.ref) {
+      add(box, svg('line', { x1: L, x2: W - R, y1: y(o.ref.v).toFixed(1), y2: y(o.ref.v).toFixed(1), 'class': 'href' }));
+      add(box, svg('text', { x: W - R + 6, y: (y(o.ref.v) + 4).toFixed(1), 'class': 'tk href-t' }, woNum(o.ref.v)));
+    }
     ticks.forEach(function (t) {
       add(box, svg('text', { x: W - R + 6, y: (y(t) + 4).toFixed(1), 'class': 'tk' }, o.tick ? o.tick(t) : woNum(t)));
     });
@@ -17801,7 +17816,14 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     var still = hs.length > 1 && hs.every(function (h) { return Math.abs(h.bio - hs[0].bio) < 0.05; });
     if (still) body.appendChild(el('div', 'mu hsec-s', 'Общий возраст стоит на месте: он держится на анализе крови' + (p.taken_on ? ' от ' + dmy(p.taken_on) : '') +
       (hab ? ' и привычках за 28 дней — сне, шагах, тренировках.' : ' и VO2max и сдвинется с новым анализом или VO2max.')));
-    if (hs.length > 1 && age != null) body.appendChild(add(el('div', 'bas-wl'), bioWeeksLine(hs, age), bioLegend(hs, age)));
+    if (hs.length > 1) {
+      var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
+      body.appendChild(hlChart(hs.map(function (h) { return { day: h.week_start, v: h.bio }; }),
+        { W: W, from: hs[0].week_start, to: hs[hs.length - 1].week_start, days: 84, dots: true, grid: true, ref: age == null ? null : { v: age },
+          label: 'Биовозраст по неделям', unit: 'лет', tick: woNum, tipSub: function (pt) { return age == null ? '' : ' · ' + bioDelta(pt.v - age); } }));
+      if (age != null) body.appendChild(add(el('div', 'nus-lg'), add(el('span'), el('i', 'nus-dot bio-lg-b'), document.createTextNode('биологический')),
+        add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('пунктир — твой возраст ' + woNum(age)))));
+    }
     var t = add(el('div', 'htr bas-wk' + (hab ? ' bas-wk3' : '')), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Общий'), hab ? el('span', '', 'Привычки') : el('span', '', 'Изменение')));
     hs.slice().reverse().forEach(function (h, i, a) {
       var prev = a[i + 1], wk = prev && addDays(h.week_start, -7) === prev.week_start;
