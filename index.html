@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 13:27">
+<meta name="published" content="2026-11-01 13:32">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -17775,11 +17775,11 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
   }
   // How it is counted: the overall, the years of a factor, the overlaps, the sources (the old «Из чего»'s footnote).
   function bioHowSheet(j, from) {
-    var f = j.fitness || {}, l = j.lifestyle || {}, close = noop;
+    var l = j.lifestyle || {}, close = noop;
     var nodes = [el('div', 'mu hxs', bioHonest(j) + '.'),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Общий'), el('span', 'pr', j.overall == null ? '—' : woNum(j.overall))),
-        el('div', 'mu', 'Среднее крови (PhenoAge, с весом свежести: полный до 6 мес., к 18 мес. — ноль) и фитнес-возраста по VO2max' +
-          (f.age != null ? ' (' + (f.floor ? '≤ ' : '') + woNum(f.age) + ')' : '') + '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
+        el('div', 'mu', 'Среднее крови (PhenoAge, с весом свежести: полный до 6 мес., к 18 мес. — ноль) и возраста по привычкам за 28 дней' +
+          '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', (l.factors || []).length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')),
         el('div', 'mu', 'Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту из PhenoAge. Сумма честная: факторы перекрываются ' +
           '(пульс и VO2max, силовые и мышцы), у Bevel итог меньше за счёт перекрытий. Каждый — не больше ±4 лет; считается при 20 днях из 28.')),
@@ -17800,7 +17800,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     var age = bioNum(j.age), hab = hs.filter(function (h) { return h.habits != null; }).length > 1, p = j.pheno || {};
     var still = hs.length > 1 && hs.every(function (h) { return Math.abs(h.bio - hs[0].bio) < 0.05; });
     if (still) body.appendChild(el('div', 'mu hsec-s', 'Общий возраст стоит на месте: он держится на анализе крови' + (p.taken_on ? ' от ' + dmy(p.taken_on) : '') +
-      ' и VO2max и сдвинется с новым анализом или VO2max.' + (hab ? ' Каждую неделю двигаются привычки — сон, шаги, тренировки.' : '')));
+      (hab ? ' и привычках за 28 дней — сне, шагах, тренировках.' : ' и VO2max и сдвинется с новым анализом или VO2max.')));
     if (hs.length > 1 && age != null) body.appendChild(add(el('div', 'bas-wl'), bioWeeksLine(hs, age), bioLegend(hs, age)));
     var t = add(el('div', 'htr bas-wk' + (hab ? ' bas-wk3' : '')), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Общий'), hab ? el('span', '', 'Привычки') : el('span', '', 'Изменение')));
     hs.slice().reverse().forEach(function (h, i, a) {
