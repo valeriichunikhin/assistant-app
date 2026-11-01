@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 12:14">
+<meta name="published" content="2026-11-01 12:43">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -17277,7 +17277,12 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         hs.filter(function (h) { return h.habits != null; }).length > 1 ? add(el('span'), el('i', 'nus-dot bio-lg-h'), document.createTextNode('привычки')) : null,
         add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('возраст ' + woNum(age)))));
     }
-    c.appendChild(tap(lead, function () { haptic(); bioAgeSheet(j, lead); }));
+    // A tap on the line or its legend opens the weeks' chart (his «нажимаю на график», 01.11.2026), elsewhere — the sheet.
+    c.appendChild(tap(lead, function (ev) {
+      haptic();
+      var t = ev && ev.target;
+      if (t && t.closest && t.closest('.bio-wl, .nus-lg')) bioWeeksSheet(j, lead); else bioAgeSheet(j, lead);
+    }));
     lead.setAttribute('aria-label', 'Биологический возраст ' + bioYears(bio) + (bio == null ? '' : ', ' + w[0]) +
       (ch == null ? '' : ', за ' + span + ' ' + ['неделю', 'недели', 'недель'][plural3(span)] + ' ' + bioSigned(ch)) + ' — подробно');
     T.box = c.appendChild(el('div', 'bio-tiles'));
