@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 01:10">
+<meta name="published" content="2026-11-01 01:13">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1382,7 +1382,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fmd .fsc{margin:0;width:42px;height:42px}.fmd .fsc .i{width:21px;height:21px}
 .fmd .fsc.fmn{background:none;color:var(--fg);font:500 15px var(--font-num);letter-spacing:0}.fmd .fsc.fmn.ld{color:var(--muted)}
 .fmd.today .fsc{box-shadow:0 0 0 2px var(--mark)}.fmd.sel::after{content:"";position:absolute;bottom:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--mark)}
-.fmc{position:absolute;top:1px;right:max(0px,calc(50% - 27px));min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--wo);color:var(--solid);font:700 11px/18px var(--font-num);text-align:center}
+.fmc{position:absolute;top:5px;right:calc(50% - 21px);display:grid;place-items:center;width:13px;height:13px;border-radius:50%;background:var(--wo);color:var(--solid);font:800 11px/1 var(--font-num);letter-spacing:0}
+.fmd .fsc.cut{-webkit-mask:radial-gradient(circle 8.5px at 35.5px 6.5px,transparent 8px,#000 8.6px);mask:radial-gradient(circle 8.5px at 35.5px 6.5px,transparent 8px,#000 8.6px)}
 .fmd:active .fsc{transform:scale(.94)}
 /* «Месяц» of «Сегодня», «Питание», «Биология» (docs/specs/health-month.md, Bevel's calendar-recovery.jpg): the same
    sheet, a day a pill — its small ring in the ring's colour with the number inside (a day without data the bare track,
@@ -19547,7 +19548,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         var n = D ? D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length : 0;
         if (D && n) b.appendChild(circle(d));
         else b.appendChild(el('span', 'fsc fmn' + (D ? '' : ' ld'), String(+d.slice(8, 10))));
-        if (n > 1) b.appendChild(el('span', 'fmc ' + ((b.firstChild.className.match(/\bk-[a-z]+/) || ['k-other'])[0]), String(n)));
+        // The count as the strip draws it (his 01.11.2026): a small disc cut out of the circle with a gap.
+        if (n > 1) { b.firstChild.className += ' cut'; b.appendChild(el('span', 'fmc ' + ((b.firstChild.className.match(/\bk-[a-z]+/) || ['k-other'])[0]), String(n))); }
         b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + ': ' + (D ? what(d) : 'загружаю'));
         b.onclick = function () { haptic(); close(); pickDay(d); };
         return b;
