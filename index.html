@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 13:50">
+<meta name="published" content="2026-11-01 14:40">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -17793,7 +17793,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     var l = j.lifestyle || {}, close = noop;
     var nodes = [el('div', 'mu hxs', bioHonest(j) + '.'),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Общий'), el('span', 'pr', j.overall == null ? '—' : woNum(j.overall))),
-        el('div', 'mu', 'Среднее крови (PhenoAge, с весом свежести: полный до 6 мес., к 18 мес. — ноль) и возраста по привычкам за 28 дней' +
+        el('div', 'mu', 'Кровь (PhenoAge) — треть, возраст по привычкам за 28 дней — две трети; кровь весит полностью до 6 мес., к 18 мес. — ноль. Пульс и VO2max перекрываются: слабейший из них — в счёт наполовину' +
           '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', (l.factors || []).length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')),
         el('div', 'mu', 'Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту из PhenoAge. Сумма честная: факторы перекрываются ' +
