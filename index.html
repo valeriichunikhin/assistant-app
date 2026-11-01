@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 17:59">
+<meta name="published" content="2026-11-01 18:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1015,16 +1015,23 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 /* «Питание» in the frame of «Сегодня» and «Фитнес» (his ask 30.10.2026): the shared day row, the lead card tinted as
    theirs, the sections as card heads. */
 .card.nutop{padding:0 0 14px}
-/* The food scale «C · стопка» (30.10.2026): the meals' colours, the bar with the hatched rest, the axis, the legend,
-   the macro rings. */
-.nus{padding:0 14px}
+/* The lead of «Питание» (01.11.2026): the macro rings, the kcal tick scale in the meals' colours, the legend. */
+.nus{padding:0 14px 12px}
 /* Four hues apart (31.10.2026, his «сложно читать»: lunch in the lime accent and the green snack merged) */
 .nus-breakfast{--ms:var(--nu-carbs)}.nus-lunch{--ms:var(--ring-recovery-2)}.nus-dinner{--ms:var(--hl-sky)}.nus-snack{--ms:var(--ring-sleep)}.nus-other{--ms:var(--muted)}
 .nus-lg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nus-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--ms)}
 .nus-dot.nus-rest{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--fg) 30%,transparent) 0 1px,transparent 1px 3px),var(--track)}
-.nud{display:block;width:100%;max-width:260px;margin:0 auto}.nud line{stroke-width:4;stroke-linecap:round}.nud line.off{stroke:var(--track)}.nud line.on{stroke:var(--ms)}
-.nud .gt{stroke:var(--fg);stroke-width:3}.nud .ov{fill:none;stroke:var(--bad);stroke-width:3;stroke-linecap:round}.nud text{text-anchor:middle;fill:var(--muted);font:500 13px var(--font)}
-.nud .big{font:800 40px var(--font-num);fill:var(--fg);letter-spacing:-.02em}.nud .gl,.nud .ax{font-size:11px}.nud .gl{font-weight:600}.nud .lf{font-weight:700}.nud .lf.over{fill:var(--bad)}
+/* The kcal scale «шкала-штрихи» (01.11.2026): the head, a row of 4px ticks spread edge to edge (divs, so they snap to
+   device pixels), the goal's tick taller in the text colour, the axis with «цель» under it. */
+.nut{--nut-w:4px}.nut-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
+.nut-big{white-space:nowrap}.nut-big b{font:800 34px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.nut-big span{margin-left:7px;color:var(--muted);font-size:15px}
+.nut-lf{display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;color:var(--muted);font-size:13px;line-height:1.25;white-space:nowrap}
+.nut-lf b{color:var(--fg);font:700 17px/1.25 var(--font-num);font-variant-numeric:tabular-nums}.nut-lf.nus-ov b{color:var(--bad)}
+.nut-row{display:flex;justify-content:space-between;align-items:flex-end;height:32px;margin:14px 0 6px}
+.nut-row i{flex:none;width:var(--nut-w);height:22px;border-radius:2px;background:var(--track)}.nut-row i.on{background:var(--ms)}.nut-row i.gt{height:32px;background:var(--fg)}
+.nut-ax{position:relative;height:16px;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}.nut-ax span{position:absolute;top:0;left:0;white-space:nowrap}
+.nut-ax .gl{transform:translateX(-50%);font-weight:600}.nut-ax .mx{left:auto;right:0}
 .nuw-row{display:flex;align-items:center;gap:12px;margin:0 14px;padding:10px 12px;border-radius:18px;background:color-mix(in srgb,var(--fg) 5%,transparent)}
 .nuw-row .tx{flex:1;min-width:0}.nuw-row .t{font-weight:600;font-size:16px}.nuw-row .mu{font-size:13px}
 .nuw-i{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--hl-sky)}.nuw-i .i{width:18px;height:18px}
@@ -1032,10 +1039,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nuw-p{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:var(--hl-sky);color:#fff;display:grid;place-items:center}.nuw-p .i{width:22px;height:22px}
 .nuw-c{display:flex;gap:8px;margin:12px 14px 14px}.nuw-c button{flex:1;min-width:0;height:40px;border:1px solid var(--line-2);border-radius:20px;background:none;color:var(--fg);font:600 14px var(--font);white-space:nowrap}
 .nuw-c button.on{background:color-mix(in srgb,var(--hl-sky) 18%,transparent);color:var(--hl-sky);border-color:transparent}
-.nus-ov{color:var(--bad)}.nus-ov .nus-dot{background:var(--bad)}
+.nus-ov{color:var(--bad)}
 /* Б · Ж · У as «Здоровье»'s rings (his ask 01.11.2026): hlRing with the macro's two shades and track; over 100 % a second
    lap in a darker shade of the same colour; the grams under the ring, «+N г» over the goal in the macro's colour. */
-.nus-mb{margin:14px -10px 16px}.nus-mb .hrc{gap:2px}.nus-mb .hring{margin-bottom:6px}
+.nus-mb{margin:6px -10px 18px}.nus-mb .hrc{gap:2px}.nus-mb .hring{margin-bottom:6px}
 .hring.nu-protein,.hring.nu-fat,.hring.nu-carbs{--rc-end:var(--nu);--rc-lap:var(--nu)}.hring.nu-protein{--rc-start:var(--nu-protein-2)}
 .hring.nu-fat{--rc-start:var(--nu-fat-2)}.hring.nu-carbs{--rc-start:var(--nu-carbs-2)}
 .hring.nu-protein .tr,.hring.nu-fat .tr,.hring.nu-carbs .tr{stroke:color-mix(in srgb,var(--nu) var(--nu-soft),transparent)}
@@ -15268,13 +15275,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function nuTimeline(n) {
     return mkCard('history', 'Таймлайн питания', n ? n + ' ' + ['событие', 'события', 'событий'][plural3(n)] : 'событий нет');
   }
-  // Our food scale (his pick 30.10.2026 of four variants — «C · стопка»): the day's kcal big against the goal; one bar
-  // to the goal — the meals as segments in the meal's colour in the day's order (food from Health beyond the entries
-  // — a grey «без записи» one), the rest hatched; under it 0 · the eaten · the goal; the legend; Б · Ж · У as three
-  // rings of «Здоровье» (his ask 01.11.2026). Over the goal the bar is the eaten and the goal a marker inside it.
+  // The lead of «Питание» (his ask 01.11.2026): Б · Ж · У first, as the three rings of «Здоровье» on «Сегодня»; under them
+  // the kcal scale (his pick of two — «шкала-штрихи»): the eaten big against the goal, what is left (or over) on the right,
+  // a row of ticks from 0 to max lit up to the eaten in the meal's colour in the day's order (food from Health beyond the
+  // entries — a grey «без записи»), the goal one tall tick; the axis 0 · цель · max; the legend.
   var NU_MEAL_CLS = { breakfast: 'nus-breakfast', lunch: 'nus-lunch', dinner: 'nus-dinner', snack: 'nus-snack' };
   function nuStack(j, src, kcal, goal, redraw) {
-    var box = el('div', 'nus'), left = goal - kcal;
+    var box = el('div', 'nus');
     var es = (j.entries || []).filter(function (e) { return Number(e.kcal) > 0; }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
     var segs = es.map(function (e) { return { kcal: Math.round(Number(e.kcal)), cls: NU_MEAL_CLS[e.meal] || 'nus-snack', label: (FOOD_RU[e.meal] || 'еда').toLowerCase(), at: e.at }; });
     // One block a meal in the day's order of meals (the same meal at 18:00 and 22:20 is one block), as the legend.
@@ -15283,14 +15290,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       .map(function (x) { return x[0]; });
     var rest = kcal - segs.reduce(function (a, x) { return a + x.kcal; }, 0);
     if (rest > 0 && kcal) segs.push({ kcal: rest, cls: 'nus-other', label: 'без записи' });
-    box.appendChild(nuDial(segs, kcal, goal));
-    // The legend: a meal a chip in the day's order (the same meal twice — summed), then what is left.
-    var byMeal = [], seen = {};
-    segs.forEach(function (sg) { var k = sg.cls; if (seen[k] == null) { seen[k] = byMeal.length; byMeal.push({ cls: k, label: sg.label, kcal: 0 }); } byMeal[seen[k]].kcal += sg.kcal; });
-    var lg = el('div', 'nus-lg');
-    byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
-    lg.appendChild(add(el('span', left < 0 ? 'nus-ov' : ''), el('i', 'nus-dot nus-rest'), document.createTextNode(left >= 0 ? 'осталось ' + grouped(left) : 'сверх цели ' + grouped(-left))));
-    box.appendChild(lg);
     // Б · Ж · У: «Здоровье»'s rings in the macros' colours — the share of the goal, a second darker lap past 100 %; under
     // it the grams, «Белки · из 213» or «Углеводы · +67 г» in the macro's colour; a tap — the «Цели» sheet.
     var mb = el('div', 'hrings hdiv nus-mb');
@@ -15302,33 +15301,36 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       mb.appendChild(tap(cell, function () { foodGoalSheet(cell, redraw); }));
     });
     box.appendChild(mb);
+    box.appendChild(nuTicks(segs, kcal, goal));
+    // The legend: a meal a chip in the day's order (the same meal twice — summed).
+    var byMeal = [], seen = {};
+    segs.forEach(function (sg) { var k = sg.cls; if (seen[k] == null) { seen[k] = byMeal.length; byMeal.push({ cls: k, label: sg.label, kcal: 0 }); } byMeal[seen[k]].kcal += sg.kcal; });
+    if (byMeal.length) {
+      var lg = el('div', 'nus-lg');
+      byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
+      box.appendChild(lg);
+    }
     return box;
   }
-  // The kcal dial (his pick 31.10.2026 of five variants — «B · риски, как циферблат Bevel»): 60 ticks on a 270° arc from 0
-  // to a round scale (the eaten or 1,25 × the goal, up to 500), lit up to the eaten in the colour of the meal that tick
-  // falls in, the rest the track; the goal a long tick with «цель»; past it a red arc outside the ticks. In the middle
-  // the eaten, «ккал · цель N» and what is left — or «+N сверх цели» in red.
-  function nuDial(segs, kcal, goal) {
-    var N = 60, max = Math.ceil(Math.max(kcal, goal * 1.25, 1) / 500) * 500, cx = 120, cy = 118, r1 = 78, r2 = 96;
-    var box = svg('svg', { viewBox: '0 0 240 206', 'class': 'nud', role: 'img' }), left = goal - kcal;
-    function ang(v) { return (-225 + Math.min(1, v / max) * 270) * Math.PI / 180; }
-    function pt(a, r) { return [(cx + r * Math.cos(a)).toFixed(1), (cy + r * Math.sin(a)).toFixed(1)]; }
+  // The kcal scale: the head «2 115 из 2 500 ккал · осталось 385 ккал» («сверх цели» in red past the goal); 48 ticks from 0
+  // to max (1,4 × the goal or the eaten, rounded up to 500), each lit if its middle is eaten, in the colour of the meal it
+  // falls in, the rest dim; the goal's tick tall in the text colour; the axis «0 · цель N · max» under the goal's tick.
+  function nuTicks(segs, kcal, goal) {
+    var N = 48, max = Math.ceil(Math.max(kcal, goal * 1.4, 1) / 500) * 500, left = goal - kcal, gi = Math.min(N - 1, Math.floor(goal / max * N));
+    var gx = 'calc((100% - var(--nut-w)) * ' + (gi / (N - 1)).toFixed(4) + ' + var(--nut-w) / 2)';
     function cls(v) { var c = 0; for (var i = 0; i < segs.length; i++) { c += segs[i].kcal; if (v < c) return segs[i].cls; } return segs.length ? segs[segs.length - 1].cls : ''; }
+    var row = el('div', 'nut-row');
     for (var i = 0; i < N; i++) {
-      var v = (i + 0.5) / N * max, a = (-225 + i / (N - 1) * 270) * Math.PI / 180, p1 = pt(a, r1), p2 = pt(a, r2);
-      box.appendChild(svg('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], 'class': v <= kcal ? 'on ' + cls(v) : 'off' }));
+      var v = (i + 0.5) / N * max;
+      row.appendChild(el('i', i === gi ? 'gt' : v <= kcal ? 'on ' + cls(v) : ''));
     }
-    var ga = ang(goal), g1 = pt(ga, 70), g2 = pt(ga, 104), gl = pt(ga, 117), co = Math.cos(ga);
-    if (kcal > goal) {
-      var o1 = pt(ga, 103), o2 = pt(ang(kcal), 103);
-      box.appendChild(svg('path', { d: 'M' + o1.join(' ') + ' A103 103 0 ' + (ang(kcal) - ga > Math.PI ? 1 : 0) + ' 1 ' + o2.join(' '), 'class': 'ov' }));
-    }
-    add(box, svg('line', { x1: g1[0], y1: g1[1], x2: g2[0], y2: g2[1], 'class': 'gt' }),
-      svg('text', { x: gl[0], y: (Number(gl[1]) - 3).toFixed(1), 'class': 'gl', style: 'text-anchor:' + (co > 0.4 ? 'end' : co < -0.4 ? 'start' : 'middle') }, 'цель'),
-      svg('text', { x: cx, y: cy, 'class': 'big' }, grouped(kcal)),
-      svg('text', { x: cx, y: cy + 22, 'class': 'sub' }, 'ккал · цель ' + grouped(goal)),
-      svg('text', { x: cx, y: cy + 46, 'class': left < 0 ? 'lf over' : 'lf' }, left < 0 ? '+' + grouped(-left) + ' сверх цели' : 'осталось ' + grouped(left)),
-      svg('text', { x: pt(ang(0), 88)[0], y: 200, 'class': 'ax' }, '0'), svg('text', { x: pt(ang(max), 88)[0], y: 200, 'class': 'ax' }, grouped(max)));
+    var gl = el('span', 'gl', 'цель ' + grouped(goal));
+    gl.style.left = gx;
+    var box = add(el('div', 'nut'),
+      add(el('div', 'nut-hd'), add(el('div', 'nut-big'), el('b', '', grouped(kcal)), el('span', '', 'из ' + grouped(goal) + ' ккал')),
+        add(el('div', 'nut-lf' + (left < 0 ? ' nus-ov' : '')), el('span', '', left < 0 ? 'сверх цели' : 'осталось'), el('b', '', grouped(Math.abs(left)) + ' ккал'))),
+      row, add(el('div', 'nut-ax'), el('span', '', '0'), gl, el('span', 'mx', grouped(max))));
+    box.setAttribute('role', 'img');
     box.setAttribute('aria-label', grouped(kcal) + ' из ' + grouped(goal) + ' ккал' + (left >= 0 ? ', осталось ' + grouped(left) : ', сверх цели ' + grouped(-left)) +
       (segs.length ? ': ' + segs.map(function (sg) { return sg.label + ' ' + grouped(sg.kcal); }).join(', ') : ''));
     return box;
