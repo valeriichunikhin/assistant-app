@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 18:30">
+<meta name="published" content="2026-11-01 18:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -19010,7 +19010,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // «Силовая тренировка» in the gym colour, the day's name large, «Упражнений: N · Сетов: M»; a card an exercise — its
   // animation (only the ones in sight play: gymPlayInView), the name, «гантели · 3 сета», then СЕТЫ · КГ · ПОВТОРЫ ·
   // ОТДЫХ by the plan (КГ — this time's weight, which only the day to do has: its items carry suggest), a chip only for a
-  // weight after a break or one to pick. A tap — the exercise's sheet (gymExSheet); «Начать» starts this very day.
+  // weight after a break, one to pick or the plan's start weight («старт 30 кг», not a warning). A tap — the exercise's sheet (gymExSheet); «Начать» starts this very day.
   function gymTplSheet(d, ctx, from) {
     var close = noop, vids = [], items = d.items || [], s = gymLoad(), gifs = ctx.gifs, mus = ctx.mus;
     var nodes = [add(el('div', 'gthero k-gym'), add(el('span', 'gtring'), icon('dumbbell')), el('div', 'gtk', 'Силовая тренировка'),
@@ -19025,14 +19025,15 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var grid = el('div', 'gtv');
       cells.forEach(function (x) { grid.appendChild(el('span', 'gtl', x[0])); });
       cells.forEach(function (x) { grid.appendChild(el('span', 'gtc' + (x[1] === '—' ? ' mu' : ''), x[1])); });
-      var chip = m.chip ? pill(m.chip, 'warn') : sg && sg.why === 'new' ? pill('подбери вес', 'warn') : null;
+      var chip = m.chip ? pill(m.chip, 'warn') : sg && sg.why === 'new' && i.unit !== 's' ? pill('подбери вес', 'warn')
+        : sg && sg.why === 'start' && sg.kg != null ? pill('старт ' + woNum(sg.kg) + ' кг') : null;
       var r = add(el('div', 'gtx'), add(el('div', 'gtxh'), th, add(el('span', 'tx'), el('div', 't', i.exercise), el('div', 'mu', sub))), grid,
         chip || m.note ? add(el('div', 'gtnote'), chip, m.note ? el('span', 'mu', (chip ? ' ' : '') + m.note) : null) : null);
       r.setAttribute('aria-label', i.exercise + ', ' + sub + ', ' + cells.map(function (x) { return x[0].toLowerCase() + ' ' + x[1]; }).join(', ') +
         (m.chip ? ', ' + m.chip : '') + ' — как делать');
       nodes.push(tap(r, function () {
         haptic();
-        var w = sg ? gymWhy({ sg: sg, reps: i.reps }) : '';
+        var w = sg ? gymWhy({ sg: sg, reps: i.reps, unit: i.unit }) : '';
         gymExSheet(i, gifs, mus, r, sg ? [add(el('div', 'gxw'), el('b', '', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')),
           el('span', 'mu', ' · отдых ' + (i.rest_s || 75) + ' с')), w ? el('div', 'mu gxwhy', w) : null] : undefined);
       }));
@@ -19067,14 +19068,15 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     vs.forEach(function (v) { v.removeAttribute('autoplay'); v.autoplay = false; v.preload = 'none'; io.observe(v); });
   }
   // The hint after an exercise's plan — the twin of _shared/gym.ts hintText: «80 → 85 кг», «80 кг», «80 → 75 кг (−5 %)»,
-  // «подбери вес», «было 12 → 13», «было 12». Edit both together.
+  // «подбери вес», «старт 30 кг», «было 12 → 13», «было 12». Edit both together.
   function gymHint(i) {
     var h = gymHintBase(i), s = i.suggest || {};
     return h && s.via ? h + ' (по аналогу ' + s.via + ')' : h;
   }
   function gymHintBase(i) {
     var s = i.suggest || {};
-    if (s.why === 'new') return 'подбери вес';
+    if (s.why === 'new') return i.unit === 's' ? '' : 'подбери вес';
+    if (s.why === 'start' && s.kg != null) return 'старт ' + woNum(s.kg) + ' кг';
     if (i.unit === 'bw' || i.progress === 'bw' || s.kg == null) {
       var best = Math.max.apply(null, (s.last_reps || []).concat(0));
       return !best ? '' : s.reps_to != null ? 'было ' + best + ' → ' + s.reps_to : 'было ' + best;
@@ -19091,7 +19093,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // Why this weight, one line under the current exercise.
   function gymWhy(it) {
     var s = it.sg || {}, reps = (s.last_reps || []).join('/'), via = s.via ? ' По аналогу: ' + s.via + '.' : '';
-    if (s.why === 'new') return 'Первый раз — подбери вес, чтобы последний повтор давался с трудом.';
+    if (s.why === 'new') return it.unit === 's' ? '' : 'Первый раз — подбери вес, чтобы последний повтор давался с трудом.';
+    if (s.why === 'start') return 'Стартовый вес — от твоих жимов. Тяжело — уменьши, дальше подстроится по записям.';
     if (s.effort === 'max') return 'В прошлый раз на пределе — сбавь на 5 %.' + via;
     if (s.effort === 'hard') return s.why === 'down' ? 'В прошлый раз тяжело и ниже ' + gymRange(it.reps)[0] + ' — сбавь на 5 %.' + via : 'В прошлый раз тяжело — оставь вес.' + via;
     if (s.effort === 'easy' && s.why === 'up') return 'В прошлый раз легко и все до верха — прибавь.' + via;
@@ -19131,7 +19134,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var sg = i.suggest || {};
     var u = i.unit === 'bw' || i.unit === 's' ? i.unit : 'kg';
     return { exercise: i.exercise, orig: i.exercise, sets: i.sets || 3, reps: i.reps || '10–12', unit: u,
-      progress: i.progress || null, rest_s: i.rest_s || 75, alts: i.alts || [], kg: sg.kg != null ? sg.kg : sg.last_kg != null ? sg.last_kg : null,
+      progress: i.progress || null, rest_s: i.rest_s || 75, alts: i.alts || [], start_kg: i.start_kg > 0 ? i.start_kg : undefined, kg: sg.kg != null ? sg.kg : sg.last_kg != null ? sg.last_kg : null,
       r: u === 's' ? gymSecs(i.reps) : sg.reps_to || gymRange(i.reps)[1] || 10, sg: sg, done: [], skip: false };
   }
   // A new session of the day (gym_start's day) — or the server's draft of it taken over: its start and its sets.
@@ -19647,7 +19650,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
               haptic();
               keep();
               draw();
-              api('miniapp', { action: 'gym_suggest' }, 15000, true, { exercise: a, sets: it.sets, reps: it.reps, unit: it.unit, progress: it.progress || undefined, alts: [it.orig].concat(it.alts).filter(function (x) { return x !== a; }) })
+              api('miniapp', { action: 'gym_suggest' }, 15000, true, { exercise: a, sets: it.sets, reps: it.reps, unit: it.unit, progress: it.progress || undefined, start_kg: a === it.orig ? it.start_kg : undefined, alts: [it.orig].concat(it.alts).filter(function (x) { return x !== a; }) })
                 .then(function (j) {
                   if (it.exercise !== a || it.done.length) return;
                   it.sg = j.suggest || {};
