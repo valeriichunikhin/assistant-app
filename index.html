@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 00:55">
+<meta name="published" content="2026-11-01 01:02">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1349,9 +1349,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
 .fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 11px var(--font);letter-spacing:-.04em}
 .fsc .i{width:14px;height:14px}.fsc{position:relative}
-/* Several workouts a day: a dot each under the circle, in the sport's colour, inside the pill (his 01.11.2026). */
-.fsq{position:absolute;left:50%;bottom:-8px;display:flex;gap:2px;transform:translateX(-50%)}.fsq i{width:4px;height:4px;border-radius:50%;background:var(--wo)}
-.fsd{padding-bottom:9px}
+/* Several workouts a day: the count in the circle's corner, inside the pill (38 px, the circle 28: 5 px each side). */
+.fsq{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:13px;height:13px;border:1.5px solid var(--surface);border-radius:50%;box-sizing:content-box;background:var(--wo);color:var(--solid);font:700 9px/1 var(--font-num);letter-spacing:0}
 .fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
 .fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
 .fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
@@ -19598,10 +19597,10 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
-      // More than one on the day (his 01.11.2026, «внутри, не обязательно как Bevel»): a dot a workout under the
-      // circle, each in its sport's colour, inside the pill.
-      var ks = D.workouts.map(woKind).concat(D.planned.filter(function (p) { return !p.workout_id; }).map(function (p) { return p.sport; }));
-      if (ks.length > 1) c.appendChild(add.apply(null, [el('span', 'fsq')].concat(ks.slice(0, 4).map(function (k) { return el('i', 'k-' + k); }))));
+      // More than one on the day (his 01.11.2026: «циферки», but inside the pill): the count in the circle's corner,
+      // in the first one's colour, never past the pill's edge.
+      var n = D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length;
+      if (n > 1 && (w || pl)) c.appendChild(el('span', 'fsq', String(n)));
       return c;
     }
     function what(d) {
