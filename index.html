@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 12:43">
+<meta name="published" content="2026-11-01 13:27">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1715,7 +1715,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .lfold.lgf{color:var(--fg)}.lgf-n{font-weight:700}.lgf-c{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}.lgf>.i{color:var(--muted)}.lgr[hidden]{display:none}
 .bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
 .bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
-.bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
+.bas-wk .htr-h,.bas-wk .htr-r{grid-template-columns:minmax(0,1fr) 72px 84px}.bas-wk3 .htr-h,.bas-wk3 .htr-r{grid-template-columns:minmax(0,1fr) 60px 108px}.bas-wk3 .htr-h span:last-child{text-align:right}.bas-wl{margin:4px 0 8px}.bas-wk .htr-h span:nth-child(2){text-align:left}.bas-wd{justify-self:end}
 /* «Календарь» (docs/specs/calendar.md, 30.10.2026): the month Monday-first, today ringed, the chosen day filled in the
    accent, under the number up to three dots in the sources' colours (--cs: ours the accent, a task pink — the sleep
    violet read as the accent's twin —, a game the volleyball's orange, a workout green — the gym's colour is the accent —,
@@ -17272,11 +17272,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       ch == null ? null : add(el('div', 'bio-r'), el('div', '', span + ' ' + ['неделя', 'недели', 'недель'][plural3(span)]),
         add(el('div'), el('b', '', bioSigned(ch)), document.createTextNode(' ' + bioYw(ch)))));
     var lead = add(el('div', 'bio-lead'), top, bio == null || age == null || span < 2 ? null : bioWeeksLine(hs, age));
-    if (lead.childNodes.length > 1) {
-      lead.appendChild(add(el('div', 'nus-lg'), add(el('span'), el('i', 'nus-dot bio-lg-b'), document.createTextNode('биологический по неделям')),
-        hs.filter(function (h) { return h.habits != null; }).length > 1 ? add(el('span'), el('i', 'nus-dot bio-lg-h'), document.createTextNode('привычки')) : null,
-        add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('возраст ' + woNum(age)))));
-    }
+    if (lead.childNodes.length > 1) lead.appendChild(bioLegend(hs, age));
     // A tap on the line or its legend opens the weeks' chart (his «нажимаю на график», 01.11.2026), elsewhere — the sheet.
     c.appendChild(tap(lead, function (ev) {
       haptic();
@@ -17299,6 +17295,12 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     if (n != null) foot.appendChild(add(el('span', 'mu'), document.createTextNode('обновление через '), el('b', '', n + ' ' + ['день', 'дня', 'дней'][plural3(n)])));
     if (foot.firstChild) c.appendChild(foot);
     return c;
+  }
+  // The line's legend: the bio age, the habits (when logged), the passport age.
+  function bioLegend(hs, age) {
+    return add(el('div', 'nus-lg'), add(el('span'), el('i', 'nus-dot bio-lg-b'), document.createTextNode('биологический по неделям')),
+      hs.filter(function (h) { return h.habits != null; }).length > 1 ? add(el('span'), el('i', 'nus-dot bio-lg-h'), document.createTextNode('привычки')) : null,
+      add(el('span'), el('i', 'nus-dot nus-rest'), document.createTextNode('возраст ' + woNum(age))));
   }
   // The logged weeks as a line (each week at its date) against the passport age dashed, the gap between them shaded,
   // the last week a dot; the two numbers in the right gutter (pushed apart when close), the first and last week under.
@@ -17787,23 +17789,29 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     close = legalSheet('Как считается', nodes, from);
   }
   // The 12 weeks: the overall a week as a line with dots (hlChart), a row a week with its change.
+  // «Биовозраст по неделям»: the card's line (the bio age, the habits, the passport age) and the weeks as a table — the
+  // bio age and the habits' age with its change. His «реально ничего не менялось» (01.11.2026): the bio age holds still
+  // between labs and VO2max, the habits move week to week, so the sheet says so and shows both.
   function bioWeeksSheet(j, from) {
-    var hs = (j.history || []).filter(function (h) { return h.bio != null; }), body = el('div', 'hsh'), close = noop;
+    var hs = (j.history || []).filter(function (h) { return bioNum(h.bio) != null && /^\d{4}-\d{2}-\d{2}/.test(h.week_start || ''); }), body = el('div', 'hsh'), close = noop;
     var nodes = [body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))];
     close = legalSheet('Биовозраст по неделям', nodes, from);
     hlFrame(body);
-    var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
-    if (hs.length > 1) {
-      body.appendChild(hlChart(hs.map(function (h) { return { day: h.week_start, v: h.bio }; }),
-        { W: W, from: hs[0].week_start, to: hs[hs.length - 1].week_start, days: 84, dots: true, label: 'Биовозраст по неделям', unit: 'лет', tick: woNum }));
-    }
-    var t = add(el('div', 'htr bas-wk'), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Возраст'), el('span', '', 'Изменение')));
+    var age = bioNum(j.age), hab = hs.filter(function (h) { return h.habits != null; }).length > 1, p = j.pheno || {};
+    var still = hs.length > 1 && hs.every(function (h) { return Math.abs(h.bio - hs[0].bio) < 0.05; });
+    if (still) body.appendChild(el('div', 'mu hsec-s', 'Общий возраст стоит на месте: он держится на анализе крови' + (p.taken_on ? ' от ' + dmy(p.taken_on) : '') +
+      ' и VO2max и сдвинется с новым анализом или VO2max.' + (hab ? ' Каждую неделю двигаются привычки — сон, шаги, тренировки.' : '')));
+    if (hs.length > 1 && age != null) body.appendChild(add(el('div', 'bas-wl'), bioWeeksLine(hs, age), bioLegend(hs, age)));
+    var t = add(el('div', 'htr bas-wk' + (hab ? ' bas-wk3' : '')), add(el('div', 'htr-h mu'), el('span', '', 'Неделя'), el('span', '', 'Общий'), hab ? el('span', '', 'Привычки') : el('span', '', 'Изменение')));
     hs.slice().reverse().forEach(function (h, i, a) {
-      var prev = a[i + 1], d = prev && addDays(h.week_start, -7) === prev.week_start ? Math.round((h.bio - prev.bio) * 10) / 10 : null;
+      var prev = a[i + 1], wk = prev && addDays(h.week_start, -7) === prev.week_start;
+      var v = hab ? (h.habits == null ? null : Number(h.habits)) : h.bio, pv = !wk ? null : hab ? (prev.habits == null ? null : Number(prev.habits)) : prev.bio;
+      var d = v == null || pv == null ? null : Math.round((v - pv) * 10) / 10;
       t.appendChild(add(el('div', 'htr-r ' + (d == null || Math.abs(d) < 0.05 ? 'hs-same' : d > 0 ? 'hs-below' : 'hs-norm')), el('span', 'mu', 'с ' + hlShort(h.week_start)),
-        el('span', 'htr-c', woNum(h.bio)), add(el('span', 'htr-c bas-wd'), el('i', 'hdot'), document.createTextNode(d == null ? '—' : bioSigned(d)))));
+        el('span', 'htr-c', woNum(h.bio)),
+        add(el('span', 'htr-c bas-wd'), el('i', 'hdot'), document.createTextNode(hab ? (v == null ? '—' : woNum(v)) + (d == null ? '' : ' (' + bioSigned(d) + ')') : d == null ? '—' : bioSigned(d)))));
     });
-    add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'По неделям'), el('div', 'mu hsec-s', 'Пересчёт по понедельникам; младше — зелёным, старше — оранжевым.'), t));
+    add(body, add(el('div', 'hsec'), el('div', 'hsec-h', 'По неделям'), el('div', 'mu hsec-s', 'Пересчёт по понедельникам; ' + (hab ? 'у привычек ' : '') + 'младше — зелёным, старше — оранжевым.'), t));
   }
   // A group's sheet: its years large; a card a factor — the value, the threshold, the contribution as a bar from the
   // middle, the source; its 28 days (hlChart) when the factor has a series. The blood: the nine PhenoAge terms.
