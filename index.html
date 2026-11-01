@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 19:03">
+<meta name="published" content="2026-11-01 19:35">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1016,7 +1016,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
    theirs, the sections as card heads. */
 .card.nutop{padding:0 0 14px}
 /* The lead of «Питание» (01.11.2026): the macro rings, the kcal tick scale in the meals' colours, the legend. */
-.nus{padding:0 14px 12px}
+.nus{padding:0 14px}
 /* Four hues apart (31.10.2026, his «сложно читать»: lunch in the lime accent and the green snack merged) */
 .nus-breakfast{--ms:var(--nu-carbs)}.nus-lunch{--ms:var(--ring-recovery-2)}.nus-dinner{--ms:var(--hl-sky)}.nus-snack{--ms:var(--ring-sleep)}.nus-other{--ms:var(--muted)}
 .nus-lg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:8px;font-size:12px;color:var(--muted)}.nus-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--ms)}
@@ -1057,10 +1057,12 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .hring.nu-protein .tr,.hring.nu-fat .tr,.hring.nu-carbs .tr{stroke:color-mix(in srgb,var(--nu) var(--nu-soft),transparent)}
 .hring .arcs.lap{--rc-start:color-mix(in srgb,var(--rc-lap) 84%,#000);--rc-end:color-mix(in srgb,var(--rc-lap) 68%,#000)}
 .nus-mv{font:700 17px/1.25 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.nus-mv.over,.nus-ov2{color:var(--nu)}
-.nusrc{margin:2px 0 12px;font-size:11px;text-align:center}
-.nuact{display:flex;justify-content:center;flex-wrap:wrap;gap:6px}
-.nuact button{display:inline-flex;align-items:center;gap:4px;height:36px;padding:0 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:500 13px var(--font);white-space:nowrap}
-.nuact .i{width:16px;height:16px;color:var(--mark)}
+/* The card's last row (01.11.2026, his «что это вообще за вес?»): the meals' legend with the source after it on the left,
+   the weight chip on the right — the day's, else the last one with its date, else «записать вес». */
+.nus-ft{display:flex;align-items:center;gap:8px 10px;margin-top:10px}.nus-ft .nus-lg{flex:1;min-width:0;margin-top:0}
+.nus-src{color:var(--muted-2);font-size:11px}
+.nuwt{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;margin-left:auto;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font:600 13px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nuwt::after{content:"";position:absolute;inset:-7px -4px}.nuwt .i{width:15px;height:15px;color:var(--mark)}.nuwt .mu{font-weight:500}
 .card.nuc{padding:0 0 14px}
 .nugo{flex:none;display:grid;place-items:center;width:40px;height:40px;margin:-8px -10px -8px 0;padding:0;border:0;background:none;color:var(--muted)}
 .nuk{display:flex;align-items:center;gap:10px;margin:0 14px 8px;padding:12px 12px 12px 14px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
@@ -1453,17 +1455,18 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fmd:active .fsc{transform:scale(.94)}
 /* «Месяц» of «Сегодня», «Питание», «Биология» (docs/specs/health-month.md, Bevel's calendar-recovery.jpg): the same
    sheet, a day a pill — its small ring in the ring's colour with the number inside (a day without data the bare track,
-   the days ahead the date alone), the kcal's red arc past the goal; «Биология» the date with a dot for a weigh-in and
-   one for labs, the week's bio age in an eighth column with the arrow against the week before. */
-.fmg.hmg{row-gap:8px}.fmg.hmb,.fmw.hmb{grid-template-columns:repeat(7,minmax(0,1fr)) 44px}
-.fmd.hmd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:62px;margin:0 2px;border:1px solid var(--line);border-radius:21px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.hmd .hmn{font:600 13px/1 var(--font-num);font-variant-numeric:tabular-nums}.hmd.fut{background:none;box-shadow:none}.hmd.fut .hmn{color:var(--muted)}
+   the days ahead the date alone), the kcal past the goal a second lap in a darker shade, as the macro rings; «Биология»
+   the date with a dot for a weigh-in and one for labs, the week's bio age in an eighth column with the arrow against the
+   week before. 01.11.2026 (his «много пустого места»): the pills lower, the days ahead the dim number alone, no pill. */
+.fmg.hmg{row-gap:6px}.fmg.hmb,.fmw.hmb{grid-template-columns:repeat(7,minmax(0,1fr)) 44px}
+.fmd.hmd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:54px;margin:0 2px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.hmd .hmn{font:600 12px/1 var(--font-num);font-variant-numeric:tabular-nums}.fmd.hmd.fut{border-color:transparent;background:none;box-shadow:none}.hmd .hmr-x{display:block;flex:none;width:30px;height:30px}.hmd.fut .hmn{color:var(--muted)}
 .fmd.hmd::after{display:none}.fmb:disabled{opacity:.35}.fmd.hmd.today{border:2px solid var(--mark)}.hmd.today .hmn{color:var(--mark);font-weight:800}.fmd.hmd.sel:not(.today){border-color:var(--fg)}
 button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
-.hmr{display:block;flex:none;width:32px;height:32px;overflow:visible}.hmr circle{fill:none;stroke-width:3.6;stroke-linecap:round}
-.hmr .tr{stroke:color-mix(in srgb,var(--hm) 22%,transparent)}.hmr.e .tr{stroke:var(--track)}.hmr .a{stroke:var(--hm)}.hmr .ov{stroke:var(--bad)}
+.hmr{display:block;flex:none;width:30px;height:30px;overflow:visible}.hmr circle{fill:none;stroke-width:3.6;stroke-linecap:round}
+.hmr .tr{stroke:color-mix(in srgb,var(--hm) 22%,transparent)}.hmr.e .tr{stroke:var(--track)}.hmr .a{stroke:var(--hm)}.hmr .ov{stroke:color-mix(in srgb,var(--hm) 50%,#000)}
 .hmr .hmv{fill:var(--fg);font:700 10px var(--font-num);letter-spacing:-.02em}
-.hm-load{--hm:var(--ring-load)}.hm-rec{--hm:var(--ring-recovery)}.hm-sleep{--hm:var(--ring-sleep)}.hm-kcal{--hm:var(--mark)}
+.hm-load{--hm:var(--ring-load)}.hm-rec{--hm:var(--ring-recovery)}.hm-sleep{--hm:var(--ring-sleep)}.hm-kcal{--hm:var(--ring-recovery-2)}
 .hm-st-good{--hm:var(--ring-recovery)}.hm-st-mid{--hm:var(--ring-load-2)}.hm-st-bad{--hm:var(--bad)}
 .hmdots{display:flex;gap:3px;height:6px}.hmdots i{width:6px;height:6px;border-radius:50%}.hmdots .w{background:var(--hl-bio)}.hmdots .l{background:var(--hl-sky)}
 .hmy{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;font:700 13px/1 var(--font-num);font-variant-numeric:tabular-nums}
@@ -15105,6 +15108,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (seg === 'nutrition') {
         out = nuView(j, list || add(nuTimeline(0), none), {
           weight: function (wb) { foodWeightSheet(date, j.weight, wb, function () { fresh(); load(); loadStats(); }); },
+          lastWeight: function () {
+            var l = null;
+            ((SJ && SJ.weights) || []).forEach(function (x) { if (x.day <= date && (!l || x.day > l.day)) l = x; });
+            return l;
+          },
           add: function (ev) { foodAddSheet(date, ev.currentTarget, load); },
           scan: function (ev) { foodScanSheet(date, ev.currentTarget, load); },
           water: function (ml) { waterAdd(date, j, ml, function () { render(j); }, function () { fresh(); load(); }); },
@@ -15137,7 +15145,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (seg !== 'nutrition') return;
       swr({ key: 'food:stats', box: stats, n: 1, live: function () { return current === 'food' && healthSeg === 'nutrition'; },
         fetch: function () { return api('miniapp', { action: 'food_stats' }, 15000, true, { days: 30 }); },
-        render: function (j) { SJ = j; add(clear(stats), foodStatsCard(j, stats)); } });
+        render: function (j) { SJ = j; add(clear(stats), foodStatsCard(j, stats)); var c = body.querySelector('.nuwt'); if (c) c.upd(); } });
     }
     // The day's health: «Здоровье» and «Монитор» on top, «Фитнес» after the workouts; no health row in the 30 days —
     // the one line to set it up instead (and «Фитнес» still, from the workouts, when there are any).
@@ -15209,16 +15217,15 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function nuK(v) { return Math.abs(v) >= 1000 ? woNum(Math.round(v / 100) / 10) + 'k' : String(Math.round(v)); }
   function nuSigned(v) { return (v < 0 ? '−' : '') + grouped(Math.abs(Math.round(v))); }
   function nuView(j, timeline, h) {
-    var nu = j.nutrition, src = nu || j.totals || {}, kcal = Math.round(src.kcal || 0), goal = kcalGoal(), w = j.weight;
-    var wb = foodBtn('', 'weight', w ? foodKg(w.kg) + ' кг' : 'вес', function () { h.weight(wb); });
-    wb.setAttribute('aria-label', w ? 'Вес ' + foodKg(w.kg) + ' кг — поправить' : 'Записать вес');
-    // The lead card as «Здоровье»'s and «Фитнес»'s: the head with «Записать», the scale, the weight under it.
+    var nu = j.nutrition, src = nu || j.totals || {}, kcal = Math.round(src.kcal || 0), goal = kcalGoal();
+    // The lead card as «Здоровье»'s and «Фитнес»'s: the head with «Записать», the rings, the scale, under it one row —
+    // the legend with the source and the weight.
     var top = mkCard('utensils', 'Питание');
     top.className += ' hnu nutop';
     top.firstChild.appendChild(foodBtn('mtoday', 'plus', 'Записать', h.add));
     top.firstChild.appendChild(foodBtn('mtoday', 'scan-barcode', 'Сканер', h.scan));
-    add(top, nuStack(j, src, kcal, goal, h.redraw), el('div', 'mu nusrc', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
-      add(el('div', 'nuact'), wb));
+    add(top, nuStack(j, src, kcal, goal, h.redraw, el('span', 'nus-src', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
+      nuWeight(j.weight, FOOD.date, h)));
     return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
   }
   // «Вода» (docs/specs/water.md; his pick 31.10.2026 — «W2»): a row as Bevel's factor rows — the ring to the goal with a
@@ -15305,7 +15312,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // a row of ticks from 0 to max lit up to the eaten in the meal's colour in the day's order (food from Health beyond the
   // entries — a grey «без записи»), the goal one tall tick; the axis 0 · цель · max; the legend.
   var NU_MEAL_CLS = { breakfast: 'nus-breakfast', lunch: 'nus-lunch', dinner: 'nus-dinner', snack: 'nus-snack' };
-  function nuStack(j, src, kcal, goal, redraw) {
+  function nuStack(j, src, kcal, goal, redraw, srcNote, wchip) {
     var box = el('div', 'nus');
     var es = (j.entries || []).filter(function (e) { return Number(e.kcal) > 0; }).sort(function (a, b) { return String(a.at).localeCompare(String(b.at)); });
     var segs = es.map(function (e) { return { kcal: Math.round(Number(e.kcal)), cls: NU_MEAL_CLS[e.meal] || 'nus-snack', label: (FOOD_RU[e.meal] || 'еда').toLowerCase(), at: e.at }; });
@@ -15327,15 +15334,28 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     });
     box.appendChild(mb);
     box.appendChild(nuTicks(segs, kcal, goal));
-    // The legend: a meal a chip in the day's order (the same meal twice — summed).
-    var byMeal = [], seen = {};
+    // The last row: the legend — a meal a chip in the day's order (the same meal twice — summed), the source after it —
+    // and the weight chip on the right.
+    var byMeal = [], seen = {}, lg = el('div', 'nus-lg');
     segs.forEach(function (sg) { var k = sg.cls; if (seen[k] == null) { seen[k] = byMeal.length; byMeal.push({ cls: k, label: sg.label, kcal: 0 }); } byMeal[seen[k]].kcal += sg.kcal; });
-    if (byMeal.length) {
-      var lg = el('div', 'nus-lg');
-      byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
-      box.appendChild(lg);
-    }
+    byMeal.forEach(function (m) { lg.appendChild(add(el('span'), el('i', 'nus-dot ' + m.cls), document.createTextNode(m.label + ' ' + grouped(m.kcal)))); });
+    box.appendChild(add(el('div', 'nus-ft'), add(lg, srcNote), wchip));
     return box;
+  }
+  // The weight chip: the day's weight; else the last one before it from food_stats' 30 days with its date
+  // («94,7 кг · 30.10», redrawn by upd() when food_stats comes after the day); else «записать вес». A tap — the day's
+  // weight sheet.
+  function nuWeight(w, date, h) {
+    var b = el('button', 'nuwt');
+    b.type = 'button';
+    b.onclick = function () { h.weight(b); };
+    b.upd = function () {
+      var l = w ? { kg: w.kg, day: date } : h.lastWeight();
+      add(clear(b), icon('weight'), el('span', '', l ? foodKg(l.kg) + ' кг' : 'записать вес'), l && l.day < date ? el('span', 'mu', '· ' + dm(l.day)) : null);
+      b.setAttribute('aria-label', w ? 'Вес ' + foodKg(w.kg) + ' кг — поправить' : l ? 'Последний вес ' + foodKg(l.kg) + ' кг, ' + dm(l.day) + ' — записать вес' : 'Записать вес');
+    };
+    b.upd();
+    return b;
   }
   // The kcal scale: the head «2 115 из 2 500 ккал · осталось 385 ккал» («сверх цели» in red past the goal); 48 ticks from 0
   // to max (1,4 × the goal or the eaten, rounded up to 500), each lit if its middle is eaten, in the colour of the meal it
@@ -20075,8 +20095,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // --- «Месяц» of «Сегодня», «Питание» and «Биология» (docs/specs/health-month.md; Bevel's calendar-recovery.jpg) ---
   // The fitness month's sheet for the other segments: ‹ month ›, Mon–Sun, today ringed, the days ahead empty, one
   // health_range a month. «Сегодня» — a pill a ring (remembered), a day its small ring in the ring's colour with the
-  // number inside (the stress in its zone's colour); «Питание» — the kcal against the goal, full past it with a red arc
-  // over; «Биология» — the week's bio age at its row's end with the arrow against the week before, dots on the days
+  // number inside (the stress in its zone's colour); «Питание» — the kcal against the goal, past it a second darker lap; «Биология» — the week's bio age at its row's end with the arrow against the week before, dots on the days
   // weighed and with labs. A tap: «Сегодня» and «Питание» go to that day (pick); «Биология» has no day — a weighed day
   // opens the weight's sheet, a day of labs shows «Анализы».
   var HM_RINGS = [['load', 'Нагрузка', 'hm-load'], ['recovery', 'Восстановление', 'hm-rec'], ['sleep', 'Сон', 'hm-sleep'], ['stress', 'Стресс']];
@@ -20117,7 +20136,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function cell(d, J) {
       var by = J && J.by[d], n = +d.slice(8, 10), what = '', ring = null, dots = null, tapIt = null;
       if (bio) dots = el('span', 'hmdots');
-      if (d > today) what = '';
+      if (d > today) { what = ''; ring = bio ? null : el('span', 'hmr-x'); }
       else if (!J) { ring = bio ? null : hmRing(0, 'e', ''); what = 'загружаю'; }
       else if (bio) {
         var w = J.weights.indexOf(d) >= 0, lb = J.labs.indexOf(d) >= 0;
