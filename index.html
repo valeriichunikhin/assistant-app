@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 19:53">
+<meta name="published" content="2026-11-01 20:39">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1099,6 +1099,9 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nuf[hidden]{display:none}
 .nufe{flex:none;width:24px;font-size:20px;line-height:1;text-align:center}
 .nufn{flex:1;min-width:0;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nufl .nufn{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-height:1.2;white-space:normal}
+@media (max-width:430px){.nufl .nusl{width:72px}}
+@media (max-width:400px){.nufl .nusl{width:56px}.nufl .nuf{gap:8px}}
 .nusl{flex:none;width:96px;height:16px;overflow:visible}.nusl .tr{fill:var(--track)}.nusl .fill{fill:var(--ring-recovery)}.nusl .over{fill:var(--ring-load)}
 .nusl .mk{stroke:var(--muted);stroke-width:1.6;stroke-linecap:round}.nusl .th{fill:var(--fg);stroke:color-mix(in srgb,var(--fg) 45%,var(--surface));stroke-width:3}
 .nusl .th.up{stroke:var(--ring-recovery)}.nusl .th.down{stroke:var(--ring-load)}
@@ -1110,6 +1113,10 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nurm{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px}.nurm span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .nurm i,.nudot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--nu)}.nudot{width:10px;height:10px}
 .nufx{margin:0 0 12px;line-height:1.5}
+.nusc{display:flex;align-items:center;gap:14px;margin:0 0 8px;padding:12px 14px;border:1px solid var(--card-line);border-radius:var(--r-b);background:var(--surface);box-shadow:var(--shadow)}
+.nusc-n{flex:none;display:grid;place-items:center;min-width:52px;font:700 34px/1 var(--font-num);font-variant-numeric:tabular-nums}
+.nusc.lock .nusc-n{color:var(--muted)}.nusc-n .i{width:26px;height:26px}
+.nusc-t{min-width:0}.nusc-t .mu{margin-top:3px;font-size:13px;line-height:1.35}
 /* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
    last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
 .wempty{padding:0 14px 12px}.row.frow .wl{display:block}
@@ -15226,7 +15233,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     top.firstChild.appendChild(foodBtn('mtoday', 'scan-barcode', 'Сканер', h.scan));
     add(top, nuStack(j, src, kcal, goal, h.redraw, el('span', 'nus-src', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
       nuWeight(j.weight, FOOD.date, h)));
-    return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
+    return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || [], j.score), timeline];
   }
   // «Вода» (docs/specs/water.md; his pick 31.10.2026 — «W2»): a row as Bevel's factor rows — the ring to the goal with a
   // drop, «1,25 из 2 л · осталось 3 стакана», a round «+» (a glass, 250 мл); under it the portions and «другое». A tap on
@@ -15507,18 +15514,24 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       add(el('div', 'nuei'), burn, ate)), g, ticks);
   }
   var NU_WHY = {
-    omega3: 'Омега-3 — жирные кислоты из рыбы, лучше жирной: лосось, скумбрия, сельдь, сардины. Они поддерживают сердце, сосуды и восстановление после нагрузок. Фактор даёт +10, если в записях дня есть рыба; сколько её — не считается.',
-    veg: 'Овощи дают клетчатку, калий и витамины при малой калорийности и хорошо насыщают. Фактор даёт +10, если в записях дня есть овощи или салат.',
-    sugar: 'Сахар быстро поднимает глюкозу и почти не насыщает. До 50 г в день — безопасный порог, баллы не снимаются; выше порога снимается по доле, до −10 при 100 г и больше. Сахар берётся из Health (его пишет Bevel).',
-    sodium: 'Натрий — это в основном соль: много соли поднимает давление и задерживает воду. До 2 300 мг в день — безопасный порог; выше снимается по доле, до −10 при 4 600 мг и больше. Натрий берётся из Health.',
-    grains: 'Цельные злаки — овсянка, гречка, бурый рис, киноа, цельнозерновой и ржаной хлеб: медленные углеводы и клетчатка. Фактор даёт +10, если они есть в записях дня.',
-    fats: 'Полезные жиры — авокадо, орехи, оливковое масло, семечки: ненасыщенные жиры для сердца и сытости. Фактор даёт +10, если они есть в записях дня.',
-    fiber: 'Клетчатка кормит кишечный микробиом, держит сытость и сглаживает сахар в крови. Цель — {g} в день: +10 при {g} и больше, меньше — по доле. Клетчатка берётся из Health.',
-    water: 'Вода за день: стаканы из журнала и напитки из записей, в дни без них — из Health. Цель — {g} в день: +10 при {g} и больше, меньше — по доле.'
+    veg: 'Овощи дают клетчатку, калий и витамины при малой калорийности. +10 при ~150 г за день (2,5 чашки цельных овощей), меньше — по доле. Соусы и соки не считаются.',
+    grains: 'Цельные злаки — овсянка, гречка, бурый рис, киноа, цельнозерновой и ржаной хлеб: медленные углеводы и клетчатка. +10 при ~3 порциях за день, меньше — по доле; белый хлеб, рис и паста не считаются.',
+    fats: 'Полезные жиры — оливковое и другие растительные масла, авокадо, орехи, семена: ненасыщенные жиры для сердца и сытости. +10, когда они дают 20–35 % калорий дня, меньше — по доле. Сливочное масло и сало не считаются.',
+    fruit: 'Цельные фрукты и ягоды (и авокадо) дают клетчатку, калий и витамины. +10 при ~2,5 чашки за день, меньше — по доле; соки не считаются.',
+    nuts: 'Орехи и бобовые — грецкие орехи, миндаль, арахис, фасоль, чечевица, нут, горох, тофу: растительный белок, клетчатка и полезные жиры. +10 при ~28 г за день, меньше — по доле.',
+    omega3: 'Омега-3 — жирные кислоты из рыбы (лосось, сардины, форель, тунец, сельдь), яиц и водорослей: сердце, сосуды, восстановление. +10 при ~250 мг за день, меньше — по доле.',
+    red_meat: 'Красное мясо — говядина, баранина, свинина: много его — риск для сердца и сосудов. −5 при ~70 г приготовленного за день (~500 г в неделю), меньше — по доле. Колбасы и ветчина — в переработанном мясе.',
+    sodium: 'Натрий — это в основном соль: много соли поднимает давление и задерживает воду. До 1 500 мг за день — 0; дальше снимается по доле, −5 от 2 300 мг. Натрий — из Health, а в дни без него — сумма оценок по записям.',
+    processed: 'Переработанное мясо — бекон, колбаса, сосиски, ветчина, деликатесы, хот-доги, наггетсы: соль и нитриты, самый сильный риск из мяса. −10 при ~1,5 порции за день, меньше — по доле.',
+    alcohol: 'Алкоголь — пиво, вино, крепкие напитки и коктейли: безопасной дозы нет. −10 уже при одном напитке (~14 г спирта) за день, полнапитка — −5. Считается по записям и по порциям из Health; безалкогольное не считается.',
+    sugar: 'Добавленный сахар — сахар, мёд, сиропы, сладости, выпечка, сладкие напитки; сахар цельных фруктов и молока не считается. До 5 % калорий дня (~25 г) — 0; дальше снимается по доле, −10 от 10 % (~50 г). Берётся из оценок по записям, а в дни без них — весь сахар из Health.',
+    fiber: 'Клетчатка кормит кишечный микробиом, держит сытость и сглаживает сахар в крови. Цель — {g} в день: +10 при {g} и больше, меньше — по доле. Это наша строка, в оценку питания не входит. Клетчатка — из Health, а в дни без него — сумма оценок по записям.',
+    water: 'Вода за день: стаканы из журнала и напитки из записей, в дни без них — из Health. Цель — {g} в день: +10 при {g} и больше, меньше — по доле. Это наша строка, в оценку питания не входит.'
   };
-  var NU_THR = { sugar: '50 г', sodium: '2 300 мг', fiber: '25 г', water: '2 л' };
-  // A factor's threshold in words: a plus one's goal as the server counted it (his, from «Цели»), a limit's fixed one.
-  function nuThr(f) { return f.kind === 'plus' && f.goal != null ? woNum(f.goal) + ' ' + f.unit : NU_THR[f.key]; }
+  var NU_THR = { sugar: '25 г', sodium: '1 500 мг', fiber: '25 г', water: '2 л' };
+  // A factor's target or safe threshold in words: as the server counted it (his own goals from «Цели», the sugar's 5 % of
+  // the day's kcal), else the fixed one.
+  function nuThr(f) { return f.goal != null ? woNum(f.goal) + ' ' + f.unit : NU_THR[f.key]; }
   function nuPoints(f) { return f.points == null ? '—' : (f.kind === 'limit' ? '−' : '+') + woNum(Math.abs(f.points)); }
   // A factor's slider: the track; a plus filled to the dot, a limit with its safe threshold as a tick and what is past it
   // in orange; no data — the track alone.
@@ -15527,6 +15540,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var box = svg('svg', { viewBox: '0 0 ' + W + ' 16', 'class': 'nusl', 'aria-hidden': 'true' }), x = function (p) { return 6 + p * (W - 12); };
     box.appendChild(svg('rect', { x: 0, y: 6, width: W, height: 4, rx: 2, 'class': 'tr' }));
     if (f.pos != null && f.kind === 'plus' && f.pos > 0) box.appendChild(svg('rect', { x: 0, y: 5, width: x(f.pos).toFixed(1), height: 6, rx: 3, 'class': 'fill' }));
+    if (f.pos != null && f.kind === 'limit' && f.mark == null && f.pos > 0) box.appendChild(svg('rect', { x: 0, y: 5, width: x(f.pos).toFixed(1), height: 6, rx: 3, 'class': 'over' }));
     if (f.pos != null && f.mark != null && f.pos > f.mark) {
       box.appendChild(svg('rect', { x: x(f.mark).toFixed(1), y: 5, width: (x(f.pos) - x(f.mark)).toFixed(1), height: 6, rx: 3, 'class': 'over' }));
     }
@@ -15534,12 +15548,22 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (f.pos != null) box.appendChild(svg('circle', { cx: x(f.pos).toFixed(1), cy: 8, r: 5.5, 'class': 'th' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : '') }));
     return box;
   }
-  function nuFactors(fs) {
+  // «Оценка питания» (docs/specs/food-quality-bevel.md): the server's 50 + the eleven factors as the card's first row,
+  // «50 + 19» under it; under a third of the kcal goal — locked, how many kcal are still to go.
+  function nuScore(sc, fs) {
+    var sum = Math.round(fs.filter(function (f) { return f.score !== false; }).reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
+    var r = add(el('div', 'nusc' + (sc.locked ? ' lock' : '')), sc.locked ? add(el('span', 'nusc-n'), icon('lock')) : el('span', 'nusc-n', String(sc.value)),
+      add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
+        : 'из 100 · база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам')));
+    r.setAttribute('aria-label', sc.locked ? 'Оценка питания закрыта: запиши ещё около ' + sc.need + ' ккал' : 'Оценка питания ' + sc.value + ' из 100');
+    return r;
+  }
+  function nuFactors(fs, sc) {
     var info = add(el('button', 'nuinfo'), icon('info')), list = el('div', 'nufl');
     info.type = 'button';
     info.setAttribute('aria-label', 'Как считаются факторы');
     info.onclick = function () {
-      legalSheet('Факторы качества питания', [el('p', 'nufx', 'Оценка питания — свой прозрачный расчёт: каждый фактор — простое правило по итогам дня из Health (сахар, натрий, клетчатка, вода) и по словам в записях дня (рыба, овощи, злаки, полезные жиры). Плюсы дают до +10, пределы снимают до −10.'),
+      legalSheet('Факторы качества питания', [el('p', 'nufx', 'Оценка питания — как у Bevel: база 50, к ней плюсы и минусы одиннадцати факторов, у каждого свой потолок; калории и Б/Ж/У в неё не входят. Плюсы до +10: овощи, цельные злаки, полезные жиры, фрукты, орехи и бобовые, омега-3. Минусы: красное мясо до −5, натрий до −5, переработанное мясо до −10, алкоголь до −10, добавленный сахар до −10. Количество каждого продукта оценивается вместе с записью; в старых записях без оценки — по названию. Пока записано меньше трети дневной нормы калорий, оценка закрыта. Клетчатка и вода — наши строки с твоими целями, в оценку не входят.'),
         el('div', 'mu msrc', 'Безопасный порог — черта на шкале предела: пока точка левее, баллы не снимаются.')], info);
     };
     fs.forEach(function (f, i) {
@@ -15552,11 +15576,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var box = mkCard('layers', 'Факторы качества питания');
     box.className += ' nufs';
     add(box.firstChild, info);
+    if (sc) box.appendChild(nuScore(sc, fs));
     box.appendChild(list);
     if (fs.length > 6) {
       var more = add(el('button', 'nuf numore'), icon('chevron-down'));
       more.type = 'button';
-      more.setAttribute('aria-label', 'Ещё ' + (fs.length - 6) + ' фактора');
+      more.setAttribute('aria-label', 'Ещё ' + (fs.length - 6) + (fs.length - 6 < 5 ? ' фактора' : ' факторов'));
       more.onclick = function () {
         haptic();
         [].forEach.call(list.children, function (r) { r.hidden = false; });
@@ -15568,11 +15593,19 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     add(leg, svg('rect', { x: 0, y: 4, width: 22, height: 4, rx: 2, 'class': 'tr' }), svg('line', { x1: 15, y1: 0, x2: 15, y2: 12, 'class': 'mk' }));
     return add(box, add(el('div', 'nuleg mu'), leg, document.createTextNode('Безопасный порог')));
   }
+  // What a factor's sheet says of the day: the items that counted, the amount against the target or the threshold and
+  // where it came from (the entries' estimates, Health, or only the names of older entries).
+  var NU_SRC = { entries: ' по записям', health: ' из Health' };
   function nuFactorSheet(f, from) {
-    var said = f.found && f.found.length ? 'Сегодня в записях: ' + f.found.join(', ') + '.'
-      : NU_THR[f.key] ? (f.value == null ? 'За этот день Health этого не прислал — фактор не считается.'
-        : 'За день ' + woNum(f.value) + ' ' + f.unit + ', ' + (f.kind === 'limit' ? 'безопасный порог ' : 'цель ') + nuThr(f) + '.')
-        : 'В записях дня этого нет.';
+    var thr = nuThr(f), part = [];
+    var named = f.named || [], est = (f.found || []).filter(function (n) { return named.indexOf(n) < 0; });
+    var dot = function (t) { return /\.$/.test(t) ? t : t + '.'; };
+    if (est.length) part.push('Сегодня в записях: ' + est.join(', ') + '.');
+    if (f.value != null && (f.value > 0 || !named.length)) part.push(dot('За день ' + woNum(f.value) + '\u00a0' + f.unit + (NU_SRC[f.source] || '') + ', ' + (f.kind === 'limit' ? (f.mark != null ? 'безопасный порог ' : 'полный минус при ') : 'цель ') + thr));
+    if (named.length) part.push('Без оценки количества, по названию: ' + named.join(', ') + '.');
+    else if (f.points == null) part.push('За этот день нет ни данных Health, ни оценки в записях — фактор не считается.');
+    else if (!part.length) part.push('В записях дня этого нет.');
+    var said = part.join(' ');
     legalSheet(f.emoji + ' ' + f.name, [add(el('div', 'nuf'), el('span', 'nufn', 'Баллы за день'), nuSlider(f, 120),
       el('span', 'nufp' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : ''), nuPoints(f))), el('p', 'nufx', (NU_WHY[f.key] || '').replace(/\{g\}/g, nuThr(f) || '')),
       el('div', 'mu msrc', said)], from);
