@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 16:46">
+<meta name="published" content="2026-11-01 17:09">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1530,6 +1530,16 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hms-n{font-weight:700}.hms-s{display:block;font-size:13px;color:var(--st,var(--muted))}.hms-s b{color:var(--fg)}
 .hms-r .msil{width:64px;height:64px}.hms-r .hfd{margin-top:6px;gap:4px}.hms-r .hfd i{flex-basis:10px;height:16px;border-radius:5px}
 .hms-per{width:max-content;margin:-8px 0 0}.hms-per button{min-width:64px}.hms-per[hidden]{display:none}.hms-cr{margin:14px 0 4px;font-size:12px;color:var(--muted)}
+.hpills.hltab{margin:2px -16px 6px}.hpills.hltab button.on{border-color:transparent;background:var(--fg);color:var(--bg0)}
+.hml-map[hidden],.hml-ch[hidden],.hml-nav[hidden]{display:none}
+.hbm{display:flex;justify-content:center;gap:6%;margin:0 0 12px}.hbm svg{flex:0 1 44%;max-width:210px;height:auto;display:block}
+.hbm .b{fill:var(--line-2)}.hbm .g{fill:var(--st)}.hbm .g.hl-st-calibration{fill:var(--muted)}
+.hml-ch{margin:0 -16px 6px}.hml-ch button{display:inline-flex;align-items:center;gap:6px}.hml-ch .hml-dot{width:8px;height:8px;border-radius:50%;background:var(--st)}
+.hml-ch button.on .hml-dot{box-shadow:0 0 0 1.5px var(--accent-ink)}
+.hml-nav{margin:0 -8px 8px}
+.hl-st-none{--st:var(--muted)}.hms-r.hl-st-none .msil{color:var(--line-2)}
+.hml5{display:flex;gap:4px;margin-top:6px}.hml5 i{flex:0 0 14px;height:16px;border-radius:5px;background:color-mix(in srgb,var(--st) 26%,transparent)}
+.hml5 i.now{background:var(--st)}.hml5.off i{background:var(--track)}
 @media (min-width:900px){.hfr-g{grid-template-columns:repeat(4,1fr)}}
 .row.hbr{gap:12px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .tx .mu{font-size:12px}.hbv{font:800 19px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
 .hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
@@ -16532,14 +16542,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     steps: 'Шаги', active_kcal: 'Активные ккал', vo2max: 'VO2max', weight: 'Вес', body_fat: 'Жир', kcal: 'Еда' };
   var HL_IC = { resting_hr: 'heart', hrv: 'audio-waveform', resp_rate: 'wind', spo2: 'droplet', wrist_temp: 'thermometer', sleep_min: 'moon',
     steps: 'footprints', active_kcal: 'flame', vo2max: 'wind', weight: 'scale', body_fat: 'percent', kcal: 'utensils',
-    sleep: 'moon', recovery: 'activity', load: 'flame' };
+    sleep: 'moon', recovery: 'activity', load: 'flame', muscle: 'biceps-flexed' };
   var HL_MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
   var HL_BIO_KEYS = ['weight', 'body_fat', 'hrv', 'resting_hr', 'vo2max', 'steps', 'active_kcal', 'kcal'];
   var HL_PERIODS = [[30, '30 Д'], [90, '3 М'], [180, '6 М'], [365, '1 Г']];
   // The part's icon by its label (the rings' parts).
   var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer',
     'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', 'Сегодня': 'flame', 'За 7 дней': 'calendar-range',
-    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
+    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'Нагрузка за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
   var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Норма', bad: 'Мало' } };
   var HL_LOAD_RU = { calibration: 'Калибровка', low: 'Недостаток тренировки', maintain: 'Поддержание', productive: 'Результативность',
     fatigue: 'Усталость', overtrain: 'Перетренировка' };
@@ -16899,17 +16909,23 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   var HL_RING_CLS = { load: 'hl-load', recovery: 'hl-rec', sleep: 'hl-sleep', stress: 'hl-load' };
   // A ring's sheet: the three rings as pills, the value large with its zone or status, the line; the 30 days over the
-  // zones; «Из чего»; the load — the muscles and the statuses' breakdown, the sleep — a way to the hours of sleep.
-  function hlRingSheet(k, j, from) {
+  // zones; «Из чего»; the load — the statuses' breakdown and, under its head, the tabs «Кардионагрузка · Мышечная
+  // нагрузка» (tour-7.jpg; sub 'muscle' opens the second, hlMuscleView), the sleep — a way to the hours of sleep.
+  function hlRingSheet(k, j, from, sub) {
     HL_CACHE = {};
-    var cur = k, body = el('div', 'hsh'), close = noop, seq = 0;
+    var cur = k, lsub = sub === 'muscle' ? 'muscle' : 'cardio', body = el('div', 'hsh'), close = noop, seq = 0;
+    function loadTabs() {
+      return hlPills([['cardio', 'Кардионагрузка'], ['muscle', 'Мышечная нагрузка']], lsub, function (x) { lsub = x; draw(); }, 'hltab');
+    }
     // The stress (docs/specs/bevel-gap.md, п. 2) is a fourth pill when the day has it: its parts, no chart.
     var keys = HL_RINGS.map(function (r) { return r[0]; }).concat((j.scores || {}).stress ? ['stress'] : []);
     var pills = hlPills(keys.map(function (x) { return [x, HL_NAMES[x]]; }), k, function (x) { cur = x; draw(); }, 'hfit');
     function draw() {
       var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
-      if (h) h.textContent = HL_NAMES[cur];
+      var mus = cur === 'load' && lsub === 'muscle';
+      if (h) h.textContent = mus ? 'Мышечная нагрузка' : HL_NAMES[cur];
       clear(body);
+      if (mus) return hlMuscleView(j, body, loadTabs());
       var tgt = cur === 'load' ? j.load_target || [28, 46] : null;
       var stress = cur === 'stress';
       var zone = s && cur !== 'load' ? (stress ? hlStressZone(s.value) : s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
@@ -16917,7 +16933,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.day ? HL_DAY_CLS[s.day] : s.status || 'calibration') : 'hz-st-' + zone;
       var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
       var sub = s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null;
-      add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub));
+      add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub),
+        cur === 'load' ? loadTabs() : null);
       if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
       var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
       if (chart) body.appendChild(chart);
@@ -16937,10 +16954,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           var mr = add(el('div', 'hpr'), hlMini(m.value, 'hl-load', 'biceps-flexed'), add(el('div', 'hpr-m'),
             add(el('div', 'hpr-t'), el('span', 'hpr-n', 'Мышечная нагрузка')),
             add(el('div', 'hpr-v'), el('b', '', m.value + ' %'), el('span', 'mu', HL_LOAD_RU[m.status || 'calibration'])),
-            el('div', 'mu hpr-l', m.explain[0] ? hlNb(m.explain[0].line.charAt(0).toUpperCase() + m.explain[0].line.slice(1)) : '')));
-          mr.setAttribute('role', 'group');
-          mr.setAttribute('aria-label', 'Мышечная нагрузка: ' + m.value + ' %');
-          parts.appendChild(mr);
+            el('div', 'mu hpr-l', m.explain[0] ? hlNb(m.explain[0].line.charAt(0).toUpperCase() + m.explain[0].line.slice(1)) : '')),
+            add(el('span', 'hpr-go'), icon('chevron-right')));
+          mr.setAttribute('aria-label', 'Мышечная нагрузка: ' + m.value + ' % — её вкладка');
+          parts.appendChild(tap(mr, function () { lsub = 'muscle'; draw(); body.parentNode && body.parentNode.scrollTo && body.parentNode.scrollTo(0, 0); }));
         }
         // The watch's gaps of the day (docs/specs/watch-off.md): their pulse is not counted.
         var offMin = (j.watch_off || []).reduce(function (a, o) { return a + o.min; }, 0);
@@ -17117,6 +17134,67 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %')) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
+  // «Мышечная нагрузка» (docs/specs/muscle-load.md, tour-7.jpg): the day's number (the gauge's) with its status word in
+  // its colour and «Оптимальная», the tabs, the 30 days over the target band — a dot a day in its status colour, the
+  // statuses' strip under it — the two lines, the days of each status, «Из чего» and the way to «Мышечные группы». All
+  // from health_day's muscle_load (a cached answer without it says to refresh).
+  function hlMuscleView(j, body, tabs) {
+    var s = (j.scores || {}).muscle, ml = j.muscle_load, stt = s ? s.status || 'calibration' : 'calibration';
+    var tgt = ml ? ml.target : [28, 46];
+    var sub = s && s.line ? s.line.replace(/^\d+ % — [^:]+: /, '') : 'нужна неделя тренировок и нагрузка до последних 7 дней';
+    add(body, hlHead(s ? String(s.value) : '—', s ? '%' : '', hlDay(j.date), HL_LOAD_RU[stt], 'hl-st-' + stt, 'Оптимальная: ' + tgt[0] + '–' + tgt[1] + ' %', sub), tabs);
+    var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
+    var pts = ml ? ml.days.filter(function (d) { return d.v != null; }).map(function (d) { return { day: d.day, v: d.v, s: d.s }; }) : [];
+    var top = Math.max(60, Math.ceil((Math.max.apply(null, pts.map(function (p) { return p.v; }).concat([0])) + 8) / 10) * 10);
+    body.appendChild(add(el('div', 'hsh-ch'), pts.length ? hlChart(pts, { W: W, from: ml.days[0].day, to: j.date, days: 30, zones: ml.zones, dots: true, hi: top,
+      label: 'Мышечная нагрузка за 30 дней', unit: '%', tick: function (v) { return String(Math.round(v)); },
+      dotCls: function (p) { return 'hl-' + (p.s || 'calibration'); }, strip: function (p) { return 'hl-' + (p.s || 'calibration'); },
+      tipSub: function (p) { return ' · ' + (HL_LOAD_RU[p.s] || '').toLowerCase(); } })
+      : el('div', 'mu hsh-none', ml ? 'За 30 дней базы ещё нет.' : 'Нет данных — обнови экран.'), ml ? hlLines('muscle', ml.lines) : null));
+    if (ml) body.appendChild(hlBreakdown(ml.statuses));
+    var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
+      el('div', 'mu hsec-s', 'Зал — подходы × вес × повторы по группам, волейбол и бег — долями по группам; 7 дней против своей обычной недели за 28 (35 %).'));
+    if (s) s.explain.forEach(function (p) { parts.appendChild(hlPartRow(p, 'hl-load', j)); });
+    else parts.appendChild(el('div', 'mu', 'Пока нет базы: нужна неделя тренировок и нагрузка на мышцы до последних 7 дней.'));
+    var go = add(el('div', 'hpr hgo'), add(el('span', 'hmini'), icon('biceps-flexed')), add(el('div', 'hpr-m'), el('span', 'hpr-n', 'Мышечные группы'),
+      el('div', 'mu', 'карта тела — какие группы и в каком статусе')), add(el('span', 'hpr-go'), icon('chevron-right')));
+    add(body, parts, tap(go, function () { hlMusclesSheet(j, go, 'load'); }));
+  }
+  // The body map (docs/bevel/muscles-2-load-map.png): the front and the back of react-body-highlighter (MIT, the sprite's
+  // #mb-a/#mb-p), every muscle grey, a group's own outline (its #m-<group>) and its other side (HBM_MORE: the sprite's
+  // pieces by index — the hamstrings with the glutes, whose label carries them, the calves' front, the rear delts, the
+  // lower back and the traps, the triceps' front) in its status colour, paler the less of the most loaded group's load it
+  // has. gs: [{group, st, rel, on}] — on false greys it (a status filter).
+  var HBM_MORE = { glutes: { p: [21, 22, 23, 24] }, calves: { a: [25, 26, 27, 28] }, shoulders: { p: [3, 4] }, back: { a: [10, 11], p: [11, 12] },
+    triceps: { a: [8, 9] } };
+  function hlBodyMap(gs) {
+    function subs(id) { var e = document.getElementById(id); return e ? e.getAttribute('d').match(/M[^M]*/g) || [] : []; }
+    var base = { a: subs('mb-a'), p: subs('mb-p') }, wrap = el('div', 'hbm');
+    ['a', 'p'].forEach(function (side) {
+      var box = svg('svg', { viewBox: '0 -2 100 224', 'class': 'hbm-' + side, 'aria-hidden': 'true' });
+      box.appendChild(svg('path', { d: base[side].join(''), 'class': 'b' }));
+      gs.forEach(function (g) {
+        if (!g.on || !(g.rel > 0) || g.st === 'none') return;
+        var sym = document.getElementById('m-' + g.group), d = '';
+        if (sym && sym.querySelector('use') && (sym.querySelector('use').getAttribute('href') === '#mb-p' ? 'p' : 'a') === side) d += sym.querySelector('path').getAttribute('d');
+        ((HBM_MORE[g.group] || {})[side] || []).forEach(function (i) { d += base[side][i] || ''; });
+        if (!d) return;
+        var path = svg('path', { d: d, 'class': 'g hl-st-' + g.st });
+        path.style.fillOpacity = (0.4 + 0.6 * Math.min(1, g.rel)).toFixed(2);
+        box.appendChild(path);
+      });
+      wrap.appendChild(box);
+    });
+    return wrap;
+  }
+  // A group's load status on Bevel's five-step scale (muscles-2: недостаток · поддержание · результативность ·
+  // усталость · перетренировка), its step solid, the others pale; calibration and no load — all grey.
+  var HML_STEPS = ['low', 'maintain', 'productive', 'fatigue', 'overtrain'];
+  function hlStep5(st) {
+    var k = HML_STEPS.indexOf(st), bar = el('span', 'hml5' + (k < 0 ? ' off' : ''));
+    for (var i = 0; i < 5; i++) bar.appendChild(el('i', i === k ? 'now' : ''));
+    return bar;
+  }
   // A muscle group's status (docs/specs/bevel-gap.md, «Ответы Bevel о свежести мышц»): the server's — calibration under
   // 3 training days in 6 weeks — or, for a cached answer without it, by the value.
   var HFR_ST = { fresh: ['Восстановлены', 'productive'], tired: ['Утомлены', 'low'], exhausted: ['Истощены', 'overtrain'],
@@ -17132,14 +17210,74 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     for (var i = 0; i < 10; i++) dots.appendChild(el('i', i < n ? (today && i === n - 1 ? 'on now' : 'on') : ''));
     return dots;
   }
-  // «Мышечные группы» (docs/specs/bevel-gap.md, 11a; docs/bevel/muscles-*.png): the segments Свежесть · Подходы · Объём
-  // (the last two over 7 or 30 days, the period's segment under them), a phrase about the groups, the sort toggle, a
-  // row a group — its silhouette, the name, the word with the per cent (or the sets / the kg with the last time), the
-  // 10 dots (the load as on the card; the sets or the kg against the most).
-  var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём']], HMS_PER = [[7, '7 д'], [30, '30 д']];
-  // mode0 — the segment it opens on: the «Мышцы» gauge opens the 7 days' sets, its own load.
+  // «Мышечные группы» (docs/specs/bevel-gap.md, 11a; docs/bevel/muscles-*.png): the segments Свежесть · Подходы · Объём ·
+  // Нагрузка (Подходы and Объём over 7 or 30 days, the period's segment under them), a phrase about the groups, the sort
+  // toggle, a row a group — its silhouette, the name, the word with the per cent (or the sets / the kg with the last
+  // time), the 10 dots (the load as on the card; the sets or the kg against the most). «Нагрузка» (muscles-2, docs/specs/
+  // muscle-load.md): the body map, the statuses as filter chips, ‹ day › over muscle_load's 30 days, «День · 7 д · 30 д»,
+  // a row a group with its status word and units, Bevel's five steps.
+  var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём'], ['load', 'Нагрузка']], HMS_PER = [[7, '7 д'], [30, '30 д']];
+  var HML_PER = [[1, 'День'], [7, '7 д'], [30, '30 д']], HML_ORDER = ['low', 'maintain', 'productive', 'fatigue', 'overtrain', 'calibration', 'none'];
+  // mode0 — the segment it opens on: «Мышечная нагрузка»'s way here opens «Нагрузка».
   function hlMusclesSheet(j, from, mode0) {
     var mode = mode0 || 'fresh', per = mode0 === 'sets' ? 7 : 30, desc = true, close = noop;
+    var ml = j.muscle_load, lday = ml ? ml.days.length - 1 : 0, lper = 7, lfilter = 'all';
+    var labels = (ml && ml.labels) || {};
+    var lmap = el('div', 'hml-map'), lchips = el('div', 'hpills hml-ch'), lnav = el('div', 'mnav hsh-nav hml-nav'), lperSeg = el('div', 'seg hms-per');
+    lperSeg.setAttribute('role', 'group');
+    lperSeg.setAttribute('aria-label', 'Период');
+    HML_PER.forEach(function (d) {
+      var b = el('button', d[0] === lper ? 'on' : '', d[1]);
+      b.type = 'button';
+      b.onclick = function () { if (lper === d[0]) return; lper = d[0]; haptic(); draw(); };
+      lperSeg.appendChild(b);
+    });
+    function loadRows() {
+      var d = ml.days[lday];
+      return d.groups.map(function (g) {
+        return { group: g.group, label: labels[g.group] || g.group, u: lper === 1 ? g.day : lper === 7 ? g.d7 : g.d30, st: g.status };
+      });
+    }
+    function stWord(st) { return st === 'none' ? 'Нет нагрузки' : HL_LOAD_RU[st]; }
+    function drawLoad() {
+      clear(list); clear(lmap); clear(lchips); clear(lnav);
+      lperSeg.querySelectorAll('button').forEach(function (b, i) { b.className = HML_PER[i][0] === lper ? 'on' : ''; });
+      if (!ml) { phrase.textContent = 'Нет данных о нагрузке — обнови экран.'; note.textContent = ''; return; }
+      var rows = loadRows(), max = Math.max.apply(null, rows.map(function (r) { return r.u; }).concat([0]));
+      var present = HML_ORDER.filter(function (st) { return rows.some(function (r) { return r.st === st; }); });
+      if (lfilter !== 'all' && present.indexOf(lfilter) < 0) lfilter = 'all';
+      lmap.appendChild(hlBodyMap(rows.map(function (r) { return { group: r.group, st: r.st, rel: max ? r.u / max : 0, on: lfilter === 'all' || r.st === lfilter }; })));
+      [['all', 'Все']].concat(present.map(function (st) { return [st, stWord(st)]; })).forEach(function (c) {
+        var b = add(el('button', (c[0] === lfilter ? 'on' : '') + (c[0] === 'all' ? '' : ' hl-st-' + c[0])), c[0] === 'all' ? null : el('i', 'hml-dot'), document.createTextNode(c[1]));
+        b.type = 'button';
+        b.setAttribute('aria-pressed', c[0] === lfilter ? 'true' : 'false');
+        b.onclick = function () { if (lfilter === c[0]) return; lfilter = c[0]; haptic(); draw(); };
+        lchips.appendChild(b);
+      });
+      var day = ml.days[lday].day, today = day === warsawToday();
+      [[-1, 'chevron-left', 'Предыдущий день'], [0], [1, 'chevron-right', 'Следующий день']].forEach(function (x) {
+        if (!x[0]) return lnav.appendChild(el('div', 'mmon', (today ? 'Сегодня' : WEEK[wd(day)].charAt(0).toUpperCase() + WEEK[wd(day)].slice(1)) + ', ' + +day.slice(8, 10) + ' ' + MONTHS_G[+day.slice(5, 7) - 1]));
+        var bt = add(el('button'), icon(x[1]));
+        bt.type = 'button';
+        bt.setAttribute('aria-label', x[2]);
+        bt.disabled = x[0] < 0 ? lday === 0 : lday === ml.days.length - 1;
+        bt.onclick = function () { lday += x[0]; haptic(); draw(); };
+        lnav.appendChild(bt);
+      });
+      note.textContent = lper === 1 ? 'за день' : 'за ' + lper + ' дней';
+      var shown = rows.filter(function (r) { return lfilter === 'all' || r.st === lfilter; })
+        .sort(function (a, b) { return desc ? b.u - a.u : a.u - b.u; });
+      shown.forEach(function (r) {
+        var sub = add(el('span', 'hms-s'), document.createTextNode(stWord(r.st) + ' · '), el('b', '', r.u ? woNum(r.u) + ' ед.' : '0'));
+        var row = add(el('div', 'hms-r hl-st-' + r.st), msil(r.group), add(el('div', 'hms-m'), el('div', 'hms-n', r.label), sub, hlStep5(r.st)));
+        row.setAttribute('role', 'listitem');
+        row.setAttribute('aria-label', r.label + ': ' + stWord(r.st).toLowerCase() + ', ' + woNum(r.u) + ' ед. ' + note.textContent);
+        list.appendChild(row);
+      });
+      var top = rows.filter(function (r) { return r.u > 0; }).sort(function (a, b) { return b.u - a.u; }).slice(0, 3);
+      phrase.textContent = top.length ? 'Больше всего ' + note.textContent + ': ' + top.map(function (r) { return r.label.toLowerCase() + ' ' + woNum(r.u) + '\u00a0ед.'; }).join(', ')
+        : (lper === 1 ? 'В этот день нагрузки на мышцы не было.' : 'За ' + lper + ' дней нагрузки на мышцы не было.');
+    }
     function rowsOf(ms) {
       return (j.freshness || []).map(function (g) {
         var m = ms.filter(function (x) { return x.group === g.group; })[0] || {};
@@ -17171,7 +17309,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function draw() {
       seg.querySelectorAll('button').forEach(function (b, i) { b.className = HMS_MODES[i][0] === mode ? 'on' : ''; });
       perSeg.querySelectorAll('button').forEach(function (b, i) { b.className = HMS_PER[i][0] === per ? 'on' : ''; });
-      perSeg.hidden = mode === 'fresh';
+      perSeg.hidden = mode === 'fresh' || mode === 'load';
+      lmap.hidden = lchips.hidden = lnav.hidden = lperSeg.hidden = mode !== 'load';
+      if (mode === 'load') return drawLoad();
       // A cached answer without the periods: the 28 days'.
       var rows = rowsOf(mode === 'fresh' ? j.muscles || [] : j['muscles_' + per] || j.muscles || []);
       var sorted = rows.slice().sort(function (a, b) { return desc ? val(b) - val(a) : val(a) - val(b); }), max = Math.max.apply(null, rows.map(val).concat([1]));
@@ -17200,7 +17340,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       }
     }
     draw();
-    close = legalSheet('Мышечные группы', [seg, perSeg, phrase, head, list, el('div', 'hms-cr', 'Силуэты: react-body-highlighter (MIT)'),
+    close = legalSheet('Мышечные группы', [seg, lmap, lchips, lnav, lperSeg, perSeg, phrase, head, list, el('div', 'hms-cr', 'Силуэты: react-body-highlighter (MIT)'),
       add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
   }
   // «Фитнес»: the day's advice, the two gauges, the muscles' freshness (the days' strip is fitStrip's above it since
@@ -17215,12 +17355,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (j.tip || j.advice) c.appendChild(add(el('div', 'hfadv'), j.tip ? hlTip(j.tip, kinds) : el('div', 'hadv', hlNb(hlAdvice(j.advice, kinds)))));
     // «Кардио» against today's band, «Мышцы» — the 7 days' sets against the constant one (docs/specs/load-today.md).
     var tgt = j.load_target || [28, 46], mg = j.load_margin || [24, 52];
-    // «Кардио» opens the load's sheet; «Мышцы» — «Мышечные группы» on the 7 days' sets, the muscles' own load.
+    // «Кардио» opens the load's sheet; «Мышцы» — the same sheet on its tab «Мышечная нагрузка» (docs/specs/muscle-load.md).
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
       add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle || { status: 'calibration', value: null }, [28, 46],
-        // No sets in 28 days: «Калибровка», and «Мышечные группы» says what it waits for.
-        function (row) { hlMusclesSheet(j, row, sc.muscle ? 'sets' : null); }, [24, 52])));
+        // No base yet: «Калибровка», and the tab says what it waits for.
+        function (row) { hlRingSheet('load', j, row, 'muscle'); }, [24, 52])));
     if (fr.length) {
       var fh = add(el('div', 'hfh hfh-go'), el('span', '', 'Свежесть мышц'), icon('chevron-right'));
       fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
