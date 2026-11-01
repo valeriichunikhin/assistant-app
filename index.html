@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 18:39">
+<meta name="published" content="2026-11-01 18:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1048,8 +1048,10 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nuw-c button.on{background:color-mix(in srgb,var(--hl-sky) 18%,transparent);color:var(--hl-sky);border-color:transparent}
 .nus-ov{color:var(--bad)}
 /* Б · Ж · У as «Здоровье»'s rings (his ask 01.11.2026): hlRing with the macro's two shades and track; over 100 % a second
-   lap in a darker shade of the same colour; the grams under the ring, «+N г» over the goal in the macro's colour. */
-.nus-mb{margin:6px -10px 18px}.nus-mb .hrc{gap:2px}.nus-mb .hring{margin-bottom:6px}
+   lap in a darker shade of the same colour; the grams under the ring, «+N г» over the goal in the macro's colour.
+   The rings at the very height of «Здоровье»'s (his 01.11.2026, «дёргаются» between the segments): 14 px from the head
+   (.hbody's 6 + its rings' 8), the first line 6 px under the ring (.hrc's gap there). */
+.nus-mb{margin:14px -10px 18px}.nus-mb .hrc{gap:2px}.nus-mb .hring{margin-bottom:4px}
 .hring.nu-protein,.hring.nu-fat,.hring.nu-carbs{--rc-end:var(--nu);--rc-lap:var(--nu)}.hring.nu-protein{--rc-start:var(--nu-protein-2)}
 .hring.nu-fat{--rc-start:var(--nu-fat-2)}.hring.nu-carbs{--rc-start:var(--nu-carbs-2)}
 .hring.nu-protein .tr,.hring.nu-fat .tr,.hring.nu-carbs .tr{stroke:color-mix(in srgb,var(--nu) var(--nu-soft),transparent)}
@@ -14999,7 +15001,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div'), strip = el('div', 'fstrip');
     // The day's food_day and health_day answers: «Таймлайн» (from health_day) opens the meal's and the workout's sheets
     // from food_day's rows, and while it is drawn «Сегодня» leaves out the entries and «Спорт» it already lists.
-    var FJ = null, HJ = null;
+    var FJ = null, HJ = null, SJ = null;
     // «Прогресс» of «Фитнес» (gym-week §3): the 12 weeks' tonnage and the main lifts, after «Зал».
     var prog = el('div');
     add.apply(null, [main].concat(seg === 'fitness' ? [nav, strip, fit, body, prog] : seg === 'nutrition' ? [nav, body, stats] : [nav, top, body]));
@@ -15132,7 +15134,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (seg !== 'nutrition') return;
       swr({ key: 'food:stats', box: stats, n: 1, live: function () { return current === 'food' && healthSeg === 'nutrition'; },
         fetch: function () { return api('miniapp', { action: 'food_stats' }, 15000, true, { days: 30 }); },
-        render: function (j) { add(clear(stats), foodStatsCard(j, stats)); } });
+        render: function (j) { SJ = j; add(clear(stats), foodStatsCard(j, stats)); } });
     }
     // The day's health: «Здоровье» and «Монитор» on top, «Фитнес» after the workouts; no health row in the 30 days —
     // the one line to set it up instead (and «Фитнес» still, from the workouts, when there are any).
@@ -15141,17 +15143,28 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var box = seg === 'fitness' ? fit : top;
       swr({ key: 'body:' + date, box: box, n: 1, live: function () { return current === 'food' && FOOD.date === date && healthSeg === seg; },
         fetch: function () { return api('miniapp', { action: 'health_day' }, 15000, true, { date: date }); },
-        render: function (j) {
-          if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j)));
-          var had = HJ && HJ.has_data;
-          HJ = j;
-          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
-            woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
-          }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
-          // The food's cards drawn before the timeline lose (or get back) its entries and «Спорт».
-          if (FJ && !had !== !j.has_data) render(FJ);
-        } });
+        render: drawHealth });
     }
+    function drawHealth(j) {
+      if (seg === 'fitness') { HJ = j; return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j))); }
+      var had = HJ && HJ.has_data;
+      HJ = j;
+      add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
+        woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
+      }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+      // The food's cards drawn before the timeline lose (or get back) its entries and «Спорт».
+      if (FJ && !had !== !j.has_data) render(FJ);
+    }
+    // New settings (his goals in «Цели», the cache-first ones replaced by the server's): the segment on screen drawn
+    // again from its last answers, no fetch, at the same scroll (01.11.2026: «Белки · из 213» stayed after 170).
+    prefsHook = { tab: 'food', fn: function () {
+      if (!body.isConnected) return;
+      var y = window.scrollY;
+      if (HJ && seg !== 'nutrition') drawHealth(HJ);
+      if (FJ) render(FJ);
+      if (SJ) add(clear(stats), foodStatsCard(SJ, stats));
+      window.scrollTo(0, y);
+    } };
     // A timeline row's sheet: the meal's and the workout's from food_day's rows (a meal not there yet — «Питание»),
     // the night's — the sleep ring's.
     function openTl(x, r) {
@@ -16203,9 +16216,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function hlVal(key, v) {
     if (v == null) return '—';
     if (key === 'sleep_min') return Math.floor(v / 60) + ' ч ' + ('0' + Math.round(v % 60)).slice(-2);
-    if (key === 'wrist_temp') return (v > 0 ? '+' : v < 0 ? '−' : '') + (Math.round(Math.abs(v) * 10) / 10).toFixed(1).replace('.', ',');
+    if (key === 'wrist_temp') return (v > 0 ? '+' : v < 0 ? '−' : '') + hlC(Math.abs(v));
     return woNum(v);
   }
+  // «35,8»: the wrist's °C to one decimal.
+  function hlC(v) { return (Math.round(v * 10) / 10).toFixed(1).replace('.', ','); }
   // A ring: its tinted track, the arc of v (0–100) from 12 o'clock in the ring's gradient with a glow (the CSS), the
   // number in the middle; the stroke 13 % of the size (11 px at 84).
   // band — [from, to] as fractions of the ring: the recommended range hatched over the track, and then the value's
@@ -16884,7 +16899,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         cls = last.v > b.high ? 'hs-above' : last.v < b.low ? 'hs-below' : 'hs-norm';
       }
       var unit = cur.key === 'sleep_min' ? '' : j.unit;
-      var abs = cur.key === 'wrist_temp' && j.abs ? woNum(j.abs.v) + ' °C по запястью' : null;
+      // The wrist as Bevel's: its own °C big when the window's last night has one, the deviation a line under it.
+      var tc = cur.key === 'wrist_temp' && j.abs && last && j.abs.day === last.day ? hlC(j.abs.v) : null;
+      var abs = tc ? 'отклонение от нормы ' + hlVal('wrist_temp', last.v) + ' °C' : cur.key === 'wrist_temp' && j.abs ? woNum(j.abs.v) + ' °C по запястью' : null;
       var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
       var per = hlPills(HL_PERIODS.map(function (p) { return [p[0], p[1]]; }), cur.days, function (d) { cur.days = d; store('hlDays', String(d)); draw(); }, 'hper');
       var nav = el('div', 'mnav hsh-nav');
@@ -16903,7 +16920,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         nav.appendChild(bt);
       });
       add(clear(body),
-        hlHead(last ? hlFmt(cur.key, last.v) : '—', last ? unit : '', last ? hlDay(last.day) : 'нет данных', st, cls,
+        hlHead(tc || (last ? hlFmt(cur.key, last.v) : '—'), last ? unit : '', last ? hlDay(last.day) : 'нет данных', st, cls,
           b ? '≡ ' + hlFmt(cur.key, b.low) + ' – ' + hlFmt(cur.key, b.high) + (unit ? ' ' + unit : '') : null, abs),
         nav,
         j.points.length ? hlChart(j.points, { W: W, from: j.from, to: j.to, days: j.days, band: b, mean: b && b.mean, dots: j.days <= 90,
@@ -17154,18 +17171,19 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // «Монитор»: six tiles, two across (three from 900 px), in Bevel's form (monitor.jpg): the metric's icon by its name
   // (HL_IC, the metric sheets' own), the value, the status a coloured word after its mark (✓ норма, ↑ выше, ↓ ниже),
-  // the scale a capsule on the right.
+  // the scale a capsule on the right. «Темп.» as Bevel's: the wrist's own °C big (t.abs, the night's wrist_temp_c), the
+  // status and the capsule still of the deviation against his norm; no absolute that night — the signed deviation.
   var HL_MON_MARK = { norm: 'check', above: 'arrow-up', below: 'arrow-down' };
   function hlMonitor(ms) {
     var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
     ms.forEach(function (t) {
-      var n = HL_MON[t.key], st = HL_STATUS[t.status];
+      var n = HL_MON[t.key], st = HL_STATUS[t.status], abs = t.key === 'wrist_temp' && t.value != null && typeof t.abs === 'number' ? hlC(t.abs) : null;
       var tile = add(el('div', 'hmt hmb' + (st ? ' hs-' + t.status : '')), add(el('div', 'hmx'), add(el('div', 'mu hml'), HL_IC[t.key] ? icon(HL_IC[t.key]) : null, el('span', '', n[0])),
-        add(el('div', 'hmv'), document.createTextNode(hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
+        add(el('div', 'hmv'), document.createTextNode(abs || hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
         st ? add(el('div', 'hmst'), add(el('span', 'hmst-i'), icon(HL_MON_MARK[t.status])), el('span', '', st.charAt(0).toUpperCase() + st.slice(1)))
           : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')), add(el('span', 'hmcap'), hlTrack(t)));
       tap(tile, function () { hlSeriesSheet(t.key, HL_MON_KEYS, tile); });
-      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')) + ' — график');
+      tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : (abs ? abs + ' ' + n[1] + ', отклонение ' : '') + hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')) + ' — график');
       g.appendChild(tile);
     });
     c.appendChild(g);
