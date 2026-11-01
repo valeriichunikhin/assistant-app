@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 20:39">
+<meta name="published" content="2026-11-01 22:28">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1114,9 +1114,25 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nurm i,.nudot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--nu)}.nudot{width:10px;height:10px}
 .nufx{margin:0 0 12px;line-height:1.5}
 .nusc{display:flex;align-items:center;gap:14px;margin:0 0 8px;padding:12px 14px;border:1px solid var(--card-line);border-radius:var(--r-b);background:var(--surface);box-shadow:var(--shadow)}
-.nusc-n{flex:none;display:grid;place-items:center;min-width:52px;font:700 34px/1 var(--font-num);font-variant-numeric:tabular-nums}
-.nusc.lock .nusc-n{color:var(--muted)}.nusc-n .i{width:26px;height:26px}
+/* «Оценка питания»: the tick dial on a soft glow of its band's colour, the base 50 a faint inner tick; the chips of the
+   biggest contributors beside it. */
+.nq-low{--hs:var(--ring-load)}.nq-mid{--hs:var(--ring-load-2)}.nq-good{--hs:var(--ring-recovery)}.nq-top{--hs:var(--ring-recovery-2)}
+.nusd{flex:none;position:relative;display:grid;place-items:center;width:140px;height:140px;border-radius:50%;
+  background:radial-gradient(circle closest-side,color-mix(in srgb,var(--hs,var(--muted)) 20%,transparent) 0%,color-mix(in srgb,var(--hs,var(--muted)) 6%,transparent) 72%,transparent 100%)}
+.nusd .hsd{width:100%;height:100%}.nusd .hsd .tk{opacity:.18}.nusd .hsd .tk.on{opacity:1}.nusd .hsd .lit{filter:var(--hl-glow)}
+.nusd .hsd .mk{stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;opacity:.7}.nusd .hsd .v{font-weight:800;letter-spacing:-.02em}
+.nusd.lock{background:radial-gradient(circle closest-side,var(--surface-2) 0%,transparent 100%)}
+.nusd>.i{position:absolute;width:30px;height:30px;color:var(--muted)}
+/* on white the yellow and the bright green word go darker toward the ink, the unlit ticks a shade stronger */
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .nusd .hsd .w{fill:color-mix(in srgb,var(--hs) 72%,var(--fg))}:root:not([data-theme="dark"]) .nusd .hsd .tk:not(.on){opacity:.28}}
+:root[data-theme="light"] .nusd .hsd .w{fill:color-mix(in srgb,var(--hs) 72%,var(--fg))}:root[data-theme="light"] .nusd .hsd .tk:not(.on){opacity:.28}
 .nusc-t{min-width:0}.nusc-t .mu{margin-top:3px;font-size:13px;line-height:1.35}
+.nuchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.nuchip{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 10px 0 7px;border-radius:999px;color:var(--nc);
+  background:color-mix(in srgb,var(--nc) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nc) 28%,transparent)}
+.nuchip.up{--nc:var(--ring-recovery)}.nuchip.down{--nc:var(--ring-load)}
+.nuchip .nufe{width:auto;font-size:16px}.nuchip b{font:700 14px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+@media (max-width:400px){.nusc{gap:12px;padding:12px}.nusd{width:124px;height:124px}.nuchip{padding:0 8px 0 6px}}
 /* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
    last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
 .wempty{padding:0 14px 12px}.row.frow .wl{display:block}
@@ -15548,14 +15564,33 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (f.pos != null) box.appendChild(svg('circle', { cx: x(f.pos).toFixed(1), cy: 8, r: 5.5, 'class': 'th' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : '') }));
     return box;
   }
-  // «Оценка питания» (docs/specs/food-quality-bevel.md): the server's 50 + the eleven factors as the card's first row,
-  // «50 + 19» under it; under a third of the kcal goal — locked, how many kcal are still to go.
+  // «Оценка питания» (docs/specs/food-quality-bevel.md): the server's 50 + the eleven factors as the card's hero — Bevel's
+  // dial (nutrition-1.jpg) drawn as the stress card's tickDial: ticks orange → bright green lit to the value, a faint
+  // mark at the base 50, the number and its band's word inside; beside it «база 50 − 6,9 по факторам» and the three
+  // biggest contributors as chips (pluses first), a tap — the factor's sheet; under a third of the kcal goal — locked:
+  // the dial empty with a lock, how many kcal are still to go.
+  var NU_BAND = [[80, 'отличная', 'nq-top'], [60, 'хорошая', 'nq-good'], [40, 'средняя', 'nq-mid'], [0, 'низкая', 'nq-low']];
   function nuScore(sc, fs) {
-    var sum = Math.round(fs.filter(function (f) { return f.score !== false; }).reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
-    var r = add(el('div', 'nusc' + (sc.locked ? ' lock' : '')), sc.locked ? add(el('span', 'nusc-n'), icon('lock')) : el('span', 'nusc-n', String(sc.value)),
-      add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
-        : 'из 100 · база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам')));
-    r.setAttribute('aria-label', sc.locked ? 'Оценка питания закрыта: запиши ещё около ' + sc.need + ' ккал' : 'Оценка питания ' + sc.value + ' из 100');
+    var used = fs.filter(function (f) { return f.score !== false; });
+    var sum = Math.round(used.reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
+    var band = NU_BAND.filter(function (b) { return sc.locked || sc.value >= b[0]; })[0];
+    var dial = add(el('div', 'nusd ' + (sc.locked ? 'lock' : band[2])), tickDial(sc.locked ? null : sc.value, sc.locked ? '' : band[1], '',
+      { size: 140, n: 60, nf: 34, wf: 11.5, wy: 19, mark: 50, glow: true, hue: function (f) { return 22 + 98 * f; } }));
+    if (sc.locked) dial.appendChild(icon('lock'));
+    var t = add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
+      : 'база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам'));
+    if (!sc.locked) {
+      var top = used.filter(function (f) { return f.points; }).sort(function (a, b) { return Math.abs(b.points) - Math.abs(a.points); }).slice(0, 3)
+        .sort(function (a, b) { return (b.points > 0) - (a.points > 0) || Math.abs(b.points) - Math.abs(a.points); });
+      if (top.length) t.appendChild(add.apply(null, [el('div', 'nuchips')].concat(top.map(function (f) {
+        var c = add(el('span', 'nuchip ' + (f.points > 0 ? 'up' : 'down')), el('span', 'nufe', f.emoji), el('b', '', nuPoints(f)));
+        c.setAttribute('aria-label', f.name + ': ' + nuPoints(f) + ' — подробнее');
+        return tap(c, function () { haptic(); nuFactorSheet(f, c); });
+      }))));
+    }
+    var r = add(el('div', 'nusc' + (sc.locked ? ' lock' : '')), dial, t);
+    dial.setAttribute('role', 'img');
+    dial.setAttribute('aria-label', sc.locked ? 'Оценка питания закрыта: запиши ещё около ' + sc.need + ' ккал' : 'Оценка питания ' + sc.value + ' из 100, ' + band[1]);
     return r;
   }
   function nuFactors(fs, sc) {
@@ -16469,7 +16504,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (!t) return;
       stat(t, String(x.label || '').replace(/ к норме$/, ''), x.score == null ? '' : x.score <= 50 ? 'hz-good' : 'hz-mid');
     });
-    var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), hlStressDial(s.value, word, z));
+    var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), tickDial(s.value, word, 'hz-' + z));
     body.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
     c.appendChild(tap(body, function () { haptic(); hlRingSheet('stress', j, body); }));
     if (j.energy && j.energy.level != null) {
@@ -16603,17 +16638,27 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // The dial: 48 ticks round the circle, each in the colour of its place (green → yellow → red), lit to the value,
   // the rest faint; the number and the word in the middle.
-  function hlStressDial(v, word, z) {
-    var size = 104, h = size / 2, N = 48, box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hsd', 'aria-hidden': 'true' });
+  // The app's one tick dial (the stress card's; «Оценка питания» too): a full circle of ticks from the top, coloured by
+  // o.hue(f) (stress: green → red), lit to v, the number and the word inside. o.n ticks, o.nf/o.wf the number's and
+  // the word's size in the 104 grid, o.mark — a faint inner tick at that value; v null — no number, nothing lit.
+  function tickDial(v, word, wcls, o) {
+    o = o || {};
+    var size = 104, h = size / 2, N = o.n || 48, box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: o.size || size, height: o.size || size, 'class': 'hsd', 'aria-hidden': 'true' });
+    var lit = o.glow ? add(svg('g', { 'class': 'lit' }), svg('circle', { cx: h, cy: h, r: 50, fill: 'none' })) : box;
     for (var i = 0; i < N; i++) {
-      var f = i / N, a = Math.PI * (2 * f - 0.5), on = f * 100 <= v + 1e-9;
-      var hue = Math.round(130 - 130 * f);
+      var f = i / N, a = Math.PI * (2 * f - 0.5), on = v != null && f * 100 <= v + 1e-9;
+      var hue = Math.round(o.hue ? o.hue(f) : 130 - 130 * f);
       var tk = svg('line', { x1: (h + 42 * Math.cos(a)).toFixed(1), y1: (h + 42 * Math.sin(a)).toFixed(1), x2: (h + 50 * Math.cos(a)).toFixed(1), y2: (h + 50 * Math.sin(a)).toFixed(1), 'class': 'tk' + (on ? ' on' : '') });
       tk.style.stroke = 'hsl(' + hue + ' 70% 50%)';
-      box.appendChild(tk);
+      (on ? lit : box).appendChild(tk);
     }
-    box.appendChild(svg('text', { x: h, y: h - 4, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 26 }, String(v)));
-    box.appendChild(svg('text', { x: h, y: h + 16, 'class': 'w hz-' + z, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 11 }, word));
+    if (lit !== box) box.appendChild(lit);
+    if (o.mark != null) {
+      var m = Math.PI * (2 * o.mark / 100 - 0.5);
+      box.appendChild(svg('line', { x1: (h + 33 * Math.cos(m)).toFixed(1), y1: (h + 33 * Math.sin(m)).toFixed(1), x2: (h + 37.5 * Math.cos(m)).toFixed(1), y2: (h + 37.5 * Math.sin(m)).toFixed(1), 'class': 'mk' }));
+    }
+    if (v != null) box.appendChild(svg('text', { x: h, y: h - 4, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': o.nf || 26 }, String(v)));
+    if (word) box.appendChild(svg('text', { x: h, y: h + (o.wy || 16), 'class': 'w ' + wcls, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': o.wf || 11 }, word));
     return box;
   }
   function hlStressTile(s, onTap) {
