@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 01:13">
+<meta name="published" content="2026-11-01 01:15">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1382,8 +1382,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fmd .fsc{margin:0;width:42px;height:42px}.fmd .fsc .i{width:21px;height:21px}
 .fmd .fsc.fmn{background:none;color:var(--fg);font:500 15px var(--font-num);letter-spacing:0}.fmd .fsc.fmn.ld{color:var(--muted)}
 .fmd.today .fsc{box-shadow:0 0 0 2px var(--mark)}.fmd.sel::after{content:"";position:absolute;bottom:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--mark)}
-.fmc{position:absolute;top:5px;right:calc(50% - 21px);display:grid;place-items:center;width:13px;height:13px;border-radius:50%;background:var(--wo);color:var(--solid);font:800 11px/1 var(--font-num);letter-spacing:0}
-.fmd .fsc.cut{-webkit-mask:radial-gradient(circle 8.5px at 35.5px 6.5px,transparent 8px,#000 8.6px);mask:radial-gradient(circle 8.5px at 35.5px 6.5px,transparent 8px,#000 8.6px)}
+.fmc{position:absolute;top:4px;right:calc(50% - 22px);display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--wo);color:var(--solid);font:800 13px/1 var(--font-num);letter-spacing:0}
+.fmd .fsc.cut{-webkit-mask:radial-gradient(circle 10.5px at 33.5px 7.5px,transparent 10px,#000 10.6px);mask:radial-gradient(circle 10.5px at 33.5px 7.5px,transparent 10px,#000 10.6px)}
 .fmd:active .fsc{transform:scale(.94)}
 /* «Месяц» of «Сегодня», «Питание», «Биология» (docs/specs/health-month.md, Bevel's calendar-recovery.jpg): the same
    sheet, a day a pill — its small ring in the ring's colour with the number inside (a day without data the bare track,
@@ -19596,7 +19596,10 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     function circle(d) {
       var D = FIT.days[d], c = el('span', 'fsc');
       if (!D) { c.className += ' ld'; return c; }
-      var w = D.workouts[0], pl = D.planned.filter(function (p) { return p.status !== 'done' || !p.workout_id; })[0];
+      // The day's heaviest by its load on Bevel's scale (fit_range's load), else the longest (his 01.11.2026: three
+      // hours of walking is a walk; two of volleyball or the gym weigh more).
+      var w = D.workouts.slice().sort(function (a, b) { return (b.load == null ? -1 : b.load) - (a.load == null ? -1 : a.load) || (b.minutes || 0) - (a.minutes || 0); })[0];
+      var pl = D.planned.filter(function (p) { return p.status !== 'done' || !p.workout_id; })[0];
       if (w) { c.className += ' wo k-' + woKind(w); c.appendChild(icon(woIcon(w))); }
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
