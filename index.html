@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 01:24">
+<meta name="published" content="2026-11-01 01:33">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1099,7 +1099,6 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
    accent, the meta (badge, minutes) at the head's right, the muscle chips, a row an exercise with its animation 48 px. */
 .pill.glv{height:22px;padding:0 9px;font-size:12px;font-weight:700;vertical-align:2px}
 .gym .gdw{display:flex;align-items:center;gap:8px;min-width:0}
-.gsub .pill.glv{margin-left:2px}
 .gtip{margin-top:8px}.card>.sub.gtip,.wex .wl.gtip{color:var(--warn)}
 .wex .whrl{margin-top:-2px;font-size:12px}
 .chart.whr .sdot{fill:var(--solid);stroke:var(--mark);stroke-width:2}
@@ -1113,15 +1112,35 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .gthumb.none{background:var(--accent-soft);color:var(--mark);border-color:transparent}.gthumb.none .i{width:22px;height:22px}
 .ggif.gbig{height:260px;margin:0 0 12px}
 .gpch.gxch{padding:0 0 12px}
-/* «Зал» card rows (31.10.2026): the animation 56 px on the left, «3×10–12 · 55 кг», the why a smaller muted line or chip;
-   the exercise's sheet: this time's line bold, the why under it. */
-.row.gxrow{align-items:center;gap:12px}.gxrow .gthumb{width:56px;height:56px;border-radius:14px}
-.gxrow .gnt{margin-top:3px;font-size:12px;line-height:1.3}.gxrow .gnt .pill{height:20px;padding:0 8px;font-size:11.5px;font-weight:600}
-.gattr.gcattr{margin:8px 14px 0;font-size:11px}
+/* The exercise's sheet from the day to do (31.10.2026): this time's line bold, the why under it. */
+/* «Режимы» (01.11.2026, docs/bevel/fitness-routines.png): a strip a template, stacked, the day to do ringed in the gym
+   colour; the template's sheet (docs/bevel/workout-0-template.png): the icon in a dashed ring, the kicker in the gym
+   colour, the name large and centred, a card an exercise — its planned values in four soft cells under capital labels. */
+.gtpls{display:flex;flex-direction:column;gap:8px;padding:2px 14px 14px}
+.gtpl{min-width:0;padding:10px 14px 14px;border-radius:var(--r-b);background:var(--surface-2);cursor:pointer}
+.gtpl.on{box-shadow:inset 0 0 0 2px var(--wo)}
+.gth1{display:flex;align-items:center;justify-content:space-between;margin:0 -6px 2px 0}
+.gtic{display:grid;place-items:center;color:var(--wo)}.gtic .i{width:24px;height:24px}
+.gtmore{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--surface-2);color:var(--fg)}.gtmore .i{width:20px;height:20px}
+.gtk{font:700 13px/1.3 var(--font);color:var(--wo);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtt{margin-top:2px;font:800 20px/1.25 var(--font);overflow-wrap:anywhere}
+.gtn{margin-top:3px;font-size:13px}
+.gtf{display:flex;align-items:center;gap:8px;margin-top:12px}.gtf .pill{height:24px;padding:0 10px;font-size:12.5px;font-weight:600}.gtf .btn{margin-left:auto}
+.btn.gtgo{font-weight:700}.gtsheet .bar .btn.gtgo{flex:1}
+.gtsheet>.lsh{display:none}
+.gthero{display:flex;flex-direction:column;align-items:center;margin:8px 0 18px;text-align:center}
+.gtring{display:grid;place-items:center;width:64px;height:64px;margin:0 0 12px;border:2px dashed color-mix(in srgb,var(--wo) 55%,transparent);border-radius:50%;color:var(--wo)}.gtring .i{width:28px;height:28px}
+.gthero .gtk{font-size:16px;white-space:normal}.gthero .gtt{margin-top:6px;font-size:28px;line-height:1.15}.gtcnt{margin-top:8px;font-size:15px}
+.gtx{margin:0 0 10px;padding:14px;border:1px solid var(--card-line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);cursor:pointer}
+.gtxh{display:flex;align-items:center;gap:12px;min-width:0}.gtxh .tx{flex:1;min-width:0;overflow-wrap:anywhere}.gtxh .t{font:700 16px/1.25 var(--font)}.gtxh .mu{margin-top:2px;font-size:13.5px}
+.gtv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 8px;margin-top:14px;text-align:center}
+.gtl{font:600 11px/1.2 var(--font);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtc{display:grid;place-items:center;min-width:0;height:40px;border-radius:12px;background:var(--surface-2);font:600 16px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
+.gtnote{margin-top:10px;font-size:12px;line-height:1.35}.gtnote .pill{height:22px;padding:0 9px;font-size:12px;font-weight:600}
 .gxw{margin:0 0 4px;font-size:16px}.gxw b{font-variant-numeric:tabular-nums}.gxw .mu{font-size:14px}.gxwhy{margin:0 0 10px;font-size:13px;line-height:1.35}
 .cgym{margin:0 0 14px}.cgym .btn.gstart{width:100%;margin:0}.cgyml{margin-top:8px;font-size:13px;line-height:1.4}
 .hft.gsum{padding:0;margin:0 0 12px}
-.gym .btn.wide,.gwt~.foot .btn.wide{width:100%;margin:0}
+.gym .btn.wide{width:100%;margin:0}
 @media (max-width:899px){.tsum.bfull .gym .bar.mact.mstick{bottom:-24px;margin-bottom:-24px;padding-bottom:24px}}
 /* «Тренировка» in Bevel's form (docs/specs/gym-week.md, «Экран тренировки как у Bevel»; docs/bevel/workout-1…4.png):
    the clock large and «Завершить» as a soft red pill; a card an exercise — the animation 48 px, the name, a row a set
@@ -18335,38 +18354,29 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       text(box, 'Карта не загрузилась — проверь связь и открой ещё раз.');
     });
   }
-  // «Зал» (docs/specs/gym.md): «Следующая: B · жим ногами 80 → 85», its exercises with this time's weight by double
-  // progression (↑ when it goes up, ↓ after two misses), his weight of the 4 weeks with its sparkline, and «Начать зал»
-  // («Продолжить», while a session waits in this phone) — the full-screen «Тренировка». «План» opens the plan's sheet.
+  // «Режимы» (his ask 01.11.2026, docs/bevel/fitness-routines.png): the plan's days as templates, a strip each stacked
+  // down — the sport's icon in the gym colour and «⋯», «Силовая тренировка», the day's name large, «Упражнения: 7,
+  // сеты: 20 · ~55 мин» (gymMinutes); the day to do ringed and marked «следующая · вт 3.11» with «Начать» («Продолжить ·
+  // Вт», while a session waits in this phone) — the full-screen «Тренировка». A tap on a strip (or its «⋯») opens the
+  // template (gymTplSheet). The days come cache-first from plan_get (gym:plan); until it answers, food_day's next day
+  // alone, whose items (with this time's weights) stand for that day's either way. His weight of the 4 weeks with its
+  // sparkline under them. «План» opens the plan's sheet.
   function gymCard(g, w4, done) {
-    var c = mkCard('dumbbell', 'Зал'), pb = foodBtn('mtoday', 'clipboard-list', 'План', function () { planSheet(pb, done); });
+    var c = mkCard('dumbbell', 'Режимы'), pb = foodBtn('mtoday', 'clipboard-list', 'План', function () { planSheet(pb, done); });
     pb.setAttribute('aria-label', 'План тренировок');
     c.firstChild.appendChild(pb);
-    var d = g.last_at ? foodDay(g.last_at) : null;
-    c.appendChild(add(el('div', 'sub gsub'), document.createTextNode('Следующая: ' + gymShort(g.name) + ' · ' + (g.up || (d ? 'прошлый раз ' + WEEK[wd(d)] + ' ' + dm(d) : 'ещё не было')) + ' '),
-      gymBadge(gymLevelOf(g.name))));
-    // A row an exercise (his ask 31.10.2026, «чтобы были видео»): its looping animation 56 px, the name, «3×10–12 · 55 кг»,
-    // the why in a short muted line or chip; a tap — the exercise's sheet (gymExSheet: the animation large, this time's
-    // weight, the muscles, the swaps). Only the thumbnails in sight play (gymPlayInView).
-    var gifs = g.gifs || {}, mus = g.muscles || {}, vids = [];
-    (g.items || []).forEach(function (i) {
-      var s = i.suggest || {}, h = gymHint(i), m = gymMeta(i), th = gymThumb(gifs[i.exercise], i.exercise), v = th.querySelector('video');
-      if (v) vids.push(v);
-      var r = add(el('div', 'row frow wnx gxrow'), th, add(el('span', 'tx'), el('div', 't', i.exercise),
-        el('div', 'mu', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')),
-        m.chip ? add(el('div', 'gnt'), pill(m.chip, 'warn')) : m.note ? el('div', 'mu gnt', m.note) : null),
-        add(el('span', 'pr'), s.why === 'up' && s.kg != null ? pill('↑ ' + woNum(s.kg), 'good') : s.why === 'up' && s.reps_to ? pill('↑ ' + s.reps_to, 'good')
-          : s.why === 'down' ? pill('↓ ' + woNum(s.kg), 'warn') : null));
-      r.setAttribute('aria-label', i.exercise + ', ' + i.sets + ' по ' + i.reps + (h ? ', ' + h : '') + ' — как делать');
-      c.appendChild(tap(r, function () {
-        haptic();
-        var w = gymWhy({ sg: s, reps: i.reps });
-        gymExSheet(i, gifs, mus, r, [add(el('div', 'gxw'), el('b', '', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')), el('span', 'mu', ' · отдых ' + (i.rest_s || 75) + ' с')),
-          w ? el('div', 'mu gxwhy', w) : null]);
-      }));
-    });
-    gymPlayInView(vids);
-    if (Object.keys(gifs).length) c.appendChild(el('div', 'mu gattr gcattr', 'Анимации: ExerciseDB · AscendAPI'));
+    var box = el('div', 'gtpls');
+    c.appendChild(box);
+    function draw(j) {
+      var gifs = {}, mus = {}, ctx = { gifs: gifs, mus: mus, done: done };
+      [j.gifs, g.gifs].forEach(function (o) { for (var k in o || {}) gifs[k] = o[k]; });
+      [j.muscles, g.muscles].forEach(function (o) { for (var k in o || {}) mus[k] = o[k]; });
+      var days = (j.plan || []).length ? j.plan : [g];
+      add.apply(null, [clear(box)].concat(days.map(function (d) { return d.id === g.id ? gymTplTile(g, ctx, true) : gymTplTile(d, ctx, false); })));
+    }
+    draw({});
+    swr({ key: 'gym:plan', box: box, n: 0, live: function () { return current === 'food' && healthSeg === 'fitness'; },
+      fetch: function () { return api('miniapp', { action: 'plan_get' }, 15000, true, {}); }, render: draw });
     var pts = (w4 || []).map(function (x) { return { day: x.day, v: Number(x.kg) }; });
     if (pts.length) {
       var last = pts[pts.length - 1].v, dv = pts.length > 1 ? Math.round((last - pts[0].v) * 10) / 10 : null;
@@ -18377,9 +18387,79 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       wr.setAttribute('aria-label', 'Вес ' + woNum(last) + ' кг' + (dv ? ', за 4 недели ' + (dv > 0 ? '+' : '−') + woNum(Math.abs(dv)) : ''));
       c.appendChild(wr);
     }
-    var s = gymLoad(), go = foodBtn('btn wide gstart', 'dumbbell', s ? 'Продолжить · ' + (s.day || 'зал') : 'Начать зал', function () { gymScreen(go, done); });
-    c.appendChild(add(el('div', 'foot'), go));
     return c;
+  }
+  // A template's sets, all its exercises'.
+  function gymSetsOf(items) { return (items || []).reduce(function (a, i) { return a + (Number(i.sets) || 0); }, 0); }
+  // When the day comes by its weekdays: «сегодня», «вт 3.11»; '' for a day without one.
+  function gymWhen(d) {
+    var t = foodToday(), w = d.weekday || [];
+    for (var k = 0; k < 7; k++) {
+      var x = addDays(t, k);
+      if (w.indexOf(wd(x) + 1) >= 0) return k ? WEEK[wd(x)] + ' ' + Number(x.slice(8, 10)) + '.' + Number(x.slice(5, 7)) : 'сегодня';
+    }
+    return '';
+  }
+  // The start button's words: «Продолжить · Вт» while a session waits in this phone, else «Начать».
+  function gymGoText(s) { return s ? 'Продолжить · ' + gymShort(s.day || 'зал') : 'Начать'; }
+  // A template's strip; on — the day to do, with its marker and the start.
+  function gymTplTile(d, ctx, on) {
+    var n = (d.items || []).length, when = on ? gymWhen(d) : '';
+    var more = foodBtn('gtmore', 'ellipsis', '', open), go = null;
+    more.setAttribute('aria-label', d.name + ': упражнения');
+    if (on) go = foodBtn('btn gtgo', 'play', gymGoText(gymLoad()), function () { gymScreen(go, ctx.done); });
+    var t = add(el('div', 'gtpl k-gym' + (on ? ' on' : '')), add(el('div', 'gth1'), add(el('span', 'gtic'), icon('dumbbell')), more),
+      el('div', 'gtk', 'Силовая тренировка'), el('div', 'gtt', d.name),
+      el('div', 'mu gtn', 'Упражнения: ' + n + ', сеты: ' + gymSetsOf(d.items) + (n ? ' · ~' + gymMinutes(d.items) + ' мин' : '')),
+      on ? add(el('div', 'gtf'), pill(when === 'сегодня' ? 'сегодня' : 'следующая' + (when ? ' · ' + when : ''), 'acc'), go) : null);
+    t.onclick = function (ev) { if (!ev.target.closest('button')) open(); };
+    function open() { haptic(); gymTplSheet(d, ctx, more); }
+    return t;
+  }
+  // The equipment by the exercise's name for the template's line («гантели · 3 сета»); '' when the name says none.
+  function gymGear(i) {
+    var n = String(i.exercise || '').toLowerCase();
+    return /гантел/.test(n) ? 'гантели' : /штанг/.test(n) ? 'штанга' : /гир[яие]/.test(n) ? 'гиря' : /блок|кроссовер/.test(n) ? 'блок'
+      : /тренаж|жим ногами|противовес/.test(n) ? 'тренажёр' : /эспандер|резин/.test(n) ? 'эспандер'
+      : i.unit === 'bw' || i.unit === 's' || i.progress === 'bw' ? 'свой вес' : '';
+  }
+  // A template's sheet in Bevel's form (docs/bevel/workout-0-template.png): the sport's icon in a dashed ring,
+  // «Силовая тренировка» in the gym colour, the day's name large, «Упражнений: N · Сетов: M»; a card an exercise — its
+  // animation (only the ones in sight play: gymPlayInView), the name, «гантели · 3 сета», then СЕТЫ · КГ · ПОВТОРЫ ·
+  // ОТДЫХ by the plan (КГ — this time's weight, which only the day to do has: its items carry suggest), a chip only for a
+  // weight after a break or one to pick. A tap — the exercise's sheet (gymExSheet); «Начать» starts this very day.
+  function gymTplSheet(d, ctx, from) {
+    var close = noop, vids = [], items = d.items || [], s = gymLoad(), gifs = ctx.gifs, mus = ctx.mus;
+    var nodes = [add(el('div', 'gthero k-gym'), add(el('span', 'gtring'), icon('dumbbell')), el('div', 'gtk', 'Силовая тренировка'),
+      el('div', 'gtt', d.name), el('div', 'mu gtcnt', 'Упражнений: ' + items.length + ' · Сетов: ' + gymSetsOf(items)))];
+    items.forEach(function (i) {
+      var sg = i.suggest || null, m = sg ? gymMeta(i) : {}, th = gymThumb(gifs[i.exercise], i.exercise), v = th.querySelector('video');
+      if (v) vids.push(v);
+      var gear = gymGear(i), sub = (gear ? gear + ' · ' : '') + (i.sets || 0) + ' ' + plural(i.sets || 0, ['сет', 'сета', 'сетов']);
+      var kg = sg && sg.kg != null && i.unit !== 'bw' && i.unit !== 's' ? woNum(sg.kg) : '—';
+      var reps = i.unit === 's' && !/\sс$/.test(i.reps) ? i.reps + ' с' : String(i.reps || '—');
+      var cells = [['Сеты', String(i.sets || 0)], ['Кг', kg], [i.unit === 's' ? 'Время' : 'Повторы', reps], ['Отдых', gymMin(i.rest_s || 75)]];
+      var grid = el('div', 'gtv');
+      cells.forEach(function (x) { grid.appendChild(el('span', 'gtl', x[0])); });
+      cells.forEach(function (x) { grid.appendChild(el('span', 'gtc' + (x[1] === '—' ? ' mu' : ''), x[1])); });
+      var chip = m.chip ? pill(m.chip, 'warn') : sg && sg.why === 'new' ? pill('подбери вес', 'warn') : null;
+      var r = add(el('div', 'gtx'), add(el('div', 'gtxh'), th, add(el('span', 'tx'), el('div', 't', i.exercise), el('div', 'mu', sub))), grid,
+        chip || m.note ? add(el('div', 'gtnote'), chip, m.note ? el('span', 'mu', (chip ? ' ' : '') + m.note) : null) : null);
+      r.setAttribute('aria-label', i.exercise + ', ' + sub + ', ' + cells.map(function (x) { return x[0].toLowerCase() + ' ' + x[1]; }).join(', ') +
+        (m.chip ? ', ' + m.chip : '') + ' — как делать');
+      nodes.push(tap(r, function () {
+        haptic();
+        var w = sg ? gymWhy({ sg: sg, reps: i.reps }) : '';
+        gymExSheet(i, gifs, mus, r, sg ? [add(el('div', 'gxw'), el('b', '', i.sets + '×' + i.reps + (m.main ? ' · ' + m.main : '')),
+          el('span', 'mu', ' · отдых ' + (i.rest_s || 75) + ' с')), w ? el('div', 'mu gxwhy', w) : null] : undefined);
+      }));
+    });
+    if (items.some(function (i) { return gifs[i.exercise]; })) nodes.push(el('div', 'mu gattr', 'Анимации: ExerciseDB · AscendAPI'));
+    var go = foodBtn('btn gtgo', 'play', s ? gymGoText(s) : 'Начать', function () { close(); gymScreen(from, ctx.done, s ? undefined : d.name); });
+    nodes.push(add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }), go));
+    close = legalSheet(d.name, nodes, from);
+    nodes[0].parentNode.classList.add('hsheet', 'gtsheet');
+    gymPlayInView(vids);
   }
   // The card row's meta: the weight to lift as the main line («55 кг», «80 → 85 кг», «подбери вес»), the reason
   // apart — after a break a chip «после перерыва −15 %» and the weight it starts from, a borrowed weight «по аналогу …».
@@ -19170,6 +19250,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
         // The same day's answer is not drawn again (swr): the card's button learns the session's fate here.
         var k = gymLoad();
         if (from.isConnected && from.classList.contains('gstart')) label(from, 'dumbbell', k ? 'Продолжить · ' + (k.day || 'зал') : 'Начать зал');
+        [].forEach.call(document.querySelectorAll('.gtpl .gtgo'), function (b) { label(b, 'play', gymGoText(k)); });
         gymPill();
         done();
         return;
