@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 18:18">
+<meta name="published" content="2026-11-01 18:30">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1032,6 +1032,13 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nut-row i{flex:none;width:var(--nut-w);height:22px;border-radius:2px;background:var(--track)}.nut-row i.on{background:var(--ms)}.nut-row i.gt{height:32px;background:var(--fg)}
 .nut-ax{position:relative;height:16px;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}.nut-ax span{position:absolute;top:0;left:0;white-space:nowrap}
 .nut-ax .gl{transform:translateX(-50%);font-weight:600}.nut-ax .mx{left:auto;right:0}
+/* «Шаги» on «Здоровье · Сегодня» (01.11.2026): the kcal scale's form in one green; the seven days as bars, the goal's days
+   full green, the rest dimmer, the day itself in bold. */
+.hst{--ms:var(--good);padding:0 14px 14px}.hst-go{margin-left:auto}.hst-none{margin-top:6px;font-size:13px}
+.hst-wk{display:flex;gap:6px;margin-top:12px}
+.hst-d{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;color:var(--muted);font-size:11px;text-align:center}.hst-d.now span{color:var(--fg);font-weight:700}
+.hst-b{height:44px;display:flex;align-items:flex-end}
+.hst-b i{display:block;width:100%;border-radius:5px;background:color-mix(in srgb,var(--good) 40%,var(--track))}.hst-b i.full{background:var(--good)}.hst-b i.none{height:3px;background:var(--track)}
 .nuw-row{display:flex;align-items:center;gap:12px;margin:0 14px;padding:10px 12px;border-radius:18px;background:color-mix(in srgb,var(--fg) 5%,transparent)}
 .nuw-row .tx{flex:1;min-width:0}.nuw-row .t{font-weight:600;font-size:16px}.nuw-row .mu{font-size:13px}
 .nuw-i{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--hl-sky)}.nuw-i .i{width:18px;height:18px}
@@ -2863,7 +2870,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // prefs.health (docs/specs/nutrition-health.md, docs/specs/labs.md): the kcal goal (a whole 500–6000), his birth date
   // and height (a whole 100–250 cm), the macro goals fat_g, carbs_g, protein_g (each a whole 5–1000 g, «Питание» как у
-  // Bevel), the day's fiber_g (5–100), water_ml (500–6000) and sleep_min (240–720), each optional; none of them — null.
+  // Bevel), the day's fiber_g (5–100), water_ml (500–6000), sleep_min (240–720) and steps_goal (1000–50000), each
+  // optional; none of them — null.
   // miniapp's healthPrefsIn is the twin.
   function healthPrefsIn(h) {
     if (!h || typeof h !== 'object') return null;
@@ -2874,7 +2882,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     ['fat_g', 'carbs_g', 'protein_g'].forEach(function (k) {
       if (typeof h[k] === 'number' && h[k] % 1 === 0 && h[k] >= 5 && h[k] <= 1000) o[k] = h[k];
     });
-    [['fiber_g', 5, 100], ['water_ml', 500, 6000], ['sleep_min', 240, 720]].forEach(function (g) {
+    [['fiber_g', 5, 100], ['water_ml', 500, 6000], ['sleep_min', 240, 720], ['steps_goal', 1000, 50000]].forEach(function (g) {
       var v = h[g[0]];
       if (typeof v === 'number' && v % 1 === 0 && v >= g[1] && v <= g[2]) o[g[0]] = v;
     });
@@ -15137,7 +15145,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           if (seg === 'fitness') return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j)));
           var had = HJ && HJ.has_data;
           HJ = j;
-          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
+          add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
             woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
           }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
           // The food's cards drawn before the timeline lose (or get back) its entries and «Спорт».
@@ -15317,24 +15325,30 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // to max (1,4 × the goal or the eaten, rounded up to 500), each lit if its middle is eaten, in the colour of the meal it
   // falls in, the rest dim; the goal's tick tall in the text colour; the axis «0 · цель N · max» under the goal's tick.
   function nuTicks(segs, kcal, goal) {
-    var N = 48, max = Math.ceil(Math.max(kcal, goal * 1.4, 1) / 500) * 500, left = goal - kcal, gi = Math.min(N - 1, Math.floor(goal / max * N));
-    var gx = 'calc((100% - var(--nut-w)) * ' + (gi / (N - 1)).toFixed(4) + ' + var(--nut-w) / 2)';
+    var max = Math.ceil(Math.max(kcal, goal * 1.4, 1) / 500) * 500, left = goal - kcal;
     function cls(v) { var c = 0; for (var i = 0; i < segs.length; i++) { c += segs[i].kcal; if (v < c) return segs[i].cls; } return segs.length ? segs[segs.length - 1].cls : ''; }
-    var row = el('div', 'nut-row');
-    for (var i = 0; i < N; i++) {
-      var v = (i + 0.5) / N * max;
-      row.appendChild(el('i', i === gi ? 'gt' : v <= kcal ? 'on ' + cls(v) : ''));
-    }
-    var gl = el('span', 'gl', 'цель ' + grouped(goal));
-    gl.style.left = gx;
-    var box = add(el('div', 'nut'),
+    var box = add.apply(null, [el('div', 'nut'),
       add(el('div', 'nut-hd'), add(el('div', 'nut-big'), el('b', '', grouped(kcal)), el('span', '', 'из ' + grouped(goal) + ' ккал')),
-        add(el('div', 'nut-lf' + (left < 0 ? ' nus-ov' : '')), el('span', '', left < 0 ? 'сверх цели' : 'осталось'), el('b', '', grouped(Math.abs(left)) + ' ккал'))),
-      row, add(el('div', 'nut-ax'), el('span', '', '0'), gl, el('span', 'mx', grouped(max))));
+        add(el('div', 'nut-lf' + (left < 0 ? ' nus-ov' : '')), el('span', '', left < 0 ? 'сверх цели' : 'осталось'), el('b', '', grouped(Math.abs(left)) + ' ккал')))]
+      .concat(tickScale(kcal, goal, max, cls)));
     box.setAttribute('role', 'img');
     box.setAttribute('aria-label', grouped(kcal) + ' из ' + grouped(goal) + ' ккал' + (left >= 0 ? ', осталось ' + grouped(left) : ', сверх цели ' + grouped(-left)) +
       (segs.length ? ': ' + segs.map(function (sg) { return sg.label + ' ' + grouped(sg.kcal); }).join(', ') : ''));
     return box;
+  }
+  // The scale's row and axis, one style for the kcal of «Питание» and the steps of «Шаги»: 48 ticks from 0 to max, each
+  // lit («on» and lit(v)) if its middle is under val, the goal's tick tall; the axis «0 · цель N · max».
+  function tickScale(val, goal, max, lit) {
+    var N = 48, gi = Math.min(N - 1, Math.floor(goal / max * N));
+    var gx = 'calc((100% - var(--nut-w)) * ' + (gi / (N - 1)).toFixed(4) + ' + var(--nut-w) / 2)';
+    var row = el('div', 'nut-row');
+    for (var i = 0; i < N; i++) {
+      var v = (i + 0.5) / N * max;
+      row.appendChild(el('i', i === gi ? 'gt' : v <= val ? 'on ' + lit(v) : ''));
+    }
+    var gl = el('span', 'gl', 'цель ' + grouped(goal));
+    gl.style.left = gx;
+    return [row, add(el('div', 'nut-ax'), el('span', '', '0'), gl, el('span', 'mx', grouped(max)))];
   }
   // A card with the app's head (the icon, the title), what goes beside it, an arrow to more.
   function nuCard(ic, title, extra, go, aria) {
@@ -15989,10 +16003,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // «Цели» (docs/specs/nutrition-health.md): every daily goal of «Здоровье» in one place (his ask 01.11.2026), in groups.
   // «Питание» — the kcal of Health's food (a whole 500–6000), the macros' grams (each a whole 5–1000; empty — Bevel's
   // 89 / 212 / 213 g at 2 500 kcal, scaled to the kcal goal) and fiber (a whole 5–100 г); «Вода» in litres (0,5–6, kept
-  // as water_ml); «Сон» in hours (4–12, kept as sleep_min); «Тело» — his birth date and height (the biological age,
-  // docs/specs/labs.md). An empty field is its default (2 500 kcal, 25 г, 2 л, 8 ч, 25.11.2000, 180 cm).
+  // as water_ml); «Сон» in hours (4–12, kept as sleep_min); «Активность» — the steps a day (a whole 1 000–50 000, kept
+  // as steps_goal, the «Шаги» card's); «Тело» — his birth date and height (the biological age, docs/specs/labs.md). An
+  // empty field is its default (2 500 kcal, 25 г, 2 л, 8 ч, 10 000 steps, 25.11.2000, 180 cm).
   function foodGoalSheet(from, done) {
-    var kc = el('input'), fb = el('input'), wt = el('input'), sl = el('input'), bd = el('input'), ht = el('input'), close = noop;
+    var kc = el('input'), fb = el('input'), wt = el('input'), sl = el('input'), st = el('input'), bd = el('input'), ht = el('input'), close = noop;
     var h = prefs.health || {};
     function num(x, mode, ph, aria, v) { x.inputMode = mode; x.placeholder = ph; x.setAttribute('aria-label', aria); x.value = v; return x; }
     function row(ic, x, unit) { return add(el('div', 'bar'), add(el('label', 'field'), ic, x, unit ? el('span', 'mu', unit) : null)); }
@@ -16003,6 +16018,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     num(fb, 'numeric', 'клетчатка — по умолчанию 25', 'Клетчатка, г в день', h.fiber_g ? String(h.fiber_g) : '');
     num(wt, 'decimal', 'по умолчанию 2', 'Вода, л в день', h.water_ml ? waterL(h.water_ml) : '');
     num(sl, 'decimal', 'по умолчанию 8', 'Сон, часов за ночь', h.sleep_min ? String(Math.round(h.sleep_min / 60 * 100) / 100).replace('.', ',') : '');
+    num(st, 'numeric', 'по умолчанию 10000', 'Шаги в день', h.steps_goal ? String(h.steps_goal) : '');
     bd.type = 'date';
     bd.max = foodToday();
     bd.setAttribute('aria-label', 'Дата рождения');
@@ -16010,12 +16026,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     num(ht, 'numeric', 'рост — по умолчанию 180', 'Рост, см', h.height_cm ? String(h.height_cm) : '');
     function val(x) { var t = x.value.trim(); return t ? foodNum(t) : null; }
     var ok = foodBtn('btn', 'check', 'Сохранить', function () {
-      var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), cm = val(ht), b = bd.value;
+      var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), sg = val(st), cm = val(ht), b = bd.value;
       var ml = l === null ? null : Math.round(l * 1000), min = hr === null ? null : Math.round(hr * 60);
       if (k !== null && !(k % 1 === 0 && k >= 500 && k <= 6000)) { toast('Ккал — целое число от 500 до 6000'); return; }
       if (f !== null && !(f % 1 === 0 && f >= 5 && f <= 100)) { toast('Клетчатка — целое число граммов от 5 до 100'); return; }
       if (ml !== null && !(ml >= 500 && ml <= 6000)) { toast('Вода — от 0,5 до 6 л в день'); return; }
       if (min !== null && !(min >= 240 && min <= 720)) { toast('Сон — от 4 до 12 часов'); return; }
+      if (sg !== null && !(sg % 1 === 0 && sg >= 1000 && sg <= 50000)) { toast('Шаги — целое число от 1 000 до 50 000'); return; }
       if (cm !== null && !(cm % 1 === 0 && cm >= 100 && cm <= 250)) { toast('Рост — целое число от 100 до 250 см'); return; }
       if (b && !(/^\d{4}-\d{2}-\d{2}$/.test(b) && b >= '1900-01-01' && b <= foodToday())) { toast('Дата рождения — не позже сегодня'); return; }
       var o = {}, bad = null;
@@ -16029,6 +16046,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (f !== null) o.fiber_g = f;
       if (ml !== null) o.water_ml = ml;
       if (min !== null) o.sleep_min = min;
+      if (sg !== null) o.steps_goal = sg;
       if (b && b !== '2000-11-25') o.birth_date = b;
       if (cm !== null) o.height_cm = cm;
       close();
@@ -16045,6 +16063,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu msrc', 'Вода и напитки за день, в литрах — например 2,5. Пусто\u00a0— 2\u00a0л.'),
       el('div', 'fgsec', 'Сон'), row(icon('moon'), sl, 'ч'),
       el('div', 'mu msrc', 'Сколько спать за ночь, в часах — например 7,5. По этой цели считается кольцо сна. Пусто\u00a0— 8\u00a0ч.'),
+      el('div', 'fgsec', 'Активность'), row(icon('footprints'), st, 'шагов'),
+      el('div', 'mu msrc', 'Шагов в день — цель на шкале «Шаги» в «Сегодня». Пусто\u00a0— 10\u00a0000.'),
       el('div', 'fgsec', 'Тело'), row(icon('calendar'), bd), row(icon('scale'), ht, 'см'),
       el('div', 'mu msrc', 'Дата рождения и рост — для биологического возраста (возраст, безжировая масса к росту).'),
       add(el('div', 'bar mact mstick'), ok)], from);
@@ -16267,6 +16287,38 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     b.setAttribute('aria-label', 'Из чего считаются кольца');
     c.firstChild.appendChild(b);
     c.appendChild(wrap);
+    return c;
+  }
+  // «Шаги» (his ask 01.11.2026, «интересно смотреть, сколько я натопал»): the day's steps big «из» his goal
+  // (prefs.health.steps_goal, STEPS_GOAL without one), the distance on the right — steps × a stride of 0,415 × his height
+  // (health_days has no distance; no kcal: Health's active energy is the whole day's, not the walking's); «Питание»'s
+  // tick scale in one green, the goal the tall tick, max 1,4 × the goal or the day's steps; the seven days to the day as
+  // bars (at or over the goal full green, under it dimmer, the day itself in bold). No count yet — «—» and a line. A tap
+  // — the steps' sheet.
+  var STEPS_GOAL = 10000;
+  function stepsGoal() { return (prefs.health && prefs.health.steps_goal) || STEPS_GOAL; }
+  function hlStepsCard(j) {
+    var goal = stepsGoal(), days = j.week || [], cur = days.filter(function (d) { return d.day === j.date; })[0];
+    var n = cur && cur.steps != null ? Math.round(cur.steps) : null;
+    var km = n ? (Math.round(n * 0.415 * ((prefs.health && prefs.health.height_cm) || 180) / 10000) / 10).toFixed(1).replace('.', ',') : null;
+    var c = mkCard('footprints', 'Шаги'), body = el('div', 'nut hst');
+    c.firstChild.appendChild(add(el('span', 'hpr-go hst-go'), icon('arrow-right')));
+    add(body, add(el('div', 'nut-hd'), add(el('div', 'nut-big'), el('b', '', n == null ? '—' : grouped(n)), el('span', '', 'из ' + grouped(goal))),
+      km ? add(el('div', 'nut-lf'), el('span', '', 'пройдено'), el('b', '', '≈ ' + km + ' км')) : null),
+      n == null ? el('div', 'mu hst-none', 'Шагов за этот день ещё нет — придут с iPhone.') : null);
+    add.apply(null, [body].concat(tickScale(n || 0, goal, Math.ceil(Math.max(n || 0, goal * 1.4) / 1000) * 1000, function () { return ''; })));
+    var top = Math.max.apply(null, [goal].concat(days.map(function (d) { return d.steps || 0; }))), wk = el('div', 'hst-wk'), said = [];
+    days.forEach(function (d) {
+      var v = d.steps == null ? null : Math.round(d.steps), wd = WEEK[(new Date(d.day + 'T12:00:00Z').getUTCDay() + 6) % 7];
+      var bar = el('i', v ? v >= goal ? 'full' : '' : 'none');
+      if (v) bar.style.height = Math.max(6, Math.round(v / top * 100)) + '%';
+      wk.appendChild(add(el('div', 'hst-d' + (d.day === j.date ? ' now' : '')), add(el('div', 'hst-b'), bar), el('span', '', wd)));
+      said.push(wd + ' ' + (v == null ? 'нет данных' : grouped(v)));
+    });
+    body.appendChild(wk);
+    body.setAttribute('aria-label', 'Шаги: ' + (n == null ? 'нет данных' : grouped(n)) + ' из ' + grouped(goal) + (km ? ', около ' + km + ' км' : '') +
+      '; за 7 дней: ' + said.join(', ') + ' — подробнее');
+    c.appendChild(tap(body, function () { haptic(); hlSeriesSheet('steps', HL_BIO_KEYS, body); }));
     return c;
   }
   // The day's advice with its context (docs/specs/advice-context.md) in Bevel's form (home.jpg): the title bold with the
