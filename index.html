@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 14:44">
+<meta name="published" content="2026-11-01 16:46">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1046,8 +1046,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nukb .gt{fill:var(--mark);font:600 12px var(--font-num)}.nukb .col{fill:color-mix(in srgb,var(--mark) 50%,var(--surface-2))}.nukb .col.over{fill:var(--mark)}
 .nukb .base{stroke:color-mix(in srgb,var(--fg) 12%,transparent);stroke-width:2;stroke-linecap:round;stroke-dasharray:8 6}
 .nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 14px}
-.nums>.num{min-width:0;padding:10px 8px 12px 10px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
-.numh{display:flex;align-items:flex-start;justify-content:space-between;gap:4px}.numh .nun{min-width:0;font-size:14px;-webkit-hyphens:auto;hyphens:auto}
+.nums>.num{min-width:0;padding:10px 6px 12px 8px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.numh{display:flex;align-items:flex-start;justify-content:space-between;gap:3px}.numh .nun{min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nur{flex:none;width:18px;height:18px;margin-top:1px;overflow:visible}.nur .tr{fill:none;stroke:color-mix(in srgb,var(--nu) 22%,transparent);stroke-width:3}
 .nur .a{fill:none;stroke:var(--nu);stroke-width:3;stroke-linecap:round}
 .nusw{flex:none;display:inline-flex;padding:2px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2)}
@@ -1336,6 +1336,7 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .hring .band{fill:none;stroke:url(#p-load-band);stroke-opacity:.75}.hring .dot{fill:var(--ring-load-2);stroke:var(--surface);stroke-width:2}
 .hring .rv{fill:var(--fg);font-family:var(--font-num);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.hring .rv.mu{fill:var(--muted)}
 .hrings{display:flex;justify-content:space-around;gap:6px}.hrc{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.hrings.hdiv{gap:0}.hrings.hdiv>.hrc{flex:1 1 0;justify-content:center}.hrings.hdiv>.hrc+.hrc{border-left:1px solid var(--line)}.hring .rv .rp{font-weight:700;letter-spacing:0}
 .hrl{font-size:12.5px;letter-spacing:-.01em;color:var(--muted);white-space:nowrap}
 .card.hcard{background:linear-gradient(100deg,color-mix(in srgb,var(--ring-load) var(--hl-tint),transparent),transparent 50%,color-mix(in srgb,var(--ring-sleep) var(--hl-tint),transparent)),var(--surface)}
 .hbody{padding:6px 0 14px;border-radius:var(--r-b)}.hbody>.hrings{position:relative;z-index:1;margin:0 4px;padding:8px 0 10px}/* no tile, no frame (his 31.10.2026) */.hadv{margin-top:14px;font-weight:700;font-size:15px;line-height:1.4;text-align:center;text-wrap:balance}
@@ -1344,6 +1345,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .hbody:has(>.hcur){position:relative}
 .hcur .hadv{margin-top:0}.hcur .hadv.htip{padding:0}.hcur .htip-h .i{width:18px;height:18px;margin-top:1px}
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
+/* The small widget's three rings fill its width with their names: no room for dividers there (the wide one keeps them). */
+.bw .hrings.hdiv:not(.bsm){gap:4px}.bw .hrings.hdiv:not(.bsm)>.hrc+.hrc{border-left:0}
 /* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
 .bw .hrings.bsm{flex:none;margin:2px 0 4px}.bw .bl.bh3{font-size:12.5px;line-height:1.3}
 .hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
@@ -1359,6 +1362,14 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .pill.hst{border-color:transparent;background:color-mix(in srgb,var(--st) 16%,transparent);color:color-mix(in srgb,var(--st) 68%,var(--fg));font-weight:600}
 .htrk{flex:none;overflow:visible}.htrk .tr{fill:var(--track)}.htrk .band{fill:color-mix(in srgb,var(--st) 55%,transparent)}
 .htrk .halo{fill:color-mix(in srgb,var(--st) 28%,transparent)}.htrk .dot{fill:var(--st);stroke:var(--solid);stroke-width:2}
+/* «Монитор» in Bevel's form (monitor.jpg): the icon by the name, the status a coloured word after a filled mark, the scale
+   in a capsule on the right; the tile's ground stays neutral. */
+.hmt.hmb{justify-content:space-between;gap:8px;padding:12px 10px 12px 12px}.hmb .hmx{flex:1;gap:5px}
+.hmb .hml{display:flex;align-items:center;gap:5px}.hmb .hml .i{width:14px;height:14px}.hmb .hml span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hmst{display:flex;align-items:center;gap:5px;font:700 14px/1.2 var(--font);color:color-mix(in srgb,var(--st) 78%,var(--fg))}
+.hmst-i{flex:none;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--st);color:var(--solid)}.hmst-i .i{width:11px;height:11px;stroke-width:3}
+.hmcap{flex:none;display:grid;place-items:center;width:24px;padding:6px 0;border-radius:12px;background:color-mix(in srgb,var(--st) 10%,var(--surface-2))}
+.hmb .hmn{font-size:12px}
 .card.hfit{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-peach) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .card.hnu{background:linear-gradient(180deg,color-mix(in srgb,var(--nu-carbs) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
 .card.hbio{background:linear-gradient(180deg,color-mix(in srgb,var(--hl-teal) var(--hl-tint2),transparent),transparent 120px),var(--surface)}
@@ -1482,7 +1493,6 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .pill.bio-dp{height:24px;gap:4px;padding:0 9px}.pill.bio-dp .i{width:12px;height:12px}
 @media (max-width:389px){.bio-foot{gap:6px}.bio-foot .mu,.pill.bio-dp{font-size:11px}.pill.bio-dp{padding:0 7px}}
 .bio-mon .hmt.tap{cursor:pointer}.htrk .cal{fill:color-mix(in srgb,var(--fg) 70%,transparent)}
-.bio-mon .hmt.hs-cal{--st:var(--muted);background:none;box-shadow:inset 0 0 0 1px var(--line)}.bio-mon .hmt.hs-cal .htrk .halo{display:none}
 .row.hbr.bio-tr{min-height:0;padding:8px 14px}.row.hbr.bio-tr .hbv{font-size:17px}.row.hbr.bio-tr .tx .mu{font-size:11.5px}
 .bnote{padding:0 14px 12px}
 .bxb{flex:none;display:block;margin:0 8px}.bxb .tr{fill:var(--track)}.bxb .mid{fill:var(--line-2)}
@@ -1503,6 +1513,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .lch .dot{fill:var(--st,var(--mark));stroke:var(--solid);stroke-width:2}.lch .hit{fill:transparent}
 .lch .vl{fill:var(--fg);font:700 11px var(--font-num)}.lch .tl{fill:var(--muted);font:10px var(--font-num)}
 .lhist>.mu{margin:0 0 6px}
+.lone{display:flex;flex-direction:column;gap:10px;margin:6px 0 14px}.lone-v{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.lone-v b{font:800 34px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}.lone-v small{font:500 14px var(--font);color:var(--muted)}.lone-v .pill{margin-left:6px}.lone .lrg{max-width:100%}
 .hgg>.mu{font-size:12px}
 .hfr{padding:0 14px 12px}.hfh{font-weight:600;margin:0 0 8px}.hfr-g{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
 .hfr1{min-width:0;display:flex;align-items:center;gap:8px}.hfr-t{flex:1;min-width:0}.hfr1 .tx{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1542,6 +1554,10 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hpills button{flex:none;height:34px;padding:0 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface-2);color:var(--muted);font:600 13px/1 var(--font);white-space:nowrap;transition:background .15s,color .15s}
 .hpills button.on{border-color:transparent;background:var(--accent);color:var(--accent-ink)}
 .hpills.hper{justify-content:center;margin:10px 0 16px;padding:0}.hpills.hper button{min-width:58px}
+/* A strip that scrolls fades at its edges (the first pill sits clear of the fade at rest); a pill's focus ring inside it,
+   not clipped by the strip. The ring sheets' four pills (.hfit) share the row and fit in 375 px. */
+.hpills:not(.hper){-webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
+.hpills button:focus-visible{outline-offset:-2px}.hpills.hfit button{flex:1 1 auto;min-width:0;padding:0 8px}
 .hsh{transition:opacity .2s}.hsh.busy{opacity:.55}.hsh-none{padding:22px 0;text-align:center}
 .hsh-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:0 0 6px}
 .hsh-v{min-width:0}.hsh-v .mu{font-size:13px;margin-top:4px}
@@ -1558,6 +1574,19 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hch .hln{fill:none;stroke:var(--mark);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hch .hln.q{stroke:color-mix(in srgb,var(--fg) 32%,transparent)}
 .hch .hdt{fill:var(--hs,var(--mark));stroke:var(--solid);stroke-width:1.5}.hch .hdt.end{stroke-width:2}.hch .hstrip{fill:var(--hs)}
 .hch .hmp rect{fill:var(--solid);stroke:color-mix(in srgb,var(--mark) 55%,transparent);stroke-width:1}.hch .hmp text{fill:var(--fg);font:600 11px var(--font-num)}
+/* The recovery's hero (recovery.jpg): the ring centred, its word inside; the two tiles «ВСР в покое · Пульс в покое» with
+   a coloured mark on the right. */
+.hrhero{display:flex;flex-direction:column;align-items:center;gap:6px;margin:4px 0 6px;text-align:center}.hrh-ring{margin:4px 0 2px}
+.hring .rw{fill:var(--muted);font:600 12px var(--font)}.hrh-d{font-size:13px}
+.hrh-st{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 10px}.hrh-st .pill{height:24px;padding:0 10px;font-size:12px}.hrh-st .mu{font-size:12px}
+.hrh-l{font-size:14px;line-height:1.4;max-width:34em;text-wrap:balance}
+.hrh-g{align-self:stretch;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;text-align:left}
+.hrh-t{min-width:0;padding:10px 12px 12px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2);cursor:pointer}
+.hrh-h{display:flex;align-items:center;gap:6px;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap}.hrh-h .i{width:14px;height:14px}
+.hrh-v{display:flex;align-items:center;justify-content:space-between;gap:6px}.hrh-v b{font:800 22px/1.1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}.hrh-v small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
+.hrh-mk{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:color-mix(in srgb,var(--st) 18%,transparent);color:var(--st)}.hrh-mk .i{width:14px;height:14px;stroke-width:2.6}
+.hrh-n{margin-top:4px;font-size:12px}
+.hsh-nav{margin:2px -8px 4px}.hsh-nav .mmon{font-variant-numeric:tabular-nums}.hwhat p{margin:4px 0 0;font-size:14px;line-height:1.5}
 .hsec{margin:20px 0 0}.hsec-h{font:800 17px/1.3 var(--font);margin:0 0 2px}.hsec-s{font-size:12px;margin:0 0 10px}.hsec-n{font-size:11px;margin:8px 0 0;text-align:center}
 .htr{padding:2px 14px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
 .htr-h,.htr-r{display:grid;grid-template-columns:56px minmax(0,1fr) 72px;align-items:center;gap:8px;min-height:42px}
@@ -1590,6 +1619,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
    the screen above the bottom bar, which stays. */
 .tsum.bfull>div{height:100%;max-height:none;border-radius:0;border:0;padding-top:calc(6px + env(safe-area-inset-top))}
 @media (max-width:899px){.tsum.bfull{bottom:calc(var(--bar) + env(safe-area-inset-bottom))}.tsum.bfull>div{padding-bottom:24px;box-shadow:none}.tsum.bfull>div>.grab{visibility:hidden}}
+/* The bar under a full-screen sheet is opaque, the sheet's own ground: the page under the sheet must not show through it. */
+body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop-filter:none;backdrop-filter:none}
 .tsum>div.hsheet.bsheet{position:relative;--star:color-mix(in srgb,var(--fg) 70%,transparent);
   background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 18%,var(--solid)) 0,color-mix(in srgb,var(--accent) 6%,var(--solid)) 520px,var(--solid) 900px) var(--solid);background-attachment:local}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .tsum>div.hsheet.bsheet{--star:color-mix(in srgb,var(--mark) 40%,transparent)}}
@@ -15040,7 +15071,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       add(day, add(el('div', 'fsum'), el('div', 'fk' + (tk ? '' : ' mu'), (nu ? grouped(tk) : tk ? foodK(tk) : '0') + ' ккал'),
         el('div', 'mu', 'Б ' + Math.round(tt.protein || 0) + ' · Ж ' + Math.round(tt.fat || 0) + ' · У ' + Math.round(tt.carbs || 0) +
           (nu ? ' · цель ' + grouped(goal) : norm ? ' · норма ' + foodK(norm.kcal) : '')),
-        tk ? el('div', 'mu fsrc', nu ? 'из Bevel через Health' : 'из записей') : null),
+        tk ? el('div', 'mu fsrc', nu ? 'из Health' : 'из записей') : null),
         add(el('div', 'foot'), foodBtn('btn', 'plus', 'Записать', function (ev) { foodAddSheet(date, ev.currentTarget, load); }),
           foodBtn('btn ghost', 'chevron-right', 'Питание', function () { haptic(); show('nutrition'); })));
       out = [day];
@@ -15128,7 +15159,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     top.className += ' hnu nutop';
     top.firstChild.appendChild(foodBtn('mtoday', 'plus', 'Записать', h.add));
     top.firstChild.appendChild(foodBtn('mtoday', 'scan-barcode', 'Сканер', h.scan));
-    add(top, nuStack(j, src, kcal, goal), el('div', 'mu nusrc', kcal ? (nu ? 'из Bevel через Health' : 'из записей') : 'за этот день еды нет'),
+    add(top, nuStack(j, src, kcal, goal), el('div', 'mu nusrc', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
       add(el('div', 'nuact'), wb));
     return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || []), timeline];
   }
@@ -15376,7 +15407,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       box.appendChild(add(el('div', 'row hxr'), el('span', 'tx', r[0]), el('span', 'pr' + (r[1] == null ? ' mu' : ''),
         r[1] == null ? '—' : (r[2] === 'ккал' ? grouped(Math.round(r[1])) : woNum(r[1])) + ' ' + r[2])));
     });
-    legalSheet('Пищевая ценность', [box, el('div', 'mu msrc', nu ? 'Из Bevel через Health, сумма за день.' : 'Из записей дня; клетчатку, сахар, воду и остальное присылает только Health.')], from);
+    legalSheet('Пищевая ценность', [box, el('div', 'mu msrc', nu ? 'Из Health, сумма за день.' : 'Из записей дня; клетчатку, сахар, воду и остальное присылает только Health.')], from);
   }
   // «Чистая энергия»: eaten minus Health's active kcal (none — eaten alone), the marker on −2,2k…+2,2k.
   function nuEnergy(eaten, active) {
@@ -15406,7 +15437,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     grains: 'Цельные злаки — овсянка, гречка, бурый рис, киноа, цельнозерновой и ржаной хлеб: медленные углеводы и клетчатка. Фактор даёт +10, если они есть в записях дня.',
     fats: 'Полезные жиры — авокадо, орехи, оливковое масло, семечки: ненасыщенные жиры для сердца и сытости. Фактор даёт +10, если они есть в записях дня.',
     fiber: 'Клетчатка кормит кишечный микробиом, держит сытость и сглаживает сахар в крови. Цель — 25 г в день: +10 при 25 г и больше, меньше — по доле. Клетчатка берётся из Health.',
-    water: 'Вода из напитков, которую Bevel пишет в Health. Цель — 2 л в день: +10 при 2 л и больше, меньше — по доле.'
+    water: 'Вода за день: стаканы из журнала и напитки из записей, в дни без них — из Health. Цель — 2 л в день: +10 при 2 л и больше, меньше — по доле.'
   };
   var NU_THR = { sugar: '50 г', sodium: '2 300 мг', fiber: '25 г', water: '2 л' };
   function nuPoints(f) { return f.points == null ? '—' : (f.kind === 'limit' ? '−' : '+') + woNum(Math.abs(f.points)); }
@@ -15429,7 +15460,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     info.type = 'button';
     info.setAttribute('aria-label', 'Как считаются факторы');
     info.onclick = function () {
-      legalSheet('Факторы качества питания', [el('p', 'nufx', 'Bevel считает свою оценку питания закрыто, поэтому здесь свой прозрачный расчёт: каждый фактор — простое правило по итогам дня из Health (сахар, натрий, клетчатка, вода) и по словам в записях дня (рыба, овощи, злаки, полезные жиры). Плюсы дают до +10, пределы снимают до −10.'),
+      legalSheet('Факторы качества питания', [el('p', 'nufx', 'Оценка питания — свой прозрачный расчёт: каждый фактор — простое правило по итогам дня из Health (сахар, натрий, клетчатка, вода) и по словам в записях дня (рыба, овощи, злаки, полезные жиры). Плюсы дают до +10, пределы снимают до −10.'),
         el('div', 'mu msrc', 'Безопасный порог — черта на шкале предела: пока точка левее, баллы не снимаются.')], info);
     };
     fs.forEach(function (f, i) {
@@ -15974,11 +16005,11 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       done();
     });
     close = legalSheet('Цели', [add(el('div', 'bar'), add(el('label', 'field'), icon('target'), kc)),
-      el('div', 'mu msrc', 'Цель ккал в день для итогов из Health. Пусто — 2 500, как у Bevel.'),
+      el('div', 'mu msrc', 'Цель ккал в день для итогов из Health. Пусто — 2 500.'),
       add.apply(null, [el('div')].concat(mac.map(function (x, i) {
         return add(el('div', 'bar'), add(el('label', 'field'), el('i', 'nudot nu-' + NU_MACROS[i][0]), x));
       }))),
-      el('div', 'mu msrc', 'Жиры, углеводы и белки в граммах в день. Пусто — как у Bevel: 89 / 212 / 213 г при 2 500 ккал, по цели ккал.'),
+      el('div', 'mu msrc', 'Жиры, углеводы и белки в граммах в день. Пусто — 89 / 212 / 213 г при 2 500 ккал, по цели ккал.'),
       add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), bd)), add(el('div', 'bar'), add(el('label', 'field'), icon('scale'), ht)),
       el('div', 'mu msrc', 'Дата рождения и рост — для биологического возраста (возраст, безжировая масса к росту).'),
       add(el('div', 'bar mact mstick'), ok)], from);
@@ -16123,8 +16154,9 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
   // A ring: its tinted track, the arc of v (0–100) from 12 o'clock in the ring's gradient with a glow (the CSS), the
   // number in the middle; the stroke 13 % of the size (11 px at 84).
   // band — [from, to] as fractions of the ring: the recommended range hatched over the track, and then the value's
-  // dot at the arc's end (the load ring, as Bevel's).
-  function hlRing(v, cls, size, band) {
+  // dot at the arc's end (the load ring, as Bevel's). pct — «%» after the number, smaller (the rings of «Сегодня» and
+  // of the board's widget, home.jpg).
+  function hlRing(v, cls, size, band, pct) {
     var sw = Math.round(size * 0.13), r = (size - sw) / 2, c = 2 * Math.PI * r, h = size / 2, rot = 'rotate(-90 ' + h + ' ' + h + ')';
     var box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hring ' + cls, 'aria-hidden': 'true' });
     box.appendChild(svg('circle', { cx: h, cy: h, r: r, 'class': 'tr', 'stroke-width': sw }));
@@ -16150,17 +16182,20 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       var a = Math.PI * (2 * Math.min(100, v) / 100 - 0.5);
       box.appendChild(svg('circle', { cx: (h + r * Math.cos(a)).toFixed(1), cy: (h + r * Math.sin(a)).toFixed(1), r: Math.max(3, sw * 0.5), 'class': 'dot' }));
     }
-    box.appendChild(svg('text', { x: h, y: h, 'class': 'rv' + (v == null ? ' mu' : ''), 'text-anchor': 'middle', 'dominant-baseline': 'central',
-      'font-size': size >= 60 ? 22 : 13 }, v == null ? '—' : String(v)));
+    // With «%» the number sits on its alphabetic baseline (a central one would lift the small «%» to the digits' middle).
+    var fs = size >= 60 ? 22 : 13, pc = pct && v != null, tx = svg('text', pc ? { x: h, y: (h + fs * 0.36).toFixed(1), 'class': 'rv', 'text-anchor': 'middle', 'font-size': fs }
+      : { x: h, y: h, 'class': 'rv' + (v == null ? ' mu' : ''), 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': fs }, v == null ? '—' : String(v));
+    if (pc) tx.appendChild(svg('tspan', { 'class': 'rp', 'font-size': Math.round(fs * 0.55) }, '%'));
+    box.appendChild(tx);
     return box;
   }
   // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls; onTap(key, cell) —
-  // a ring opens its sheet (left out on the board's widget).
+  // a ring opens its sheet (left out on the board's widget). The numbers with «%», thin dividers between the rings.
   function hlRings(vs, size, onTap, bare) {
-    var row = el('div', 'hrings');
+    var row = el('div', 'hrings hdiv');
     HL_RINGS.forEach(function (k) {
       var band = k[0] === 'load' ? (vs.load_target || [28, 46]).map(function (x) { return x / 100; }) : null;
-      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band), bare ? null : el('div', 'hrl', size < 60 && k[0] === 'recovery' ? 'Восст.' : k[1]));
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band, true), bare ? null : el('div', 'hrl', size < 60 && k[0] === 'recovery' ? 'Восст.' : k[1]));
       if (onTap) tap(cell, function () { onTap(k[0], cell); });
       else cell.setAttribute('role', 'img');
       cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
@@ -16714,16 +16749,33 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     if (p) p.classList.add('hsheet');
   }
   // A metric's sheet (a «Монитор» tile, a «Биология» row, a part of a ring): the siblings of `group` as pills.
+  // «Что это» under a metric's sheet (tour-3.jpg): what the measure is and what moves it, plainly.
+  var HL_WHAT = {
+    resting_hr: 'Сколько раз в минуту бьётся сердце в покое — часы берут его, когда ты сидишь или спишь. Ниже своей нормы — сердце отдохнуло; растёт от недосыпа, алкоголя, болезни, жары и тяжёлой тренировки накануне.',
+    hrv: 'Вариабельность ритма — насколько различаются промежутки между ударами сердца (часы меряют SDNN, в мс). Выше своей нормы — нервная система отдохнула; падает от стресса, недосыпа, алкоголя, болезни и большой нагрузки. Сравнивать стоит только с собой.',
+    resp_rate: 'Сколько вдохов в минуту ты делаешь во сне. Обычно держится ровно; рост на 1–2 вдоха к своей норме бывает при простуде, перегреве, после алкоголя или тяжёлой нагрузки.',
+    spo2: 'Насыщение крови кислородом по датчику часов. У здорового человека — 95–100 %; разовое низкое значение чаще от неплотного ремешка, тревожно — если держится ниже 92 %.',
+    wrist_temp: 'Сдвиг температуры запястья во сне от твоей обычной, в градусах, — не температура тела. Растёт при простуде и воспалении, после алкоголя и в жаркой комнате.',
+    sleep_min: 'Сколько ты спал за ночь по часам — без времени, когда просто лежал. Взрослому нужно 7–9 часов; несколько коротких ночей подряд копят недосып, и это видно по ВСР и пульсу.',
+    steps: 'Шаги за день с iPhone и часов. Больше движения — ниже риски для сердца; польза растёт примерно до 8–10 тысяч в день, дальше почти не прибавляется.',
+    active_kcal: 'Энергия на движение сверх покоя: ходьба, тренировки, игра. Часы считают её по пульсу и движению — это оценка, а не точное число.',
+    vo2max: 'Сколько кислорода тело может взять на пике нагрузки, мл на кг в минуту, — главный показатель выносливости. Часы оценивают его по ходьбе и бегу на улице; растёт от кардио в зоне 2 и интервалов, падает в перерывы.',
+    weight: 'Вес с умных весов или из записей в Health. За день гуляет на 1–2 кг из-за воды и еды, поэтому важна линия за недели, а не одно утро.',
+    body_fat: 'Доля жира в теле по умным весам. Весы меряют её слабым током и ошибаются на несколько процентов, но тренд за недели честный: падает при дефиците калорий и силовых.',
+    kcal: 'Калории, съеденные за день, — по записям дневника или из Health. Вместе с активной энергией показывает, в дефиците ты или в избытке.'
+  };
+  // ‹ › over the chart step through the past windows of the chosen period (tour-2.jpg): cur.to — the window's last day,
+  // null for the one ending today; › stops at today, ‹ at a past window with no data.
   function hlSeriesSheet(key, group, from) {
     HL_CACHE = {};
-    var cur = { key: key, days: +(store('hlDays') || 30) }, body = el('div', 'hsh'), close = noop, seq = 0;
+    var cur = { key: key, days: +(store('hlDays') || 30), to: null }, body = el('div', 'hsh'), close = noop, seq = 0;
     if (!HL_PERIODS.some(function (p) { return p[0] === cur.days; })) cur.days = 30;
     var pills = hlPills(group.map(function (k) { return [k, HL_SN[k]]; }), key, function (k) { cur.key = k; draw(); });
     function draw() {
       var n = ++seq;
       body.classList.add('busy');
       var h = body.parentNode && body.parentNode.querySelector('.lsh');
-      hlSeries(cur.key, cur.days).then(function (j) {
+      hlSeries(cur.key, cur.days, cur.to).then(function (j) {
         if (n !== seq) return;
         if (h) h.textContent = j.name;
         render(j);
@@ -16744,12 +16796,29 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       var abs = cur.key === 'wrist_temp' && j.abs ? woNum(j.abs.v) + ' °C по запястью' : null;
       var W = Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32));
       var per = hlPills(HL_PERIODS.map(function (p) { return [p[0], p[1]]; }), cur.days, function (d) { cur.days = d; store('hlDays', String(d)); draw(); }, 'hper');
+      var nav = el('div', 'mnav hsh-nav');
+      [[-1, 'chevron-left', 'Предыдущий период'], [0], [1, 'chevron-right', 'Следующий период']].forEach(function (x) {
+        if (!x[0]) return nav.appendChild(el('div', 'mmon', hlShort(j.from) + ' – ' + hlDay(j.to)));
+        var bt = add(el('button'), icon(x[1]));
+        bt.type = 'button';
+        bt.setAttribute('aria-label', x[2]);
+        bt.disabled = x[0] < 0 ? !!cur.to && !j.points.length : !cur.to;
+        bt.onclick = function () {
+          haptic();
+          if (x[0] < 0) cur.to = addDays(j.from, -1);
+          else { var t = addDays(j.to, j.days); cur.to = t >= warsawToday() ? null : t; }
+          draw();
+        };
+        nav.appendChild(bt);
+      });
       add(clear(body),
         hlHead(last ? hlFmt(cur.key, last.v) : '—', last ? unit : '', last ? hlDay(last.day) : 'нет данных', st, cls,
           b ? '≡ ' + hlFmt(cur.key, b.low) + ' – ' + hlFmt(cur.key, b.high) + (unit ? ' ' + unit : '') : null, abs),
+        nav,
         j.points.length ? hlChart(j.points, { W: W, from: j.from, to: j.to, days: j.days, band: b, mean: b && b.mean, dots: j.days <= 90,
           label: j.name, unit: unit, tick: function (v) { return hlFmt(cur.key, v); } }) : el('div', 'mu hsh-none', 'За этот период данных нет.'),
-        per, hlLines(cur.key, j.lines), hlTrends(j));
+        per, hlLines(cur.key, j.lines), hlTrends(j),
+        HL_WHAT[cur.key] ? add(el('div', 'hsec hwhat'), el('div', 'hsec-h', 'Что это'), el('p', 'mu', HL_WHAT[cur.key])) : null);
     }
     close = legalSheet(HL_SN[key], [pills, body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
     hlFrame(body);
@@ -16836,7 +16905,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     var cur = k, body = el('div', 'hsh'), close = noop, seq = 0;
     // The stress (docs/specs/bevel-gap.md, п. 2) is a fourth pill when the day has it: its parts, no chart.
     var keys = HL_RINGS.map(function (r) { return r[0]; }).concat((j.scores || {}).stress ? ['stress'] : []);
-    var pills = hlPills(keys.map(function (x) { return [x, HL_NAMES[x]]; }), k, function (x) { cur = x; draw(); });
+    var pills = hlPills(keys.map(function (x) { return [x, HL_NAMES[x]]; }), k, function (x) { cur = x; draw(); }, 'hfit');
     function draw() {
       var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
       if (h) h.textContent = HL_NAMES[cur];
@@ -16847,7 +16916,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       var st = !s ? null : cur === 'load' ? (s.day ? HL_DAY_RU[s.day] : HL_LOAD_RU[s.status || 'calibration']) : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
       var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.day ? HL_DAY_CLS[s.day] : s.status || 'calibration') : 'hz-st-' + zone;
       var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
-      add(body, hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null));
+      var sub = s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null;
+      add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub));
       if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
       var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
       if (chart) body.appendChild(chart);
@@ -16908,6 +16978,36 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     hlFrame(body);
     draw();
   }
+  // The recovery's head as Bevel's (recovery.jpg): the ring large with «78 %» and «Восстановлено» in it, the date, the
+  // status and the line; then two tiles — «ВСР в покое» and «Пульс в покое» from the ring's parts, the value and a mark
+  // against his norm: ▲/▼ green when it helps the recovery (HRV up, pulse down), orange when it costs, ✓ in the norm;
+  // a tap — the metric's sheet. The parts' rows stay below under «Из чего».
+  function hlRecHero(s, j, st, stCls, range, sub) {
+    var ring = hlRing(s.value, 'hl-rec', 156, null, true), h = 78, tx = ring.querySelector('.rv');
+    tx.setAttribute('y', h + 3);
+    tx.setAttribute('font-size', 34);
+    if (tx.lastChild.setAttribute) tx.lastChild.setAttribute('font-size', 18);
+    ring.appendChild(svg('text', { x: h, y: h + 22, 'class': 'rw', 'text-anchor': 'middle', 'font-size': 12 }, 'Восстановлено'));
+    var out = add(el('div', 'hrhero'), add(el('div', 'hrh-ring'), ring),
+      el('div', 'mu hrh-d', hlDay(j.date)),
+      st ? add(el('div', 'hrh-st ' + stCls), pill(st, 'hst'), range ? el('span', 'mu', range) : null) : null,
+      sub ? el('div', 'mu hrh-l', sub.charAt(0).toUpperCase() + sub.slice(1)) : null);
+    var g = el('div', 'hrh-g');
+    [['hrv', 'ВСР в покое', 1], ['resting_hr', 'Пульс в покое', -1]].forEach(function (m) {
+      var p = (s.explain || []).filter(function (x) { return x.key === m[0]; })[0];
+      if (!p || p.value == null) return;
+      var dir = p.norm ? (p.value > p.norm.high ? 1 : p.value < p.norm.low ? -1 : 0) : 0, good = dir * m[2] > 0;
+      var mk = add(el('span', 'hrh-mk ' + (dir === 0 ? 'hs-norm' : good ? 'hs-norm' : 'hs-below')), icon(dir > 0 ? 'arrow-up' : dir < 0 ? 'arrow-down' : 'check'));
+      var t = add(el('div', 'hrh-t'), add(el('div', 'mu hrh-h'), icon(HL_IC[m[0]]), el('span', '', m[1])),
+        add(el('div', 'hrh-v'), add(el('b', ''), document.createTextNode(woNum(p.value)), el('small', '', ' ' + p.unit)), mk),
+        p.norm ? el('div', 'mu hrh-n', 'норма ' + woNum(p.norm.low) + '–' + woNum(p.norm.high)) : null);
+      t.setAttribute('aria-label', m[1] + ': ' + woNum(p.value) + ' ' + p.unit + ', ' + (dir === 0 ? 'в норме' : dir > 0 ? 'выше нормы' : 'ниже нормы') + ' — график');
+      tap(t, function () { hlSeriesSheet(m[0], HL_MON_KEYS, t); });
+      g.appendChild(t);
+    });
+    if (g.children.length) out.appendChild(g);
+    return out;
+  }
   // The night at the top of the sleep ring's sheet (sleep-score.jpg, sleep-phases.jpg): the period and the efficiency,
   // «В постели · Сон» large, then a tile a phase — Бодрствование · REM · Основной · Глубокий, its time, its share in its colour
   // and a small ring of the share.
@@ -16954,14 +17054,18 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     }
     return box;
   }
-  // «Монитор»: six tiles, two across (three from 900 px).
+  // «Монитор»: six tiles, two across (three from 900 px), in Bevel's form (monitor.jpg): the metric's icon by its name
+  // (HL_IC, the metric sheets' own), the value, the status a coloured word after its mark (✓ норма, ↑ выше, ↓ ниже),
+  // the scale a capsule on the right.
+  var HL_MON_MARK = { norm: 'check', above: 'arrow-up', below: 'arrow-down' };
   function hlMonitor(ms) {
     var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
     ms.forEach(function (t) {
       var n = HL_MON[t.key], st = HL_STATUS[t.status];
-      var tile = add(el('div', 'hmt' + (st ? ' hs-' + t.status : '')), hlTrack(t), add(el('div', 'hmx'), el('div', 'mu hml', n[0]),
+      var tile = add(el('div', 'hmt hmb' + (st ? ' hs-' + t.status : '')), add(el('div', 'hmx'), add(el('div', 'mu hml'), HL_IC[t.key] ? icon(HL_IC[t.key]) : null, el('span', '', n[0])),
         add(el('div', 'hmv'), document.createTextNode(hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
-        st ? pill(st, 'hst') : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')));
+        st ? add(el('div', 'hmst'), add(el('span', 'hmst-i'), icon(HL_MON_MARK[t.status])), el('span', '', st.charAt(0).toUpperCase() + st.slice(1)))
+          : el('div', 'mu hmn', t.value == null ? 'нет данных' : 'мало дней')), add(el('span', 'hmcap'), hlTrack(t)));
       tap(tile, function () { hlSeriesSheet(t.key, HL_MON_KEYS, tile); });
       tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')) + ' — график');
       g.appendChild(tile);
@@ -17033,8 +17137,9 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
   // row a group — its silhouette, the name, the word with the per cent (or the sets / the kg with the last time), the
   // 10 dots (the load as on the card; the sets or the kg against the most).
   var HMS_MODES = [['fresh', 'Свежесть'], ['sets', 'Подходы'], ['volume', 'Объём']], HMS_PER = [[7, '7 д'], [30, '30 д']];
-  function hlMusclesSheet(j, from) {
-    var mode = 'fresh', per = 30, desc = true, close = noop;
+  // mode0 — the segment it opens on: the «Мышцы» gauge opens the 7 days' sets, its own load.
+  function hlMusclesSheet(j, from, mode0) {
+    var mode = mode0 || 'fresh', per = mode0 === 'sets' ? 7 : 30, desc = true, close = noop;
     function rowsOf(ms) {
       return (j.freshness || []).map(function (g) {
         var m = ms.filter(function (x) { return x.group === g.group; })[0] || {};
@@ -17110,12 +17215,12 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     if (j.tip || j.advice) c.appendChild(add(el('div', 'hfadv'), j.tip ? hlTip(j.tip, kinds) : el('div', 'hadv', hlNb(hlAdvice(j.advice, kinds)))));
     // «Кардио» against today's band, «Мышцы» — the 7 days' sets against the constant one (docs/specs/load-today.md).
     var tgt = j.load_target || [28, 46], mg = j.load_margin || [24, 52];
-    // Both open the load's sheet: the muscles' row is in it.
+    // «Кардио» opens the load's sheet; «Мышцы» — «Мышечные группы» on the 7 days' sets, the muscles' own load.
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
       add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle || { status: 'calibration', value: null }, [28, 46],
-        // No sets in 28 days: «Калибровка», and the tap goes to «Мышечные группы» (which says what it waits for).
-        sc.muscle ? open : function (row) { hlMusclesSheet(j, row); }, [24, 52])));
+        // No sets in 28 days: «Калибровка», and «Мышечные группы» says what it waits for.
+        function (row) { hlMusclesSheet(j, row, sc.muscle ? 'sets' : null); }, [24, 52])));
     if (fr.length) {
       var fh = add(el('div', 'hfh hfh-go'), el('span', '', 'Свежесть мышц'), icon('chevron-right'));
       fh.setAttribute('aria-label', 'Свежесть мышц — мышечные группы');
@@ -17385,8 +17490,8 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
   }
   // «Факторы» as «Монитор»'s tiles: a group a tile — its short name, its age in years, the change against the calendar
   // age in a pill (younger green, older orange) and a thin scale on the left: ±10 years around a line at the calendar
-  // age, the group's dot on it; a tap — the group's sheet (bioFactorSheet). The sixth tile is the calendar age itself,
-  // the line every scale is drawn against. No group with data and no age — one line instead of empty tiles.
+  // age, the group's dot on it; a tap — the group's sheet (bioFactorSheet). The calendar age is a line under the tiles,
+  // not a tile (it is no factor). No group with data and no age — one line instead of empty tiles.
   var BIO_SHORT = { act: 'Активность' };
   function bioTrack(d, cal) {
     var H = 64, W = 16, span = 10, box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'htrk', 'aria-hidden': 'true' });
@@ -17411,15 +17516,9 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       tile.setAttribute('aria-label', r.label + ': ' + (v == null ? 'нет данных' : woNum(v) + ' лет' + (d == null ? '' : ', ' + bioWord(d)[0])) + ' — подробно');
       g.appendChild(tile);
     });
-    if (age != null) {
-      var ct = add(el('div', 'hmt hs-cal'), bioTrack(0, true), add(el('div', 'hmx'), el('div', 'mu hml', 'Календарный'),
-        add(el('div', 'hmv'), document.createTextNode(woNum(age)), el('small', '', ' лет')), pill('черта', 'hst')));
-      ct.setAttribute('role', 'group');
-      ct.setAttribute('aria-label', 'Календарный возраст ' + woNum(age) + ' лет — черта на каждой шкале');
-      g.appendChild(ct);
-    }
     c.appendChild(any ? g : el('div', 'mu bnote', 'Нет данных: привычки считаются при 20 днях из 28, кровь — по анализу.'));
-    c.appendChild(el('div', 'mu msrc bnote', 'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
+    c.appendChild(el('div', 'mu msrc bnote', (age != null ? 'Риска посередине шкалы — твой календарный возраст, ' + woNum(age) + ' лет. ' : '') +
+      'Ориентир по открытым формулам, не диагноз.' + (j.defaults ? ' Дата рождения — по умолчанию, поправь в «Целях».' : '')));
     return c;
   }
   // A part in years as a bar from the middle: minus (younger) green to the left, plus orange to the right; the number
@@ -17797,7 +17896,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
           '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', (l.factors || []).length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')),
         el('div', 'mu', 'Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту из PhenoAge. Сумма честная: факторы перекрываются ' +
-          '(пульс и VO2max, силовые и мышцы), у Bevel итог меньше за счёт перекрытий. Каждый — не больше ±4 лет; считается при 20 днях из 28.')),
+          '(пульс и VO2max, силовые и мышцы). Каждый — не больше ±4 лет; считается при 20 днях из 28.')),
       el('div', 'mu msrc', 'Источники: Levine 2018; Kaminsky 2015 (FRIEND); Kodama 2009; Cappuccio 2010; Windred 2024; Paluch 2022; Arem 2015; ' +
         'Gebel 2015; Momma 2022; Jensen 2013; Schutz 2002; Sedlmeier 2021; Schwingshackl 2018; Wood 2018. Ориентир, не диагноз.'),
       add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))];
@@ -17985,8 +18084,19 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
     function draw(j) {
       var pts = (j.points || []).slice(-8);
       clear(body);
-      body.appendChild(el('div', 'mu', 'Полоса — норма лаборатории ' + labRefText(pts.length ? pts[pts.length - 1] : it) + (it.unit ? ' ' + it.unit : '') + '.'));
-      if (pts.length) body.appendChild(add(el('div', 'lchw'), labChart(pts, Math.max(260, Math.min(560, (window.innerWidth || 375) - 48)))));
+      // One date only: no chart over an empty band — the value large, its flag, the lab's range with the dot on it, and
+      // that the line comes with the second test. The date row below says the date and the lab.
+      if (pts.length === 1) {
+        var p1 = pts[0], rw = Math.max(220, Math.min(420, (window.innerWidth || 375) - 48)), hasRef = p1.ref_low != null || p1.ref_high != null;
+        body.appendChild(add(el('div', 'lone' + (LAB_ST[p1.flag] ? ' hs-' + LAB_ST[p1.flag] : '')),
+          add(el('div', 'lone-v'), el('b', '', woLab(p1.value)), p1.unit ? el('small', '', ' ' + p1.unit) : null, p1.flag ? pill(LAB_FLAG[p1.flag], 'hst hs-' + LAB_ST[p1.flag]) : null),
+          hasRef ? labRange(p1, rw) : null,
+          el('div', 'mu', (hasRef ? 'Зелёная полоса — норма лаборатории ' + labRefText(p1) + (p1.unit ? ' ' + p1.unit : '') + '. ' : 'Нормы у лаборатории нет. ') +
+            'Пока одно измерение — линия появится со вторым анализом.')));
+      } else {
+        body.appendChild(el('div', 'mu', 'Полоса — норма лаборатории ' + labRefText(pts.length ? pts[pts.length - 1] : it) + (it.unit ? ' ' + it.unit : '') + '.'));
+        if (pts.length) body.appendChild(add(el('div', 'lchw'), labChart(pts, Math.max(260, Math.min(560, (window.innerWidth || 375) - 48)))));
+      }
       (j.points || []).slice().reverse().forEach(function (p) {
         body.appendChild(add(el('div', 'row hxr'), add(el('span', 'tx'), el('div', 't', dmy(p.taken_on)), el('div', 'mu', (p.lab || '') + (p.lab ? ' · ' : '') + labRefText(p))),
           add(el('span', 'pr'), el('div', 'lv', woLab(p.value) + (p.unit ? ' ' + p.unit : '')), p.flag ? pill(LAB_FLAG[p.flag], 'hst hs-' + LAB_ST[p.flag]) : null)));
@@ -18321,7 +18431,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       scale.appendChild(seg);
     });
     var c = add(el('div', 'wcard'), el('div', 'wch', 'Восстановление ЧСС'), head, note ? el('div', 'mu whrn' + (lv == null ? ' c' : ''), note) : null, scale,
-      el('div', 'mu whrf', 'Диапазоны — как у Bevel для твоего возраста.'));
+      el('div', 'mu whrf', 'Диапазоны — для твоего возраста.'));
     c.setAttribute('aria-label', 'Восстановление ЧСС: ' + (v == null ? 'нет данных' : v + ' уд/мин за 2 минуты, ' + WO_HRR[lv][1].toLowerCase()));
     return c;
   }
