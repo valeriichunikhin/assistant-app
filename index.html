@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 01:02">
+<meta name="published" content="2026-11-01 01:10">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1349,8 +1349,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .fsd.today .fsn{color:var(--mark);font-weight:800}.fsd.on .fsw{color:var(--fg);font-weight:600}
 .fsc{--wo:var(--muted);display:grid;place-items:center;flex:none;width:28px;height:28px;margin-top:4px;border-radius:50%;background:var(--surface-2);color:var(--muted);font:700 11px var(--font);letter-spacing:-.04em}
 .fsc .i{width:14px;height:14px}.fsc{position:relative}
-/* Several workouts a day: the count in the circle's corner, inside the pill (38 px, the circle 28: 5 px each side). */
-.fsq{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:13px;height:13px;border:1.5px solid var(--surface);border-radius:50%;box-sizing:content-box;background:var(--wo);color:var(--solid);font:700 9px/1 var(--font-num);letter-spacing:0}
+/* Several workouts a day: an 11 px disc with the count at the circle's corner, the circle cut 2 px around it. */
+.fscw{position:relative;display:grid;margin-top:4px}.fscw .fsc{margin-top:0}
+.fsc.cut{-webkit-mask:radial-gradient(circle 7.5px at 22.5px 5.5px,transparent 7px,#000 7.6px);mask:radial-gradient(circle 7.5px at 22.5px 5.5px,transparent 7px,#000 7.6px)}
+.fsq{position:absolute;top:0;right:0;display:grid;place-items:center;width:11px;height:11px;border-radius:50%;background:var(--wo);color:var(--solid);font:800 10px/1 var(--font-num);letter-spacing:0}
 .fsc.wo{background:color-mix(in srgb,var(--wo) 22%,transparent);color:var(--wo)}
 .fsc.plan{background:none;border:2px dashed color-mix(in srgb,var(--wo) 70%,transparent);color:var(--wo)}
 .fsc.plan.miss{border-color:var(--line-2);color:var(--muted)}
@@ -19597,11 +19599,16 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       else if (pl && pl.status === 'done') { c.className += ' wo k-' + pl.sport; c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else if (pl) { c.className += ' plan k-' + pl.sport + (pl.status === 'missed' ? ' miss' : ''); c.appendChild(icon(WO_IC[pl.sport] || 'medal')); }
       else { c.className += ' zz' + (d > today ? ' fut' : ''); c.textContent = 'Zz'; }
-      // More than one on the day (his 01.11.2026: «циферки», but inside the pill): the count in the circle's corner,
-      // in the first one's colour, never past the pill's edge.
-      var n = D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length;
-      if (n > 1 && (w || pl)) c.appendChild(el('span', 'fsq', String(n)));
       return c;
+    }
+    // The strip's circle; more than one on the day (his 01.11.2026, Bevel's look): the count in a small disc at the
+    // corner, cut out of the circle with a gap (a mask, so it shows on any background), inside the pill.
+    function stripCircle(d) {
+      var c = circle(d), D = FIT.days[d];
+      var n = D ? D.workouts.length + D.planned.filter(function (p) { return !p.workout_id; }).length : 0;
+      if (n < 2 || /\b(zz|ld)\b/.test(c.className)) return c;
+      c.className += ' cut';
+      return add(el('span', 'fscw'), c, el('span', 'fsq ' + ((c.className.match(/\bk-[a-z]+/) || ['k-other'])[0]), String(n)));
     }
     function what(d) {
       var D = FIT.days[d];
@@ -19617,7 +19624,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
       b.setAttribute('data-d', d);
       b.setAttribute('aria-pressed', d === FIT.sel ? 'true' : 'false');
       b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + ': ' + what(d));
-      add(b, el('span', 'fsk'), el('span', 'fsw', cap(WEEK[wd(d)])), el('span', 'fsn', String(+d.slice(8, 10))), circle(d));
+      add(b, el('span', 'fsk'), el('span', 'fsw', cap(WEEK[wd(d)])), el('span', 'fsn', String(+d.slice(8, 10))), stripCircle(d));
       b.onclick = function () { center(d, true); };
       b.pick = function () {
         if (d === FIT.sel) return;
