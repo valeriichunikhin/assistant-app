@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 14:35">
+<meta name="published" content="2026-11-02 14:50">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -22191,16 +22191,20 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           place();
         }, 60000);
       }
-      var keep = gridKeep && gridKeep.d === date ? gridKeep.y : null;
+      // Where it opens (his word 02.11.2026: «на текущее время, а не в самый верх»): today an hour before now, another day
+      // its first event (else 8:00); a scroll of his own on the same day is kept for two minutes, then now wins again.
+      var keep = gridKeep && gridKeep.d === date && Date.now() - gridKeep.t < 120000 ? gridKeep.y : null;
+      var nowQ = wp(Date.now()), nowMin = Number(nowQ.hour) * 60 + Number(nowQ.minute);
+      var start = date === foodToday() ? Math.max(0, nowMin - 60) : es.length ? es[0].a - 30 : 480;
       // As tall as the screen leaves it down to «＋ Событие» over the tab bar (240–720 px): measured with 240 px against
       // the page's bottom, the tab bar's room included, so the page does not grow.
       function fit() {
         sc.style.height = '240px';
         var hh = Math.min(720, Math.max(240, Math.floor(240 + innerHeight - main.getBoundingClientRect().bottom - window.pageYOffset)));
         sc.style.height = hh + 'px';
-        sc.scrollTop = keep != null ? keep : y(es.length ? es[0].a - 30 : 480);
+        sc.scrollTop = keep != null ? keep : y(start);
         if (empty) empty.style.top = (sc.scrollTop + hh / 2 - 8) + 'px';
-        sc.addEventListener('scroll', function () { gridKeep = { d: date, y: sc.scrollTop }; }, { passive: true });
+        sc.addEventListener('scroll', function () { gridKeep = { d: date, y: sc.scrollTop, t: Date.now() }; }, { passive: true });
       }
       if (sc.isConnected) fit(); else requestAnimationFrame(fit);
     }
