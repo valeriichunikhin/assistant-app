@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 08:21">
+<meta name="published" content="2026-11-02 08:26">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -22090,12 +22090,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       gymGo = add(el('div', 'cgym'), gb, ev.gym ? add(el('div', 'mu cgyml'), document.createTextNode(calGymLine({ name: gymShort(ev.gym.name), n: ev.gym.n }) + ' '), gymBadge(gymLevelOf(ev.gym.name))) : null,
         ev.gym && ev.gym.ex && ev.gym.ex.length ? el('div', 'mu cgyml', ev.gym.ex.join(' · ')) : null);
     }
+    // The event's link (the commute's route, a Meet), opened outside the app: a new tab, Telegram's browser.
+    var go = ev && /^https?:\/\//i.test(ev.url || '') ? foodBtn('btn ghost wide', 'link', 'Открыть ссылку', function () { openLink(ev.url); }) : null;
     close = legalSheet(ev ? 'Событие' : 'Новое событие', [gymGo, add(el('div', 'bar'), add(el('label', 'field'), ti)),
       past ? el('div', 'ccap', 'Тренировка была?') : null, past ? dones : null,
       add(el('div', 'wrow2'), add(el('label', 'field'), icon('calendar'), di), add(el('label', 'field'), icon('clock'), tm, clr)),
       moves ? el('div', 'ccap', 'Перенести') : null, moves,
       cap, durs, el('div', 'ccap', 'Напомнить'), rems, el('div', 'ccap', 'Повтор'), reps, repRow, rdays,
-      add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), nt, el('div', 'ccap', 'Вид'), kinds,
+      add(el('div', 'bar'), add(el('label', 'field'), icon('pin'), pl)), go, nt, el('div', 'ccap', 'Вид'), kinds,
       add(el('div', 'bar mact mstick'), save, del)], from);
   }
 
