@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 10:31">
+<meta name="published" content="2026-11-02 10:56">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -569,6 +569,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .ldf:disabled{opacity:.5}.ldocs-l li.lf{margin:0}
 .lwp{margin:0 0 10px;padding:10px 12px 6px;border:1px solid var(--line);border-radius:var(--r-s)}.lwp .ldocs-l{margin-top:4px}
 .tsum .acts.ltop{margin:0 0 12px}.tsum .lprint{display:none}
+/* «Архив документов» (docs/specs/legal.md, 02.11.2026): a group's documents step in under its row. */
+.row.lar{padding-left:24px}.row.lar .tb{margin:-4px -8px -4px 0;color:var(--link)}
 /* «Деньги» (docs/specs/money.md): the month switch, the big sum, a bar per category (one accent colour, its share of the
    month), the spends by day; the sheet's category chips, «Всегда для этого продавца» and the steps for the iPhone. */
 .mhead{padding:6px 14px 14px}
@@ -2213,6 +2215,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 <symbol id="i-graduation-cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
 <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></symbol>
+<symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
 <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
 <symbol id="i-arrow-up-down" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></symbol>
 <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
@@ -7053,6 +7056,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var LEGAL_SENT = [['osobiscie', 'лично'], ['polecona', 'заказным письмом'], ['mos', 'через MOS'], ['email', 'e-mail'], ['inne', 'иначе']];
   // The documents unfolded or folded by hand, by event id (the default: unfolded on a wide screen, folded on the phone).
   var legalDocs = {};
+  // «Архив документов»: the groups he unfolded, by key (folded until tapped).
+  var legalArc = {};
   function pairName(list, k) { var a = list.filter(function (x) { return x[0] === k; })[0]; return a ? a[1] : ''; }
   function dmy(d) { return d ? dm(d) + '.' + d.slice(0, 4) : ''; }
   // The Clipboard API, else a hidden textarea (some webviews deny the API); done() after a copy.
@@ -7123,11 +7128,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function load() {
       swr({ key: 'legal', box: body, n: 2, live: function () { return current === 'legal'; },
         fetch: function () {
-          return api('miniapp', { action: 'legal_list' }, 15000, true).then(function (j) {
+          // The archive does not hold the cases back: without it (not built yet, a failure) the card is not drawn.
+          return Promise.all([api('miniapp', { action: 'legal_list' }, 15000, true).then(function (j) {
             return Promise.all(((j && j.cases) || []).map(function (c) {
               return api('miniapp', { action: 'legal_case' }, 15000, true, { id: c.id });
             }));
-          }).then(function (all) { return { cases: all }; });
+          }), api('miniapp', { action: 'legal_archive' }, 15000, true).catch(function () { return null; })])
+            .then(function (r) { return { cases: r[0], archive: r[1] }; });
         },
         render: function (j) { data = j; render(); }, retry: load });
     }
@@ -7156,13 +7163,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       }, function () { if (b) b.disabled = false; });
     }
     // One document's PDF: legal_doc_url signs it for 300 s. In a browser the tab opens on the tap itself (Safari
-    // blocks a window opened after a request) and goes to the link when it comes; in Telegram openLink.
-    function openDoc(d, b) {
+    // blocks a window opened after a request) and goes to the link when it comes; in Telegram openLink. An archive
+    // file: action legal_archive_url, and extra {download: true} for «Скачать».
+    function openDoc(d, b, action, extra) {
       var w = browser ? window.open('', '_blank') : null;
       if (w) try { w.opener = null; } catch (e) {}
       b.disabled = true;
       haptic();
-      api('miniapp', { action: 'legal_doc_url' }, 15000, false, { id: d.id }).then(function (j) {
+      api('miniapp', { action: action || 'legal_doc_url' }, 15000, false, Object.assign({ id: d.id }, extra)).then(function (j) {
         b.disabled = false;
         // The tab follows only an https link; anything else closes it with the failure toast.
         if (!w) openLink(j.url);
@@ -7387,10 +7395,45 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       });
       return add(c, by.length ? tl : null);
     }
+    // «Архив документов»: his scans from iCloud «01 Tożsamość i pobyt» by group (folded, the count on the right); a
+    // document's row opens it as the case documents open, «Скачать» saves it under its own name; under it when the Mac
+    // last brought the folder over and how many documents there are.
+    function arcDate(d) {
+      var y = d.slice(0, 4);
+      return +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1] + (y === warsawToday().slice(0, 4) ? '' : ' ' + y);
+    }
+    function arcRow(d) {
+      var sub = dotted(el('div', 'mu'), [d.doc_date ? arcDate(d.doc_date) : '', d.pages ? d.pages + ' стр.' : '']);
+      var r = add(el('div', 'row lar'), add(el('span', 'lead'), icon(d.kind === 'image' ? 'image' : 'file')),
+        add(el('span', 'tx'), el('div', 't', d.title), sub.firstChild ? sub : null));
+      var dl = add(el('button', 'tb'), icon('download'));
+      dl.type = 'button';
+      dl.setAttribute('aria-label', 'Скачать: ' + d.title);
+      dl.onclick = function (ev) { ev.stopPropagation(); openDoc(d, dl, 'legal_archive_url', { download: true }); };
+      tap(r, function () { openDoc(d, r, 'legal_archive_url'); });
+      r.setAttribute('aria-label', d.title + ' — открыть');
+      return add(r, dl);
+    }
+    function archiveCard(a) {
+      var c = mkCard('archive', 'Архив документов'), groups = a.groups || [], n = a.count || 0, p = a.synced_at ? wp(a.synced_at) : null;
+      if (!groups.length) c.appendChild(el('div', 'row mu', 'Положи файл в iCloud → Dokumenty → 01'));
+      groups.forEach(function (g) {
+        var open = !!legalArc[g.key], r = hrow(g.name, null, String(g.docs.length));
+        r.appendChild(icon(open ? 'chevron-up' : 'chevron-down', 'go'));
+        tap(r, function () { legalArc[g.key] = !open; render(); });
+        r.setAttribute('aria-expanded', String(open));
+        c.appendChild(r);
+        if (open) g.docs.forEach(function (d) { c.appendChild(arcRow(d)); });
+      });
+      c.appendChild(el('div', 'row small mu', (p ? 'обновлено ' + p.day + '.' + p.month + ' в ' + p.hour + ':' + p.minute : 'ещё не обновлялся') +
+        ' · ' + n + ' ' + plural(n, ['документ', 'документа', 'документов'])));
+      return c;
+    }
     function render() {
       if (current !== 'legal') return;
       var cases = ((data && data.cases) || []).filter(function (x) { return x && x.case; }), today = warsawToday();
       clear(body);
+      if (data && data.archive) body.appendChild(archiveCard(data.archive));
       if (!cases.length) {
         var st0 = state('stamp', 'Дел пока нет');
         st0.appendChild(el('p', '', 'Дело заводит помощник в сессии — скажи ему номер и ужонд'));
