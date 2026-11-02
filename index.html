@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 11:52">
+<meta name="published" content="2026-11-02 11:59">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -571,6 +571,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .tsum .acts.ltop{margin:0 0 12px}.tsum .lprint{display:none}
 /* «Архив документов» (docs/specs/legal.md, 02.11.2026): a group's documents step in under its row. */
 .row.lar{padding-left:24px}.row.lar .tb{margin:-4px -8px -4px 0;color:var(--link)}
+/* A purchase's warranty (02.11.2026): «до» in the text colour, the last 60 days in the accent, an ended one muted. */
+.law{font-size:13px}.law.soon{color:var(--link);font-weight:600}.law.over{color:var(--muted)}
 /* «Деньги» (docs/specs/money.md): the month switch, the big sum, a bar per category (one accent colour, its share of the
    month), the spends by day; the sheet's category chips, «Всегда для этого продавца» and the steps for the iPhone. */
 .mhead{padding:6px 14px 14px}
@@ -7402,10 +7404,18 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var y = d.slice(0, 4);
       return +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1] + (y === warsawToday().slice(0, 4) ? '' : ' ' + y);
     }
+    // A purchase's warranty: «гарантия до …», within 60 days «гарантия кончается …» in the accent, after it
+    // «гарантия кончилась …» muted.
+    function arcWarranty(w) {
+      if (!w) return null;
+      var left = days(warsawToday(), w);
+      return left < 0 ? el('div', 'law over', 'гарантия кончилась ' + dmy(w))
+        : el('div', 'law' + (left <= 60 ? ' soon' : ''), (left <= 60 ? 'гарантия кончается ' : 'гарантия до ') + dmy(w));
+    }
     function arcRow(d) {
       var sub = dotted(el('div', 'mu'), [d.doc_date ? arcDate(d.doc_date) : '', d.pages ? d.pages + ' стр.' : '']);
       var r = add(el('div', 'row lar'), add(el('span', 'lead'), icon(d.kind === 'image' ? 'image' : 'file')),
-        add(el('span', 'tx'), el('div', 't', d.title), sub.firstChild ? sub : null));
+        add(el('span', 'tx'), el('div', 't', d.title), sub.firstChild ? sub : null, arcWarranty(d.warranty_until)));
       var dl = add(el('button', 'tb'), icon('download'));
       dl.type = 'button';
       dl.setAttribute('aria-label', 'Скачать: ' + d.title);
