@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 09:55">
+<meta name="published" content="2026-11-02 10:31">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -887,6 +887,16 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .brow .pr .pill{vertical-align:middle}
 /* «Дорога» (docs/specs/commute.md): the late tram's delay, the foot with «выйдешь сейчас» and «В офисе к …» side by side. */
 .brow .pr.warn{color:var(--warn)}
+/* Its office days (02.11.2026): five chips of one width a row (large — by weekday, two rows), a mark filled, the default
+   outlined, a holiday dashed; the head's «обычно: …» switch. */
+.bcw{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:6px 0 0}
+.bcw+.bv{margin-top:4px}
+.bcwc{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;height:28px;padding:0 2px;border:1px solid var(--line-2);border-radius:999px;background:none;color:var(--fg);font:500 12px/1 var(--font);white-space:nowrap;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background .12s,color .12s,border-color .12s}
+.bcwc .i{flex:none;width:13px;height:13px}.bcwc.td span{font-weight:700}
+.bcwc.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.bcwc.hol{border-style:dashed;color:var(--muted)}.bcwc:disabled{cursor:default}
+.bcwd{flex:none;height:24px;margin:-2px 0;padding:0 9px;border:1px solid var(--line-2);border-radius:999px;background:none;color:var(--muted);font:500 11.5px/1 var(--font);white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.board.bedit .bcwd{visibility:hidden}
 .bcmf{flex:none;display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:4px;min-width:0}
 .bcmf .bnt{flex:1;min-width:0;margin:0;padding:0;-webkit-line-clamp:1}
 .bcmf select{flex:none;max-width:58%;height:32px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font:16px var(--font)}
@@ -4042,6 +4052,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // The ＋ Задача widget's typed text and its last «добавлено» line ({s, t}), kept across the board's redraws.
   var boardTaskDraft = '', boardTaskSaid = null;
+  // «Дорога»'s office days: a chip's taps within 600 ms are one write ({date: {v, was, t}}), kept across redraws.
+  var commuteTap = {};
   // ＋ Трата: «Деньги»'s add sheet over the board. Its account chips come from «Деньги»'s cached month, else from home's
   // accounts; a saved spend reloads the board.
   function boardSpend(from, j) {
@@ -4286,6 +4298,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       // «Дорога» (docs/specs/commute.md): tram 24 to the office, from 15:00 home — today's «выходи в …» (to the office),
       // the next three departures with the delay estimated from the tram's position («расп.» — no tram on the line yet),
       // «выйдешь сейчас — у офиса в …», and «В офисе к …» for today (the push follows it). A tap asks again.
+      // «Офисные дни» (02.11.2026): under the head the weekdays — wide the coming five, large this week from today and
+      // the next by weekday; a chip's tap is office → home → as usual (a mark filled, the default outlined), the head's
+      // «обычно: офис / дома» is an unmarked weekday. Wide, the strip takes one of the two lines under the big one.
       commute: function () {
         var t = src('transit');
         if (!t || !t.ok) return wait(t === undefined ? t : null);
@@ -4295,6 +4310,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         function late(d) { return d.delay_min == null ? 'расп.' : d.delay_min === 0 ? 'вовремя' : (d.delay_min > 0 ? '+' : '−') + Math.abs(d.delay_min) + ' мин'; }
         name.textContent = home ? 'Домой' : 'Дорога';
         r.go = function () { bsrcAt.transit = 0; boardAsk('transit'); };
+        var days = (t.week || []).slice(0, s === 'l' ? 10 : 5), tight = s !== 'l' && days.length > 0;
+        if (days.length) commuteWeek(days);
         var gone = mins(p.hour + ':' + p.minute);
         if (pl) {
           r.now = mins(pl.leave) - gone <= 30 && mins(pl.leave) >= gone;
@@ -4302,15 +4319,16 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           line((pl.late_min ? 'опоздаешь на ' + pl.late_min + ' мин · ' : '') + '24 в ' + hm(pl.at) + ' · у офиса ' + hm(pl.arrive), 'mu');
         } else if (w.deps.length) {
           big(hm(w.deps[0].at) + (w.deps[0].delay_min ? ' ' + late(w.deps[0]) : ''), 'vs');
-          line(w.from + ' → ' + w.to, 'mu');
+          if (!tight || w.deps.length < 2) line(w.from + ' → ' + w.to, 'mu');
         } else quiet('отправлений нет');
         var shown = s === 'l' ? w.deps : pl ? [] : w.deps.slice(1);
+        if (tight && pl) shown = [];
         if (s === 'l') {
           shown.forEach(function (d) {
             var pr = el('span', 'pr' + (d.delay_min > 2 ? ' warn' : ''), late(d));
             row(null, add(el('span', 'tx'), el('span', 't', hm(d.at) + ' · ' + (home ? 'дома ' : 'у офиса ') + hm(d.reach))), pr);
           });
-        } else if (shown.length || pl) {
+        } else if (shown.length || (pl && !tight)) {
           line((pl ? w.deps : shown).slice(0, 3).map(function (d) { return hm(d.at) + (d.delay_min ? ' ' + (d.delay_min > 0 ? '+' : '−') + Math.abs(d.delay_min) : ''); }).join(' · '));
         }
         var foot = el('div', 'bcmf'), said = w.now ? 'сейчас → ' + (home ? 'дома ' : 'у офиса ') + hm(w.now.arrive) : '';
@@ -4352,6 +4370,77 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           foot.appendChild(sel);
         }
         n.appendChild(foot);
+        // The strip and the head's default switch; a chip is painted from its day's mark and the default.
+        function commuteWeek(days) {
+          var strip = el('div', 'bcw' + (s === 'l' ? ' bcwl' : '')), paints = [], def = t.default === 'home' ? 'home' : 'office';
+          function was(d) { return d.mark && d.mark !== 'home' ? 'office' : d.mark; }
+          days.forEach(function (d) {
+            var bt = el('button', 'bcwc' + (d.date === today ? ' td' : ''));
+            bt.type = 'button';
+            if (s === 'l') bt.style.gridColumn = String(d.wd + 1);
+            function paint() {
+              var m = was(d), k = m || (d.holiday ? 'home' : def);
+              bt.className = 'bcwc' + (d.date === today ? ' td' : '') + (m ? ' on' : d.holiday ? ' hol' : '');
+              add(clear(bt), icon(k === 'home' ? 'house' : 'building-2'), el('span', '', WEEK[d.wd].replace(/^./, function (c) { return c.toUpperCase(); }) + ' ' + Number(d.date.slice(8))));
+              bt.setAttribute('aria-label', WEEK[d.wd] + ' ' + dm(d.date) + ': ' + (m === 'office' ? 'офис' : m === 'home' ? 'дома' : d.holiday ? 'праздник' : 'обычно, ' + (def === 'home' ? 'дома' : 'офис')));
+            }
+            paint();
+            paints.push(paint);
+            if (preview) bt.disabled = true;
+            else bt.onclick = function (ev) {
+              ev.stopPropagation();
+              if (hdr.classList.contains('bediting')) return;
+              haptic();
+              var m = was(d), nm = !m ? 'office' : m === 'office' ? 'home' : null, q = commuteTap[d.date] || (commuteTap[d.date] = { was: d.mark });
+              d.mark = nm;
+              bsrcPut('transit', function (j) { (j.week || []).forEach(function (x) { if (x.date === d.date) x.mark = nm; }); });
+              paint();
+              stale(bt);
+              clearTimeout(q.t);
+              q.t = setTimeout(function () {
+                delete commuteTap[d.date];
+                if (nm === q.was) return;
+                api('miniapp', { action: 'transit_set' }, 15000, true, { date: d.date, day: nm || 'auto' }).then(function () {
+                  bsrcAt.transit = 0;
+                  boardAsk('transit');
+                }, function (e) {
+                  d.mark = q.was;
+                  bsrcPut('transit', function (j) { (j.week || []).forEach(function (x) { if (x.date === d.date) x.mark = q.was; }); });
+                  paint();
+                  stale(bt);
+                  if (!e.login) toast(ERRORS[e.code]);
+                });
+              }, 600);
+            };
+            strip.appendChild(bt);
+          });
+          n.insertBefore(strip, head.nextSibling);
+          if (preview) return;
+          var sw = el('button', 'bcwd');
+          sw.type = 'button';
+          function label() { sw.textContent = 'обычно: ' + (def === 'home' ? 'дома' : 'офис'); }
+          label();
+          sw.onclick = function (ev) {
+            ev.stopPropagation();
+            if (hdr.classList.contains('bediting') || sw.disabled) return;
+            haptic();
+            var old = def;
+            function put(v) { def = v; bsrcPut('transit', function (j) { j.default = v; }); label(); paints.forEach(function (f) { f(); }); stale(sw); }
+            put(old === 'home' ? 'office' : 'home');
+            sw.disabled = true;
+            api('miniapp', { action: 'transit_set' }, 15000, true, { default: def }).then(function () {
+              sw.disabled = false;
+              toast(def === 'home' ? 'Обычно дома — в офис по отметке' : 'Обычно в офис — дома по отметке');
+              bsrcAt.transit = 0;
+              boardAsk('transit');
+            }, function (e) {
+              sw.disabled = false;
+              put(old);
+              if (!e.login) toast(ERRORS[e.code]);
+            });
+          };
+          head.appendChild(sw);
+        }
       },
       poland: function () {
         var pl = j.poland;
