@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 16:57">
+<meta name="published" content="2026-11-02 17:17">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -882,6 +882,19 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 /* The «Цели» sheet's groups (01.11.2026): the catalog's group header. */
 .fgauto:not(:empty){display:flex;align-items:center;gap:12px;margin:0 0 6px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-s)}
 .fgauto>.mu{font-size:12px}.fgauto-t{flex:1;min-width:0;font-size:14px;font-weight:600}.fgauto-t .mu{font-size:12px;font-weight:400;margin-top:2px}.fgauto-b{flex:none}
+.ngt{margin:0 0 6px}.ngh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 10px}
+.ngb{font:800 30px/1.1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}.ngb small{font:600 14px var(--font);color:var(--muted);letter-spacing:0}
+.ngw{display:flex;flex-direction:column;align-items:flex-end;text-align:right;font-size:13px;font-weight:600}.ngw b{font:700 15px var(--font-num)}
+.ngw.good{color:var(--good)}.ngw.acc{color:var(--hl-sky)}.ngw.warn{color:var(--ring-load)}
+.hpills.ngp{margin-bottom:8px}.ngc{max-width:480px;transition:opacity .2s}.ngc.busy{opacity:.5}
+.ngs{display:block;width:100%;height:auto;overflow:visible}.ngs .b{fill:color-mix(in srgb,var(--ng) 45%,transparent)}.ngs .b.on{fill:var(--ng)}.ngs .none{fill:var(--line)}
+.ngs .gl{stroke:var(--fg);stroke-width:1;stroke-dasharray:4 4;opacity:.55}.ngs text{font:500 10.5px var(--font);fill:var(--muted);font-variant-numeric:tabular-nums}.ngs text.strong{fill:var(--fg);font-weight:700}.ngs .hit{fill:transparent;cursor:pointer}
+.ngs.nu-kcal{--ng:var(--accent)}.ngs.nu-fat,.ngs.nu-carbs,.ngs.nu-protein{--ng:var(--nu)}
+.ngn{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 0 6px}.ngd{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.row.ngm{align-items:center;gap:12px;min-height:56px;padding:6px 2px}.ngi{position:relative;flex:none;display:grid;place-items:center;width:40px;height:40px}
+.ngr{position:absolute;inset:0;width:40px;height:40px}.ngr .tr{fill:none;stroke:color-mix(in srgb,var(--nu,var(--ring-load)) 20%,transparent);stroke-width:4}
+.ngr .a{fill:none;stroke:var(--nu,var(--ring-load));stroke-width:4;stroke-linecap:round}.ngi.over .ngr .a{stroke:var(--bad)}.nge{font-size:17px}
+.ngsub{font-size:12px;margin:-2px 0 4px}.row.ngm .mu.warn{color:var(--ring-load)}
 .fgsec{padding:14px 0 6px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}.fgsec:first-child{padding-top:0}
 .bv.bwx{display:flex;align-items:center;gap:8px}.bv.bwx .i{flex:none;width:30px;height:30px;stroke-width:1.75}
 .bsplit .bcol .bv.bwx{margin:0}.bcol>.mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1904,6 +1917,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .hft-h{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--muted)}.hft-h span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hft-h .i{flex:none;width:15px;height:15px}.hft-v{font:800 22px/1.15 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}
 .hft-v small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}.hft-s{font-size:12px}
+.hfoc{display:grid;gap:6px;margin-top:8px}.hfoc .wzb{height:10px;border-radius:5px}.hfoc .wzb i{border-radius:5px}
+.hzon{display:flex;align-items:flex-end;gap:5px;height:46px;margin-top:8px}.hzon span{flex:1;height:100%;display:flex;align-items:flex-end}
+.hzon i{display:block;width:100%;border-radius:4px 4px 2px 2px;background:var(--ring-load)}.hzon .z1{opacity:.45}.hzon .z2{opacity:.6}.hzon .z3{opacity:.75}.hzon .z4{opacity:.88}.hzon .z5{opacity:1}
+.btn.hfed{margin:0 0 16px}
 .hftw{position:relative;height:40px;margin-top:6px}.hftc{display:block;width:100%;height:40px;overflow:visible}
 .hftc .ln{fill:none;stroke:var(--hl-sky);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hftc .pv{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linejoin:round;opacity:.6}
 .hftc .ar{fill:color-mix(in srgb,var(--hl-sky) 14%,transparent)}
@@ -2193,6 +2210,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
 <symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
 <symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
 <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
 <symbol id="i-weight" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></symbol>
 <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
@@ -2312,7 +2330,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
 <symbol id="i-dna" viewBox="0 0 24 24"><path d="m10 16 1.5 1.5"/><path d="m14 8-1.5-1.5"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m16.5 10.5 1 1"/><path d="m17 6-2.891-2.891"/><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="m20 9 .891.891"/><path d="M3.109 14.109 4 15"/><path d="m6.5 12.5 1 1"/><path d="m7 18 2.891 2.891"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-person-standing" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></symbol><symbol id="i-audio-waveform" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol><symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
-<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-signal-medium" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol>
+<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-signal-medium" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></symbol><symbol id="i-chart-no-axes-column" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
 </svg>
 <!-- Muscle silhouettes: react-body-highlighter 2.0.5 (MIT, (c) 2020 GV79), docs/specs/bevel-gap.md -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -3006,8 +3024,16 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
       start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null, genshin: genshinIn(p && p.genshin),
-      health: healthPrefsIn(p && p.health),
+      health: healthPrefsIn(p && p.health), fitness: fitPrefsIn(p && p.fitness),
       accent: { light: p && p.accent && p.accent.light === 'lime' ? 'lime' : 'purple', dark: p && p.accent && p.accent.dark === 'lime' ? 'lime' : 'purple' } };
+  }
+  // prefs.fitness (bevel-gap п. 10, «Редактировать «Фитнес»»): the tiles hidden and their order, keys of FIT_TILE_KEYS
+  // once each; both empty — null (the server's prefsInput is the twin).
+  var FIT_TILE_KEYS = ['all', 'energy', 'vo2', 'hrr', 'focus', 'zones', 'sets', 'volume'];
+  function fitPrefsIn(f) {
+    if (!f || typeof f !== 'object') return null;
+    var o = { hidden: keysIn(f.hidden, FIT_TILE_KEYS), order: keysIn(f.order, FIT_TILE_KEYS) };
+    return o.hidden.length || o.order.length ? o : null;
   }
   // prefs.health (docs/specs/nutrition-health.md, docs/specs/labs.md): the kcal goal (a whole 500–6000), his birth date
   // and height (a whole 100–250 cm), the macro goals fat_g, carbs_g, protein_g (each a whole 5–1000 g, «Питание» как у
@@ -14470,7 +14496,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       views: next.views || (w ? { wide: v } : prefs.views), cents: next.cents !== undefined ? next.cents : prefs.cents,
       telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food,
       start: next.start !== undefined ? next.start : prefs.start, genshin: next.genshin !== undefined ? next.genshin : prefs.genshin,
-      health: next.health !== undefined ? next.health : prefs.health, accent: next.accent || prefs.accent };
+      health: next.health !== undefined ? next.health : prefs.health, accent: next.accent || prefs.accent,
+      fitness: next.fitness !== undefined ? next.fitness : prefs.fitness };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -14621,6 +14648,18 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // «Тема» (docs/specs/health-look.md): the accent of the light and of the dark theme apart, purple or lime; drawn at
   // once (setPrefs → setAccent), saved with the other settings.
+  // «Профиль» (bevel-gap п. 14): his birth date and height in a line, «Изменить» — the «Тело» sheet (bodySheet).
+  function bodyCard() {
+    var card = mkCard('user', 'Профиль'), line = el('div', 'sub');
+    var b = foodBtn('btn ghost', 'pen-line', 'Изменить', function () { bodySheet(b, function () { card.paint(); }); });
+    add(card, line, add(el('div', 'foot'), b));
+    card.paint = function () {
+      var h = prefs.health || {}, d = h.birth_date || '2000-11-25';
+      line.textContent = 'Дата рождения ' + d.slice(8, 10) + '.' + d.slice(5, 7) + '.' + d.slice(0, 4) + ' · рост ' + (h.height_cm || 180) + ' см — для биовозраста и норм по возрасту';
+    };
+    card.paint();
+    return card;
+  }
   function accentCard() {
     var card = mkCard('sun', 'Тема'), box = el('div');
     add(card, el('div', 'sub', 'Акцент — отдельно для светлой и тёмной темы'), box);
@@ -15235,16 +15274,16 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // the page's own date into <meta name="published">.
   function settingsView() {
     var meta = document.querySelector('meta[name="published"]');
-    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), ac = accentCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard();
+    var tc = tabsCard(), mc = modulesCard(), tgc = telegramCard(), ac = accentCard(), bc = wide() ? null : barCard(), mo = moneyCardsCard(), pc = bodyCard();
     prefsHook = { tab: 'settings', fn: function (focus) {
-      tc.paint(focus); ac.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); if (bc) bc.paint();
+      tc.paint(focus); ac.paint(focus); mc.paint(focus); tgc.paint(focus); mo.paint(focus); pc.paint(); if (bc) bc.paint();
     },
       modules: function () { mc.paint(); } };
     var note = el('p', 'mu', 'страница: ' + ((meta && meta.content) || 'не опубликована'));
     if (wide()) {
       // Wide screen: the settings side by side in the card packing, «Модули» right after «Уведомления», compact rows.
-      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, ac, mo), note);
-    } else add(main, browser ? pushCard() : null, tc, ac, mc, tgc, mo, bc, note);
+      add(main, add(el('div', 'cols set'), browser ? pushCard() : null, mc, tgc, tc, ac, pc, mo), note);
+    } else add(main, browser ? pushCard() : null, tc, ac, pc, mc, tgc, mo, bc, note);
     // «Выйти»: the last row of the settings, two taps — the second («Точно выйти») within 5 s, else it reverts.
     if (browser) {
       var lo = label(el('button', 'btn ghost'), 'logout', 'Выйти'), loT = null;
@@ -15750,7 +15789,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     top.firstChild.appendChild(sb);
     // «Цели» and «Сведения о питании» repeated the rings and the scale (his «убрать, если юзлес», 02.11.2026): the goals
     // sheet is a target button in the head now.
-    var gb = foodBtn('mtoday nugb', 'target', '', function () { foodGoalSheet(gb, h.redraw); });
+    var gb = foodBtn('mtoday nugb', 'target', '', function () { foodGoalSheet(gb, h.redraw, j); });
     gb.setAttribute('aria-label', 'Цели');
     top.firstChild.appendChild(gb);
     add(top, nuStack(j, src, kcal, goal, h.redraw, el('span', 'nus-src', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
@@ -15862,7 +15901,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var cell = add(el('div', 'hrc nu-' + m[0]), hlRing(pc, 'nu-' + m[0], 100, null, true, true), el('div', 'nus-mv' + (ov ? ' over' : ''), v + ' г'),
         add(el('div', 'hrl'), document.createTextNode(m[1] + ' · '), ov ? el('span', 'nus-ov2', '+' + (v - g) + ' г') : document.createTextNode('из ' + g)));
       cell.setAttribute('aria-label', m[1] + ': ' + v + ' из ' + g + ' г, ' + pc + ' %' + (ov ? ', сверх цели ' + (v - g) + ' г' : '') + ' — цели');
-      mb.appendChild(tap(cell, function () { foodGoalSheet(cell, redraw); }));
+      mb.appendChild(tap(cell, function () { foodGoalSheet(cell, redraw, j); }));
     });
     box.appendChild(mb);
     box.appendChild(nuTicks(segs, kcal, goal));
@@ -16584,8 +16623,119 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // as water_ml); «Сон» in hours (4–12, kept as sleep_min); «Активность» — the steps a day (a whole 1 000–50 000, kept
   // as steps_goal, the «Шаги» card's); «Тело» — his birth date and height (the biological age, docs/specs/labs.md). An
   // empty field is its default (2 500 kcal, 25 г, 2 л, 8 ч, 10 000 steps, 25.11.2000, 180 cm).
-  function foodGoalSheet(from, done) {
-    var kc = el('input'), fb = el('input'), wt = el('input'), sl = el('input'), st = el('input'), bd = el('input'), ht = el('input'), close = noop;
+  // «Цели» как у Bevel (bevel-gap п. 6, tour-2.jpg «Цели по питанию»): over the goal fields the picked day's value against
+  // its goal («2 115 ккал · 2 ноября», «Ниже цели −385 ккал»), the pills Калории · Жиры · Углеводы · Белки, the 7 days as
+  // bars under the goal's dashed line (health_range food: each day's kcal and grams), ‹ › a week back and forth (never
+  // past today), a tap on a bar picks its day; «Макронутриенты» — each macro's ring and «104 % · Сверх 3,1 г» of the
+  // picked day (a tap — its pill); «Ограничить» — added sugar (the entries' estimate, the quality factor's limit: 5 % of
+  // the day's kcal) and caffeine (the entries' names, 400 мг) of the day food_day answered (fj), left out without fj;
+  // sugar left out on a day the diary has no estimate for. Birth date and height are «Тело» (bodySheet).
+  var CAFFEINE_LIMIT = 400;
+  var NG_TABS = [['kcal', 'Калории', 'ккал'], ['fat', 'Жиры', 'г'], ['carbs', 'Углеводы', 'г'], ['protein', 'Белки', 'г']];
+  function ngGoal(k) { return k === 'kcal' ? kcalGoal() : nuGoal(NU_MACROS.filter(function (m) { return m[0] === k; })[0]); }
+  function ngNum(v) { return woNum(Math.round(v * 10) / 10); }
+  function ngRing(f, cls) {
+    var R = 14, L = 2 * Math.PI * R, ring = svg('svg', { viewBox: '0 0 36 36', 'class': 'ngr ' + cls, 'aria-hidden': 'true' });
+    ring.appendChild(svg('circle', { cx: 18, cy: 18, r: R, 'class': 'tr' }));
+    if (f > 0) ring.appendChild(svg('circle', { cx: 18, cy: 18, r: R, 'class': 'a', transform: 'rotate(-90 18 18)', 'stroke-dasharray': (Math.min(1, f) * L).toFixed(1) + ' ' + L.toFixed(1) }));
+    return ring;
+  }
+  function foodGoalTop(fj) {
+    var box = el('div', 'ngt'), today = foodToday(), end = FOOD.date && FOOD.date <= today ? FOOD.date : today, cur = { k: 'kcal', end: end, sel: end };
+    var data = {}, head = el('div', 'ngh'), chart = el('div', 'ngc'), nav = el('div', 'ngn'), macros = el('div'), seq = 0, loaded = false;
+    var pills = hlPills(NG_TABS.map(function (t) { return [t[0], t[1]]; }), 'kcal', function (k) { cur.k = k; draw(); }, 'ngp');
+    var prev = foodBtn('fmb', 'chevron-left', '', function () { haptic(); go(-7); }), next = foodBtn('fmb', 'chevron-right', '', function () { haptic(); go(7); });
+    prev.setAttribute('aria-label', 'Предыдущая неделя');
+    next.setAttribute('aria-label', 'Следующая неделя');
+    var span = el('span', 'ngd');
+    add(nav, prev, span, next);
+    function go(n) {
+      var e = addDays(cur.end, n);
+      if (e > today) e = today;
+      if (e === cur.end) return;
+      cur.end = e;
+      cur.sel = e;
+      load();
+    }
+    function val(d, k) { var x = data[d]; return x ? (k === 'kcal' ? x.kcal : x[k]) : null; }
+    function dayRu(d) { return Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
+    function draw() {
+      var t = NG_TABS.filter(function (x) { return x[0] === cur.k; })[0], goal = ngGoal(cur.k), v = val(cur.sel, cur.k), from = addDays(cur.end, -6);
+      var diff = v == null ? null : v - goal, word = v == null ? (loaded ? 'нет записей' : 'загружаю…') : Math.abs(diff) <= goal * 0.05 ? 'В цели' : diff < 0 ? 'Ниже цели' : 'Выше цели';
+      clear(head).appendChild(add(el('div', 'ngv'), add(el('div', 'ngb'), document.createTextNode(v == null ? '—' : t[0] === 'kcal' ? grouped(Math.round(v)) : ngNum(v)),
+        el('small', '', ' ' + t[2])), el('div', 'mu', dayRu(cur.sel))));
+      head.appendChild(add(el('div', 'ngw ' + (v == null ? 'mu' : word === 'В цели' ? 'good' : diff < 0 ? 'acc' : 'warn')), el('span', '', word),
+        diff == null || word === 'В цели' ? null : el('b', '', (diff < 0 ? '−' : '+') + (t[0] === 'kcal' ? grouped(Math.round(Math.abs(diff))) : ngNum(Math.abs(diff))) + ' ' + t[2])));
+      // The bars: 7 days, the goal's dashed line with its value, the picked day full, the rest paler; a tap picks a day.
+      var W = 300, H = 150, top = 16, bot = 20, max = goal * 1.25, ds = [];
+      for (var i = 0; i < 7; i++) { ds.push(addDays(from, i)); max = Math.max(max, val(ds[i], cur.k) || 0); }
+      var g = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, 'class': 'ngs nu-' + cur.k, role: 'img', 'aria-label': t[1] + ' за неделю: ' + ds.map(function (d) {
+        var x = val(d, cur.k); return dm(d) + ' ' + (x == null ? 'нет записей' : Math.round(x)); }).join(', ') + '; цель ' + Math.round(goal) });
+      function y(x) { return top + (1 - x / max) * (H - top - bot); }
+      var bw = 26, step = (W - 40) / 7;
+      ds.forEach(function (d, i) {
+        var x = val(d, cur.k), cx = 4 + step * i + (step - bw) / 2;
+        if (x == null) g.appendChild(svg('rect', { x: cx.toFixed(1), y: H - bot - 3, width: bw, height: 3, rx: 1.5, 'class': 'none' }));
+        else g.appendChild(svg('rect', { x: cx.toFixed(1), y: y(x).toFixed(1), width: bw, height: Math.max(3, H - bot - y(x)).toFixed(1), rx: 5, 'class': 'b' + (d === cur.sel ? ' on' : '') }));
+        var hit = svg('rect', { x: (4 + step * i).toFixed(1), y: 0, width: step.toFixed(1), height: H, 'class': 'hit' });
+        hit.addEventListener('click', function () { if (cur.sel !== d) { haptic(); cur.sel = d; draw(); } });
+        g.appendChild(hit);
+        g.appendChild(svg('text', { x: (cx + bw / 2).toFixed(1), y: H - 4, 'text-anchor': 'middle', 'class': 'tk' + (d === cur.sel ? ' strong' : '') }, dm(d)));
+      });
+      var gy = y(goal).toFixed(1);
+      g.appendChild(svg('line', { x1: 0, x2: W - 36, y1: gy, y2: gy, 'class': 'gl' }));
+      g.appendChild(svg('text', { x: W, y: (Number(gy) + 4).toFixed(1), 'text-anchor': 'end', 'class': 'tk strong' }, t[0] === 'kcal' ? nuK(goal) : Math.round(goal) + ' г'));
+      clear(chart).appendChild(g);
+      span.textContent = dm(from) + ' — ' + dm(cur.end);
+      next.disabled = cur.end >= today;
+      // «Макронутриенты» of the picked day.
+      clear(macros).appendChild(el('div', 'fgsec', 'Макронутриенты · ' + dayRu(cur.sel)));
+      NU_MACROS.forEach(function (m) {
+        var x = val(cur.sel, m[0]), gl = nuGoal(m), pc = x == null ? null : Math.round(x / gl * 100), ov = x != null && x > gl;
+        var r = add(el('div', 'row ngm'), add(el('span', 'ngi nu-' + m[0]), ngRing(x == null ? 0 : x / gl, 'nu-' + m[0])), add(el('span', 'tx'), el('div', 't', m[1]),
+          el('div', 'mu', x == null ? 'нет записей' : pc + ' % · ' + (ov ? 'Сверх ' + ngNum(x - gl) : 'Осталось ' + ngNum(gl - x)) + ' г')), icon('chevron-right'));
+        r.setAttribute('aria-label', m[1] + ': ' + (x == null ? 'нет записей' : pc + ' % цели, ' + (ov ? 'сверх ' + ngNum(x - gl) : 'осталось ' + ngNum(gl - x)) + ' г') + ' — по дням');
+        macros.appendChild(tap(r, function () {
+          cur.k = m[0];
+          [].forEach.call(pills.children, function (b, i) { var on = NG_TABS[i][0] === m[0]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+          draw();
+          box.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        }));
+      });
+    }
+    function load() {
+      var n = ++seq, from = addDays(cur.end, -6);
+      chart.classList.add('busy');
+      api('miniapp', { action: 'health_range' }, 15000, true, { from: from, days: 7, part: 'food' }).then(function (j) {
+        if (n !== seq) return;
+        chart.classList.remove('busy');
+        loaded = true;
+        (j.days || []).forEach(function (x) { data[x.date] = x; });
+        draw();
+      }, function () { if (n === seq) { chart.classList.remove('busy'); draw(); } });
+    }
+    draw();
+    load();
+    add(box, head, pills, chart, nav, macros);
+    // «Ограничить»: the day food_day answered.
+    if (fj) {
+      var lim = [], sug = (fj.factors || []).filter(function (f) { return f.key === 'sugar'; })[0];
+      if (sug && sug.value != null && sug.goal) lim.push(['🍰', 'Добавленный сахар', sug.value, sug.goal, 'г']);
+      lim.push(['☕', 'Кофеин', fj.caffeine ? fj.caffeine.mg : 0, CAFFEINE_LIMIT, 'мг']);
+      box.appendChild(el('div', 'fgsec', 'Ограничить · ' + dayRu(fj.date || cur.end)));
+      box.appendChild(el('div', 'mu ngsub', 'Держаться у лимита или ниже: сахар — 5 % калорий дня, кофеин — 400 мг'));
+      lim.forEach(function (l) {
+        var pc = Math.round(l[2] / l[3] * 100), ov = l[2] > l[3];
+        var r = add(el('div', 'row ngm'), add(el('span', 'ngi ngl' + (ov ? ' over' : '')), ngRing(l[2] / l[3], 'ngl'), el('span', 'nge', l[0])), add(el('span', 'tx'), el('div', 't', l[1]),
+          el('div', 'mu' + (ov ? ' warn' : ''), pc + ' % · ' + (ov ? 'Сверх ' : 'Осталось ') + ngNum(Math.abs(l[3] - l[2])) + ' ' + l[4])));
+        r.setAttribute('aria-label', l[1] + ': ' + ngNum(l[2]) + ' из ' + ngNum(l[3]) + ' ' + l[4] + ', ' + pc + ' %');
+        box.appendChild(r);
+      });
+    }
+    return box;
+  }
+  function foodGoalSheet(from, done, fj) {
+    var kc = el('input'), fb = el('input'), wt = el('input'), sl = el('input'), st = el('input'), close = noop;
     var h = prefs.health || {};
     function num(x, mode, ph, aria, v) { x.inputMode = mode; x.placeholder = ph; x.setAttribute('aria-label', aria); x.value = v; return x; }
     function row(ic, x, unit) { return add(el('div', 'bar'), add(el('label', 'field'), ic, x, unit ? el('span', 'mu', unit) : null)); }
@@ -16597,11 +16747,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     num(wt, 'decimal', 'по умолчанию 2', 'Вода, л в день', h.water_ml ? waterL(h.water_ml) : '');
     num(sl, 'decimal', 'по умолчанию 8', 'Сон, часов за ночь', h.sleep_min ? String(Math.round(h.sleep_min / 60 * 100) / 100).replace('.', ',') : '');
     num(st, 'numeric', 'по умолчанию 10000', 'Шаги в день', h.steps_goal ? String(h.steps_goal) : '');
-    bd.type = 'date';
-    bd.max = foodToday();
-    bd.setAttribute('aria-label', 'Дата рождения');
-    bd.value = h.birth_date || '2000-11-25';
-    num(ht, 'numeric', 'рост — по умолчанию 180', 'Рост, см', h.height_cm ? String(h.height_cm) : '');
     function val(x) { var t = x.value.trim(); return t ? foodNum(t) : null; }
     // «Сколько тебе нужно» (docs/specs/sleep-need.md, п. 2): the median sleep of his good mornings (recovery from 67 %)
     // over 90 days; «Взять» puts it in the field, «Сохранить» keeps it — the goal never changes by itself.
@@ -16622,16 +16767,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         el('div', 'mu', 'медиана сна утр с восстановлением от 67 %, на ' + nights)), b);
     }, noop);
     var ok = foodBtn('btn', 'check', 'Сохранить', function () {
-      var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), sg = val(st), cm = val(ht), b = bd.value;
+      var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), sg = val(st);
       var ml = l === null ? null : Math.round(l * 1000), min = hr === null ? null : Math.round(hr * 60);
       if (k !== null && !(k % 1 === 0 && k >= 500 && k <= 6000)) { toast('Ккал — целое число от 500 до 6000'); return; }
       if (f !== null && !(f % 1 === 0 && f >= 5 && f <= 100)) { toast('Клетчатка — целое число граммов от 5 до 100'); return; }
       if (ml !== null && !(ml >= 500 && ml <= 6000)) { toast('Вода — от 0,5 до 6 л в день'); return; }
       if (min !== null && !(min >= 240 && min <= 720)) { toast('Сон — от 4 до 12 часов'); return; }
       if (sg !== null && !(sg % 1 === 0 && sg >= 1000 && sg <= 50000)) { toast('Шаги — целое число от 1 000 до 50 000'); return; }
-      if (cm !== null && !(cm % 1 === 0 && cm >= 100 && cm <= 250)) { toast('Рост — целое число от 100 до 250 см'); return; }
-      if (b && !(/^\d{4}-\d{2}-\d{2}$/.test(b) && b >= '1900-01-01' && b <= foodToday())) { toast('Дата рождения — не позже сегодня'); return; }
+      // The goals of this sheet replaced, the rest of prefs.health (birth date, height) kept.
       var o = {}, bad = null;
+      if (h.birth_date) o.birth_date = h.birth_date;
+      if (h.height_cm) o.height_cm = h.height_cm;
       mac.forEach(function (x, i) {
         var v = val(x);
         if (v !== null && !(v % 1 === 0 && v >= 5 && v <= 1000)) bad = bad || NU_MACROS[i][1];
@@ -16643,15 +16789,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (ml !== null) o.water_ml = ml;
       if (min !== null) o.sleep_min = min;
       if (sg !== null) o.steps_goal = sg;
-      if (b && b !== '2000-11-25') o.birth_date = b;
-      if (cm !== null) o.height_cm = cm;
       close();
       editPrefs({ health: Object.keys(o).length ? o : null });
       cacheDrop('home');
       cacheDrop('body:bioage');
       done();
     });
-    close = legalSheet('Цели', [el('div', 'fgsec', 'Питание'), row(icon('target'), kc, 'ккал'),
+    close = legalSheet('Цели', [foodGoalTop(fj), el('div', 'fgsec', 'Цели питания'), row(icon('target'), kc, 'ккал'),
       add.apply(null, [el('div')].concat(mac.map(function (x, i) { return row(el('i', 'nudot nu-' + NU_MACROS[i][0]), x, 'г'); }))),
       row(icon('leaf'), fb, 'г'),
       el('div', 'mu msrc', 'Ккал — для итогов из Health. Жиры, углеводы, белки и клетчатка — граммы в день; пусто — 89 / 212 / 213\u00a0г при 2\u00a0500\u00a0ккал (по цели ккал) и 25\u00a0г клетчатки.'),
@@ -16661,8 +16805,38 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu msrc', 'Сколько спать за ночь, в часах — например 7,5. По этой цели считается кольцо сна. Пусто\u00a0— 8\u00a0ч.'),
       el('div', 'fgsec', 'Активность'), row(icon('footprints'), st, 'шагов'),
       el('div', 'mu msrc', 'Шагов в день — цель на шкале «Шаги» в «Сегодня». Пусто\u00a0— 10\u00a0000.'),
-      el('div', 'fgsec', 'Тело'), row(icon('calendar'), bd), row(icon('scale'), ht, 'см'),
-      el('div', 'mu msrc', 'Дата рождения и рост — для биологического возраста (возраст, безжировая масса к росту).'),
+      add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  // «Тело» (bevel-gap п. 14): his birth date and height, prefs.health as before, a sheet of their own — from
+  // «Биология» (the head of «Биологический возраст») and the settings («Профиль»). Saved, the week's bio age is counted
+  // again (bioage_recompute), then done().
+  function bodySheet(from, done) {
+    var bd = el('input'), ht = el('input'), h = prefs.health || {}, close = noop;
+    bd.type = 'date';
+    bd.max = foodToday();
+    bd.setAttribute('aria-label', 'Дата рождения');
+    bd.value = h.birth_date || '2000-11-25';
+    ht.inputMode = 'numeric';
+    ht.placeholder = '180';
+    ht.setAttribute('aria-label', 'Рост, см');
+    ht.value = h.height_cm ? String(h.height_cm) : '';
+    var ok = foodBtn('btn', 'check', 'Сохранить', function () {
+      var t = ht.value.trim(), cm = t ? foodNum(t) : null, b = bd.value;
+      if (cm !== null && !(cm % 1 === 0 && cm >= 100 && cm <= 250)) { toast('Рост — целое число от 100 до 250 см'); return; }
+      if (b && !(/^\d{4}-\d{2}-\d{2}$/.test(b) && b >= '1900-01-01' && b <= foodToday())) { toast('Дата рождения — не позже сегодня'); return; }
+      var o = Object.assign({}, h);
+      delete o.birth_date;
+      delete o.height_cm;
+      if (b && b !== '2000-11-25') o.birth_date = b;
+      if (cm !== null) o.height_cm = cm;
+      close();
+      editPrefs({ health: Object.keys(o).length ? o : null });
+      cacheDrop('home');
+      api('miniapp', { action: 'bioage_recompute' }, 15000, true, {}).catch(noop).then(function () { cacheDrop('body:bioage'); if (done) done(); });
+    });
+    close = legalSheet('Тело', [add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'Дата рождения'), bd)),
+      add(el('div', 'bar'), add(el('label', 'field'), icon('ruler'), el('span', 'mu', 'Рост'), ht, el('span', 'mu', 'см'))),
+      el('div', 'mu msrc', 'Для биологического возраста (возраст, безжировая масса к росту), верхнего пульса и норм по возрасту в «Трендах» и «Фитнесе». Пусто — 25.11.2000 и 180\u00a0см.'),
       add(el('div', 'bar mact mstick'), ok)], from);
   }
   // An entry seen first (bevel-gap п. 9; tour-3.jpg, the last frame): its emoji in a tile, «Ужин: сырники, кофе», the day
@@ -18380,38 +18554,119 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     dot.style.top = ((36 - (cur[cur.length - 1] - lo) / (hi - lo) * 32) / 40 * 100).toFixed(1) + '%';
     return add(el('div', 'hftw'), box, dot);
   }
+  // Batch 3 (bevel-gap п. 10, fitness-3-cardio.png, fitness-4): «Кардиофокус» — the 7 days' cardio by where its points
+  // came from (cardio_tiles.focus, cardioFocus over their pulse by minute): the leading group's share big, its name, a
+  // bar each (low · high · anaerobic); «Пульсовые зоны» — the leading zone of 1–5 and its time, a column a zone. VO2 max
+  // carries its word against his age (vo2max.norm, ageNorm). The tiles hidden and in his order — prefs.fitness
+  // («Редактировать «Фитнес»», fitTilesSheet); a card with every tile hidden is left out.
+  var FIT_TILES = { all: ['Кардио', 'Все занятия'], energy: ['Кардио', 'Активная энергия'], vo2: ['Кардио', 'VO2 max'],
+    hrr: ['Кардио', 'Восст. пульса'], focus: ['Кардио', 'Кардиофокус'], zones: ['Кардио', 'Пульсовые зоны'], sets: ['Сила', 'Все мышцы'],
+    volume: ['Сила', 'Общий объём'] };
+  var FIT_FOCUS_ORDER = ['low', 'high', 'anaerobic'];
+  function fitOrder() {
+    var f = prefs.fitness || { hidden: [], order: [] };
+    return f.order.concat(FIT_TILE_KEYS.filter(function (k) { return f.order.indexOf(k) < 0; }));
+  }
   function hlFitTiles(j) {
-    var ct = j.cardio_tiles, sg = j.strength_tiles, fl = j.fit_lines, out = [];
-    function grid(card, tiles) {
-      var g = el('div', 'hft');
-      tiles.forEach(function (x) {
-        var t = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(x[0]), el('span', '', x[1]), x[5] ? icon('chevron-right') : null),
-          add(el('div', 'hft-v' + (x[2] === '—' ? ' mu' : '')), document.createTextNode(x[2]), x[3] && x[2] !== '—' ? el('small', '', ' ' + x[3]) : null),
-          el('div', 'mu hft-s', x[4]), x[6] && x[6][0] && x[6][0].length ? hlFitLine(x[6][0], x[6][1]) : null);
-        t.setAttribute('aria-label', x[1] + ': ' + x[2] + (x[3] && x[2] !== '—' ? ' ' + x[3] : '') + ', ' + x[4] + (x[5] ? ' — график' : ''));
-        if (x[5]) tap(t, function () { x[5](t); });
+    var ct = j.cardio_tiles, sg = j.strength_tiles, fl = j.fit_lines, out = [], hid = (prefs.fitness || {}).hidden || [];
+    function grid(card, defs) {
+      var g = el('div', 'hft'), by = {};
+      defs.forEach(function (x) { by[x.k] = x; });
+      fitOrder().forEach(function (k) {
+        var x = by[k];
+        if (!x || hid.indexOf(k) >= 0) return;
+        var t = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(x.ic), el('span', '', FIT_TILES[k][1]), x.tap ? icon('chevron-right') : null),
+          add(el('div', 'hft-v' + (x.v === '—' ? ' mu' : '')), document.createTextNode(x.v), x.unit && x.v !== '—' ? el('small', '', ' ' + x.unit) : null),
+          add(el('div', 'mu hft-s'), x.word ? el('b', 'hbw ' + x.word.tone, x.word.word) : null, document.createTextNode((x.word && x.sub ? ' · ' : '') + (x.sub || ''))),
+          x.line && x.line[0] && x.line[0].length ? hlFitLine(x.line[0], x.line[1]) : null, x.extra || null);
+        t.setAttribute('aria-label', FIT_TILES[k][1] + ': ' + x.v + (x.unit && x.v !== '—' ? ' ' + x.unit : '') + ', ' + (x.word ? x.word.word.toLowerCase() + ', ' : '') +
+          (x.sub || '') + (x.tap ? ' — график' : ''));
+        if (x.tap) tap(t, function () { x.tap(t); });
         else t.setAttribute('role', 'group');
         g.appendChild(t);
       });
+      if (!g.firstChild) return null;
       card.appendChild(g);
       return card;
     }
     var sub = 'за 7 дней' + (fl ? ' · серым — 7 до них' : '');
     if (ct) {
-      var n = ct.workouts || 0;
-      out.push(grid(mkCard('heart-pulse', 'Кардио', sub), [
-        ['timer', 'Все занятия', n ? hlHm(ct.minutes) : '0', '', 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)], null, fl && [fl.minutes, fl.prev_minutes]],
-        ['flame', 'Активная энергия', ct.kcal == null ? '—' : grouped(ct.kcal), 'ккал', 'на тренировках', null, fl && [fl.kcal, fl.prev_kcal]],
-        ['wind', 'VO2 max', ct.vo2max ? woNum(ct.vo2max.v) : '—', '', ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
-          ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null, fl && [(fl.vo2 || []).map(function (p) { return p.v; })]],
-        ['heart', 'Восст. пульса', ct.recovery ? woNum(ct.recovery.v) : '—', 'уд/мин', ct.recovery ? 'за минуту, на ' + hlShort(ct.recovery.day) : 'нет данных']]));
+      var n = ct.workouts || 0, fo = ct.focus, zs = ct.zones, top = null, zt = null;
+      if (fo) fo.forEach(function (f) { if (f.pts && (!top || f.pct > top.pct)) top = f; });
+      if (zs) for (var z = 1; z <= 5; z++) if (zs[z] && (zt == null || zs[z] > zs[zt])) zt = z;
+      var fbars = null, zbars = null;
+      if (top) {
+        fbars = el('div', 'hfoc');
+        FIT_FOCUS_ORDER.forEach(function (key) {
+          var f = fo.filter(function (x) { return x.key === key; })[0] || { pct: 0 }, b = add(el('span', 'wzb'), el('i', 'f-' + key));
+          b.firstChild.style.width = (f.pct ? Math.max(4, f.pct) : 0) + '%';
+          fbars.appendChild(b);
+        });
+      }
+      if (zt != null) {
+        var zmax = Math.max.apply(null, zs.slice(1, 6));
+        zbars = el('div', 'hzon');
+        for (var q = 1; q <= 5; q++) {
+          var col = el('i', 'z' + q);
+          col.style.height = (zs[q] ? Math.max(6, Math.round(zs[q] / zmax * 100)) : 2) + '%';
+          zbars.appendChild(add(el('span'), col));
+        }
+      }
+      var cc = grid(mkCard('heart-pulse', 'Кардио', sub), [
+        { k: 'all', ic: 'timer', v: n ? hlHm(ct.minutes) : '0', sub: 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)], line: fl && [fl.minutes, fl.prev_minutes] },
+        { k: 'energy', ic: 'flame', v: ct.kcal == null ? '—' : grouped(ct.kcal), unit: 'ккал', sub: 'на тренировках', line: fl && [fl.kcal, fl.prev_kcal] },
+        { k: 'vo2', ic: 'wind', v: ct.vo2max ? woNum(ct.vo2max.v) : '—', word: ct.vo2max && ct.vo2max.norm, sub: ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
+          tap: ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null, line: fl && [(fl.vo2 || []).map(function (p) { return p.v; })] },
+        { k: 'hrr', ic: 'heart', v: ct.recovery ? woNum(ct.recovery.v) : '—', unit: 'уд/мин', sub: ct.recovery ? 'за минуту, на ' + hlShort(ct.recovery.day) : 'нет данных' },
+        { k: 'focus', ic: 'crosshair', v: top ? top.pct + ' %' : '—', sub: top ? WO_FOCUS[top.key] : 'нет пульса по минутам', extra: fbars },
+        { k: 'zones', ic: 'chart-no-axes-column', v: zt != null ? 'Зона ' + zt : '—', sub: zt != null ? woDur(zs[zt]) : 'нет пульса по минутам', extra: zbars }]);
+      if (cc) out.push(cc);
     }
     if (sg) {
-      out.push(grid(mkCard('dumbbell', 'Сила', sub), [
-        ['biceps-flexed', 'Все мышцы', String(sg.sets || 0), '', 'всего подходов', null, fl && [fl.sets, fl.prev_sets]],
-        ['weight', 'Общий объём', grouped(sg.volume_kg || 0), 'кг', 'вес × повторы', null, fl && [fl.volume, fl.prev_volume]]]));
+      var sc = grid(mkCard('dumbbell', 'Сила', sub), [
+        { k: 'sets', ic: 'biceps-flexed', v: String(sg.sets || 0), sub: 'всего подходов', line: fl && [fl.sets, fl.prev_sets] },
+        { k: 'volume', ic: 'weight', v: grouped(sg.volume_kg || 0), unit: 'кг', sub: 'вес × повторы', line: fl && [fl.volume, fl.prev_volume] }]);
+      if (sc) out.push(sc);
+    }
+    if (ct || sg) {
+      var eb = foodBtn('btn ghost wide hfed', 'pen-line', 'Редактировать «Фитнес»', function () { fitTilesSheet(eb); });
+      out.push(add(el('div', 'bar'), eb));
     }
     return out;
+  }
+  // «Редактировать «Фитнес»»: every tile of «Кардио» and «Сила» a row — shown or hidden (a tick), dragged by its grip into
+  // his order; «Сбросить» back to all in the app's order. Each change one prefs_set (prefs.fitness), the page under the
+  // sheet redrawn by the food tab's prefsHook.
+  function fitTilesSheet(from) {
+    var card = mkCard('pen-line', 'Плитки «Фитнеса»'), rows = el('div'), foot = el('div', 'foot');
+    var reset = foodBtn('btn ghost', null, 'Сбросить', function () { editPrefs({ fitness: null }, ['fit', 'reset']); paint(['fit', 'reset']); });
+    foot.appendChild(reset);
+    add(card, el('div', 'sub', 'Галочка — показывать плитку, ручка — порядок. Карточка без плиток прячется.'), rows);
+    function save(hidden, order, focus) {
+      editPrefs({ fitness: hidden.length || order.length ? { hidden: hidden, order: order } : null }, focus);
+      paint(focus);
+    }
+    function paint(focus) {
+      var f = prefs.fitness || { hidden: [], order: [] };
+      clear(rows);
+      fitOrder().forEach(function (k) {
+        var on = f.hidden.indexOf(k) < 0, name = FIT_TILES[k][1], row = el('div', 'row');
+        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' в «Фитнесе»', on: on }, 'tog', false, function () {
+          save(on ? f.hidden.concat([k]) : f.hidden.filter(function (x) { return x !== k; }), f.order, ['fit', k, 'tog']);
+        }), add(el('span', 'tx'), el('div', 't', name), el('div', 'mu', FIT_TILES[k][0])), dragGrip(name));
+        row.k = k;
+        rows.appendChild(row);
+      });
+      if (f.hidden.length || f.order.length) card.appendChild(foot);
+      else if (foot.parentNode) card.removeChild(foot);
+      refocus(rows, focus, 'fit');
+    }
+    dragSort(rows, function () { return [].slice.call(rows.children); }, function (o, k) {
+      save((prefs.fitness || { hidden: [] }).hidden, o, ['fit', k, 'grip']);
+    });
+    paint();
+    var close = noop;
+    close = legalSheet('Редактировать «Фитнес»', [card, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Готово', function () { close(); }))], from);
   }
   // A sparkline: the points of the window as one quiet line over a fading area, the last one a dot with a halo; no
   // axes, no grid.
@@ -18512,11 +18767,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var c = mkCard('dna', 'Биологический возраст');
     c.className += ' hbage';
     // A new birth date or height rewrites this week's number (bioage_recompute), then the card reloads.
-    var gb = foodBtn('mtoday', 'target', 'Цели', function () {
-      foodGoalSheet(gb, function () {
-        api('miniapp', { action: 'bioage_recompute' }, 15000, true, {}).catch(noop).then(function () { cacheDrop('body:bioage'); reload(); });
-      });
-    });
+    var gb = foodBtn('mtoday', 'user', 'Тело', function () { bodySheet(gb, reload); });
     gb.setAttribute('aria-label', 'Дата рождения и рост');
     c.firstChild.appendChild(gb);
     // The lead as variant B3 (his pick 31.10.2026): the week's date over the number, «на N года моложе» under (no «паспорта», his 01.11.2026)
