@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 16:22">
+<meta name="published" content="2026-11-02 16:57">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1025,13 +1025,34 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .fpr-b{margin:-6px 0 4px;font-size:13px}.fpr-100{margin:0 0 12px;font-size:13px}
 .fpr-l{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:0 0 14px}.fpr-k{font:700 26px/1.15 var(--font-num);font-variant-numeric:tabular-nums}
 .fmiss-b{flex-wrap:wrap}.fmiss-b .btn{flex:1 1 200px}.fmiss-n{margin:0 0 12px}
-/* The weight (addendum «вес»): its pill beside the norm's in the day's head; «Неделя и месяц» — the 30 days' weight as a
-   quiet line (no axes, no grid: a dot a day, the last one priced), the averages under it. */
+/* The weight (addendum «вес»): its pill beside the norm's in the day's head. «Тренды» of «Питание» (bevel-gap п. 6): a
+   row a measure — the icon and name small, the number, a word in its colour, a small chart of 7 bars on the right. */
 .ch .mtoday+.mtoday{margin-left:6px}.ch .mtoday.fw{color:var(--fg)}
-.fstat{padding:0 14px 12px}.fstat .chart{padding:4px 0 0;overflow:visible}.fstat .chart .ln{stroke:var(--mark);stroke-width:2}
-.fstat .chart .dot{stroke-width:2}.fstat>.mu{margin-top:6px}.fstat>.mu.fe{margin-top:0}
+.row.nutr-r{align-items:center;padding:10px 14px;min-height:0}.nutr-h{display:flex;align-items:center;gap:6px;font-size:12px}.nutr-h .i{width:14px;height:14px;flex:none}
+.nutr-w{font-size:12px}.nutr-w>span:first-child{font-weight:600}.nutr-w .good{color:var(--good)}.nutr-w .warn{color:var(--ring-load)}.nutr-w .acc{color:var(--hl-sky)}
+.nutr-c{flex:none;overflow:visible}.nutr-k{fill:var(--nu-carbs)}.nutr-over{fill:var(--ring-load)}.nutr-none{fill:var(--line)}
+.nutr-m{fill:var(--nu)}.nutr-up{fill:var(--ring-load)}.nutr-dn{fill:var(--hl-sky)}
+.nutr-goal{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 3;opacity:.55}.nutr-zero{stroke:var(--line);stroke-width:1}
+/* An entry seen first (bevel-gap п. 9): the emoji tile, the name, the day; the sums as four tiles two across. */
+.fvh{padding:4px 2px 12px}.fve{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--surface-2);font-size:28px;margin-bottom:10px}
+.fvn{margin:0 0 4px;font-size:19px;line-height:1.25;overflow-wrap:anywhere}
+.fvts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 12px}
+.fvt{display:flex;align-items:center;gap:10px;min-width:0;padding:12px;border-radius:var(--r-b);background:var(--surface-2)}
+.fvt .tx{min-width:0}.fvt b{font:800 18px var(--font-num);font-variant-numeric:tabular-nums}.fvt small{color:var(--muted)}.fvt .mu{font-size:12px}
+.fvi{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--surface)}.fvi .i{width:16px;height:16px}
+.fvi.nu-fat,.fvi.nu-carbs,.fvi.nu-protein{background:color-mix(in srgb,var(--nu) 18%,transparent)}.fvi.nu-fat::after,.fvi.nu-carbs::after,.fvi.nu-protein::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--nu)}
+.card.fvl{margin:0 0 12px}.fve-s{flex:none;width:28px;font-size:20px;text-align:center}
+.nutl-e{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface-2);font-size:22px}
+.nutl-p{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fwin{width:100%;font:700 28px/1.2 var(--font-num);text-align:center;font-variant-numeric:tabular-nums}
 .bl.bkg{display:flex;align-items:center;gap:4px}.bl.bkg .i{width:14px;height:14px}
+/* «Нагрузка» and «Монитор» on the board, Ж·У·Б under «Еда сегодня» (bevel-gap п. 12). */
+.bld{font-size:13px;font-weight:700;color:var(--st)}.bldw{margin-top:auto}.bldc{display:block;overflow:visible;max-width:100%}
+.bldc .bd{fill:color-mix(in srgb,var(--ring-recovery) 16%,transparent)}.bldc .ln{fill:none;stroke:var(--ring-sleep);stroke-width:2;stroke-linejoin:round}
+.bldc .dt{fill:var(--ring-load);stroke:var(--solid);stroke-width:1.5}
+.bmac{margin-top:2px;font-size:12px}
+.bmon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;margin-top:6px}.bmc{min-width:0}.bmc .mu{display:block;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmc b{display:flex;align-items:center;gap:3px;font:700 16px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bmc b .i{width:13px;height:13px;color:var(--st,var(--muted))}
 /* «Питание» как у Bevel (docs/specs/nutrition-health.md, the last section; docs/bevel/nutrition-1…3.jpg): the title and
    the date centred, the plate — a faint disc with a band of ticks 0–100 lit in the accent up to the share of the kcal
    goal, a pale fork and knife beside it; cards titled in Bevel's way (no icon, an arrow on the right); the macros in
@@ -1482,6 +1503,10 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .card.fsp{margin-top:12px;padding-bottom:4px}
 .fsh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 4px}.fsh h3{margin:0;font:700 19px var(--font)}
 .fsadd{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:var(--surface-2);color:var(--fg)}
+/* «Месяц тренировок»' days under the grid (bevel-gap п. 13): a head a day, its rows in a card, a rest day dashed. */
+.fml{margin-top:14px;border-top:1px solid var(--line)}.fmday .fsh{padding:14px 2px 8px}.fmday .fsh h4{margin:0;font:700 17px var(--font)}
+.fmday .card.fmdc{margin:0}.fmday .card.fmdc>.row:first-child{border-top:0}
+.row.fmrest{align-items:center;gap:12px;padding:12px 14px;border:1.5px dashed var(--line-2);border-radius:var(--r-b);font-size:15px}.row.fmrest .fsc{margin:0}
 .row.fsr2{align-items:center;gap:12px}.row.fsr2>.i{flex:none;color:var(--muted)}.fsr2 .fss{font-size:12px;font-weight:600}
 /* A colour per sport (30.10.2026): the gym in his accent, volleyball orange, the run green, the bike sky, swimming teal,
    the rest gold; the strip's circles and the «Спорт» rows' icons take it through --wo. */
@@ -1620,7 +1645,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hml5 i.now{background:var(--st)}.hml5.off i{background:var(--track)}
 @media (min-width:900px){.hfr-g{grid-template-columns:repeat(4,1fr)}}
 .row.hbr{gap:12px}.row.hbr .tx{flex:1;min-width:0}.row.hbr .tx .mu{font-size:12px}.hbv{font:800 19px/1.2 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;white-space:nowrap}
-.hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}
+.hbv small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}.hbw{font-weight:700}.hbw.good{color:var(--good)}.hbw.fair{color:var(--warn)}.hbw.low{color:var(--bad)}
 .hspk{flex:none;overflow:visible}.hspk .ln{fill:none;stroke:var(--hl-bio);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hspk .ar{fill:url(#g-bio-area)}
 .hspk .halo{fill:color-mix(in srgb,var(--hl-bio) 25%,transparent)}.hspk .dot{fill:var(--hl-bio);stroke:var(--solid);stroke-width:2}.hbn{flex:none;font-size:12px}
 .hset{margin:0 0 12px;padding-left:20px;display:flex;flex-direction:column;gap:8px}
@@ -1879,6 +1904,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .hft-h{display:flex;align-items:center;gap:6px;min-width:0;font-size:12px;color:var(--muted)}.hft-h span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hft-h .i{flex:none;width:15px;height:15px}.hft-v{font:800 22px/1.15 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.02em}
 .hft-v small{font:500 12px var(--font);color:var(--muted);letter-spacing:0}.hft-s{font-size:12px}
+.hftw{position:relative;height:40px;margin-top:6px}.hftc{display:block;width:100%;height:40px;overflow:visible}
+.hftc .ln{fill:none;stroke:var(--hl-sky);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}.hftc .pv{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linejoin:round;opacity:.6}
+.hftc .ar{fill:color-mix(in srgb,var(--hl-sky) 14%,transparent)}
+.hftd{position:absolute;right:0;width:9px;height:9px;margin:-4.5px -4.5px 0 0;border-radius:50%;background:var(--hl-sky);box-shadow:0 0 0 3px color-mix(in srgb,var(--hl-sky) 28%,transparent),0 0 0 1.5px var(--solid)}
 .lfold.lgf{color:var(--fg)}.lgf-n{font-weight:700}.lgf-c{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}.lgf>.i{color:var(--muted)}.lgr[hidden]{display:none}
 .bas-fy{flex:none;display:inline-flex;align-items:center;gap:2px}.bas-fy b{font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.bas-fy .bxb{margin:0 6px 0 0}
 .bas-ch{margin:-2px 0 12px}.hsh-big.bas-fb{font-size:34px}
@@ -2283,7 +2312,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
 <symbol id="i-dna" viewBox="0 0 24 24"><path d="m10 16 1.5 1.5"/><path d="m14 8-1.5-1.5"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m16.5 10.5 1 1"/><path d="m17 6-2.891-2.891"/><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="m20 9 .891.891"/><path d="M3.109 14.109 4 15"/><path d="m6.5 12.5 1 1"/><path d="m7 18 2.891 2.891"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-person-standing" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></symbol><symbol id="i-audio-waveform" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol><symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
-<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-signal-medium" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/></symbol>
+<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-signal-medium" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol>
 </svg>
 <!-- Muscle silhouettes: react-body-highlighter 2.0.5 (MIT, (c) 2020 GV79), docs/specs/bevel-gap.md -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -2873,6 +2902,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     ['food', 'Еда сегодня', 'utensils', 'sm'],
     // 28.10.2026, docs/specs/health-v2.md: the three rings «Нагрузка · Восст. · Сон», the advice on m (home's health).
     ['body', 'Здоровье', 'activity', 'sm'],
+    // 02.11.2026, bevel-gap п. 12 (home-cardio.jpg, monitor.jpg): the load — number, word, its 30 days; «Монитор» — the
+    // six night metrics against his norm (home's health).
+    ['load', 'Нагрузка', 'flame', 'sm'], ['monitor', 'Монитор', 'watch', 'sm'],
     // 30.10.2026, docs/specs/calendar-2.md А3: today's next timed thing of «Календарь» (home's next).
     ['next', 'Дальше', 'clock', 'sm'],
     // 31.10.2026, docs/specs/calendar-2.md В15: the next holiday, trading Sunday and long weekend (home's poland).
@@ -2885,7 +2917,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'next', 'poland', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
-    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'commute', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body', 'load', 'monitor']], ['Город', ['weather', 'commute', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -4619,6 +4651,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         var sub = left == null ? (k ? '' : 'сегодня записей нет') : left >= 0 ? 'осталось ' + (nu ? grouped(left) : foodK(left))
           : (nu ? 'сверх цели ' + grouped(-left) : 'сверх нормы ' + foodK(-left));
         if (s === 'm' && last) line((last.emoji ? last.emoji + ' ' : '') + FOOD_RU[last.meal] + ', ' + foodTime(last.at) + ' · ' + foodK(last.kcal) + ' ккал', 'mu');
+        // Ж · У · Б of the day (bevel-gap п. 12, home-cardio.jpg «Питание за сегодня»), a dot of each macro's colour.
+        if (s === 'm' && k) n.appendChild(nuMacroLine(nu || f.today || {})).className += ' bmac';
         if (norm) {
           var bar = add(el('div', 'mbar'), el('i', left < 0 ? 'over' : ''));
           bar.firstChild.style.width = Math.min(100, Math.round(k / norm.kcal * 100)) + '%';
@@ -4648,6 +4682,42 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           rings.className += ' bsm';
           note(h.advice_model ? h.advice_model.title : h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice_model || h.advice ? '' : 'mu');
         }
+      },
+      // «Нагрузка» (bevel-gap п. 12, home-cardio.jpg): the rings' day load big, its status word in its colour, the 30 days
+      // as a line over the day's target band, the last a dot; a tap — the load's sheet (health_day of that day).
+      load: function () {
+        var h = j.health;
+        if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
+        if (h.date !== today) name.textContent = 'Нагрузка · вчера';
+        var st = h.load_status || 'calibration', word = HL_LOAD_RU[st] || '', pts = h.load_line || [];
+        r.go = function (node) {
+          api('miniapp', { action: 'health_day' }, 15000, false, { date: h.date }).then(function (hj) { if (hj && hj.date) hlRingSheet('load', hj, node); }, noop);
+        };
+        var col = add(el('div', 'bcol'), el('div', 'bv vs' + (h.load == null ? ' vmu' : ''), h.load == null ? '—' : h.load + ' %'), el('div', 'bld hl-st-' + st, word));
+        var sp = pts.length > 1 ? hlLoadSpark(pts, h.load_target, s === 'm' ? 150 : 120, s === 'm' ? 60 : 40) : null;
+        if (s === 'm') n.appendChild(add(el('div', 'bsplit'), col, sp));
+        else { n.appendChild(col); if (sp) n.appendChild(add(el('div', 'bldw'), sp)); }
+        if (h.load_target) note('цель ' + h.load_target[0] + '–' + h.load_target[1] + ' %');
+      },
+      // «Монитор» (monitor.jpg): the six night metrics of «Сегодня» against his 30 days — s: how many are in the norm
+      // and the ones off it; m: a cell each, the value and the status mark in its colour. A tap — «Здоровье».
+      monitor: function () {
+        var h = j.health, ms = (h && h.monitor) || [];
+        r.go = tab('food');
+        if (!ms.length) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
+        var on = ms.filter(function (t) { return t.status; }), ok2 = on.filter(function (t) { return t.status === 'norm'; }), off = on.filter(function (t) { return t.status !== 'norm'; });
+        if (s === 's') {
+          big(ok2.length + ' из ' + ms.length, 'vs');
+          line('в норме', 'mu');
+          return note(off.length ? off.map(function (t) { return HL_MON[t.key][0] + ' ' + HL_STATUS[t.status]; }).join(' · ') : 'всё в норме', off.length ? 'warn' : '');
+        }
+        var g = el('div', 'bmon');
+        ms.forEach(function (t) {
+          var nm = HL_MON[t.key] || [t.key, ''];
+          g.appendChild(add(el('div', 'bmc' + (t.status ? ' hs-' + t.status : '')), el('span', 'mu', nm[0]),
+            add(el('b', ''), document.createTextNode(hlVal(t.key, t.value)), t.status ? icon(HL_MON_MARK[t.status]) : null)));
+        });
+        n.appendChild(g);
       },
       // Today's post and how far it got; with none today (the fourth batch) the next one — its idea, how far it got and
       // when it is planned.
@@ -15361,8 +15431,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // text to the same model on the Mac (food_add: the entry comes in 1–3 minutes, «разбираю…» until then); «Текст для
   // Bevel» is the day as one text to copy, as /food in the bot. «Норма» on the day's card: kcal and protein a day
   // (prefs.food), empty — no bar. Beside it the day's weight (the addendum «вес»): «82,4 кг», or «вес» with a plus when
-  // there is none; a tap opens its sheet (weight_set). Under the day «Неделя и месяц» (food_stats, the same for every
-  // day): the weight of the last 30 days as a line and the kcal a day over 7 and 30 finished days.
+  // there is none; a tap opens its sheet (weight_set). Under the day «Тренды» (food_stats, the same for every day):
+  // the 7 finished days' kcal, macros and net energy as bars, the weight of the last 30 days as a line.
   // on: the Warsaw day FOOD.date was last drawn on. A page left open over midnight (the app on the Home Screen stays in
   // memory) kept yesterday as the day shown — after midnight the tab opens on the new today again.
   var FOOD = { date: null, on: null };
@@ -15451,7 +15521,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     }
     // The day's segments (docs/specs/health-v2.md, «Навигация»): «Сегодня» — the rings and the advice, «Монитор», the
     // day in short (the food's sums and entries) and «Спорт»; «Питание» — the day's food in full (Health's sums against
-    // the goal, the weight, the entries) and «Неделя и месяц»; «Фитнес» — the week's strip, the load and the muscles'
+    // the goal, the weight, the entries) and «Тренды»; «Фитнес» — the week's strip, the load and the muscles'
     // freshness, the day's workouts and «Зал».
     var date = FOOD.date, nav = el('div', 'mnav fnav'), top = el('div'), body = el('div'), fit = el('div'), stats = el('div'), strip = el('div', 'fstrip');
     // The day's food_day and health_day answers: «Таймлайн» (from health_day) opens the meal's and the workout's sheets
@@ -15545,9 +15615,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
             add(el('span', 'tx'), el('div', 't', 'разбираю…'), el('div', 'mu clip', '«' + p.text + '»')), el('span', 'pr mu', foodTime(p.at))));
         });
         es.forEach(function (e) {
-          var r = add(el('div', 'row frow'), add(el('span', 'tx'), el('div', 't', FOOD_RU[e.meal] + ' · ' + foodTime(e.at)),
-            el('div', 'mu', e.items.map(function (i) { return (i.emoji ? i.emoji + ' ' : '') + i.name + (i.amount ? ', ' + i.amount : ''); }).join(' · ')),
-            e.note ? el('div', 'mu fnote', e.note) : null, seg === 'nutrition' ? nuMacroLine(e) : null), el('span', 'pr', foodK(e.kcal) + ' ккал'));
+          // «Таймлайн питания» (bevel-gap п. 9): the first product's emoji in a tile on the left, the products one line.
+          var nu1 = seg === 'nutrition', em = nu1 ? (e.items.filter(function (i) { return i.emoji; })[0] || {}).emoji || '🍽️' : null;
+          var r = add(el('div', 'row frow'), nu1 ? el('span', 'nutl-e', em) : null, add(el('span', 'tx'), el('div', 't', FOOD_RU[e.meal] + ' · ' + foodTime(e.at)),
+            nu1 ? el('div', 'mu nutl-p', e.items.map(function (i) { return i.name; }).join(', '))
+              : el('div', 'mu', e.items.map(function (i) { return (i.emoji ? i.emoji + ' ' : '') + i.name + (i.amount ? ', ' + i.amount : ''); }).join(' · ')),
+            e.note ? el('div', 'mu fnote', e.note) : null, nu1 ? nuMacroLine(e) : null), el('span', 'pr', foodK(e.kcal) + ' ккал'));
           r.setAttribute('aria-label', FOOD_RU[e.meal] + ', ' + foodTime(e.at) + ', ' + foodK(e.kcal) + ' ккал — поправить');
           list.appendChild(tap(r, function () { foodSheet(e, r, function () { fresh(); load(); }); }));
         });
@@ -16033,70 +16106,89 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       return add(el('span', 'nu-' + m[0]), el('i'), document.createTextNode(m[5] + ' ' + Math.round(Number(e[m[0]]) || 0) + ' г'));
     })));
   }
-  // «Неделя и месяц»: the weight's line over the window (the box's width at drawing), the kcal a day over 7 and 30
-  // finished days, the weight's change over the 30; «вес пока не записан» with none.
+  // «Тренды» of «Питание» (bevel-gap п. 6; tour-2.jpg, «Тренды»: a row a measure — its icon and name, the number big,
+  // a word under it, a small chart on the right) over the 7 finished days of food_stats' days_7: «Калории по дням» — the
+  // mean against the goal, a bar a day under the goal's dashed line; «Баланс макронутриентов» — the mean grams a day and
+  // the shares, a stacked bar a day (Ж · У · Б in their colours); «Чистая энергия» — eaten less Health's active kcal, a
+  // bar a day up (surplus) or down (deficit) from zero; «Вес» — the last weight, its change over the 30 days and their
+  // line, a tap — its sheet. A day without food is a grey stub. An older answer without days_7 — the weight row only.
   function foodStatsCard(j, box) {
-    var c = mkCard('chart-line', 'Неделя и месяц'), b = el('div', 'fstat'), ws = j.weights || [];
-    c.appendChild(b);
-    if (ws.length) b.appendChild(foodWeightChart(ws, j.from, j.to, (box.clientWidth || 360) - 28));
-    else b.appendChild(el('div', 'mu fe', 'вес пока не записан'));
-    var a7 = j.avg_kcal_7, a30 = j.avg_kcal_30;
-    // The means with the macros (docs/specs/nutrition-health.md: Health's days, else the entries'), a line per window,
-    // and the 7 days that have food; an older answer without them — the kcal line below.
-    if (j.avg_7 !== undefined) {
-      [[j.avg_7, '7'], [j.avg_30, '30']].forEach(function (x) {
-        var t = x[0];
-        if (t) b.appendChild(el('div', 'mu', 'за\u00a0' + x[1] + '\u00a0дн.: ' + foodK(t.kcal) + '\u00a0ккал/день · Б\u00a0' + Math.round(t.protein) +
-          ' · Ж\u00a0' + Math.round(t.fat) + ' · У\u00a0' + Math.round(t.carbs)));
-      });
-      if (j.food_days_7 != null) b.appendChild(el('div', 'mu', 'дней с едой ' + j.food_days_7 + ' из 7'));
-    } else if (a7 != null || a30 != null) {
-      // A line breaks only between its parts (no lone «дн.» on the next one).
-      b.appendChild(el('div', 'mu', 'в среднем ' + [a7 != null ? foodK(a7) + ' ккал/день за 7 дн.' : null,
-        a30 != null ? (a7 != null ? grouped(a30) : foodK(a30) + ' ккал/день') + ' за 30 дн.' : null].filter(Boolean)
-        .map(function (x) { return x.replace(/ /g, '\u00a0'); }).join(' · ')));
+    var ds = j.days_7 || [], fd = ds.filter(function (d) { return d.kcal != null; }), goal = kcalGoal(), ws = j.weights || [];
+    var c = mkCard('trending', 'Тренды', 'за 7 дней' + (ds.length ? ' · с едой ' + fd.length + ' из 7' : ''));
+    c.className += ' nutr';
+    var W = Math.max(96, Math.min(160, ((box && box.clientWidth) || 360) - 230)), H = 44;
+    function mean(f) { return fd.length ? fd.reduce(function (a, d) { return a + f(d); }, 0) / fd.length : null; }
+    function chart(lbl) { return svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'nutr-c', role: 'img', 'aria-label': lbl }); }
+    // A bar a day, x of day i of 7.
+    var bw = Math.min(10, (W - 6 * 4) / 7);
+    function bx(i) { return (W - 7 * bw) / 6 * i + i * bw; }
+    function stub(box2, i) { box2.appendChild(svg('rect', { x: bx(i).toFixed(1), y: H - 3, width: bw.toFixed(1), height: 3, rx: 1.5, 'class': 'nutr-none' })); }
+    function row(ic, name, big, unit, word, wcls, ch, lbl, more) {
+      var r = add(el('div', 'row hbr nutr-r'), add(el('span', 'tx'), add(el('div', 'mu nutr-h'), icon(ic), el('span', '', name)),
+        add(el('div', 'hbv'), document.createTextNode(big), unit ? el('small', '', ' ' + unit) : null),
+        word ? add(el('div', 'nutr-w'), el('span', wcls || 'mu', word), more ? el('span', 'mu', more) : null) : null), ch);
+      r.setAttribute('aria-label', lbl);
+      return r;
     }
-    if (j.delta_30 != null) b.appendChild(el('div', 'mu', 'вес ' + foodDelta(j.delta_30) + '\u00a0кг за\u00a030\u00a0дн.'));
-    // «тренировок: 3 за 7 дн. · 11 за 30 (зал 2, волейбол 1)» — the brackets are the 7 days' kinds.
-    var wo = j.workouts;
-    if (wo && wo.d30) {
-      var by = WO_KINDS.filter(function (k) { return wo.by7 && wo.by7[k[0]]; }).map(function (k) {
-        return k[1].toLowerCase() + '\u00a0' + wo.by7[k[0]];
+    if (ds.length) {
+      // Калории по дням.
+      var k = mean(function (d) { return d.kcal; }), kmax = Math.max(goal * 1.25, Math.max.apply(null, ds.map(function (d) { return d.kcal || 0; })));
+      var kc = chart('Калории за 7 дней: ' + ds.map(function (d) { return dm(d.day) + ' ' + (d.kcal == null ? 'нет записей' : grouped(d.kcal)); }).join(', '));
+      ds.forEach(function (d, i) {
+        if (d.kcal == null) return stub(kc, i);
+        var h = Math.max(3, d.kcal / kmax * (H - 4));
+        kc.appendChild(svg('rect', { x: bx(i).toFixed(1), y: (H - h).toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), rx: 2, 'class': d.kcal > goal ? 'nutr-over' : 'nutr-k' }));
       });
-      b.appendChild(el('div', 'mu', 'тренировок: ' + wo.d7 + '\u00a0за\u00a07\u00a0дн. · ' + wo.d30 + '\u00a0за\u00a030' +
-        (by.length ? ' (' + by.join(', ') + ')' : '')));
+      var gy = (H - goal / kmax * (H - 4)).toFixed(1);
+      kc.appendChild(svg('line', { x1: 0, x2: W, y1: gy, y2: gy, 'class': 'nutr-goal' }));
+      var kw = k == null ? 'нет записей' : k > goal * 1.1 ? 'Выше цели' : k < goal * 0.9 ? 'Ниже цели' : 'В цели';
+      var a30 = j.avg_30 ? ' · месяц ' + grouped(j.avg_30.kcal) : '';
+      c.appendChild(row('chart-column', 'Калории по дням', k == null ? '—' : grouped(Math.round(k)), k == null ? '' : 'ккал/день', kw,
+        k == null ? 'mu' : kw === 'В цели' ? 'good' : kw === 'Выше цели' ? 'warn' : 'acc', kc,
+        'Калории по дням: ' + (k == null ? 'нет записей' : grouped(Math.round(k)) + ' ккал в день, ' + kw.toLowerCase() + ' ' + grouped(goal) + (j.avg_30 ? ', за 30 дней ' + grouped(j.avg_30.kcal) : '')), a30));
+      // Баланс макронутриентов.
+      var mg = NU_MACROS.map(function (m) { return mean(function (d) { return d[m[0]] || 0; }); }), tot = mg[0] == null ? null : mg[0] + mg[1] + mg[2];
+      var gmax = Math.max.apply(null, ds.map(function (d) { return (d.fat || 0) + (d.carbs || 0) + (d.protein || 0); }).concat([1]));
+      var mc = chart('Жиры, углеводы и белки за 7 дней по дням');
+      ds.forEach(function (d, i) {
+        var y = H;
+        if (d.kcal == null) return stub(mc, i);
+        NU_MACROS.forEach(function (m) {
+          var h = (d[m[0]] || 0) / gmax * (H - 4);
+          if (h <= 0) return;
+          y -= h;
+          mc.appendChild(svg('rect', { x: bx(i).toFixed(1), y: y.toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), 'class': 'nutr-m nu-' + m[0] }));
+        });
+      });
+      var sh = tot ? NU_MACROS.map(function (m, i) { return m[5] + ' ' + Math.round(mg[i] / tot * 100); }).join(' · ') + ' %' : 'нет записей';
+      c.appendChild(row('chart-pie', 'Баланс макронутриентов', tot == null ? '—' : String(Math.round(tot)), tot == null ? '' : 'г/день', sh, 'mu', mc,
+        'Баланс макронутриентов: ' + (tot == null ? 'нет записей' : Math.round(tot) + ' г в день — жиры ' + Math.round(mg[0]) + ', углеводы ' + Math.round(mg[1]) + ', белки ' + Math.round(mg[2]) + ' г')));
+      // Чистая энергия.
+      var nets = ds.map(function (d) { return d.kcal == null ? null : d.kcal - (d.active || 0); });
+      var nn = nets.filter(function (v) { return v != null; }), net = nn.length ? nn.reduce(function (a, v) { return a + v; }, 0) / nn.length : null;
+      var nmax = Math.max.apply(null, nn.map(Math.abs).concat([500])), zy = nn.some(function (v) { return v < 0; }) ? H / 2 : H;
+      var ec = chart('Чистая энергия за 7 дней: ' + ds.map(function (d, i) { return dm(d.day) + ' ' + (nets[i] == null ? 'нет записей' : nuSigned(nets[i])); }).join(', '));
+      nets.forEach(function (v, i) {
+        if (v == null) return stub(ec, i);
+        var h = Math.max(2, Math.abs(v) / nmax * (zy - 2));
+        ec.appendChild(svg('rect', { x: bx(i).toFixed(1), y: (v >= 0 ? zy - h : zy).toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), rx: 2, 'class': v >= 0 ? 'nutr-up' : 'nutr-dn' }));
+      });
+      if (zy < H) ec.appendChild(svg('line', { x1: 0, x2: W, y1: zy, y2: zy, 'class': 'nutr-zero' }));
+      var nw = net == null ? 'нет записей' : net >= 0 ? 'Избыток' : 'Дефицит';
+      c.appendChild(row('diff', 'Чистая энергия', net == null ? '—' : nuSigned(net), net == null ? '' : 'ккал/день', nw, net == null ? 'mu' : net >= 0 ? 'warn' : 'acc', ec,
+        'Чистая энергия: ' + (net == null ? 'нет записей' : nuSigned(net) + ' ккал в день, ' + nw.toLowerCase() + ' — съедено минус активные ккал')));
     }
+    // Вес.
+    var last = ws.length ? ws[ws.length - 1] : null, d30 = j.delta_30;
+    var wr = row('scale', 'Вес', last ? foodKg(last.kg) : '—', last ? 'кг' : '', last ? (d30 == null ? 'одно взвешивание' : foodDelta(d30) + ' кг за 30 дн.') : 'вес пока не записан', 'mu',
+      ws.length ? hlSpark(ws.map(function (w) { return { day: w.day, v: Number(w.kg) }; }), j.from, j.to, W) : null,
+      'Вес: ' + (last ? foodKg(last.kg) + ' кг' + (d30 == null ? '' : ', за 30 дней ' + foodDelta(d30)) : 'пока не записан') + (last ? ' — график' : ''));
+    if (last) {
+      wr.appendChild(icon('chevron-right'));
+      tap(wr, function () { hlSeriesSheet('weight', HL_BIO_KEYS, wr); });
+    }
+    c.appendChild(wr);
     return c;
-  }
-  // The weight a day: one quiet line of --mark through a dot a day (a day missing is bridged), no axes and no grid;
-  // the last dot priced, the window's first and last dates under it. W: the drawing's width in px. Each dot names its
-  // day and weight (hover, a screen reader).
-  function foodWeightChart(ws, from, to, W) {
-    W = W > 0 ? W : 320;
-    var H = 128, L = 6, R = 34, T = 20, B = 20;
-    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'class': 'chart',
-      'aria-label': 'Вес за 30 дней: ' + ws.map(function (w) { return dm(w.day) + ' ' + foodKg(w.kg); }).join(', ') });
-    var t0 = Date.parse(from + 'T12:00:00Z'), t1 = Date.parse(to + 'T12:00:00Z');
-    var ks = ws.map(function (w) { return Number(w.kg); });
-    var lo = Math.min.apply(null, ks), hi = Math.max.apply(null, ks), pad = Math.max((hi - lo) * 0.15, 0.5);
-    lo -= pad;
-    hi += pad;
-    function x(d) { return t1 === t0 ? W / 2 : L + (Date.parse(d + 'T12:00:00Z') - t0) / (t1 - t0) * (W - L - R); }
-    function y(k) { return T + (hi - k) / (hi - lo) * (H - T - B); }
-    if (ws.length > 1) {
-      add(box, svg('polyline', { 'class': 'ln', points: ws.map(function (w, i) { return x(w.day).toFixed(1) + ',' + y(ks[i]).toFixed(1); }).join(' ') }));
-    }
-    var n = ws.length - 1;
-    ws.forEach(function (w, i) {
-      var c = svg('circle', { cx: x(w.day).toFixed(1), cy: y(ks[i]).toFixed(1), r: i === n ? 4.5 : 3, 'class': 'dot' });
-      c.appendChild(svg('title', {}, dm(w.day) + ' · ' + foodKg(w.kg) + ' кг'));
-      box.appendChild(c);
-    });
-    var lx = x(ws[n].day), ly = y(ks[n]);
-    add(box, svg('text', { x: Math.min(lx + 8, W - 2), y: ly + 4, 'class': 'tk strong', 'text-anchor': 'start' }, foodKg(ks[n])),
-      svg('text', { x: L, y: H - 4, 'class': 'tk', 'text-anchor': 'start' }, dm(from)),
-      svg('text', { x: W - R, y: H - 4, 'class': 'tk', 'text-anchor': 'end' }, 'сегодня'));
-    return box;
   }
   // The day's weight: one number (a comma or a dot), 30–250 kg; «Убрать» removes the day's (weight_set kg null).
   function foodWeightSheet(date, w, from, done) {
@@ -16573,9 +16665,35 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu msrc', 'Дата рождения и рост — для биологического возраста (возраст, безжировая масса к росту).'),
       add(el('div', 'bar mact mstick'), ok)], from);
   }
-  // An entry's sheet: the meal, the time on its day, each line (name, amount, kcal, protein, carbs, fat; ✕ takes it
-  // away, «＋ Строка» adds one), the note; «Сохранить» (food_edit, the sums the server's) and «Убрать» on two taps.
+  // An entry seen first (bevel-gap п. 9; tour-3.jpg, the last frame): its emoji in a tile, «Ужин: сырники, кофе», the day
+  // and time, the sums as four tiles (ккал · Жиры · Углев. · Белки), each product a row (emoji, name, amount, kcal), the
+  // note; «Изменить» opens the form (foodEditSheet) in its place.
   function foodSheet(e, from, done) {
+    var close = noop, its = e.items || [], d = foodDay(e.at);
+    var emo = (its.filter(function (i) { return i.emoji; })[0] || {}).emoji || '🍽️';
+    var title = FOOD_RU[e.meal] + ': ' + its.map(function (i) { return i.name; }).join(', ');
+    var when = Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1] + ' в ' + foodTime(e.at);
+    function tile(lead, v, unit, name) {
+      return add(el('div', 'fvt'), lead, add(el('span', 'tx'), add(el('b', '', v), el('small', '', ' ' + unit)), el('div', 'mu', name)));
+    }
+    var tiles = add.apply(null, [el('div', 'fvts'), tile(add(el('span', 'fvi'), icon('apple')), foodK(e.kcal), 'ккал', 'Калории')].concat(NU_MACROS.map(function (m) {
+      return tile(el('span', 'fvi nu-' + m[0], ''), String(Math.round(Number(e[m[0]]) || 0)), 'г', m[2]);
+    })));
+    tiles.setAttribute('aria-label', foodK(e.kcal) + ' ккал, жиры ' + Math.round(Number(e.fat) || 0) + ' г, углеводы ' + Math.round(Number(e.carbs) || 0) +
+      ' г, белки ' + Math.round(Number(e.protein) || 0) + ' г');
+    tiles.setAttribute('role', 'group');
+    var list = its.length > 1 ? add.apply(null, [el('div', 'card fvl')].concat(its.map(function (i) {
+      return add(el('div', 'row frow'), el('span', 'fve-s', i.emoji || '•'), add(el('span', 'tx'), el('div', 't', i.name), i.amount ? el('div', 'mu', i.amount) : null),
+        el('span', 'pr mu', foodK(i.kcal) + ' ккал'));
+    }))) : null;
+    var ed = foodBtn('btn', 'pen-line', 'Изменить', function () { close(); foodEditSheet(e, from, done); });
+    close = legalSheet(FOOD_RU[e.meal] + ', ' + foodTime(e.at), [add(el('div', 'fvh'), el('span', 'fve', emo), el('h4', 'fvn', title), el('div', 'mu', when)),
+      tiles, list, e.note ? el('div', 'mu msrc', e.note) : null,
+      add(el('div', 'bar mact mstick'), ed, foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
+  }
+  // An entry's form: the meal, the time on its day, each line (name, amount, kcal, protein, carbs, fat; ✕ takes it
+  // away, «＋ Строка» adds one), the note; «Сохранить» (food_edit, the sums the server's) and «Убрать» on two taps.
+  function foodEditSheet(e, from, done) {
     var meal = e.meal, day = foodDay(e.at), items = e.items.map(function (i) { return Object.assign({}, i); }), close = noop;
     var seg = el('div', 'seg'), tm = el('input'), note = el('input'), lines = el('div', 'flines'), sums = el('div', 'mu fsums');
     seg.setAttribute('role', 'group');
@@ -17221,12 +17339,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // a short norm track with the dot where he is, the impact in points with a small column (up sky, down orange), the
   // line; a part with a sheet of its own opens it (chevron). The load adds «Разбивка за 30 дней» — a bar a status.
   var HL_SN = { resting_hr: 'Пульс покоя', hrv: 'ВСР', resp_rate: 'Дыхание', spo2: 'SpO2', wrist_temp: 'Температура', sleep_min: 'Сон',
-    steps: 'Шаги', active_kcal: 'Активные ккал', vo2max: 'VO2max', weight: 'Вес', body_fat: 'Жир', kcal: 'Еда' };
+    steps: 'Шаги', active_kcal: 'Активные ккал', vo2max: 'VO2max', weight: 'Вес', body_fat: 'Жир', lean_kg: 'Безжир. масса', kcal: 'Еда' };
   var HL_IC = { resting_hr: 'heart', hrv: 'audio-waveform', resp_rate: 'wind', spo2: 'droplet', wrist_temp: 'thermometer', sleep_min: 'moon',
-    steps: 'footprints', active_kcal: 'flame', vo2max: 'wind', weight: 'scale', body_fat: 'percent', kcal: 'utensils',
+    steps: 'footprints', active_kcal: 'flame', vo2max: 'wind', weight: 'scale', body_fat: 'percent', lean_kg: 'biceps-flexed', kcal: 'utensils',
     sleep: 'moon', recovery: 'activity', load: 'flame', muscle: 'biceps-flexed' };
   var HL_MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
-  var HL_BIO_KEYS = ['weight', 'body_fat', 'hrv', 'resting_hr', 'vo2max', 'steps', 'active_kcal', 'kcal'];
+  var HL_BIO_KEYS = ['weight', 'body_fat', 'lean_kg', 'hrv', 'resting_hr', 'vo2max', 'steps', 'active_kcal', 'kcal'];
   var HL_PERIODS = [[30, '30 Д'], [90, '3 М'], [180, '6 М'], [365, '1 Г']];
   // The part's icon by its label (the rings' parts).
   var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer', 'SpO2': 'droplet',
@@ -17927,6 +18045,19 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // the scale a capsule on the right. «Темп.» as Bevel's: the wrist's own °C big (t.abs, the night's wrist_temp_c), the
   // status and the capsule still of the deviation against his norm; no absolute that night — the signed deviation.
   var HL_MON_MARK = { norm: 'check', above: 'arrow-up', below: 'arrow-down' };
+  // The board's «Нагрузка» line: the 30 days' load on 0…max (at least the target's top + 10), the target a soft band,
+  // the line in the status colour, the last day a dot.
+  function hlLoadSpark(pts, tgt, W, H) {
+    var hi = Math.max.apply(null, pts.map(function (p) { return p.v; }).concat([(tgt ? tgt[1] : 50) + 10]));
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'bldc', 'aria-hidden': 'true' });
+    function x(i) { return 4 + i / (pts.length - 1) * (W - 8); }
+    function y(v) { return 3 + (hi - v) / hi * (H - 6); }
+    if (tgt) box.appendChild(svg('rect', { x: 0, y: y(tgt[1]).toFixed(1), width: W, height: Math.max(1, y(tgt[0]) - y(tgt[1])).toFixed(1), rx: 3, 'class': 'bd' }));
+    box.appendChild(svg('polyline', { points: pts.map(function (p, i) { return x(i).toFixed(1) + ',' + y(p.v).toFixed(1); }).join(' '), 'class': 'ln' }));
+    var l = pts.length - 1;
+    box.appendChild(svg('circle', { cx: x(l).toFixed(1), cy: y(pts[l].v).toFixed(1), r: 3.5, 'class': 'dt' }));
+    return box;
+  }
   function hlMonitor(ms) {
     var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
     ms.forEach(function (t) {
@@ -18234,14 +18365,29 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // «Кардио» and «Сила» under «Фитнес» (docs/specs/bevel-gap.md, п. 11; tour-4.jpg, row 3): tiles two across over the
   // 7 days — the workouts but the gym (their time and count), their kcal, the latest VO2max (a tap — its chart) and
   // heart rate recovery; the sets of the exercises and their volume. Nothing without the server's tiles.
+  // The period lines (bevel-gap п. 10, fitness-4-cardio-strength.png; fit_lines): under a tile this period's running
+  // total in the accent over the 7 days before it in grey, the end a dot; VO2max — its 30 days as one line. The line
+  // stretches with the tile (a 100 × 40 box, strokes kept 2 px), the dot an HTML mark at the end.
+  function hlFitLine(cur, prev) {
+    var vs = cur.concat(prev || []), hi = Math.max.apply(null, vs.concat([0])), lo = prev ? 0 : Math.min.apply(null, vs);
+    if (hi === lo) { hi += 1; lo = prev ? 0 : lo - 1; }
+    function pts(a) { return a.map(function (v, i) { return (a.length > 1 ? i / (a.length - 1) * 100 : 100).toFixed(1) + ',' + (36 - (v - lo) / (hi - lo) * 32).toFixed(1); }).join(' '); }
+    var box = svg('svg', { viewBox: '0 0 100 40', preserveAspectRatio: 'none', 'class': 'hftc', 'aria-hidden': 'true' });
+    if (prev) box.appendChild(svg('polyline', { points: pts(prev), 'class': 'pv', 'vector-effect': 'non-scaling-stroke' }));
+    if (cur.length > 1) box.appendChild(svg('polygon', { points: '0,40 ' + pts(cur) + ' 100,40', 'class': 'ar' }));
+    box.appendChild(svg('polyline', { points: pts(cur.length > 1 ? cur : [cur[0], cur[0]]), 'class': 'ln', 'vector-effect': 'non-scaling-stroke' }));
+    var dot = el('i', 'hftd');
+    dot.style.top = ((36 - (cur[cur.length - 1] - lo) / (hi - lo) * 32) / 40 * 100).toFixed(1) + '%';
+    return add(el('div', 'hftw'), box, dot);
+  }
   function hlFitTiles(j) {
-    var ct = j.cardio_tiles, sg = j.strength_tiles, out = [];
+    var ct = j.cardio_tiles, sg = j.strength_tiles, fl = j.fit_lines, out = [];
     function grid(card, tiles) {
       var g = el('div', 'hft');
       tiles.forEach(function (x) {
         var t = add(el('div', 'hftl'), add(el('div', 'hft-h'), icon(x[0]), el('span', '', x[1]), x[5] ? icon('chevron-right') : null),
           add(el('div', 'hft-v' + (x[2] === '—' ? ' mu' : '')), document.createTextNode(x[2]), x[3] && x[2] !== '—' ? el('small', '', ' ' + x[3]) : null),
-          el('div', 'mu hft-s', x[4]));
+          el('div', 'mu hft-s', x[4]), x[6] && x[6][0] && x[6][0].length ? hlFitLine(x[6][0], x[6][1]) : null);
         t.setAttribute('aria-label', x[1] + ': ' + x[2] + (x[3] && x[2] !== '—' ? ' ' + x[3] : '') + ', ' + x[4] + (x[5] ? ' — график' : ''));
         if (x[5]) tap(t, function () { x[5](t); });
         else t.setAttribute('role', 'group');
@@ -18250,19 +18396,20 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       card.appendChild(g);
       return card;
     }
+    var sub = 'за 7 дней' + (fl ? ' · серым — 7 до них' : '');
     if (ct) {
       var n = ct.workouts || 0;
-      out.push(grid(mkCard('heart-pulse', 'Кардио', 'за 7 дней'), [
-        ['timer', 'Все занятия', n ? hlHm(ct.minutes) : '0', '', 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)]],
-        ['flame', 'Активная энергия', ct.kcal == null ? '—' : grouped(ct.kcal), 'ккал', 'на тренировках'],
+      out.push(grid(mkCard('heart-pulse', 'Кардио', sub), [
+        ['timer', 'Все занятия', n ? hlHm(ct.minutes) : '0', '', 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)], null, fl && [fl.minutes, fl.prev_minutes]],
+        ['flame', 'Активная энергия', ct.kcal == null ? '—' : grouped(ct.kcal), 'ккал', 'на тренировках', null, fl && [fl.kcal, fl.prev_kcal]],
         ['wind', 'VO2 max', ct.vo2max ? woNum(ct.vo2max.v) : '—', '', ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
-          ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null],
+          ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null, fl && [(fl.vo2 || []).map(function (p) { return p.v; })]],
         ['heart', 'Восст. пульса', ct.recovery ? woNum(ct.recovery.v) : '—', 'уд/мин', ct.recovery ? 'за минуту, на ' + hlShort(ct.recovery.day) : 'нет данных']]));
     }
     if (sg) {
-      out.push(grid(mkCard('dumbbell', 'Сила', 'за 7 дней'), [
-        ['biceps-flexed', 'Все мышцы', String(sg.sets || 0), '', 'всего подходов'],
-        ['weight', 'Общий объём', grouped(sg.volume_kg || 0), 'кг', 'вес × повторы']]));
+      out.push(grid(mkCard('dumbbell', 'Сила', sub), [
+        ['biceps-flexed', 'Все мышцы', String(sg.sets || 0), '', 'всего подходов', null, fl && [fl.sets, fl.prev_sets]],
+        ['weight', 'Общий объём', grouped(sg.volume_kg || 0), 'кг', 'вес × повторы', null, fl && [fl.volume, fl.prev_volume]]]));
     }
     return out;
   }
@@ -18286,21 +18433,25 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     return box;
   }
   // «Тренды»: a compact row a measure — its name, the last value, the change with an arrow and a word; the 30 days as
-  // a sparkline on the right.
+  // a sparkline on the right. Before the change the word against the norm of his age where there is one (the server's
+  // norms, bevel-gap п. 14, tour-4.jpg «Другие биомаркеры»): «Хороший» green, «Приемлемый» amber, «Низкий / Высокий»
+  // red; «Безжировая масса» a row of its own (health_days' lean_kg).
   function hlBio(j, box) {
-    var c = mkCard('trending', 'Тренды', 'за 30 дней'), s = j.series || {}, any = false;
+    var c = mkCard('trending', 'Тренды', 'за 30 дней'), s = j.series || {}, any = false, nm = j.norms || {};
     c.className += ' hbio';
     var W = Math.max(80, Math.min(200, ((box && box.clientWidth) || 360) - 190));
-    [['weight', 'Вес', 'кг', 1], ['body_fat', 'Жир', '%', 1], ['hrv', 'ВСР', 'мс', 1], ['resting_hr', 'Пульс покоя', 'уд/мин', -1], ['vo2max', 'VO2max', '', 1]].forEach(function (m) {
-      var x = s[m[0]] || { points: [] }, p = x.points || [], last = p.length ? p[p.length - 1].v : null;
+    [['weight', 'Вес', 'кг', 1], ['body_fat', 'Жир', '%', 1], ['lean_kg', 'Безжировая масса', 'кг', 1], ['hrv', 'ВСР', 'мс', 1], ['resting_hr', 'Пульс покоя', 'уд/мин', -1], ['vo2max', 'VO2max', '', 1]].forEach(function (m) {
+      var x = s[m[0]] || { points: [] }, p = x.points || [], last = p.length ? p[p.length - 1].v : null, w = p.length ? nm[m[0]] : null;
       if (p.length) any = true;
       var d = x.delta, dv = d == null || d === 0 ? '' : (d > 0 ? '+' : '−') + woNum(Math.abs(d));
       var tr = d == null || !p.length ? '' : d > 0 ? '↑ ' + dv + ' · растёт' : d < 0 ? '↓ ' + dv + ' · снижается' : '→ ровно';
       var r = add(el('div', 'row hbr bio-tr'), add(el('span', 'tx'), el('div', 'mu', m[1]),
-        add(el('div', 'hbv'), document.createTextNode(last == null ? '—' : woNum(last)), last != null && m[2] ? el('small', '', ' ' + m[2]) : null),
-        tr ? el('div', 'mu', tr) : null), p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'));
+        add(el('div', 'hbv'), document.createTextNode(last == null ? '—' : woNum(last)), last != null && m[2] ? el('small', '', ' ' + m[2]) : null),
+        w || tr ? add(el('div', 'mu'), w ? el('b', 'hbw ' + w.tone, w.word) : null, document.createTextNode(w ? (tr ? ' · ' + tr.split(' · ')[0] : '') : tr)) : null),
+        p.length ? hlSpark(p, j.from, j.to, W) : el('span', 'mu hbn', 'нет данных'));
       tap(r, function () { hlSeriesSheet(m[0], HL_BIO_KEYS, r); });
-      r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (dv ? ', за 30 дней ' + dv : '')) + ' — график');
+      r.setAttribute('aria-label', m[1] + ': ' + (last == null ? 'нет данных' : woNum(last) + ' ' + m[2] + (w ? ', ' + w.word.toLowerCase() + ' для возраста' : '') +
+        (dv ? ', за 30 дней ' + dv : '')) + ' — график');
       c.appendChild(r);
     });
     return any ? c : null;
@@ -20966,7 +21117,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     // a planned one dashed), the date alone on a day with nothing, a badge with the count when more than one, today
     // ringed; ‹ › for the months (fit_range, a month at most 31 days). A tap closes it and picks that day in the strip.
     function monthSheet(ym, from) {
-      var close = noop, head = el('div', 'fmh'), grid = el('div', 'fmg'), cur = ym;
+      var close = noop, head = el('div', 'fmh'), grid = el('div', 'fmg'), cur = ym, list = el('div', 'fml');
       var prevB = foodBtn('fmb', 'chevron-left', '', function () { haptic(); go(-1); }), nextB = foodBtn('fmb', 'chevron-right', '', function () { haptic(); go(1); });
       prevB.setAttribute('aria-label', 'Предыдущий месяц');
       nextB.setAttribute('aria-label', 'Следующий месяц');
@@ -21002,6 +21153,27 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         var first = cur + '-01', lead = wd(first), n = days(cur);
         for (var i = 0; i < lead; i++) grid.appendChild(el('span', 'fmd fmx'));
         for (var k = 0; k < n; k++) grid.appendChild(cell(addDays(first, k)));
+        drawList(first, n);
+      }
+      // Under the grid (bevel-gap п. 13, fitness-month-calendar.png) the month's days newest first — a day ahead only
+      // with a plan: the day's head with «+», its workouts and plans as the strip's card has them, «День отдыха» in a
+      // dashed box with «Zz» for a past day without any.
+      function drawList(first, n) {
+        clear(list);
+        if (first > today) return;
+        var any = false;
+        for (var q = 0; q < n; q++) if (FIT.days[addDays(first, q)]) any = true;
+        if (!any) return list.appendChild(el('div', 'mu wempty', 'Загружаю…'));
+        for (var k = n - 1; k >= 0; k--) {
+          var d = addDays(first, k), D = FIT.days[d];
+          if (d > today && !(D && D.planned.length)) continue;
+          var sec = add(el('section', 'fmday'), dayHead(d, 'h4', d === today ? 'Сегодня, ' + +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1] : null));
+          if (!D) sec.appendChild(el('div', 'mu wempty', 'Загружаю…'));
+          else if (!D.workouts.length && !D.planned.length) {
+            sec.appendChild(add(el('div', 'row fmrest'), el('span', 'fsc zz sm', 'Zz'), el('span', 'tx mu', 'День отдыха')));
+          } else dayRows(d, add(sec, el('div', 'card fmdc')).lastChild);
+          list.appendChild(sec);
+        }
       }
       function load() {
         var m = cur;
@@ -21013,7 +21185,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       }
       draw();
       load();
-      close = legalSheet('Месяц тренировок', [head, wk, grid, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
+      close = legalSheet('Месяц тренировок', [head, wk, grid, list, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Закрыть', function () { close(); }))], from);
     }
     // A day from «Месяц»: picked in the strip as a swipe to it would; a past day out of the strip moves «Фитнес» to it,
     // one ahead stretches the strip to it.
@@ -21153,15 +21325,25 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function drawPanel() {
       var d = FIT.sel, D = FIT.days[d];
       clear(panel);
-      var add1 = d <= today ? foodBtn('fsadd', 'plus', '', function (ev) { woAddSheet(d, ev.currentTarget, refresh); }) : null;
-      if (add1) add1.setAttribute('aria-label', 'Добавить тренировку');
-      panel.appendChild(add(el('div', 'fsh'), el('h3', '', cap(WEEK[wd(d)]) + ', ' + +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1]), add1));
+      panel.appendChild(dayHead(d, 'h3'));
       if (!D) return panel.appendChild(el('div', 'mu wempty', 'Загружаю…'));
+      dayRows(d, panel);
+      if (!D.workouts.length && !D.planned.length) panel.appendChild(el('div', 'mu wempty', d > today ? 'Ничего не запланировано.' : 'День отдыха.'));
+    }
+    // A day's head: «Пн, 2 ноября» and «+» for a workout up to today.
+    function dayHead(d, tag, name) {
+      var add1 = d <= today ? foodBtn('fsadd', 'plus', '', function (ev) { woAddSheet(d, ev.currentTarget, refresh); }) : null;
+      if (add1) add1.setAttribute('aria-label', 'Добавить тренировку, ' + dm(d));
+      return add(el('div', 'fsh'), el(tag, '', name || cap(WEEK[wd(d)]) + ', ' + +d.slice(8, 10) + ' ' + MONTHS_G[+d.slice(5, 7) - 1]), add1);
+    }
+    // A day's plans and workouts as rows into box (the strip's card and «Месяц тренировок»' list).
+    function dayRows(d, box) {
+      var D = FIT.days[d];
       var ids = D.workouts.map(function (w) { return w.id; });
       D.planned.filter(function (p) { return !(p.workout_id && ids.indexOf(p.workout_id) >= 0); }).forEach(function (p) {
         var word = { missed: 'Пропущено', planned: 'Запланировано', done: 'Сделано' }[p.status];
         var t = foodTime(p.starts_at) + (p.ends_at ? '–' + foodTime(p.ends_at) : '');
-        panel.appendChild(row(add(el('span', 'fsc plan sm k-' + p.sport + (p.status === 'missed' ? ' miss' : p.status === 'done' ? ' wo' : '')), icon(WO_IC[p.sport] || 'medal')),
+        box.appendChild(row(add(el('span', 'fsc plan sm k-' + p.sport + (p.status === 'missed' ? ' miss' : p.status === 'done' ? ' wo' : '')), icon(WO_IC[p.sport] || 'medal')),
           word, p.title, [t, p.place].filter(Boolean).join(' · '), null, word + ': ' + p.title + ', ' + t));
       });
       D.workouts.forEach(function (w) {
@@ -21171,9 +21353,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         if (w.kind === 'gym' && w.title) parts.unshift(w.title);
         var r = row(add(el('span', 'fsc wo sm k-' + woKind(w)), icon(woIcon(w))), foodTime(w.at), woLabel(w), parts.join(' · '),
           function () { woDetailSheet(w, r, refresh); }, woLabel(w) + ', ' + foodTime(w.at) + ' — подробно');
-        panel.appendChild(r);
+        box.appendChild(r);
       });
-      if (!D.workouts.length && !D.planned.length) panel.appendChild(el('div', 'mu wempty', d > today ? 'Ничего не запланировано.' : 'День отдыха.'));
     }
     // The strip around the day: what is known at once, then fit_range's 4 weeks around it.
     if (!FIT.from || date < addDays(FIT.from, 7) || date > addDays(FIT.to, -7)) {
