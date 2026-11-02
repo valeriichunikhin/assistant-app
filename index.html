@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 14:22">
+<meta name="published" content="2026-11-02 14:35">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1820,6 +1820,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .hen-gl{stroke:var(--line);stroke-width:1}.hen-l{fill:none;stroke:var(--ring-recovery);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
 .hen-f{stroke:none}.hen-s0{stop-color:var(--ring-recovery);stop-opacity:.3}.hen-s1{stop-color:var(--ring-recovery);stop-opacity:0}.hen-dot{fill:var(--ring-recovery);stroke:var(--bg0,var(--surface));stroke-width:2}
 .hen-b-sleep{fill:var(--ring-sleep-soft)}.hen-b-workout{fill:var(--ring-load-soft)}.hen-off{fill:url(#p-off);opacity:.55}.hen-ch .hen-off-i{width:12px;height:12px;color:var(--muted)}.hen-x{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+/* The day's stress (docs/specs/health-queue-2026-11-02.md, C): three tiles, the curve in its bands' colours with the
+   bands' edges dashed, «Время по уровням» — a dot, a bar of the day's share, the time. */
+.hsx-g{grid-template-columns:repeat(3,minmax(0,1fr))}.hsx-v{color:var(--hs)}
+.hsx-z{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}.hsx-l{fill:none;stroke:var(--hs);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.hsx-dot{fill:var(--hs);stroke:var(--bg0,var(--surface));stroke-width:2}
+.hsx-r{display:flex;align-items:center;gap:10px;padding:7px 0}.hsx-d{flex:none;width:10px;height:10px;border-radius:50%;background:var(--hs)}
+.hsx-n{flex:none;width:72px}.hsx-b{flex:1;min-width:0;height:8px;border-radius:4px;background:var(--track);overflow:hidden}.hsx-b>i{display:block;height:100%;border-radius:4px;background:var(--hs)}
+.hsx-r>b{flex:none;min-width:84px;text-align:right;font:700 14px var(--font-num);font-variant-numeric:tabular-nums}
 .hen-tip{position:absolute;top:0;width:90px;padding:3px 0;border-radius:8px;background:var(--surface-2);font:700 12px var(--font-num);text-align:center;pointer-events:none}
 .hen-r .hen-d{flex:none;font:800 16px var(--font-num);font-variant-numeric:tabular-nums}.hen-sleep .hmini{color:var(--ring-sleep);background:var(--ring-sleep-soft)}
 .hen-day .hmini{color:var(--muted);background:var(--track)}.hen-workout .hmini{color:var(--wo);background:color-mix(in srgb,var(--wo) 16%,transparent)}
@@ -16841,12 +16849,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // «1:35», «0:58»: minutes as hours and minutes (Bevel's, without the seconds).
   function hlHm(m) { m = Math.round(m || 0); return Math.floor(m / 60) + ':' + ('0' + m % 60).slice(-2); }
-  // The stress in a word, the server's («39 — стресс средний»), capitalised; its zone by the bands 34 / 67.
+  // The stress's bands, the server's STRESS_BANDS (Bevel's: under 30 low, 30–59 medium, from 60 high).
+  var HL_STRESS = [30, 60];
+  // The stress in a word, the server's («39 — стресс средний»), capitalised; its zone by the bands.
   function hlStressWord(s) {
-    var w = String(s.line || '').split('стресс ')[1] || (s.value < 34 ? 'низкий' : s.value < 67 ? 'средний' : 'высокий');
+    var w = String(s.line || '').split('стресс ')[1] || (s.value < HL_STRESS[0] ? 'низкий' : s.value < HL_STRESS[1] ? 'средний' : 'высокий');
     return w.charAt(0).toUpperCase() + w.slice(1);
   }
-  function hlStressZone(v) { return v < 34 ? 'good' : v < 67 ? 'mid' : 'bad'; }
+  function hlStressZone(v) { return v < HL_STRESS[0] ? 'good' : v < HL_STRESS[1] ? 'mid' : 'bad'; }
+  // The stress of the curve (j.stress_day, docs/specs/health-queue-2026-11-02.md, C): «сейчас» — the last hour's mean
+  // today, a past day its mean.
+  function hlStressNow(sd) { return sd.now != null ? sd.now : sd.mean; }
   // «Стресс» as Bevel's gauge (home.jpg): a 270° arc lit to the value in its zone's colour, the number in the middle,
   // the word under it.
   // «Стресс» as Bevel's «Стресс за сегодня» (his frame 30.10.2026, 11:03): the dot in the zone's colour and the name,
@@ -16855,29 +16868,33 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // the value, the number and the word inside; under the card the energy bar — «Запас энергии» (j.energy, the pulse
   // model, docs/specs/health-energy.md) as lit ticks with «%», hidden without the day's pulse (never the recovery).
   // A tap on the card — the stress sheet; on the bar — hlEnergySheet.
+  // With the day's curve (j.stress_day — Bevel's home.jpg): the three numbers are its maximum, minimum and mean, each
+  // in its band's colour, the dial «сейчас» (the last hour; a past day — the mean), the update — the pulse's last sample.
   function hlStressCard(j) {
-    var sc = j.scores || {}, s = sc.stress;
-    if (!s) return null;
-    var z = hlStressZone(s.value), word = hlStressWord(s), row = j.row || {};
+    var sc = j.scores || {}, s = sc.stress, sd = j.stress_day;
+    if (!s && !sd) return null;
+    var v = sd ? hlStressNow(sd) : s.value, z = hlStressZone(v), word = sd ? hlStressWord({ value: v }) : hlStressWord(s), row = j.row || {};
     var c = mkCard('brain', 'Стресс и энергия');
-    var head = add(el('div', 'hsc-h hz-st-' + z), el('i', 'hsc-dot'), el('span', 'hsc-t', 'Стресс за сегодня'), add(el('span', 'hpr-go'), icon('arrow-right')));
-    var upd = row.received_at ? el('div', 'mu hsc-u', 'Последнее обновление: ' + foodTime(row.received_at)) : null;
+    var head = add(el('div', 'hsc-h hz-st-' + z), el('i', 'hsc-dot'), el('span', 'hsc-t', sd && sd.now == null ? 'Стресс за день' : 'Стресс за сегодня'), add(el('span', 'hpr-go'), icon('arrow-right')));
+    var upd = sd ? el('div', 'mu hsc-u', 'Последнее обновление: ' + foodTime(sd.at)) : row.received_at ? el('div', 'mu hsc-u', 'Последнее обновление: ' + foodTime(row.received_at)) : null;
     var stats = el('div', 'hsc-s');
     // «48,3 мс» — the number big, the unit small beside it.
     function stat(v, label, cls) {
       var m = String(v).match(/^([\d.,−-]+)\s*(.*)$/), num = m ? m[1] : String(v), unit = m ? m[2] : '';
       stats.appendChild(add(el('div', 'hsc-1'), add(el('div', 'hsc-v ' + cls), document.createTextNode(num), unit ? el('small', '', ' ' + unit) : null), el('div', 'mu', label)));
     }
-    stat(String(s.value), 'Среднее значение', 'hz-' + z);
+    if (sd) [[sd.max, 'Максимум'], [sd.min, 'Минимум'], [sd.mean, 'Среднее']].forEach(function (x) { stat(String(x[0]), x[1], 'hz-' + hlStressZone(x[0])); });
+    else stat(String(s.value), 'Среднее значение', 'hz-' + z);
     // A part's text is «48,3 мс (норма 50,2)»: the number before the bracket; its score under 50 — calmer than his
     // norm (green), over — tenser (orange).
-    (s.explain || []).forEach(function (x) {
+    if (!sd) (s.explain || []).forEach(function (x) {
       var t = String(x.text || (typeof x.value === 'string' ? x.value : '')).split(' (')[0];
       if (!t) return;
       stat(t, String(x.label || '').replace(/ к норме$/, ''), x.score == null ? '' : x.score <= 50 ? 'hz-good' : 'hz-mid');
     });
-    var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), tickDial(s.value, word, 'hz-' + z));
-    body.setAttribute('aria-label', 'Стресс ' + s.value + ', ' + word.toLowerCase() + ' — из чего');
+    var body = add(el('div', 'hsc-b'), add(el('div', 'hsc-l'), head, upd, stats), tickDial(v, word, 'hz-' + z));
+    body.setAttribute('aria-label', 'Стресс ' + (sd ? (sd.now != null ? 'сейчас ' : 'за день ') + v + ', ' + word.toLowerCase() + '; максимум ' + sd.max + ', минимум ' + sd.min + ', среднее ' + sd.mean
+      : s.value + ', ' + word.toLowerCase()) + ' — подробно');
     c.appendChild(tap(body, function () { haptic(); hlRingSheet('stress', j, body); }));
     if (j.energy && j.energy.level != null) {
       var e = j.energy.level, bar = el('div', 'hsc-e');
@@ -17006,6 +17023,88 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       tip.style.left = Math.max(0, Math.min(r.width - tw, cx * r.width / W - tw / 2)) + 'px';
     });
     box.addEventListener('pointerleave', hide);
+    return wrap;
+  }
+  // The day's stress (j.stress_day, docs/specs/health-queue-2026-11-02.md, C) under the stress sheet's head: three tiles —
+  // maximum, minimum, mean in their bands' colours; the curve from last night's start to the day's end, 0–100 with the
+  // bands' edges 30 and 60 dashed, the line in each step's band colour, the workouts (and 12 min after) as soft bands
+  // with no line, a crosshair «14:05 · 42»; «Время по уровням» — low, medium, high: a dot, the bar of the day's share,
+  // the time.
+  function hlStressDay(sd, W) {
+    var box = el('div', 'hsx'), g = el('div', 'hen-g hsx-g');
+    [[sd.max, 'Максимум'], [sd.min, 'Минимум'], [sd.mean, 'Среднее']].forEach(function (x) {
+      g.appendChild(add(el('div', 'hen-c hz-' + hlStressZone(x[0])), el('div', 'mu', x[1]), el('b', 'hsx-v', String(x[0]))));
+    });
+    add(box, g, hlStressChart(sd, W));
+    var m = sd.minutes || {}, all = (m.low || 0) + (m.mid || 0) + (m.high || 0), lv = el('div', 'hsec');
+    lv.appendChild(el('div', 'hsec-h', 'Время по уровням'));
+    [['low', 'Низкий', 'good'], ['mid', 'Средний', 'mid'], ['high', 'Высокий', 'bad']].forEach(function (x) {
+      var v = m[x[0]] || 0, bar = add(el('span', 'hsx-b'), el('i'));
+      bar.firstChild.style.width = (all ? Math.round(v / all * 100) : 0) + '%';
+      var r = add(el('div', 'hsx-r hz-' + x[2]), el('i', 'hsx-d'), el('span', 'hsx-n', x[1]), bar, el('b', '', v ? hlFmt('sleep_min', v) : '0 мин'));
+      r.setAttribute('aria-label', x[1] + ': ' + hlFmt('sleep_min', v));
+      lv.appendChild(r);
+    });
+    add(box, lv, el('div', 'mu hsec-n', 'Пульс к пульсу покоя и к твоему дневному размаху за 30 дней, шаг 5 минут; с начала прошлой ночи. Тренировки и 12 минут после них не считаются.'));
+    return box;
+  }
+  function hlStressChart(sd, W) {
+    var H = 168, L = 4, R = 30, T = 10, B = 22, pw = W - L - R, ph = H - T - B;
+    var t0 = Date.parse(sd.from), t1 = Math.max(Date.parse(sd.to), t0 + 36e5);
+    function x(t) { return L + Math.max(0, Math.min(1, (Date.parse(t) - t0) / (t1 - t0))) * pw; }
+    function y(v) { return T + (1 - v / 100) * ph; }
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hen-ch', role: 'img',
+      'aria-label': 'Стресс за день: максимум ' + sd.max + ', минимум ' + sd.min + ', среднее ' + sd.mean });
+    [0, HL_STRESS[0], HL_STRESS[1], 100].forEach(function (v) {
+      box.appendChild(svg('line', { x1: L, x2: L + pw, y1: y(v), y2: y(v), 'class': v % 100 ? 'hsx-z' : 'hen-gl' }));
+      box.appendChild(svg('text', { x: W - 2, y: y(v) + 4, 'class': 'ge', 'text-anchor': 'end' }, String(v)));
+    });
+    (sd.hidden || []).forEach(function (w) {
+      var a = x(w.from), b = x(w.to);
+      if (b - a > 0.5) box.appendChild(svg('rect', { x: a.toFixed(1), y: T, width: (b - a).toFixed(1), height: ph, 'class': 'hen-b hen-b-workout' }));
+    });
+    // The line in runs of one band: a run starts at the point before it, so the pieces join; a null breaks it.
+    var pts = sd.curve.map(function (c) { return c[1] == null ? null : [x(c[0]), y(c[1]), hlStressZone(c[1])]; });
+    function xy(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }
+    var run = null;
+    pts.forEach(function (p, i) {
+      if (!p) { run = null; return; }
+      if (!run || run.z !== p[2]) {
+        var prev = pts[i - 1];
+        run = { z: p[2], d: 'M' + xy(prev || p) + (prev ? 'L' + xy(p) : '') };
+        run.el = svg('path', { 'class': 'hsx-l hz-' + p[2] });
+        box.appendChild(run.el);
+      } else run.d += 'L' + xy(p);
+      run.el.setAttribute('d', run.d);
+    });
+    var lastI = sd.curve.length - 1, lp = pts[lastI];
+    if (lp) box.appendChild(svg('circle', { cx: lp[0].toFixed(1), cy: lp[1].toFixed(1), r: 4.5, 'class': 'hsx-dot hz-' + lp[2] }));
+    // The hours: the start, then each 6 h of the day's clock up to its end.
+    var marks = [[t0, foodTime(sd.from)]];
+    for (var h = 6; h <= 24; h += 6) {
+      var t = Date.parse(sd.to) - (24 - h) * 36e5;
+      if (t - t0 > (t1 - t0) * 0.12) marks.push([t, ('0' + h).slice(-2) + ':00']);
+    }
+    marks.forEach(function (mk, i) {
+      var px = L + (mk[0] - t0) / (t1 - t0) * pw;
+      box.appendChild(svg('text', { x: px.toFixed(1), y: H - 6, 'class': 'ge', 'text-anchor': i === 0 ? 'start' : i === marks.length - 1 && mk[0] >= t1 ? 'end' : 'middle' }, mk[1]));
+    });
+    var cross = svg('line', { y1: T, y2: T + ph, 'class': 'hen-x' }), tip = el('div', 'hen-tip'), wrap = add(el('div', 'hsh-ch hen-w'), box, tip);
+    cross.style.display = 'none';
+    box.appendChild(cross);
+    tip.hidden = true;
+    box.addEventListener('pointermove', function (ev) {
+      var r = box.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = -1;
+      pts.forEach(function (p, i) { if (p && (best < 0 || Math.abs(p[0] - px) < Math.abs(pts[best][0] - px))) best = i; });
+      if (best < 0) return;
+      var cx = pts[best][0];
+      cross.setAttribute('x1', cx.toFixed(1)); cross.setAttribute('x2', cx.toFixed(1));
+      cross.style.display = '';
+      tip.hidden = false;
+      tip.textContent = foodTime(sd.curve[best][0]) + ' · ' + sd.curve[best][1];
+      tip.style.left = Math.max(0, Math.min(r.width - 90, cx * r.width / W - 45)) + 'px';
+    });
+    box.addEventListener('pointerleave', function () { cross.style.display = 'none'; tip.hidden = true; });
     return wrap;
   }
   // The dial: 48 ticks round the circle, each in the colour of its place (green → yellow → red), lit to the value,
@@ -17484,8 +17583,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function loadTabs() {
       return hlPills([['cardio', 'Кардионагрузка'], ['muscle', 'Мышечная нагрузка']], lsub, function (x) { lsub = x; draw(); }, 'hltab');
     }
-    // The stress (docs/specs/bevel-gap.md, п. 2) is a fourth pill when the day has it: its parts, no chart.
-    var keys = HL_RINGS.map(function (r) { return r[0]; }).concat((j.scores || {}).stress ? ['stress'] : []);
+    // The stress (docs/specs/bevel-gap.md, п. 2) is a fourth pill when the day has it: the day's curve (j.stress_day) —
+    // «сейчас» large, maximum · minimum · mean, the curve and the minutes in each band — then the day score's parts.
+    var keys = HL_RINGS.map(function (r) { return r[0]; }).concat((j.scores || {}).stress || j.stress_day ? ['stress'] : []);
     var pills = hlPills(keys.map(function (x) { return [x, HL_NAMES[x]]; }), k, function (x) { cur = x; draw(); }, 'hfit');
     function draw() {
       var n = ++seq, s = (j.scores || {})[cur], h = body.parentNode && body.parentNode.querySelector('.lsh');
@@ -17494,21 +17594,22 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       clear(body);
       if (mus) return hlMuscleView(j, body, loadTabs());
       var tgt = cur === 'load' ? j.load_target || [28, 46] : null;
-      var stress = cur === 'stress';
-      var zone = s && cur === 'sleep' && HL_SLEEP_ZONE[s.word] ? HL_SLEEP_ZONE[s.word] : s && cur !== 'load' ? (stress ? hlStressZone(s.value) : s.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : s.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
-      var st = !s ? null : cur === 'load' ? (s.day ? HL_DAY_RU[s.day] : HL_LOAD_RU[s.status || 'calibration']) : stress ? hlStressWord(s) : HL_ZONE_RU[cur][zone];
-      var stCls = !s ? '' : cur === 'load' ? 'hl-st-' + (s.day ? HL_DAY_CLS[s.day] : s.status || 'calibration') : 'hz-st-' + zone;
-      var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до 34, высокий от 67' : 'Высокое от 67 %';
-      var sub = s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null;
-      add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub),
+      var stress = cur === 'stress', sd = stress ? j.stress_day : null, hs = sd ? { value: hlStressNow(sd) } : s;
+      var zone = hs && cur === 'sleep' && HL_SLEEP_ZONE[hs.word] ? HL_SLEEP_ZONE[hs.word] : hs && cur !== 'load' ? (stress ? hlStressZone(hs.value) : hs.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : hs.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
+      var st = !hs ? null : cur === 'load' ? (hs.day ? HL_DAY_RU[hs.day] : HL_LOAD_RU[hs.status || 'calibration']) : stress ? hlStressWord(hs) : HL_ZONE_RU[cur][zone];
+      var stCls = !hs ? '' : cur === 'load' ? 'hl-st-' + (hs.day ? HL_DAY_CLS[hs.day] : hs.status || 'calibration') : 'hz-st-' + zone;
+      var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Отлично от 85 %' : stress ? 'Низкий до ' + HL_STRESS[0] + ', высокий от ' + HL_STRESS[1] : 'Высокое от 67 %';
+      var sub = sd ? (sd.now != null ? 'Сейчас — среднее за последний час, обновлено ' + foodTime(sd.at) : 'Среднее за день') : s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null;
+      add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(hs ? String(hs.value) : '—', hs && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub),
         cur === 'load' ? loadTabs() : null);
+      if (sd) add(body, hlStressDay(sd, Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32))));
       if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
       if (cur === 'sleep' && j.sleep_need) body.appendChild(hlNeedTile(j.sleep_need, j.date));
       var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
       if (chart) body.appendChild(chart);
       var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
         el('div', 'mu hsec-s', cur === 'recovery' ? 'Обычный день — 60 %; каждая часть сдвигает вверх или вниз.' :
-          cur === 'sleep' ? 'Шесть частей ночи; тап по части — её строка и сколько она отняла от 100 %.' : stress ? 'Обычный день — 50; ВСР ниже нормы и пульс покоя выше поднимают стресс.' :
+          cur === 'sleep' ? 'Шесть частей ночи; тап по части — её строка и сколько она отняла от 100 %.' : stress ? (s ? 'Оценка дня — ' + s.value + ' (её показывает календарь): ВСР и пульс покоя к норме за 30 дней. Обычный день — 50; ВСР ниже нормы и пульс покоя выше поднимают стресс.' : 'Оценка дня — по ВСР и пульсу покоя к норме за 30 дней.') :
           'Растёт с 0 % за день: тренировки по зонам пульса, пульс вне них и шаги; цель — по восстановлению. Без потолка.'));
       if (!s) {
         parts.appendChild(el('div', 'mu', cur === 'recovery' ? 'Нужны ВСР и пульс во сне хотя бы за 5 дней.' :
