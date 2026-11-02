@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 10:56">
+<meta name="published" content="2026-11-02 11:52">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -7416,7 +7416,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     }
     function archiveCard(a) {
       var c = mkCard('archive', 'Архив документов'), groups = a.groups || [], n = a.count || 0, p = a.synced_at ? wp(a.synced_at) : null;
-      if (!groups.length) c.appendChild(el('div', 'row mu', 'Положи файл в iCloud → Dokumenty → 01'));
+      if (!groups.length) c.appendChild(el('div', 'row mu', 'Положи файл в iCloud → Dokumenty'));
       groups.forEach(function (g) {
         var open = !!legalArc[g.key], r = hrow(g.name, null, String(g.docs.length));
         r.appendChild(icon(open ? 'chevron-up' : 'chevron-down', 'go'));
