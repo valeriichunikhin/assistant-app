@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 11:59">
+<meta name="published" content="2026-11-02 13:01">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -880,6 +880,8 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .bcat .bcg{padding:16px 0 4px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}
 .bcat .bcg:first-child{padding-top:2px}
 /* The «Цели» sheet's groups (01.11.2026): the catalog's group header. */
+.fgauto:not(:empty){display:flex;align-items:center;gap:12px;margin:0 0 6px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-s)}
+.fgauto>.mu{font-size:12px}.fgauto-t{flex:1;min-width:0;font-size:14px;font-weight:600}.fgauto-t .mu{font-size:12px;font-weight:400;margin-top:2px}.fgauto-b{flex:none}
 .fgsec{padding:14px 0 6px;color:var(--muted);font:600 11.5px/1.3 var(--font);letter-spacing:.04em;text-transform:uppercase}.fgsec:first-child{padding-top:0}
 .bv.bwx{display:flex;align-items:center;gap:8px}.bv.bwx .i{flex:none;width:30px;height:30px;stroke-width:1.75}
 .bsplit .bcol .bv.bwx{margin:0}.bcol>.mu{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1823,6 +1825,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .hph-m{flex:1;min-width:0}.hph-n{font-size:12px;overflow-wrap:anywhere}.hph b{display:block;margin-top:2px;font:800 22px/1.15 var(--font-num);font-variant-numeric:tabular-nums}
 .hph-s{font-size:13px;font-weight:700;color:var(--ph)}.hph-r{flex:none;overflow:visible}.hph-r circle{fill:none;stroke-linecap:round}
 .hph-r .tr{stroke:color-mix(in srgb,var(--ph) 18%,transparent)}.hph-r .arc{stroke:var(--ph)}
+.hneed{margin-top:8px;border:1px solid var(--line);border-radius:var(--r-b);background:var(--surface-2)}
+.hneed-h{display:flex;align-items:center;gap:8px;padding:12px;cursor:pointer}.hneed-h .mu{flex:1;min-width:0;font-size:13px}
+.hneed-h b{font:800 17px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}.hneed-go{width:16px;height:16px;flex:none;color:var(--muted);transition:transform .2s}
+.hneed.open .hneed-go{transform:rotate(90deg)}.hneed-b{display:none;padding:0 12px 4px}.hneed.open .hneed-b{display:block}
+.hneed-r{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.hneed-t{min-width:0}.hneed-t .tx{font-size:14px;font-weight:600}.hneed-t .mu{font-size:12px;margin-top:2px;overflow-wrap:anywhere}
+.hneed-r b{flex:none;font:800 15px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
 .hph-awake{--ph:var(--ring-load)}.hph-rem{--ph:var(--ring-sleep-2)}.hph-core{--ph:var(--ring-sleep)}.hph-deep{--ph:color-mix(in srgb,var(--ring-sleep) 55%,var(--fg))}
 .hgst{margin:-2px 0 2px;font-size:13px;font-weight:700;color:color-mix(in srgb,var(--st) 75%,var(--fg))}.hgg.tap{border-radius:var(--r-b)}
 .hft{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 14px 14px}@media (min-width:900px){.hft{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -4590,7 +4599,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           rings.className += ' bsm';
           var z = h.zones || {}, tg = h.load_target || [28, 46], ld = h.load_day;
           if (h.sleep != null) add(line('', 'bkg bh3'), icon('moon'), document.createTextNode('Сон ' + h.sleep + ' %' +
-            (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '')));
+            (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '') +
+            (h.sleep_need_min ? ' · нужно ' + needHm(h.sleep_need_min) : '')));
           if (h.recovery != null) add(line('', 'bkg bh3'), icon('activity'), document.createTextNode('Восстановление ' + h.recovery + ' %' +
             (z.recovery ? ' · ' + HL_ZONE_RU.recovery[z.recovery].toLowerCase() : '')));
           if (h.load != null) {
@@ -16439,6 +16449,24 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     bd.value = h.birth_date || '2000-11-25';
     num(ht, 'numeric', 'рост — по умолчанию 180', 'Рост, см', h.height_cm ? String(h.height_cm) : '');
     function val(x) { var t = x.value.trim(); return t ? foodNum(t) : null; }
+    // «Сколько тебе нужно» (docs/specs/sleep-need.md, п. 2): the median sleep of his good mornings (recovery from 67 %)
+    // over 90 days; «Взять» puts it in the field, «Сохранить» keeps it — the goal never changes by itself.
+    var auto = el('div', 'fgauto');
+    api('miniapp', { action: 'health_sleep_auto' }, 15000, true).then(function (a) {
+      if (!a || !a.ok) return;
+      var nights = a.good + ' ' + ['ночи', 'ночах', 'ночах'][plural3(a.good)];
+      if (a.min == null) {
+        add(auto, el('div', 'mu', 'По твоим ночам: мало данных — нужно 10 утр с восстановлением от 67 %, есть ' + a.good + '.'));
+        return;
+      }
+      var b = foodBtn('btn ghost fgauto-b', null, 'Взять', function () {
+        sl.value = String(Math.round(a.min / 60 * 100) / 100).replace('.', ',');
+        label(b, 'check', 'Взято');
+        b.disabled = true;
+      });
+      add(auto, add(el('div', 'fgauto-t'), el('span', '', 'По твоим ночам: ' + needHm(a.min)),
+        el('div', 'mu', 'медиана сна утр с восстановлением от 67 %, на ' + nights)), b);
+    }, noop);
     var ok = foodBtn('btn', 'check', 'Сохранить', function () {
       var k = val(kc), f = val(fb), l = val(wt), hr = val(sl), sg = val(st), cm = val(ht), b = bd.value;
       var ml = l === null ? null : Math.round(l * 1000), min = hr === null ? null : Math.round(hr * 60);
@@ -16475,7 +16503,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu msrc', 'Ккал — для итогов из Health. Жиры, углеводы, белки и клетчатка — граммы в день; пусто — 89 / 212 / 213\u00a0г при 2\u00a0500\u00a0ккал (по цели ккал) и 25\u00a0г клетчатки.'),
       el('div', 'fgsec', 'Вода'), row(icon('droplet'), wt, 'л'),
       el('div', 'mu msrc', 'Вода и напитки за день, в литрах — например 2,5. Пусто\u00a0— 2\u00a0л.'),
-      el('div', 'fgsec', 'Сон'), row(icon('moon'), sl, 'ч'),
+      el('div', 'fgsec', 'Сон'), row(icon('moon'), sl, 'ч'), auto,
       el('div', 'mu msrc', 'Сколько спать за ночь, в часах — например 7,5. По этой цели считается кольцо сна. Пусто\u00a0— 8\u00a0ч.'),
       el('div', 'fgsec', 'Активность'), row(icon('footprints'), st, 'шагов'),
       el('div', 'mu msrc', 'Шагов в день — цель на шкале «Шаги» в «Сегодня». Пусто\u00a0— 10\u00a0000.'),
@@ -17046,7 +17074,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // The part's icon by its label (the rings' parts).
   var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer',
     'Длительность': 'moon', 'Глубокий и REM': 'bed', 'Пробуждения': 'eye', 'Эффективность': 'percent', 'Сегодня': 'flame', 'За 7 дней': 'calendar-range',
-    'Обычно за 28 дней': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'Нагрузка за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
+    'Обычно за 6 недель': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'Нагрузка за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
   var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Норма', bad: 'Мало' } };
   var HL_LOAD_RU = { calibration: 'Калибровка', low: 'Недостаток тренировки', maintain: 'Поддержание', productive: 'Результативность',
     fatigue: 'Усталость', overtrain: 'Перетренировка' };
@@ -17435,6 +17463,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : hlHead(s ? String(s.value) : '—', s && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub),
         cur === 'load' ? loadTabs() : null);
       if (cur === 'sleep' && j.sleep) body.appendChild(hlSleepBlock(j.sleep));
+      if (cur === 'sleep' && j.sleep_need) body.appendChild(hlNeedTile(j.sleep_need, j.date));
       var chart = stress ? null : add(el('div', 'hsh-ch'), el('div', 'mu hsh-none', 'загружаю…'));
       if (chart) body.appendChild(chart);
       var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
@@ -17554,6 +17583,31 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     }
     return out;
   }
+  // «8 ч 10», «8 ч» — the sleep need's minutes.
+  function needHm(m) { m = Math.round(m || 0); return Math.floor(m / 60) + '\u00a0ч' + (m % 60 ? '\u00a0' + ('0' + m % 60).slice(-2) : ''); }
+  // «Потребность во сне» under the phases (docs/specs/sleep-need.md, Bevel's row in sleep-phases.jpg): the night after the
+  // day's need, a tap opens its parts — the goal, the load, the debt, the efficiency, each with its line — and last night
+  // against the need it had.
+  function hlNeedTile(n, date) {
+    var box = el('div', 'hneed'), go = icon('chevron-right', 'hneed-go');
+    var head = add(el('div', 'hneed-h'), el('span', 'mu', date === foodToday() ? 'Потребность сегодня' : 'Потребность на ночь'), el('b', '', needHm(n.need_min)), go);
+    head.setAttribute('role', 'button');
+    head.setAttribute('aria-expanded', 'false');
+    head.setAttribute('aria-label', 'Потребность во сне ' + needHm(n.need_min) + ' — из чего');
+    var bd = el('div', 'hneed-b');
+    (n.parts || []).forEach(function (p) {
+      var v = p.key === 'goal' ? needHm(p.min) : p.min ? '+' + p.min + '\u00a0мин' : '—';
+      bd.appendChild(add(el('div', 'hneed-r'), add(el('div', 'hneed-t'), el('span', 'tx', p.label), el('div', 'mu', hlNb(p.line.charAt(0).toUpperCase() + p.line.slice(1)))), el('b', '', v)));
+    });
+    if (n.last) bd.appendChild(add(el('div', 'hneed-r'), add(el('div', 'hneed-t'), el('span', 'tx', 'Прошлая ночь'),
+      el('div', 'mu', 'сон ' + needHm(n.last.sleep_min) + ' против потребности ' + needHm(n.last.need_min))), el('b', '', n.last.pct + '\u00a0%')));
+    tap(head, function () {
+      haptic();
+      var open = box.classList.toggle('open');
+      head.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    return add(box, head, bd);
+  }
   // A tile's scale: the norm's band (±1 σ) across the middle of ±2.5 σ, the day's dot on it with a halo; both in the
   // status colour of the tile (--st).
   function hlTrack(t) {
@@ -17653,7 +17707,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       : el('div', 'mu hsh-none', ml ? 'За 30 дней базы ещё нет.' : 'Нет данных — обнови экран.'), ml ? hlLines('muscle', ml.lines) : null));
     if (ml) body.appendChild(hlBreakdown(ml.statuses));
     var parts = add(el('div', 'hsec'), el('div', 'hsec-h', 'Из чего'),
-      el('div', 'mu hsec-s', 'Зал — подходы × вес × повторы по группам, волейбол и бег — долями по группам; 7 дней против своей обычной недели за 28 (35 %).'));
+      el('div', 'mu hsec-s', 'Зал — подходы × вес × повторы по группам, волейбол и бег — долями по группам; 7 дней против своей обычной недели за 6 недель (35 %).'));
     if (s) s.explain.forEach(function (p) { parts.appendChild(hlPartRow(p, 'hl-load', j)); });
     else parts.appendChild(el('div', 'mu', 'Пока нет базы: нужна неделя тренировок и нагрузка на мышцы до последних 7 дней.'));
     var go = add(el('div', 'hpr hgo'), add(el('span', 'hmini'), icon('biceps-flexed')), add(el('div', 'hpr-m'), el('span', 'hpr-n', 'Мышечные группы'),
