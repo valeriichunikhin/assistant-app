@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 23:36">
+<meta name="published" content="2026-11-03 00:47">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1184,6 +1184,7 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nusc{display:flex;align-items:center;gap:14px;margin:0 0 8px;padding:12px 14px;border:1px solid var(--card-line);border-radius:var(--r-b);background:var(--surface);box-shadow:var(--shadow)}
 /* «Оценка питания»: one ring as Б · Ж · У's (hlRing, 100), its colour --q set by the score (nuQ), the track a soft
    shade of it; locked — the muted track with a lock; the band word in --q, the chips of the biggest contributors. */
+.nuf.nuoff{opacity:.45}
 .nusq{flex:none;position:relative;display:grid;place-items:center}.nusq>.i{position:absolute;width:26px;height:26px;color:var(--muted)}
 .hring.nu-q{--rc-end:var(--q);--rc-start:color-mix(in srgb,var(--q) 55%,#fff)}.hring.nu-q .tr{stroke:color-mix(in srgb,var(--q) var(--nu-soft),transparent)}
 .nuqw{margin-top:1px;font:700 15px/1.3 var(--font);color:var(--q)}
@@ -3062,6 +3063,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var FIT_TILE_KEYS = ['all', 'energy', 'vo2', 'hrr', 'focus', 'zones', 'sets', 'volume'];
   // prefs.health.targets: «Целевые нутриенты» of the «Цели» sheet (NG_TARGET), the server's TARGET_KEYS.
   var NG_TARGET_KEYS = ['fiber', 'water', 'sodium', 'sugar'];
+  // prefs.health.food_off: the score's factors he switched off (up to four; food.ts SCORE_KEYS is the twin).
+  var NU_SCORE_KEYS = ['veg', 'grains', 'fats', 'fruit', 'nuts', 'omega3', 'red_meat', 'sodium', 'processed', 'alcohol', 'sugar'];
   function fitPrefsIn(f) { return orderPrefsIn(f, FIT_TILE_KEYS); }
   // prefs.monitor (bevel-gap п. 1): «Монитор»'s tiles hidden and in order, the same way.
   var MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
@@ -3084,6 +3087,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (typeof h.height_cm === 'number' && h.height_cm % 1 === 0 && h.height_cm >= 100 && h.height_cm <= 250) o.height_cm = h.height_cm;
     var tg = keysIn(h.targets, NG_TARGET_KEYS);
     if (tg.length) o.targets = tg;
+    var fo = keysIn(h.food_off, NU_SCORE_KEYS).slice(0, 4);
+    if (fo.length) o.food_off = fo;
     ['fat_g', 'carbs_g', 'protein_g'].forEach(function (k) {
       if (typeof h[k] === 'number' && h[k] % 1 === 0 && h[k] >= 5 && h[k] <= 1000) o[k] = h[k];
     });
@@ -16138,16 +16143,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     return NU_Q[NU_Q.length - 1][1];
   }
   function nuScore(sc, fs) {
-    var used = fs.filter(function (f) { return f.score !== false; });
-    var sum = Math.round(used.reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
+    var off = sc.off || [], used = fs.filter(function (f) { return f.score !== false && off.indexOf(f.key) < 0; });
+    // The server's sum (switched-off factors out, each side rescaled); an older answer without it — the plain one.
+    var sum = sc.sum != null ? sc.sum : Math.round(used.reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
     var band = NU_BAND.filter(function (b) { return sc.locked || sc.value >= b[0]; })[0];
     var dial = add(el('div', 'nusq'), hlRing(sc.locked ? null : sc.value, 'nu-q', 100));
     if (sc.locked) {
       dial.querySelector('.rv').remove();
       dial.appendChild(icon('lock'));
     }
-    var t = add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), sc.locked ? null : el('div', 'nuqw', band[1]), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
-      : 'база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам'));
+    var t = add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), sc.locked ? null : el('div', 'nuqw', band[1]), el('div', 'mu', sc.locked ? 'Запиши ещё еды — оценка с трети цели (ещё ~' + grouped(sc.need) + ' ккал)'
+      : 'база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам' + (off.length ? ' · выключено ' + off.length : '')));
     if (!sc.locked) {
       var top = used.filter(function (f) { return f.points; }).sort(function (a, b) { return Math.abs(b.points) - Math.abs(a.points); }).slice(0, 3)
         .sort(function (a, b) { return (b.points > 0) - (a.points > 0) || Math.abs(b.points) - Math.abs(a.points); });
@@ -16168,12 +16174,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     info.type = 'button';
     info.setAttribute('aria-label', 'Как считаются факторы');
     info.onclick = function () {
-      legalSheet('Факторы качества питания', [el('p', 'nufx', 'Оценка питания — как у Bevel: база 50, к ней плюсы и минусы одиннадцати факторов, у каждого свой потолок; калории и Б/Ж/У в неё не входят. Плюсы до +10: овощи, цельные злаки, полезные жиры, фрукты, орехи и бобовые, омега-3. Минусы: красное мясо до −5, натрий до −5, переработанное мясо до −10, алкоголь до −10, добавленный сахар до −10. Количество каждого продукта оценивается вместе с записью; в старых записях без оценки — по названию. Пока записано меньше трети дневной нормы калорий, оценка закрыта. Клетчатка и вода — наши строки с твоими целями, в оценку не входят.'),
+      legalSheet('Факторы качества питания', [nuOffCard(fs, info), el('p', 'nufx', 'Оценка питания — как у Bevel: база 50, к ней плюсы и минусы одиннадцати факторов, у каждого свой потолок; калории и Б/Ж/У в неё не входят. Плюсы до +10: овощи, цельные злаки, полезные жиры, фрукты, орехи и бобовые, омега-3. Минусы: красное мясо до −5, натрий до −5, переработанное мясо до −10, алкоголь до −10, добавленный сахар до −10. Количество каждого продукта оценивается вместе с записью; в старых записях без оценки — по названию. Пока записано меньше трети дневной нормы калорий, оценка закрыта. Клетчатка и вода — наши строки с твоими целями, в оценку не входят.'),
         el('div', 'mu msrc', 'Безопасный порог — черта на шкале предела: пока точка левее, баллы не снимаются.')], info);
     };
+    var offs = (sc && sc.off) || [];
     fs.forEach(function (f, i) {
-      var p = el('span', 'nufp' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : ''), nuPoints(f));
-      var r = add(el('div', 'nuf'), el('span', 'nufe', f.emoji), el('span', 'nufn', f.name), nuSlider(f), p, add(el('span', 'nufg'), icon('arrow-right')));
+      var isOff = offs.indexOf(f.key) >= 0;
+      var p = el('span', 'nufp' + (isOff ? '' : f.points > 0 ? ' up' : f.points < 0 ? ' down' : ''), isOff ? 'выкл.' : nuPoints(f));
+      var r = add(el('div', 'nuf' + (isOff ? ' nuoff' : '')), el('span', 'nufe', f.emoji), el('span', 'nufn', f.name), nuSlider(f), p, add(el('span', 'nufg'), icon('arrow-right')));
       r.setAttribute('aria-label', f.name + ': ' + (f.points == null ? 'нет данных' : nuPoints(f)) + ' — подробнее');
       if (i >= 6) r.hidden = true;
       list.appendChild(tap(r, function () { nuFactorSheet(f, r); }));
@@ -16197,6 +16205,31 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var leg = svg('svg', { viewBox: '0 0 22 12', width: 22, height: 12, 'aria-hidden': 'true' });
     add(leg, svg('rect', { x: 0, y: 4, width: 22, height: 4, rx: 2, 'class': 'tr' }), svg('line', { x1: 15, y1: 0, x2: 15, y2: 12, 'class': 'mk' }));
     return add(box, add(el('div', 'nuleg mu'), leg, document.createTextNode('Безопасный порог')));
+  }
+  // «Учитывать в оценке» (Bevel lets four of its contributors be switched off): a tick per factor of the score, at most
+  // four off — prefs.health.food_off; the score then drops them and rescales each side (food.ts qualityScore). Saved, the
+  // day is fetched again so the score is the server's.
+  function nuOffCard(fs, from) {
+    var card = mkCard('toggle-right', 'Учитывать в оценке'), rows = el('div');
+    add(card, el('div', 'sub', 'Можно выключить до четырёх факторов — оценка пересчитается без них'), rows);
+    function paint() {
+      var off = (prefs.health || {}).food_off || [];
+      clear(rows);
+      fs.filter(function (f) { return NU_SCORE_KEYS.indexOf(f.key) >= 0; }).forEach(function (f) {
+        var on = off.indexOf(f.key) < 0;
+        rows.appendChild(add(el('div', 'row'), rowBtn(on ? 'check-square' : 'square', { label: f.name + ' в оценке', on: on }, 'tog', false, function () {
+          if (on && off.length >= 4) return toast('Выключить можно не больше четырёх');
+          var next = on ? off.concat([f.key]) : off.filter(function (k) { return k !== f.key; }), h = Object.assign({}, prefs.health || {});
+          if (next.length) h.food_off = next; else delete h.food_off;
+          editPrefs({ health: Object.keys(h).length ? h : null });
+          paint();
+          cacheDrop('food:' + FOOD.date);
+          if (current === 'food') show('nutrition');
+        }), add(el('span', 'tx'), el('div', 't', f.emoji + ' ' + f.name))));
+      });
+    }
+    paint();
+    return card;
   }
   // What a factor's sheet says of the day: the items that counted, the amount against the target or the threshold and
   // where it came from (the entries' estimates, Health, or only the names of older entries).
@@ -16905,6 +16938,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (h.birth_date) o.birth_date = h.birth_date;
       if (h.height_cm) o.height_cm = h.height_cm;
       if (h.targets) o.targets = h.targets;
+      if (h.food_off) o.food_off = h.food_off;
       mac.forEach(function (x, i) {
         var v = val(x);
         if (v !== null && !(v % 1 === 0 && v >= 5 && v <= 1000)) bad = bad || NU_MACROS[i][1];
@@ -19526,7 +19560,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // The honest sentence of «Из чего»: the blood's date and weight, the factors' count, what the physiology misses.
   function bioHonest(j) {
     var p = j.pheno || {}, l = j.lifestyle || {}, n = (l.factors || []).length, out = [];
-    out.push(p.taken_on ? 'Кровь от ' + dm(p.taken_on) + ' (вес ' + Math.round((p.weight || 0) * 100) + ' %)' : 'анализа крови нет');
+    out.push(p.taken_on ? 'Кровь от ' + dm(p.taken_on) + ' (вес ' + Math.round((p.weight || 0) * 100) + ' %' +
+      (bioFreshWord(p.taken_on) ? ', ' + bioFreshWord(p.taken_on) : '') + ')' : 'анализа крови нет');
     out.push(n + ' ' + ['фактор', 'фактора', 'факторов'][plural3(n)] + ' из 28 дней');
     var miss = [];
     (l.missing || []).forEach(function (m) {
@@ -19577,7 +19612,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var l = j.lifestyle || {}, close = noop;
     var nodes = [el('div', 'mu hxs', bioHonest(j) + '.'),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'Общий'), el('span', 'pr', j.overall == null ? '—' : woNum(j.overall))),
-        el('div', 'mu', 'Кровь (PhenoAge) — треть, возраст по привычкам за 28 дней — две трети; кровь весит полностью до 6 мес., к 18 мес. — ноль. Пульс и VO2max перекрываются: слабейший из них — в счёт наполовину' +
+        el('div', 'mu', 'Кровь (PhenoAge) — треть, возраст по привычкам за 28 дней — две трети; кровь весит полностью до 6 мес., к 12 мес. — ноль. Пульс и VO2max перекрываются: слабейший из них — в счёт наполовину' +
           '. Пересчёт раз в неделю, в понедельник — число держится всю неделю.')),
       add(el('div', 'hxs'), add(el('div', 'hxh'), el('b', '', 'По привычкам, 28 дней'), el('span', 'pr', (l.factors || []).length ? bioSigned(l.sum) + ' → ' + woNum(l.age) : '—')),
         el('div', 'mu', 'Годы фактора — ln(риск) / 0,0902, наклон смертности по возрасту из PhenoAge. Сумма честная: факторы перекрываются ' +
@@ -19688,10 +19723,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // A group's sheet: its years large; a card a factor — the value, the threshold, the contribution as a bar from the
   // middle, the source; its 28 days (hlChart) when the factor has a series. The blood: the nine PhenoAge terms.
+  // A blood panel's age in words (Bevel's help center, docs/bevel-history.md): «свежий» under 3 months, «стоит
+  // пересдать» from 6, «не учитывается» from 12 (freshness() in bioage.ts: full weight to 6 months, none at 12).
+  function bioFreshWord(d) {
+    if (!d) return '';
+    var m = (Date.parse(foodToday() + 'T12:00:00Z') - Date.parse(d + 'T12:00:00Z')) / (30.4375 * 864e5);
+    return m < 3 ? 'свежий' : m >= 12 ? 'не учитывается' : m >= 6 ? 'стоит пересдать' : '';
+  }
   function bioFactorSheet(g, j, from) {
     var body = el('div', 'hsh'), close = noop, w = bioWord(g.years), p = j.pheno || {}, f = j.fitness || {};
     add(body, add(el('div', 'hsh-head'), add(el('div', 'hsh-v'), el('div', 'hsh-big bas-fb ' + w[1], g.years == null ? '—' : bioSigned(g.years) + ' ' + bioYw(g.years)),
-      el('div', 'mu', g.years == null ? 'нет данных' : w[0] + (g.key === 'blood' ? ' · анализ ' + dmy(p.taken_on) : g.key === 'life' ? '' : ' · за 28 дней')))));
+      el('div', 'mu', g.years == null ? 'нет данных' : w[0] + (g.key === 'blood' ? ' · анализ ' + dmy(p.taken_on) + (bioFreshWord(p.taken_on) ? ' · ' + bioFreshWord(p.taken_on) : '') : g.key === 'life' ? '' : ' · за 28 дней')))));
     var charts = [];
     if (g.key === 'blood') {
       var s = el('div', 'hxs');
@@ -19699,7 +19741,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       else {
         var ex = p.explain || [];
         s.appendChild(el('div', 'mu', 'PhenoAge ' + woNum(p.age) + ' при возрасте на дату ' + woNum(p.age_at != null ? p.age_at : p.age - p.delta) +
-          ' · вес ' + Math.round(p.weight * 100) + ' % (полный до 6 мес., к 18 мес. — ноль).'));
+          ' · вес ' + Math.round(p.weight * 100) + ' % (полный до 6 мес., к 12 мес. — ноль).'));
         bioRows(s, ex.map(function (x) { return [x.label, x.value == null ? 'при средних значениях' : woLab(x.value) + ' ' + x.unit, x.years]; }),
           Math.max.apply(null, ex.map(function (x) { return Math.abs(x.years); }).concat([0.5])));
       }
