@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 19:16">
+<meta name="published" content="2026-11-02 21:03">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1721,7 +1721,7 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hnc-v small{font:700 17px var(--font);color:var(--muted)}.hnc-c{font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px}
 .hnc-ch .hnc-d{fill:var(--hl-pink);opacity:.85}.hnc-ch.hnc-hrv .hnc-d{fill:var(--hl-sky)}.hnc-ch .hnc-l{fill:none;stroke:var(--ring-sleep);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .hnc-e{display:flex;justify-content:space-between;margin:4px 0 0}.hnc-e span{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:7px;background:var(--surface-2);font:700 12px var(--font-num)}
-.hnc-e .i{width:13px;height:13px}.hpills.hnc-p{margin:14px 0 0}.hpills.hnc-p button{flex:1 1 0}
+.hnc-e .i{width:13px;height:13px}.hpills.hnc-p{margin:14px 0 16px}.hpills.hnc-p button{flex:1 1 0}
 /* «Что влияет» (recovery-factors.jpg): the legend, a card a habit — icon, name, the signed difference; a track from the
    middle dot to its side; short of data grey. */
 .hef-lg{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;font-size:12px}
@@ -18046,9 +18046,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // Bevel's tiles. A finger on the chart — the nearest sample's time and value.
   function hlNightCurve(sc, W) {
     var KS = [['hr', 'Пульс', 'уд/мин', 'пульса'], ['hrv', 'ВСР', 'мс', 'ВСР']].filter(function (k) { return sc[k[0]]; });
-    var box = add(el('div', 'hsec hnc'), el('div', 'hsec-h', 'Сердечный ритм во сне')), view = el('div'), cur = KS[0][0];
+    var head = el('div', 'hsec-h'), box = add(el('div', 'hsec hnc'), head), view = el('div'), cur = KS[0][0];
     function draw() {
       var k = KS.filter(function (x) { return x[0] === cur; })[0], c = sc[cur];
+      head.textContent = cur === 'hrv' ? 'ВСР во сне' : 'Пульс во сне';
       add(clear(view), add(el('div', 'hnc-v'), el('b', '', woNum(c.mean)), el('small', '', k[2])),
         el('div', 'mu hnc-c', 'Среднее за ночь · мин ' + woNum(c.min) + ' · макс ' + woNum(c.max)), hlNightChart(sc, c, k, W),
         add(el('div', 'hnc-e'), add(el('span'), icon('moon'), document.createTextNode(foodTime(sc.start))),
