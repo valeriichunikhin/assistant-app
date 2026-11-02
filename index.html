@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 21:31">
+<meta name="published" content="2026-11-02 22:29">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1894,9 +1894,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .hsti{flex:none;display:grid;place-items:center;width:44px;height:30px;border-radius:999px;color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--hst) 80%,#fff),var(--hst));box-shadow:0 4px 14px color-mix(in srgb,var(--hst) 35%,transparent)}
 .hsti .i{width:18px;height:18px}.hsti.big{width:96px;height:64px}.hsti.big .i{width:32px;height:32px}
 .hsti.hmsb{position:absolute;right:-2px;top:-2px;width:18px;height:18px;box-shadow:0 0 0 2px var(--solid)}.hsti.hmsb .i{width:11px;height:11px}.fmd.hmd{position:relative}
-.hstw{display:flex;margin:0 0 12px}
-.hstp{display:flex;align-items:center;gap:10px;min-height:52px;max-width:100%;padding:6px 14px 6px 6px;border:1px solid var(--card-line);border-radius:999px;background:var(--surface);box-shadow:var(--shadow);color:var(--fg);text-align:left}
-.hstp .tx{display:flex;flex-direction:column;min-width:0}.hstp b{font-size:15px}.hstp .mu{font-size:12.5px}.hstp>.i{flex:none;width:18px;height:18px;color:var(--muted)}
+.hstc{margin-left:auto;flex:none;display:inline-grid;place-items:center;height:32px;padding:0;border:0;background:none;cursor:pointer}
+.hstc .hsti{width:44px;height:30px}.hstc .hsti .i{width:16px;height:16px}.hstc+.mtoday{margin-left:8px}
 .hsts{display:flex;flex-direction:column;gap:10px;margin:4px 0 12px}
 .hsrw{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:12px 16px;border:1px solid var(--card-line);border-radius:28px;background:var(--surface-2);color:var(--fg);text-align:left}
 .hsrw .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hsrw b{font-size:16px}.hsrw .mu{font-size:14px;line-height:1.3}
@@ -15756,7 +15755,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var had = HJ && HJ.has_data;
       HJ = j;
       var stRefresh = function () { cacheDrop('body:' + date); cacheDrop('home'); loadHealth(); };
-      add.apply(null, [clear(top), date === foodToday() || (j.status && j.status.status !== 'active') ? hlStatusPill(j.status, stRefresh) : null]
+      HL_STATUS_DONE = stRefresh;
+      add.apply(null, [clear(top)]
         .concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
           woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
         }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
@@ -17166,14 +17166,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     return x ? x[1] : 'до ' + Number(k.slice(8, 10)) + ' ' + MONTHS_G[Number(k.slice(5, 7)) - 1];
   }
   function hlStatusIc(st, cls) { return add(el('span', 'hsti hst-' + st + (cls ? ' ' + cls : '')), icon(HL_STATUS_DEF[st][0])); }
-  // The pill over the rings (status-list.png, left of Bevel's weather): the icon in its colour, the name, how long, ⌄.
-  function hlStatusPill(o, done) {
+  // The status in the «Здоровье» card's head (his ask 02.11.2026: not a row of its own over the rings): the icon in its
+  // colour, left of «Из чего»; the name is under the load ring while it is not «Активен». HL_STATUS_DONE — the day's
+  // reload, set by drawHealth.
+  var HL_STATUS_DONE = noop;
+  function hlStatusChip(o) {
     o = o || { status: 'active', name: 'Активен', keep: 'До изменения' };
-    var b = add(el('button', 'hstp'), hlStatusIc(o.status), add(el('span', 'tx'), el('b', '', o.name), el('span', 'mu', o.keep)), icon('chevron-down'));
+    var b = add(el('button', 'hstc'), hlStatusIc(o.status));
     b.type = 'button';
     b.setAttribute('aria-label', 'Статус: ' + o.name + ', ' + o.keep.toLowerCase() + ' — изменить');
-    b.onclick = function () { haptic(); hlStatusSheet(o, b, done); };
-    return add(el('div', 'hstw'), b);
+    b.onclick = function () { haptic(); hlStatusSheet(o, b, function (r) { HL_STATUS_DONE(r); }); };
+    return b;
   }
   function hlStatusSave(st, keep, btn, done) {
     if (btn) btn.disabled = true;
@@ -17287,6 +17290,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     wrap.appendChild(add(el('div', 'hcur'), adv));
     var b = foodBtn('mtoday', 'layers', 'Из чего', function () { hlRingSheet('recovery', j, b); });
     b.setAttribute('aria-label', 'Из чего считаются кольца');
+    if (j.date === foodToday() || (j.status && j.status.status !== 'active')) c.firstChild.appendChild(hlStatusChip(j.status));
     c.firstChild.appendChild(b);
     c.appendChild(wrap);
     return c;
