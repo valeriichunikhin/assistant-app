@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 08:09">
+<meta name="published" content="2026-11-02 08:21">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -3177,6 +3177,15 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var m = /^notif(?:\/(\d+))?(?:\?|$)/.exec(h);
     return m ? { id: m[1] ? Number(m[1]) : null } : null;
   }
+  // A tapped push while the app is open: the worker posts the push's address (iOS cannot navigate a window).
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', function (e) {
+    var d = e.data || {};
+    if (d.type !== 'open' || typeof d.url !== 'string') return;
+    var i = d.url.indexOf('#');
+    if (i < 0) return;
+    if (location.hash === d.url.slice(i)) { var n0 = notifHash(d.url.slice(i + 1)); if (n0 && n0.id) { notifFocus = n0.id; show('notif'); } }
+    else location.hash = d.url.slice(i);
+  });
   window.addEventListener('hashchange', function () {
     var h = location.hash.slice(1), n = notifHash(h);
     if (n && n.id && shell.parentNode) { notifFocus = n.id; return show('notif'); }

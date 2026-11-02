@@ -30,6 +30,9 @@ self.addEventListener('notificationclick', function (e) {
       var c = list[i];
       if (c.url.indexOf(self.registration.scope) === 0 && 'focus' in c) {
         // Focus first, then move it to the push's tab; a client the worker does not control cannot navigate.
+        // iOS has no WindowClient.navigate (02.11.2026: a tap only brought the app up on its last tab), so the page
+        // is told the address too and moves itself; navigate stays for the browsers that have it.
+        c.postMessage({ type: 'open', url: target });
         return c.focus().then(function (w) {
           if (w && w.url !== target && 'navigate' in w) return w.navigate(target).catch(function () {});
         });
