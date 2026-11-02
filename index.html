@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 08:26">
+<meta name="published" content="2026-11-02 09:55">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -653,6 +653,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .msearch input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
 .row.mdebt .pr{font:600 14px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
 .mpsum{margin:0 0 2px}.mpsum.pos{color:var(--good)}.mpsum.neg{color:var(--bad)}
+.mfamh{display:flex;align-items:center;gap:6px;padding:12px 14px 6px;border-top:1px solid var(--line);color:var(--muted);font:600 12px/1.3 var(--font)}.mfamh .i{width:14px;height:14px;color:#ff0000}
+.row.mfam .pr{white-space:nowrap}.row.mfam .pr.neg{color:var(--bad)}.row.mfam .pr.warn{color:var(--warn)}.row.mfam .pr.mu{color:var(--muted);font-weight:500}
+.row.mfam .ptile{border:0;background:none}.mfring{display:block;width:32px;height:32px}.mfring circle{fill:none;stroke-width:3.4;stroke-linecap:round}
+.mfring .tr{stroke:var(--track,var(--line))}.mfring.paid .a{stroke:var(--good)}.mfring.soon .a{stroke:var(--warn)}.mfring.due .tr{stroke:color-mix(in srgb,var(--bad) 45%,transparent)}
+.row.msub .mfamc{margin-top:2px;font-size:12px}
 .mops{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 4px}.mops .btn{width:100%;justify-content:center}
 .mhist .row{padding-left:0;padding-right:0}.mhist .row.old{opacity:.6}
 .row.mgoal .tx{gap:5px}.row.mgoal .tx .mu{font-size:12px}.mbar>i.done{background:var(--good)}
@@ -2292,7 +2297,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     closed: 'Уже закрыто', 'nothing selected': 'Ничего не отмечено', 'no such item': 'Уже убрано',
     'bad url': 'Нужна ссылка http(s) на товар', 'bad target': 'Цель — число больше нуля',
     'no such film': 'Нет такого фильма', 'no such event': 'Нет такого события', 'no such row': 'Уже закрыто', 'bad date': 'Дата — сегодня или позже',
-    'no title': 'Нужен текст', too_close: 'Срок уже завтра — отложить некуда', late: 'Поздно, уже не вернуть'
+    'no title': 'Нужен текст', too_close: 'Срок уже завтра — отложить некуда', late: 'Поздно, уже не вернуть',
+    conflict: 'Уже записано'
   };
 
   var toastEl = document.getElementById('toast');
@@ -6551,7 +6557,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     }
     // A YouTube subscription task (the title starts with «YouTube»): «Получил · +6 мес» / «+12 мес» set the period the
     // person paid for (repeat monthly ×6 or yearly; the title's «· полгода / · год» follows) and roll the task to the
-    // next ask date in one tap, the same roll as its ✓ (tasks_edit, then tasks_done).
+    // next ask date in one tap, the same roll as its ✓ (tasks_edit, then tasks_done). A task of «YouTube · семья»
+    // (docs/specs/youtube-family.md) goes through money_family_paid by its id instead: the income on Revolut, paid_until
+    // on and the task after it in one call; for any other («not found») the buttons work as before.
     function ytPaid(t) {
       if (t.done || !/^youtube\b/i.test(t.title)) return null;
       var row = add(el('div', 'acts'), el('span', 'mu', 'Получил'));
@@ -6563,12 +6571,30 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
           var title = /·\s*(год|полгода)\s*$/.test(t.title) ? t.title.replace(/(год|полгода)\s*$/, o[3]) : t.title;
           [].forEach.call(row.querySelectorAll('button'), function (x) { x.disabled = true; });
           haptic();
-          api('miniapp', { action: 'tasks_edit' }, 15000, false, { id: t.id, repeat: o[1], repeat_every: o[2], title: title })
+          function moved() { if (more[t.id] && !more[t.id].busy) delete more[t.id]; }
+          function before() {
+            api('miniapp', { action: 'tasks_edit' }, 15000, false, { id: t.id, repeat: o[1], repeat_every: o[2], title: title })
+              .then(function (j) {
+                var r = (j && j.task) || {};
+                ['title', 'repeat', 'repeat_every', 'due_date'].forEach(function (f) { if (f in r) t[f] = r[f]; });
+                markTask(t, render, moved);
+              }, function () { render(); });
+          }
+          api('miniapp', { action: 'money_family_paid' }, 15000, true, { task_id: t.id, months: o[0], account: 'revolut' })
             .then(function (j) {
-              var r = (j && j.task) || {};
-              ['title', 'repeat', 'repeat_every', 'due_date'].forEach(function (f) { if (f in r) t[f] = r[f]; });
-              markTask(t, render, function () { if (more[t.id] && !more[t.id].busy) delete more[t.id]; });
-            }, function () { render(); });
+              var r = j.task || {};
+              ['title', 'repeat', 'repeat_every', 'due_date', 'rolled_from'].forEach(function (f) { if (f in r) t[f] = r[f]; });
+              cacheDrop('money');
+              cacheDrop('tasks');
+              cacheDrop('home');
+              moved();
+              render();
+              toast('Записано · оплачено до ' + moneyFamDate(j.member.paid_until) + ' ' + j.member.paid_until.slice(0, 4), 'check');
+            }, function (e) {
+              if (e && e.code === 'not found') return before();
+              if (!e.login) toast(ERRORS[e && e.code] || SAVE_FAILED);
+              render();
+            });
         };
         row.appendChild(b);
       });
@@ -11919,6 +11945,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (MONEY.acctBox && MONEY.acctBox.isConnected) moneyAcctsDraw(MONEY.acctBox);
     if (MONEY.wishEl && MONEY.wishEl.isConnected) moneyWishFill(MONEY.wishEl);
     if (MONEY.dailyEl && MONEY.dailyEl.isConnected) moneyDailyFill(MONEY.dailyEl);
+    // The subscriptions' card drawn before the state: again, with the family's line on YouTube.
+    if (MONEY.subsBox && MONEY.subsBox.isConnected && MONEY.subsData && MONEY.subsCover !== s.family_cover) moneySubsDraw(MONEY.subsBox, MONEY.subsData);
   }
   // «Долги» (§2): «Мне должны N zł · Я должен M zł», the people with a balance (green — they owe him, red — he owes),
   // «вернуть до 12.11», the settled ones under «ещё N»; a tap opens the person; «+ Человек». A removed (archived) person
@@ -11933,15 +11961,99 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (p.balance) f.appendChild(el('span', 'mfx', '≈\u00a0' + moneyInt(Math.abs(p.balance)) + '\u00a0zł'));
     return f;
   }
+  // «YouTube · семья» (docs/specs/youtube-family.md): money_state's family — the renewal a member owes from 30 days before
+  // paid_until (due) is counted, never a row; it shows in the group's row, counts in «Мне должны» and in their sheet.
+  // FAMILY_PLANS is the twin of _shared/money.ts's: 12 zł a month a person.
+  var FAMILY_PLANS = { 6: 72, 12: 150 };
+  function moneyFamDue(id) {
+    return ((MONEY.state && MONEY.state.family) || []).reduce(function (s, f) { return s + (f.person_id === id ? f.due : 0); }, 0);
+  }
+  function moneyFamDate(d) { return +d.slice(8, 10) + '\u00a0' + MON[+d.slice(5, 7) - 1]; }
+  // A date n months on, the day cut to a shorter month's end (plusMonths in _shared/money.ts).
+  function moneyFamPlus(d, n) {
+    var m = +d.slice(5, 7) - 1 + n, y = +d.slice(0, 4) + Math.floor(m / 12), mm = (m % 12 + 12) % 12;
+    var last = new Date(Date.UTC(y, mm + 1, 0)).getUTCDate();
+    return y + '-' + String(mm + 1).padStart(2, '0') + '-' + String(Math.min(+d.slice(8, 10), last)).padStart(2, '0');
+  }
+  // The ring of the term left: the days to paid_until of the plan's length, green while paid, warn within 30 days, an
+  // empty red one once it has passed.
+  function moneyFamRing(f) {
+    var r = 13, l = 2 * Math.PI * r, k = Math.max(0, Math.min(1, f.days_left / (f.months * 30.44)));
+    var box = svg('svg', { viewBox: '0 0 32 32', 'class': 'mfring ' + f.state, 'aria-hidden': 'true' });
+    box.appendChild(svg('circle', { cx: 16, cy: 16, r: r, 'class': 'tr' }));
+    if (k > 0) box.appendChild(svg('circle', { cx: 16, cy: 16, r: r, 'class': 'a', transform: 'rotate(-90 16 16)',
+      'stroke-dasharray': (l * k).toFixed(1) + ' ' + l.toFixed(1) }));
+    return box;
+  }
+  function moneyFamSay(f) {
+    return f.state === 'due' ? 'ждём ' + moneyInt(f.price) + '\u00a0zł' : f.state === 'soon' ? (f.days_left ? 'через ' + f.days_left + '\u00a0дн' : 'сегодня') : 'оплачено';
+  }
+  function moneyFamRow(f, done) {
+    var say = moneyFamSay(f);
+    var x = add(el('div', 'row mdebt mfam'), add(el('span', 'ptile'), moneyFamRing(f)), add(el('span', 'tx'), el('div', 't', f.name),
+      el('div', 'mu', 'оплачено до ' + moneyFamDate(f.paid_until) + ' · ' + (f.months === 6 ? 'полгода' : 'год'))),
+      el('span', 'pr ' + (f.state === 'due' ? 'neg' : f.state === 'soon' ? 'warn' : 'mu'), say));
+    x.setAttribute('aria-label', f.name + ', оплачено до ' + moneyFamDate(f.paid_until) + ', ' + say);
+    tap(x, function () { moneyFamSheet(f, done, x); });
+    return x;
+  }
+  // «Получил»: the plan (+6 / +12 мес with its price — his own price for his plan), the account (Revolut unless he picks
+  // another: the family pays by BLIK there), «Записать» → money_family_paid: the income, paid_until on, the task with it.
+  function moneyFamSheet(f, done, from) {
+    var close = noop, months = f.months, acct = 'revolut', form = el('div');
+    function price(n) { return n === f.months ? f.price : FAMILY_PLANS[n]; }
+    var save = label(el('button', 'btn'), 'check', 'Записать');
+    save.type = 'button';
+    function paint() {
+      var plans = el('div', 'chips mchips'), accts = el('div', 'chips mchips');
+      plans.setAttribute('role', 'group');
+      plans.setAttribute('aria-label', 'Срок');
+      [6, 12].forEach(function (n) {
+        plans.appendChild(chip('+' + n + '\u00a0мес · ' + moneyInt(price(n)) + '\u00a0zł', n === months, null, function () { months = n; haptic(); paint(); }));
+      });
+      accts.setAttribute('role', 'group');
+      accts.setAttribute('aria-label', 'Счёт');
+      MONEY.accounts.filter(function (a) { return !a.hidden || a.key === acct; }).forEach(function (a) {
+        var b = chip(a.name, a.key === acct, null, function () { acct = a.key; haptic(); paint(); });
+        b.insertBefore(moneyAcctTile(a.key, 'am'), b.firstChild);
+        accts.appendChild(b);
+      });
+      var to = moneyFamPlus(f.paid_until, months);
+      add(clear(form), el('div', 'tsh', 'Получил'), plans, accts.firstChild ? el('div', 'tsh', 'На счёт') : null, accts.firstChild ? accts : null,
+        el('div', 'mu msrc', 'Будет оплачено до ' + moneyFamDate(to) + ' ' + to.slice(0, 4) + '. Задача в «Задачах» переедет на ' + moneyFamDate(moneyFamPlus(to, -1)) + '.'));
+    }
+    save.onclick = function () {
+      save.disabled = true;
+      haptic();
+      api('miniapp', { action: 'money_family_paid' }, undefined, false, { id: f.id, months: months, account: acct, paid_until: f.paid_until })
+        .then(function (j) {
+          cacheDrop('money');
+          cacheDrop('tasks');
+          close();
+          toast('Записано · оплачено до ' + moneyFamDate(j.member.paid_until) + ' ' + j.member.paid_until.slice(0, 4), 'check');
+          done();
+        }, function (e) {
+          save.disabled = false;
+          if (e && e.code === 'conflict') { cacheDrop('money'); close(); done(); }
+        });
+    };
+    paint();
+    close = legalSheet(f.name, [add(el('div', 'msum mpsum' + (f.due ? ' pos' : '')), document.createTextNode(f.due ? moneyFmt(f.due) : 'Оплачено')),
+      el('div', 'mvs', 'YouTube · семья · оплачено до ' + moneyFamDate(f.paid_until) + ' ' + f.paid_until.slice(0, 4) + (f.due ? ' · ' + moneyFamSay(f) : '')),
+      form, add(el('div', 'bar mact'), save)], from);
+  }
   function moneyDebtsDraw(box, done) {
     clear(box);
     var st = MONEY.state;
     if (!st) return;
-    var ppl = (st.people || []).filter(function (p) { return !p.archived || p.balance; }), owe = 0, owed = 0;
+    var fam = st.family || [], famDue = fam.reduce(function (s, f) { return s + f.due; }, 0);
+    // The renewals owed show in their group only, never again on the person's row: they count in «Мне должны» and in
+    // the person's sheet; a person whose only debt is the family one is not in the people's list at all.
+    var ppl = (st.people || []).filter(function (p) { return (!p.archived || p.balance) && (p.balance || !moneyFamDue(p.id)); }), owe = 0, owed = famDue;
     ppl.forEach(function (p) { if (p.balance > 0) owed += p.balance; else owe -= p.balance; });
     var open = ppl.filter(function (p) { return p.balance; }).sort(function (a, b) { return Math.abs(b.balance) - Math.abs(a.balance); });
     var zero = ppl.filter(function (p) { return !p.balance; });
-    var card = mkCard('hand-coins', 'Долги', open.length ? 'Мне должны ' + moneyInt(owed) + ' zł · Я должен ' + moneyInt(owe) + ' zł' : 'Все в расчёте');
+    var card = mkCard('hand-coins', 'Долги', open.length || famDue ? 'Мне должны ' + moneyInt(owed) + ' zł · Я должен ' + moneyInt(owe) + ' zł' : 'Все в расчёте');
     card.mfs = [card.lastChild.textContent];
     var rows = el('div');
     function row(p) {
@@ -11950,7 +12062,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         el('div', 'mu', (p.balance > 0 ? 'мне должны' : p.balance < 0 ? 'я должен' : 'в расчёте') + due),
         p.note && p.balance ? el('div', 'mu mnote', p.note) : null),
         add(el('span', 'pr' + (p.balance > 0 ? ' pos' : p.balance < 0 ? ' neg' : '')), moneyPersonSum(p)));
-      tap(x, function () { moneyPersonSheet(p, done, x); });
+      // The sheet's balance takes the renewal owed in (said under it).
+      tap(x, function () {
+        var d = moneyFamDue(p.id);
+        moneyPersonSheet(d ? Object.assign({}, p, { balance: Math.round((p.balance + d) * 100) / 100, fam: d }) : p, done, x);
+      });
       return x;
     }
     function paint() {
@@ -11963,6 +12079,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         more.setAttribute('aria-expanded', String(!!MONEY.zeroAll));
         more.onclick = function () { MONEY.zeroAll = !MONEY.zeroAll; paint(); };
         rows.appendChild(more);
+      }
+      // «YouTube · семья»: always there, also when everyone else is settled.
+      if (fam.length) {
+        rows.appendChild(add(el('div', 'mfamh'), icon('youtube'), document.createTextNode('YouTube · семья')));
+        fam.forEach(function (f) { rows.appendChild(moneyFamRow(f, done)); });
       }
       var addP = add(el('button', 'mlink'), icon('plus'), document.createTextNode('Человек'));
       addP.type = 'button';
@@ -12014,6 +12135,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       return el('div', 'mvs', v > 0 ? 'мне должны' : v < 0 ? 'я должен' : 'в расчёте');
     }
     var who = balance(p.balance);
+    // A renewal of «YouTube · семья» owed is in the balance (moneyDebtsDraw), said under it; «Получил» is in its row.
+    var famLine = p.fam ? el('div', 'mu msrc', 'из них YouTube · семья ' + moneyFmt(p.fam)) : null;
     var ops = add(el('div', 'mops'));
     [['lent', 'Дал в долг'], ['borrowed', 'Взял в долг'], ['repaid_in', 'Вернули'], ['repaid_out', 'Вернул']].forEach(function (k) {
       var b = label(el('button', 'btn ghost'), k[0] === 'lent' || k[0] === 'repaid_out' ? 'forward' : 'undo-2', k[1]);
@@ -12061,7 +12184,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         done();
       }, function () { drop.disabled = false; });
     };
-    close = legalSheet(p.name, [bal, who, ops,
+    close = legalSheet(p.name, [bal, who, famLine, ops,
       el('div', 'tsh', 'Напомнить вернуть'), add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), day)),
       add(el('div', 'bar mact'), setR, offR),
       el('div', 'mu msrc', 'Утром в этот день придёт строка в Telegram, без суммы.'), el('div', 'tsh', 'История'), hist,
@@ -12071,7 +12194,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function load() {
       api('miniapp', { action: 'money_person' }, 15000, true, { id: p.id }).then(function (j) {
         if (!hist.isConnected) return;
-        now = j.person.balance;
+        now = Math.round((j.person.balance + moneyFamDue(p.id)) * 100) / 100;
         who.replaceWith(who = balance(now));
         clear(hist);
         var rows = j.rows || [], at = j.person.opening_at;
@@ -12454,8 +12577,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         mark ? el('span', 'mnext ' + mark, word) : document.createTextNode(word));
       if (near && !soon) when = (s.period === 'year' ? 'раз в год' : 'каждый месяц') + ' · след.\u00a0' + word;
     } else line.push(document.createTextNode(when));
+    // The family's subscription (docs/specs/youtube-family.md): what the family pays of it a month and his part.
+    var st = MONEY.state, cover = st && st.family_cover, fam = cover && s.active && s.currency === 'PLN' &&
+      (st.family || []).some(function (f) { return f.subscription_id === s.id; });
     var x = add(el('div', 'row mcat msub' + (s.active ? '' : ' off')), moneyLogo(brandOf(s.name) || brandOf(s.pattern), merchantIc(s.name, c[2])),
-      add(el('span', 'tx'), el('div', 't', s.name), add.apply(null, [el('div', 'mu num')].concat(line))), pr);
+      add(el('span', 'tx'), el('div', 't', s.name), add.apply(null, [el('div', 'mu num')].concat(line)),
+        fam ? el('div', 'mu num mfamc', 'Семья покрывает ~' + moneyInt(cover) + ' из ' + moneyNb(s.amount) + '\u00a0· твоя доля ~' +
+          moneyInt(Math.max(0, s.monthly - cover)) + '\u00a0zł') : null), pr);
     if (soon) when = soon + ' · ' + when;
     x.setAttribute('aria-label', s.name + ', ' + moneyFmt(s.amount, s.currency) + ', ' + when);
     tap(x, function () { open(x); });
@@ -12479,6 +12607,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       el('div', 'mu num', (h.fixed ? 'Похоже на постоянный платёж' : 'Похоже на подписку') + ' · ≈\u00a0' + moneyNb(h.amount, h.currency) + ' в\u00a0месяц')), go);
   }
   function moneySubsDraw(box, j) {
+    MONEY.subsCover = MONEY.state && MONEY.state.family_cover;
     clear(box);
     if (box.fixedBox) clear(box.fixedBox);
     var reload = box.reload || noop;
