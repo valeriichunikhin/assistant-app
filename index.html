@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 15:31">
+<meta name="published" content="2026-11-02 16:22">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -12444,18 +12444,21 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var goals = st.goals || [], card = mkCard('target', 'Цели');
     card.mfs = [goals.length ? goals.length + ' ' + plural(goals.length, ['цель', 'цели', 'целей']) : 'целей пока нет'];
     goals.forEach(function (g) {
-      var p = g.target ? g.saved / g.target : 0;
+      var p = g.target ? g.saved / g.target : 0, pay = g.kind === 'payoff';
       var zl = function (v) { return moneyInt(v).replace(/ /g, '\u00a0') + '\u00a0zł'; };
-      var plan = g.left ? ['осталось ' + zl(g.left)] : ['собрано'];
+      var plan = g.left ? [pay ? 'осталось погасить ' + zl(g.left) + ' из\u00a0' + moneyInt(g.target).replace(/ /g, '\u00a0') : 'осталось ' + zl(g.left)] : [pay ? 'погашено' : 'собрано'];
       if (g.months && g.left) plan.push(g.months + '\u00a0мес.', '≈\u00a0' + zl(g.per_month) + ' в\u00a0месяц');
       else if (g.months === 0 && g.left) plan.push('срок прошёл');
-      var plus = add(el('button', 'btn ghost x mmore mgplus'), icon('plus'));
-      plus.type = 'button';
-      plus.setAttribute('aria-label', 'Отложил: ' + g.name);
-      plus.onclick = function (ev) { ev.stopPropagation(); moneyGoalSave(g, done, plus); };
+      var plus = null;
+      if (!pay) {
+        plus = add(el('button', 'btn ghost x mmore mgplus'), icon('plus'));
+        plus.type = 'button';
+        plus.setAttribute('aria-label', 'Отложил: ' + g.name);
+        plus.onclick = function (ev) { ev.stopPropagation(); moneyGoalSave(g, done, plus); };
+      }
       var r = add(el('div', 'row mcat mgoal'), add(el('span', 'ptile'), icon(goalIcon(g.icon))),
         add(el('span', 'tx'), el('div', 't', g.name), moneyBar(p, p >= 1 ? 'done' : ''), el('div', 'mu', plan.join(' · '))),
-        add(el('span', 'pr'), document.createTextNode(zl(g.saved)), el('span', 'mu', 'из ' + zl(g.target))), plus);
+        add(el('span', 'pr'), document.createTextNode(zl(g.saved)), el('span', 'mu', pay ? 'погашено' : 'из ' + zl(g.target))), plus);
       tap(r, function () { moneyGoalSheet(g, done, r); });
       card.appendChild(r);
     });
@@ -12508,6 +12511,21 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       });
     }
     drawIcons();
+    // «Погасить долг по счёту»: the goal follows a credit account's debt (docs/specs/money-goal-payoff.md).
+    var pay = !!(g && g.kind === 'payoff'), acct = (g && g.account) || '', payBox = el('div');
+    var cards = ((MONEY.state && MONEY.state.accounts) || []).filter(function (a) { return a.credit; });
+    if (!acct && cards.length) acct = cards[0].key;
+    function drawPay() {
+      clear(payBox);
+      if (!cards.length) return;
+      add(payBox, chip('Погасить долг по счёту', pay, 'Погасить долг по счёту', function () { pay = !pay; haptic(); drawPay(); }));
+      if (!pay) return;
+      var row = el('div', 'chips mchips');
+      cards.forEach(function (a) { row.appendChild(chip(a.name, acct === a.key, a.name, function () { acct = a.key; haptic(); drawPay(); })); });
+      payBox.appendChild(row);
+      payBox.appendChild(el('div', 'mu msrc', 'Прогресс — сколько долга уже снято со счёта; отложенное вручную не нужно.'));
+    }
+    drawPay();
     function send(action, body, btn, msg) {
       btn.disabled = true;
       haptic();
@@ -12524,7 +12542,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var t = moneyIn(target.value);
       if (!name.value.trim()) return toast('Название — на что копишь');
       if (!t) return toast('Сумма — число больше нуля');
-      var body = { name: name.value.trim(), target: t, due: due.value || null, icon: ic };
+      var body = { name: name.value.trim(), target: t, due: due.value || null, icon: ic, kind: pay ? 'payoff' : 'save', account: pay ? acct : null };
       if (g) body.id = g.id;
       send(g ? 'money_goal_set' : 'money_goal_add', body, save, g ? 'Сохранено' : 'Цель поставлена');
     };
@@ -12543,7 +12561,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     close = legalSheet(g ? g.name : 'Новая цель', [add(el('div', 'bar'), add(el('label', 'field'), icon('target'), name)),
       add(el('div', 'bar'), add(el('label', 'field'), icon('wallet'), target, el('span', 'mu', 'zł'))),
       add(el('div', 'bar'), add(el('label', 'field'), icon('calendar'), el('span', 'mu', 'к дню'), due)),
-      el('div', 'tsh', 'Значок'), icons, add(el('div', 'bar mact'), save, arch)], from);
+      payBox, el('div', 'tsh', 'Значок'), icons, add(el('div', 'bar mact'), save, arch)], from);
   }
   // «Вишлист: N вещей · K zł · влезает в бюджет» under the month's budget (§7): the current month only; filled when
   // money_state comes. A tap opens «Вишлист».
