@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-01 22:28">
+<meta name="published" content="2026-11-02 08:09">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -100,6 +100,10 @@ function setAccent(a, keep) {
   --accent:#c1f354;--accent-ink:#0f171f;--mark:#7aa012;--link:#6a8c0e;--accent-soft:rgba(122,160,18,.14);--toast:#1c2c21;--toast-act:#c1f354;--bg0:#f0f7e8;--grad:linear-gradient(160deg,#f0f7e8 0%,#e4fbcc 100%)}}
 :root[data-theme="light"][data-accent-l="lime"]{
   --accent:#c1f354;--accent-ink:#0f171f;--mark:#7aa012;--link:#6a8c0e;--accent-soft:rgba(122,160,18,.14);--toast:#1c2c21;--toast-act:#c1f354;--bg0:#f0f7e8;--grad:linear-gradient(160deg,#f0f7e8 0%,#e4fbcc 100%)}
+/* His «плохо читаем лаймовый на светлой теме» (02.11.2026): text and line icons in the accent take the dark lime
+   (--link) on white; fills keep the bright lime. */
+:root[data-theme="light"][data-accent-l="lime"] .tabbar [aria-current],:root[data-theme="light"][data-accent-l="lime"] .mnav .mtoday,:root[data-theme="light"][data-accent-l="lime"] .ch .mtoday,:root[data-theme="light"][data-accent-l="lime"] .sheet [aria-current] .ic,:root[data-theme="light"][data-accent-l="lime"] .rail [aria-current] .ic,:root[data-theme="light"][data-accent-l="lime"] .bell[aria-current],:root[data-theme="light"][data-accent-l="lime"] .mdl>.i,:root[data-theme="light"][data-accent-l="lime"] .mdrow .btn.x.on,:root[data-theme="light"][data-accent-l="lime"] .mmenus .mlink.mmenu>.i.mfon,:root[data-theme="light"][data-accent-l="lime"] .mlink.mmenu>.i:first-child,:root[data-theme="light"][data-accent-l="lime"] .row.nt.unr .ptile,:root[data-theme="light"][data-accent-l="lime"] .brcr .i,:root[data-theme="light"][data-accent-l="lime"] .bspa,:root[data-theme="light"][data-accent-l="lime"] .bspr .bspk-on,:root[data-theme="light"][data-accent-l="lime"] .dsort>.dlift .dgrip{color:var(--link)}
+@media (prefers-color-scheme:light){:root[data-accent-l="lime"]:not([data-theme="dark"]) .tabbar [aria-current],:root[data-accent-l="lime"]:not([data-theme="dark"]) .mnav .mtoday,:root[data-accent-l="lime"]:not([data-theme="dark"]) .ch .mtoday,:root[data-accent-l="lime"]:not([data-theme="dark"]) .sheet [aria-current] .ic,:root[data-accent-l="lime"]:not([data-theme="dark"]) .rail [aria-current] .ic,:root[data-accent-l="lime"]:not([data-theme="dark"]) .bell[aria-current],:root[data-accent-l="lime"]:not([data-theme="dark"]) .mdl>.i,:root[data-accent-l="lime"]:not([data-theme="dark"]) .mdrow .btn.x.on,:root[data-accent-l="lime"]:not([data-theme="dark"]) .mmenus .mlink.mmenu>.i.mfon,:root[data-accent-l="lime"]:not([data-theme="dark"]) .mlink.mmenu>.i:first-child,:root[data-accent-l="lime"]:not([data-theme="dark"]) .row.nt.unr .ptile,:root[data-accent-l="lime"]:not([data-theme="dark"]) .brcr .i,:root[data-accent-l="lime"]:not([data-theme="dark"]) .bspa,:root[data-accent-l="lime"]:not([data-theme="dark"]) .bspr .bspk-on,:root[data-accent-l="lime"]:not([data-theme="dark"]) .dsort>.dlift .dgrip{color:var(--link)}}
 *{box-sizing:border-box}
 html,body{margin:0;color:var(--fg)}
 html{background:var(--bg0)}
@@ -709,7 +713,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .mfound{margin:0 0 6px;padding:0 14px}.mfound .i{width:14px;height:14px}.mrate{margin:-2px 0 6px}
 .mreg .row{padding-left:0;padding-right:0}.mregsum{margin:0 0 6px;font-size:15px}.mregsum .mu{font-size:13px}
 .fst.mregh{padding:12px 0 4px}.fst.mregh .mu{font-weight:400}.mregadd{flex-wrap:wrap}
-.ch .mtoday{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:none;font:inherit;font-size:14px;color:var(--accent);cursor:pointer}.ch .mtoday .i{width:16px;height:16px}
+.ch .mtoday.nugb{padding:0 9px;gap:0}.ch .mtoday{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:none;font:inherit;font-size:14px;color:var(--accent);cursor:pointer}.ch .mtoday .i{width:16px;height:16px}
 .mbounce-l{animation:mbounceL .32s ease-out}.mbounce-r{animation:mbounceR .32s ease-out}
 @keyframes mbounceL{30%{transform:translateX(-12px)}100%{transform:none}}@keyframes mbounceR{30%{transform:translateX(12px)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.mbounce-l,.mbounce-r{animation:none}}
@@ -876,6 +880,11 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .brow>.bem{flex:none;width:18px;text-align:center;font-size:15px;line-height:1}
 .brow.b2l .tx{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .brow .pr .pill{vertical-align:middle}
+/* «Дорога» (docs/specs/commute.md): the late tram's delay, the foot with «выйдешь сейчас» and «В офисе к …» side by side. */
+.brow .pr.warn{color:var(--warn)}
+.bcmf{flex:none;display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:4px;min-width:0}
+.bcmf .bnt{flex:1;min-width:0;margin:0;padding:0;-webkit-line-clamp:1}
+.bcmf select{flex:none;max-width:58%;height:32px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--fg);font:16px var(--font)}
 .bgl{flex:none;display:flex;flex-direction:column;gap:4px;padding:6px 0 2px}.bh+.bgl{margin-top:4px}
 .bgt{display:flex;align-items:baseline;gap:8px;font-size:13.5px;line-height:1.3}.bgt .tx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bgt .pr{flex:none;color:var(--muted);font:500 12.5px/1.3 var(--font-num);font-variant-numeric:tabular-nums}
@@ -1114,25 +1123,21 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .nurm i,.nudot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--nu)}.nudot{width:10px;height:10px}
 .nufx{margin:0 0 12px;line-height:1.5}
 .nusc{display:flex;align-items:center;gap:14px;margin:0 0 8px;padding:12px 14px;border:1px solid var(--card-line);border-radius:var(--r-b);background:var(--surface);box-shadow:var(--shadow)}
-/* «Оценка питания»: the tick dial on a soft glow of its band's colour, the base 50 a faint inner tick; the chips of the
-   biggest contributors beside it. */
-.nq-low{--hs:var(--ring-load)}.nq-mid{--hs:var(--ring-load-2)}.nq-good{--hs:var(--ring-recovery)}.nq-top{--hs:var(--ring-recovery-2)}
-.nusd{flex:none;position:relative;display:grid;place-items:center;width:140px;height:140px;border-radius:50%;
-  background:radial-gradient(circle closest-side,color-mix(in srgb,var(--hs,var(--muted)) 20%,transparent) 0%,color-mix(in srgb,var(--hs,var(--muted)) 6%,transparent) 72%,transparent 100%)}
-.nusd .hsd{width:100%;height:100%}.nusd .hsd .tk{opacity:.18}.nusd .hsd .tk.on{opacity:1}.nusd .hsd .lit{filter:var(--hl-glow)}
-.nusd .hsd .mk{stroke:var(--muted);stroke-width:1.6;stroke-linecap:round;opacity:.7}.nusd .hsd .v{font-weight:800;letter-spacing:-.02em}
-.nusd.lock{background:radial-gradient(circle closest-side,var(--surface-2) 0%,transparent 100%)}
-.nusd>.i{position:absolute;width:30px;height:30px;color:var(--muted)}
-/* on white the yellow and the bright green word go darker toward the ink, the unlit ticks a shade stronger */
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .nusd .hsd .w{fill:color-mix(in srgb,var(--hs) 72%,var(--fg))}:root:not([data-theme="dark"]) .nusd .hsd .tk:not(.on){opacity:.28}}
-:root[data-theme="light"] .nusd .hsd .w{fill:color-mix(in srgb,var(--hs) 72%,var(--fg))}:root[data-theme="light"] .nusd .hsd .tk:not(.on){opacity:.28}
+/* «Оценка питания»: one ring as Б · Ж · У's (hlRing, 100), its colour --q set by the score (nuQ), the track a soft
+   shade of it; locked — the muted track with a lock; the band word in --q, the chips of the biggest contributors. */
+.nusq{flex:none;position:relative;display:grid;place-items:center}.nusq>.i{position:absolute;width:26px;height:26px;color:var(--muted)}
+.hring.nu-q{--rc-end:var(--q);--rc-start:color-mix(in srgb,var(--q) 55%,#fff)}.hring.nu-q .tr{stroke:color-mix(in srgb,var(--q) var(--nu-soft),transparent)}
+.nuqw{margin-top:1px;font:700 15px/1.3 var(--font);color:var(--q)}
+/* on white the yellow and the bright green word go darker toward the ink */
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .nuqw{color:color-mix(in srgb,var(--q) 72%,var(--fg))}}
+:root[data-theme="light"] .nuqw{color:color-mix(in srgb,var(--q) 72%,var(--fg))}
 .nusc-t{min-width:0}.nusc-t .mu{margin-top:3px;font-size:13px;line-height:1.35}
 .nuchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .nuchip{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 10px 0 7px;border-radius:999px;color:var(--nc);
   background:color-mix(in srgb,var(--nc) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nc) 28%,transparent)}
 .nuchip.up{--nc:var(--ring-recovery)}.nuchip.down{--nc:var(--ring-load)}
 .nuchip .nufe{width:auto;font-size:16px}.nuchip b{font:700 14px var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
-@media (max-width:400px){.nusc{gap:12px;padding:12px}.nusd{width:124px;height:124px}.nuchip{padding:0 8px 0 6px}}
+@media (max-width:400px){.nusc{gap:12px;padding:12px}.nuchip{padding:0 8px 0 6px}}
 /* «Спорт», «Зал», «План» (docs/specs/workouts.md): a workout a row as a meal's; «Зал» — the next session's exercises with
    last time's weights and the increase as a pill; the sheets — an exercise a block, its sets a row of reps and kg. */
 .wempty{padding:0 14px 12px}.row.frow .wl{display:block}
@@ -2800,14 +2805,16 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     // 30.10.2026, docs/specs/calendar-2.md А3: today's next timed thing of «Календарь» (home's next).
     ['next', 'Дальше', 'clock', 'sm'],
     // 31.10.2026, docs/specs/calendar-2.md В15: the next holiday, trading Sunday and long weekend (home's poland).
-    ['poland', 'Польша', 'flag', 'sm']];
+    ['poland', 'Польша', 'flag', 'sm'],
+    // 01.11.2026, docs/specs/commute.md: tram 24 to the office (from 15:00 home), the transit source.
+    ['commute', 'Дорога', 'tram-front', 'ml', 'transit']];
   var BOARD_BY = {};
   BOARD.forEach(function (b) { BOARD_BY[b[0]] = b; });
   // The catalog's groups under small headers, the «＋» actions on top; every widget of BOARD once.
   var BOARD_GROUPS = [['Быстрые действия', ['spend', 'addtask']],
     ['Деньги', ['daily', 'payday', 'month', 'payments', 'goals', 'revolut', 'accounts', 'card_debt', 'debts', 'review']],
     ['Дела', ['tasks', 'days', 'next', 'poland', 'countdown', 'shoplist', 'deals', 'wish', 'parcels', 'notif', 'linkedin', 'mail', 'health']],
-    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
+    ['Отдых', ['vb', 'volley', 'cinema', 'series', 'recent', 'food', 'body']], ['Город', ['weather', 'commute', 'events', 'news']], ['Genshin', ['genshin', 'resin', 'gtoday']]];
   // The countdown's cfg {label, date} as the server takes it (a label of 1–24 characters, a real day); null otherwise.
   function boardCfg(c) {
     var l = c && typeof c.label === 'string' ? c.label.trim() : '', d = c && c.date;
@@ -3951,7 +3958,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     wish: ['wish', bsrcApi('telegram-webhook', 'wish')], picks: ['picks:batches', bsrcApi('telegram-webhook', 'picks')],
     events: ['feed:events', bsrcApi('miniapp', 'events')], news: ['feed:all', bsrcApi('miniapp', 'news', undefined, { stream: 'all' })],
     dela: ['dela', bsrcApi('telegram-webhook', 'dela')], genshin: ['genshin', bsrcApi('miniapp', 'genshin', 25000)],
-    vb: ['vb', bsrcApi('miniapp', 'volleyball', 25000)] };
+    vb: ['vb', bsrcApi('miniapp', 'volleyball', 25000)], transit: ['transit', bsrcApi('miniapp', 'transit', 20000)] };
   // k → {t, j}, the source's last answer here (kept beside the cache, which refuses a big one), or {fail} when the
   // request failed with nothing cached.
   var bsrcMem = {};
@@ -4261,6 +4268,76 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       // «Польша» (docs/specs/calendar-2.md, В15): the next holiday's day big («завтра», «вс 01.11»), its name under it, the
       // next trading Sunday; wide — the next long weekend with its bridge. «сейчас» on the holiday and its eve. A tap
       // opens «Календарь» on the holiday.
+      // «Дорога» (docs/specs/commute.md): tram 24 to the office, from 15:00 home — today's «выходи в …» (to the office),
+      // the next three departures with the delay estimated from the tram's position («расп.» — no tram on the line yet),
+      // «выйдешь сейчас — у офиса в …», and «В офисе к …» for today (the push follows it). A tap asks again.
+      commute: function () {
+        var t = src('transit');
+        if (!t || !t.ok) return wait(t === undefined ? t : null);
+        var w = t[t.first] || t.office, home = w.leg === 'home', tg0 = t.target || {}, pl = !home && tg0.arrive && t.plan;
+        function hm(v) { return String(v || '').replace(/^0/, ''); }
+        function mins(v) { var q = String(v).split(':'); return Number(q[0]) * 60 + Number(q[1]); }
+        function late(d) { return d.delay_min == null ? 'расп.' : d.delay_min === 0 ? 'вовремя' : (d.delay_min > 0 ? '+' : '−') + Math.abs(d.delay_min) + ' мин'; }
+        name.textContent = home ? 'Домой' : 'Дорога';
+        r.go = function () { bsrcAt.transit = 0; boardAsk('transit'); };
+        var gone = mins(p.hour + ':' + p.minute);
+        if (pl) {
+          r.now = mins(pl.leave) - gone <= 30 && mins(pl.leave) >= gone;
+          big('выходи ' + hm(pl.leave), 'vs' + (pl.late_min ? ' warn' : ''));
+          line((pl.late_min ? 'опоздаешь на ' + pl.late_min + ' мин · ' : '') + '24 в ' + hm(pl.at) + ' · у офиса ' + hm(pl.arrive), 'mu');
+        } else if (w.deps.length) {
+          big(hm(w.deps[0].at) + (w.deps[0].delay_min ? ' ' + late(w.deps[0]) : ''), 'vs');
+          line(w.from + ' → ' + w.to, 'mu');
+        } else quiet('отправлений нет');
+        var shown = s === 'l' ? w.deps : pl ? [] : w.deps.slice(1);
+        if (s === 'l') {
+          shown.forEach(function (d) {
+            var pr = el('span', 'pr' + (d.delay_min > 2 ? ' warn' : ''), late(d));
+            row(null, add(el('span', 'tx'), el('span', 't', hm(d.at) + ' · ' + (home ? 'дома ' : 'у офиса ') + hm(d.reach))), pr);
+          });
+        } else if (shown.length || pl) {
+          line((pl ? w.deps : shown).slice(0, 3).map(function (d) { return hm(d.at) + (d.delay_min ? ' ' + (d.delay_min > 0 ? '+' : '−') + Math.abs(d.delay_min) : ''); }).join(' · '));
+        }
+        var foot = el('div', 'bcmf'), said = w.now ? 'сейчас → ' + (home ? 'дома ' : 'у офиса ') + hm(w.now.arrive) : '';
+        if (!t.live) said = (said ? said + ' · ' : '') + 'по расписанию';
+        foot.appendChild(el('div', 'bnt', said));
+        if (!home && !preview) {
+          var sel = el('select'), cur = tg0.source === 'override' ? tg0.arrive || 'off' : 'auto';
+          var auto = tg0.source === 'override' ? 'как обычно' : tg0.arrive ? 'к ' + hm(tg0.arrive) + (tg0.source === 'calendar' ? ' · календарь' : '') : 'не еду';
+          var opts = [['auto', auto]];
+          for (var k = 16; k <= 24; k++) opts.push([('0' + Math.floor(k / 2)).slice(-2) + ':' + (k % 2 ? '30' : '00'), '']);
+          if (cur !== 'auto' && cur !== 'off' && !opts.some(function (o) { return o[0] === cur; })) opts.push([cur, '']);
+          opts.push(['off', 'сегодня не еду']);
+          opts.forEach(function (o) {
+            var op = el('option', '', o[1] || 'к ' + hm(o[0]));
+            op.value = o[0];
+            op.selected = o[0] === cur;
+            sel.appendChild(op);
+          });
+          sel.setAttribute('aria-label', 'В офисе к');
+          sel.onclick = function (ev) { ev.stopPropagation(); };
+          sel.onchange = function () {
+            // While the board is edited a widget takes no input.
+            if (hdr.classList.contains('bediting')) { sel.value = cur; return; }
+            var v = sel.value;
+            sel.disabled = true;
+            haptic();
+            api('miniapp', { action: 'transit_set' }, 15000, true, { arrive: v === 'auto' ? 'auto' : v === 'off' ? null : v }).then(function () {
+              sel.disabled = false;
+              cur = v;
+              toast(v === 'off' ? 'Сегодня без напоминания' : 'Напомню за 15 минут до выхода');
+              bsrcAt.transit = 0;
+              boardAsk('transit');
+            }, function (e) {
+              sel.disabled = false;
+              sel.value = cur;
+              if (!e.login) toast(ERRORS[e.code]);
+            });
+          };
+          foot.appendChild(sel);
+        }
+        n.appendChild(foot);
+      },
       poland: function () {
         var pl = j.poland;
         if (!pl) return quiet(preview ? 'нет данных' : j.morning === undefined ? 'загружаю…' : 'недоступно');
@@ -15246,10 +15323,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var top = mkCard('utensils', 'Питание');
     top.className += ' hnu nutop';
     top.firstChild.appendChild(foodBtn('mtoday', 'plus', 'Записать', h.add));
-    top.firstChild.appendChild(foodBtn('mtoday', 'scan-barcode', 'Сканер', h.scan));
+    var sb = foodBtn('mtoday nugb', 'scan-barcode', '', h.scan);
+    sb.setAttribute('aria-label', 'Сканер');
+    top.firstChild.appendChild(sb);
+    // «Цели» and «Сведения о питании» repeated the rings and the scale (his «убрать, если юзлес», 02.11.2026): the goals
+    // sheet is a target button in the head now.
+    var gb = foodBtn('mtoday nugb', 'target', '', function () { foodGoalSheet(gb, h.redraw); });
+    gb.setAttribute('aria-label', 'Цели');
+    top.firstChild.appendChild(gb);
     add(top, nuStack(j, src, kcal, goal, h.redraw, el('span', 'nus-src', kcal ? (nu ? 'из Health' : 'из записей') : 'за этот день еды нет'),
       nuWeight(j.weight, FOOD.date, h)));
-    return [top, j.water ? nuWater(j.water, h) : null, nuGoals(src, kcal, goal, h.redraw), nuInfo(j, src), nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || [], j.score), timeline];
+    return [top, j.water ? nuWater(j.water, h) : null, nuEnergy(kcal, j.active_kcal), nuFactors(j.factors || [], j.score), timeline];
   }
   // «Вода» (docs/specs/water.md; his pick 31.10.2026 — «W2»): a row as Bevel's factor rows — the ring to the goal with a
   // drop, «1,25 из 2 л · осталось 3 стакана», a round «+» (a glass, 250 мл); under it the portions and «другое». A tap on
@@ -15430,31 +15514,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       'stroke-dasharray': (l * Math.min(1, f)).toFixed(1) + ' ' + l.toFixed(1) }));
     return box;
   }
-  // «Цели»: the kcal tile (what is left or over, the dotted goal with its «2,5k», the day's column, a faint baseline) and a
-  // tile a macro; the arrow and the kcal tile open the «Цели» sheet.
-  function nuGoals(src, kcal, goal, redraw) {
-    var c = nuCard('target', 'Цели', null, function (b) { foodGoalSheet(b, redraw); }, 'Цели — поправить'), left = goal - kcal;
-    var W = 128, gy = 16, by = 44, hgt = Math.max(kcal ? 3 : 0, Math.min(1.22, kcal / goal) * (by - gy));
-    var bar = svg('svg', { viewBox: '0 0 ' + W + ' 46', 'class': 'nukb', 'aria-hidden': 'true' });
-    add(bar, svg('line', { x1: 2, y1: by, x2: W - 22, y2: by, 'class': 'base' }), svg('line', { x1: 2, y1: gy, x2: W - 2, y2: gy, 'class': 'gl' }),
-      svg('text', { x: W - 2, y: gy - 6, 'class': 'gt', 'text-anchor': 'end' }, nuK(goal)));
-    if (hgt) bar.appendChild(svg('rect', { x: W - 16, y: (by - hgt).toFixed(1), width: 12, height: hgt.toFixed(1), rx: 3, 'class': 'col' + (left < 0 ? ' over' : '') }));
-    var kt = add(el('div', 'nuk'), add(el('div', 'nukt'), el('div', 'nun', 'Калории'),
-      el('div', 'mu', (left >= 0 ? 'Осталось ' + grouped(left) : 'Сверх ' + grouped(-left)) + ' ккал')), bar);
-    kt.setAttribute('aria-label', 'Калории: ' + grouped(kcal) + ' из ' + grouped(goal) + ' — цели');
-    c.appendChild(tap(kt, function () { foodGoalSheet(kt, redraw); }));
-    var grid = el('div', 'nums');
-    NU_MACROS.forEach(function (m) {
-      var v = Math.round(src[m[0]] || 0), g = nuGoal(m), d = g - v, t = (d >= 0 ? 'Осталось ' + d : 'Сверх ' + -d) + ' г';
-      var tile = add(el('div', 'num nu-' + m[0]), add(el('div', 'numh'), el('span', 'nun', m[1]), nuRing(v / g)), el('div', 'mu', t));
-      tile.setAttribute('role', 'group');
-      tile.setAttribute('aria-label', m[1] + ': ' + v + ' из ' + g + ' г, ' + t.toLowerCase());
-      grid.appendChild(tile);
-    });
-    c.appendChild(grid);
-    return c;
-  }
-  // A macro's field: 10 × 8 dots, lit from the bottom row up, left to right, by f (0–1; any food lights one).
   function nuDots(f) {
     var n = f > 0 ? Math.max(1, Math.round(Math.min(1, f) * 80)) : 0;
     var box = svg('svg', { viewBox: '0 0 100 80', 'class': 'nudd', 'aria-hidden': 'true' }), off = svg('g', { 'class': 'off' }), on = svg('g', { 'class': 'on' });
@@ -15463,53 +15522,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     }
     return add(box, off, on);
   }
-  function nuInfo(j, src) {
-    var mode = 'g', sw = el('div', 'nusw'), grid = el('div', 'nudf');
-    sw.setAttribute('role', 'group');
-    sw.setAttribute('aria-label', 'Единицы');
-    var c = nuCard('apple', 'Сведения о питании', sw, function (b) { nuNutrSheet(j, b); }, 'Пищевая ценность за день');
-    [['g', 'г', 'Граммы'], ['p', '%', 'Проценты от цели']].forEach(function (x) {
-      var b = el('button', x[0] === mode ? 'on' : '', x[1]);
-      b.type = 'button';
-      b.setAttribute('aria-label', x[2]);
-      b.setAttribute('aria-pressed', x[0] === mode ? 'true' : 'false');
-      b.onclick = function () {
-        if (mode === x[0]) return;
-        mode = x[0];
-        haptic();
-        [].forEach.call(sw.children, function (y) { y.classList.toggle('on', y === b); y.setAttribute('aria-pressed', y === b ? 'true' : 'false'); });
-        draw();
-      };
-      sw.appendChild(b);
-    });
-    function draw() {
-      clear(grid);
-      NU_MACROS.forEach(function (m) {
-        var v = Number(src[m[0]]) || 0, g = nuGoal(m), t = mode === 'g' ? Math.round(v) + ' г' : Math.round(v / g * 100) + ' %';
-        var cell = add(el('div', 'nudc nu-' + m[0]), nuDots(v / g), el('div', 'nudv', t), el('div', 'nudl', m[2]));
-        cell.setAttribute('role', 'img');
-        cell.setAttribute('aria-label', m[1] + ': ' + Math.round(v) + ' г, ' + Math.round(v / g * 100) + ' % от цели ' + g + ' г');
-        grid.appendChild(cell);
-      });
-    }
-    draw();
-    c.appendChild(grid);
-    return c;
-  }
-  // «Пищевая ценность»: every sum of the day — Health's (with what only it carries: fiber, sugar, water…) or the entries'.
-  function nuNutrSheet(j, from) {
-    var nu = j.nutrition, t = nu || j.totals || {}, rows = [['Калории', t.kcal, 'ккал'], ['Белки', t.protein, 'г'], ['Жиры', t.fat, 'г'],
-      ['Углеводы', t.carbs, 'г']].concat(nu ? [['Клетчатка', nu.fiber, 'г'], ['Сахар', nu.sugar, 'г'], ['Насыщенные жиры', nu.sat_fat, 'г'],
-      ['Натрий', nu.sodium_mg, 'мг'], ['Калий', nu.potassium_mg, 'мг'], ['Кальций', nu.calcium_mg, 'мг'], ['Кофеин', nu.caffeine_mg, 'мг'],
-      ['Вода', nu.water_ml == null ? null : nu.water_ml / 1000, 'л'], ['Алкоголь', nu.alcohol_units, 'порц.']] : []);
-    var box = el('div', 'card nunl');
-    rows.forEach(function (r) {
-      box.appendChild(add(el('div', 'row hxr'), el('span', 'tx', r[0]), el('span', 'pr' + (r[1] == null ? ' mu' : ''),
-        r[1] == null ? '—' : (r[2] === 'ккал' ? grouped(Math.round(r[1])) : woNum(r[1])) + ' ' + r[2])));
-    });
-    legalSheet('Пищевая ценность', [box, el('div', 'mu msrc', nu ? 'Из Health, сумма за день.' : 'Из записей дня; клетчатку, сахар, воду и остальное присылает только Health.')], from);
-  }
-  // «Чистая энергия»: eaten minus Health's active kcal (none — eaten alone), the marker on −2,2k…+2,2k.
   function nuEnergy(eaten, active) {
     var net = eaten - (active || 0), c = el('div', 'card nuc'), x = (Math.max(-2200, Math.min(2200, net)) + 2200) / 4400 * 100;
     var mk = el('i');
@@ -15564,20 +15576,37 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     if (f.pos != null) box.appendChild(svg('circle', { cx: x(f.pos).toFixed(1), cy: 8, r: 5.5, 'class': 'th' + (f.points > 0 ? ' up' : f.points < 0 ? ' down' : '') }));
     return box;
   }
-  // «Оценка питания» (docs/specs/food-quality-bevel.md): the server's 50 + the eleven factors as the card's hero — Bevel's
-  // dial (nutrition-1.jpg) drawn as the stress card's tickDial: ticks orange → bright green lit to the value, a faint
-  // mark at the base 50, the number and its band's word inside; beside it «база 50 − 6,9 по факторам» and the three
+  // «Оценка питания» (docs/specs/food-quality-bevel.md): the server's 50 + the eleven factors as the card's hero — one
+  // ring as Б · Ж · У's (his 01.11.2026: «просто кружок такого же размера»), filled to the score, the number inside, its
+  // colour by the score (nuQ); beside it the band's word in that colour, «база 50 − 6,9 по факторам» and the three
   // biggest contributors as chips (pluses first), a tap — the factor's sheet; under a third of the kcal goal — locked:
-  // the dial empty with a lock, how many kcal are still to go.
-  var NU_BAND = [[80, 'отличная', 'nq-top'], [60, 'хорошая', 'nq-good'], [40, 'средняя', 'nq-mid'], [0, 'низкая', 'nq-low']];
+  // the empty track with a lock, how many kcal are still to go.
+  var NU_BAND = [[80, 'отличная'], [60, 'хорошая'], [40, 'средняя'], [0, 'низкая']];
+  // The score's colour, smoothly: red-orange to 40, orange at 50, yellow-green at 70, the bright green from 85 — the
+  // stops are the status tokens, a score between two stops their mix.
+  // His «дай больше цветов» (01.11.2026): a stop every ten points, deep red → red → orange → amber → yellow → lime →
+  // green → emerald, smooth between; the word under the ring takes the same colour.
+  var NU_Q = [[0, '#c81e3a'], [10, '#e0303a'], [20, '#f04a3c'], [30, '#f26b3a'], [40, '#f5863a'], [50, '#f7a23b'],
+    [60, '#f4c430'], [70, '#d9d93a'], [80, '#a8dc45'], [90, '#6fd85a'], [100, '#2fcf7a']];
+  function nuQ(v) {
+    for (var i = 0; i < NU_Q.length; i++) {
+      if (v > NU_Q[i][0]) continue;
+      if (!i) return NU_Q[0][1];
+      var a = NU_Q[i - 1], b = NU_Q[i];
+      return 'color-mix(in srgb, ' + b[1] + ' ' + Math.round((v - a[0]) / (b[0] - a[0]) * 100) + '%, ' + a[1] + ')';
+    }
+    return NU_Q[NU_Q.length - 1][1];
+  }
   function nuScore(sc, fs) {
     var used = fs.filter(function (f) { return f.score !== false; });
     var sum = Math.round(used.reduce(function (a, f) { return a + (f.points || 0); }, 0) * 10) / 10;
     var band = NU_BAND.filter(function (b) { return sc.locked || sc.value >= b[0]; })[0];
-    var dial = add(el('div', 'nusd ' + (sc.locked ? 'lock' : band[2])), tickDial(sc.locked ? null : sc.value, sc.locked ? '' : band[1], '',
-      { size: 140, n: 60, nf: 34, wf: 11.5, wy: 19, mark: 50, glow: true, hue: function (f) { return 22 + 98 * f; } }));
-    if (sc.locked) dial.appendChild(icon('lock'));
-    var t = add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
+    var dial = add(el('div', 'nusq'), hlRing(sc.locked ? null : sc.value, 'nu-q', 100));
+    if (sc.locked) {
+      dial.querySelector('.rv').remove();
+      dial.appendChild(icon('lock'));
+    }
+    var t = add(el('div', 'nusc-t'), el('div', 'nufn', 'Оценка питания'), sc.locked ? null : el('div', 'nuqw', band[1]), el('div', 'mu', sc.locked ? 'Запиши ещё ~' + grouped(sc.need) + ' ккал, чтобы увидеть оценку'
       : 'база 50 ' + (sum < 0 ? '− ' : '+ ') + woNum(Math.abs(sum)) + ' по факторам'));
     if (!sc.locked) {
       var top = used.filter(function (f) { return f.points; }).sort(function (a, b) { return Math.abs(b.points) - Math.abs(a.points); }).slice(0, 3)
@@ -15589,6 +15618,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       }))));
     }
     var r = add(el('div', 'nusc' + (sc.locked ? ' lock' : '')), dial, t);
+    r.style.setProperty('--q', sc.locked ? 'var(--muted)' : nuQ(sc.value));
     dial.setAttribute('role', 'img');
     dial.setAttribute('aria-label', sc.locked ? 'Оценка питания закрыта: запиши ещё около ' + sc.need + ' ккал' : 'Оценка питания ' + sc.value + ' из 100, ' + band[1]);
     return r;
@@ -16638,27 +16668,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // The dial: 48 ticks round the circle, each in the colour of its place (green → yellow → red), lit to the value,
   // the rest faint; the number and the word in the middle.
-  // The app's one tick dial (the stress card's; «Оценка питания» too): a full circle of ticks from the top, coloured by
-  // o.hue(f) (stress: green → red), lit to v, the number and the word inside. o.n ticks, o.nf/o.wf the number's and
-  // the word's size in the 104 grid, o.mark — a faint inner tick at that value; v null — no number, nothing lit.
-  function tickDial(v, word, wcls, o) {
-    o = o || {};
-    var size = 104, h = size / 2, N = o.n || 48, box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: o.size || size, height: o.size || size, 'class': 'hsd', 'aria-hidden': 'true' });
-    var lit = o.glow ? add(svg('g', { 'class': 'lit' }), svg('circle', { cx: h, cy: h, r: 50, fill: 'none' })) : box;
+  function tickDial(v, word, wcls) {
+    var size = 104, h = size / 2, N = 48, box = svg('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, 'class': 'hsd', 'aria-hidden': 'true' });
     for (var i = 0; i < N; i++) {
-      var f = i / N, a = Math.PI * (2 * f - 0.5), on = v != null && f * 100 <= v + 1e-9;
-      var hue = Math.round(o.hue ? o.hue(f) : 130 - 130 * f);
+      var f = i / N, a = Math.PI * (2 * f - 0.5), on = f * 100 <= v + 1e-9;
+      var hue = Math.round(130 - 130 * f);
       var tk = svg('line', { x1: (h + 42 * Math.cos(a)).toFixed(1), y1: (h + 42 * Math.sin(a)).toFixed(1), x2: (h + 50 * Math.cos(a)).toFixed(1), y2: (h + 50 * Math.sin(a)).toFixed(1), 'class': 'tk' + (on ? ' on' : '') });
       tk.style.stroke = 'hsl(' + hue + ' 70% 50%)';
-      (on ? lit : box).appendChild(tk);
+      box.appendChild(tk);
     }
-    if (lit !== box) box.appendChild(lit);
-    if (o.mark != null) {
-      var m = Math.PI * (2 * o.mark / 100 - 0.5);
-      box.appendChild(svg('line', { x1: (h + 33 * Math.cos(m)).toFixed(1), y1: (h + 33 * Math.sin(m)).toFixed(1), x2: (h + 37.5 * Math.cos(m)).toFixed(1), y2: (h + 37.5 * Math.sin(m)).toFixed(1), 'class': 'mk' }));
-    }
-    if (v != null) box.appendChild(svg('text', { x: h, y: h - 4, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': o.nf || 26 }, String(v)));
-    if (word) box.appendChild(svg('text', { x: h, y: h + (o.wy || 16), 'class': 'w ' + wcls, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': o.wf || 11 }, word));
+    box.appendChild(svg('text', { x: h, y: h - 4, 'class': 'v', 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 26 }, String(v)));
+    box.appendChild(svg('text', { x: h, y: h + 16, 'class': 'w ' + wcls, 'text-anchor': 'middle', 'dominant-baseline': 'central', 'font-size': 11 }, word));
     return box;
   }
   function hlStressTile(s, onTap) {
