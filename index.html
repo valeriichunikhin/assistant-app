@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 22:29">
+<meta name="published" content="2026-11-02 23:06">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1983,6 +1983,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 /* a planned workout that is over (calendar-2, Б1): done — a check on its icon, as a ticked task; skipped — the row dimmed */
 .crow .cic .cck{position:absolute;right:-5px;bottom:-4px;width:14px;height:14px;padding:2px;border-radius:50%;background:var(--good);color:var(--solid);stroke-width:3.2}
 .crow.cskip .cic,.crow.cskip .tx{opacity:.5}
+.cstat .t,.cstat .ctn{text-decoration:line-through;text-decoration-thickness:1.5px}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs-task{--cs:#d6336c}}:root[data-theme="light"] .cs-task{--cs:#d6336c}
 .crow .tx .mu{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crow .tx .t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
@@ -22563,8 +22564,12 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     function icOf(x) { return x.src === 'cal' ? calKind(x.kind)[2] : x.src === 'workout' ? woIcon(x) : CAL_IC[x.src] || 'calendar'; }
     // A «Зал …» of ours says its plan day instead (gym-week §2): «Сб · тяжёлая · 7 упражнений» — the place and the series
     // are in its sheet.
-    function subOf(x) { return x.gym && x.gym.name ? calGymLine(x.gym) : [x.place, CAL_SUB[x.src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · '); }
-    function csOf(x) { return 'cs-' + (CAL_SRC.indexOf(x.src) >= 0 ? x.src : 'apple') + (x.src === 'cal' ? ' k-' + calKind(x.kind)[0] : x.src === 'info' ? ' k-' + x.kind : ''); }
+    // A workout on a status day (docs/specs/health-status.md): «пропуск · болею» first, its title struck (csOf's cstat).
+    function subOf(x) {
+      if (x.skip) return ['пропуск · ' + x.skip.tag, x.gym && x.gym.name ? calGymLine(x.gym) : x.place].filter(Boolean).join(' · ');
+      return x.gym && x.gym.name ? calGymLine(x.gym) : [x.place, CAL_SUB[x.src], x.occurrence && x.repeat ? REPEAT_LABEL(x.repeat, x.repeat_every) : ''].filter(Boolean).join(' · ');
+    }
+    function csOf(x) { return 'cs-' + (CAL_SRC.indexOf(x.src) >= 0 ? x.src : 'apple') + (x.src === 'cal' ? ' k-' + calKind(x.kind)[0] : x.src === 'info' ? ' k-' + x.kind : '') + (x.skip ? ' cstat' : ''); }
     // A planned workout, plan vs fact: done (true) — the check on its icon, skipped (false) — dimmed; null — not known.
     function doneOf(x) { return x.src === 'cal' && x.kind === 'sport' && x.done != null ? x.done : null; }
     // What a tap on the item r stands for opens: our event — its sheet, a task — the task's, a screening — «Кино», a
