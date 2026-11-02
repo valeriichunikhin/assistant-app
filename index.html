@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 21:03">
+<meta name="published" content="2026-11-02 21:31">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1888,6 +1888,27 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 .htl-off{background:var(--track);color:var(--muted)}.htl-off .i{width:20px;height:20px}
 .htl-caffeine{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}.htl-caffeine .i{width:20px;height:20px}.htl-r.htl-ro .htl-n{color:var(--muted);font-weight:600}
 .hl-off{display:flex;align-items:center;gap:8px;margin:8px 0 0;font-size:12px}.hl-off .i{flex:none;width:16px;height:16px}
+/* The activity status (docs/specs/health-status.md): the pill over the rings, the sheets' pill rows, the suggestion. */
+.hst-active{--hst:var(--good);--st:var(--good)}.hst-sick{--hst:var(--ring-load-2);--st:var(--ring-load-2)}.hst-injury{--hst:var(--bad);--st:var(--bad)}.hst-pause{--hst:var(--hl-sky);--st:var(--hl-sky)}
+.hrl.hst-sick,.hrl.hst-injury,.hrl.hst-pause{color:var(--hst);font-weight:700}
+.hsti{flex:none;display:grid;place-items:center;width:44px;height:30px;border-radius:999px;color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--hst) 80%,#fff),var(--hst));box-shadow:0 4px 14px color-mix(in srgb,var(--hst) 35%,transparent)}
+.hsti .i{width:18px;height:18px}.hsti.big{width:96px;height:64px}.hsti.big .i{width:32px;height:32px}
+.hsti.hmsb{position:absolute;right:-2px;top:-2px;width:18px;height:18px;box-shadow:0 0 0 2px var(--solid)}.hsti.hmsb .i{width:11px;height:11px}.fmd.hmd{position:relative}
+.hstw{display:flex;margin:0 0 12px}
+.hstp{display:flex;align-items:center;gap:10px;min-height:52px;max-width:100%;padding:6px 14px 6px 6px;border:1px solid var(--card-line);border-radius:999px;background:var(--surface);box-shadow:var(--shadow);color:var(--fg);text-align:left}
+.hstp .tx{display:flex;flex-direction:column;min-width:0}.hstp b{font-size:15px}.hstp .mu{font-size:12.5px}.hstp>.i{flex:none;width:18px;height:18px;color:var(--muted)}
+.hsts{display:flex;flex-direction:column;gap:10px;margin:4px 0 12px}
+.hsrw{display:flex;align-items:center;gap:14px;width:100%;min-height:72px;padding:12px 16px;border:1px solid var(--card-line);border-radius:28px;background:var(--surface-2);color:var(--fg);text-align:left}
+.hsrw .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.hsrw b{font-size:16px}.hsrw .mu{font-size:14px;line-height:1.3}
+.hstr-o{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-2)}.on>.hstr-o{border:6px solid var(--fg);background:var(--solid)}
+.hstk{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;margin:0 0 12px;padding:0 16px;border:1px solid var(--card-line);border-radius:999px;background:none;color:var(--fg)}
+.hstk .tx{flex:1;text-align:left;font-weight:600}.hstk .i{flex:none;width:18px;height:18px;color:var(--muted)}.hstk-v{font-weight:700}.hstk.off{opacity:.45}
+.card.hkps{padding:0 16px;margin:0 0 12px}.hkp{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:0;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);font-size:16px;text-align:left}
+.hkp:last-child{border-bottom:0}.hkp .tx{flex:1}.hkp>.i{width:20px;height:20px;color:var(--muted)}.field.hkp-d{margin:0 0 12px}
+.hsgp{display:flex;justify-content:center;align-items:center;margin:8px 0 18px}.hsgp .hsti.big{border-radius:999px}
+.hsgc{position:relative;z-index:1;display:grid;place-items:center;width:40px;height:40px;margin:0 -12px;border-radius:50%;background:var(--surface-2);border:2px solid var(--solid)}.hsgc .i{width:18px;height:18px}
+.hsgt{margin:0 0 8px;text-align:center;font-size:22px;line-height:1.25}.hsgx{margin:0 0 16px;text-align:center;font-size:15px;line-height:1.5}.hsgx b{color:var(--fg)}
+.bar.hsgbb{flex-direction:column;gap:6px}.btn.hsg-no{border:0;color:var(--muted)}
 .hsph{margin:0 0 4px}.hspill{display:flex;align-items:center;gap:10px;margin:10px 0 6px;padding:8px 8px 8px 16px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
 .hsp-n{flex:1;min-width:0;font-weight:600}.hsp-w{font-size:13px;font-weight:700;color:var(--hs,var(--muted))}.hsp-v{font:800 17px var(--font-num);font-variant-numeric:tabular-nums}.hsp-v small{font-size:12px;margin-left:1px}
 .hspr{flex:none;width:34px;height:34px}.hspr .tr{fill:none;stroke:color-mix(in srgb,var(--ring-sleep) 20%,transparent);stroke-width:4}.hspr .a{fill:none;stroke:var(--ring-sleep);stroke-width:4;stroke-linecap:round}
@@ -2335,7 +2356,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
 <symbol id="i-dna" viewBox="0 0 24 24"><path d="m10 16 1.5 1.5"/><path d="m14 8-1.5-1.5"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m16.5 10.5 1 1"/><path d="m17 6-2.891-2.891"/><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="m20 9 .891.891"/><path d="M3.109 14.109 4 15"/><path d="m6.5 12.5 1 1"/><path d="m7 18 2.891 2.891"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-person-standing" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></symbol><symbol id="i-audio-waveform" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol><symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
-<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></symbol><symbol id="i-chart-no-axes-column" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
+<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></symbol><symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol><symbol id="i-bandage" viewBox="0 0 24 24"><path d="M10 10.01h.01"/><path d="M10 14.01h.01"/><path d="M14 10.01h.01"/><path d="M14 14.01h.01"/><path d="M18 6v12"/><path d="M6 6v12"/><rect x="2" y="6" width="20" height="12" rx="2"/></symbol><symbol id="i-tree-palm" viewBox="0 0 24 24"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></symbol><symbol id="i-chart-no-axes-column" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
 </svg>
 <!-- Muscle silhouettes: react-body-highlighter 2.0.5 (MIT, (c) 2020 GV79), docs/specs/bevel-gap.md -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -3030,6 +3051,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
       start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null, genshin: genshinIn(p && p.genshin),
       health: healthPrefsIn(p && p.health), fitness: fitPrefsIn(p && p.fitness),
+      status_skip: p && typeof p.status_skip === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(p.status_skip) ? p.status_skip : null,
       accent: { light: p && p.accent && p.accent.light === 'lime' ? 'lime' : 'purple', dark: p && p.accent && p.accent.dark === 'lime' ? 'lime' : 'purple' } };
   }
   // prefs.fitness (bevel-gap п. 10, «Редактировать «Фитнес»»): the tiles hidden and their order, keys of FIT_TILE_KEYS
@@ -4724,15 +4746,17 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         var h = j.health;
         if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
         if (h.date !== today) name.textContent = 'Нагрузка · вчера';
-        var st = h.load_status || 'calibration', word = HL_LOAD_RU[st] || '', pts = h.load_line || [];
+        // A status day (docs/specs/health-status.md): the status's name, no target band.
+        var hid = h.load_hidden && h.status, st = h.load_status || 'calibration', word = hid ? h.status.name : HL_LOAD_RU[st] || '', pts = h.load_line || [];
         r.go = function (node) {
           api('miniapp', { action: 'health_day' }, 15000, false, { date: h.date }).then(function (hj) { if (hj && hj.date) hlRingSheet('load', hj, node); }, noop);
         };
-        var col = add(el('div', 'bcol'), el('div', 'bv vs' + (h.load == null ? ' vmu' : ''), h.load == null ? '—' : h.load + ' %'), el('div', 'bld hl-st-' + st, word));
-        var sp = pts.length > 1 ? hlLoadSpark(pts, h.load_target, s === 'm' ? 150 : 120, s === 'm' ? 60 : 40) : null;
+        var col = add(el('div', 'bcol'), el('div', 'bv vs' + (h.load == null ? ' vmu' : ''), h.load == null ? '—' : h.load + ' %'), el('div', 'bld ' + (hid ? 'hst-' + h.status.status : 'hl-st-' + st), word));
+        var sp = pts.length > 1 ? hlLoadSpark(pts, hid ? null : h.load_target, s === 'm' ? 150 : 120, s === 'm' ? 60 : 40) : null;
         if (s === 'm') n.appendChild(add(el('div', 'bsplit'), col, sp));
         else { n.appendChild(col); if (sp) n.appendChild(add(el('div', 'bldw'), sp)); }
-        if (h.load_target) note('цель ' + h.load_target[0] + '–' + h.load_target[1] + ' %');
+        if (hid) note('цель скрыта');
+        else if (h.load_target) note('цель ' + h.load_target[0] + '–' + h.load_target[1] + ' %');
       },
       // «Монитор» (monitor.jpg): the six night metrics of «Сегодня» against his 30 days — s: how many are in the norm
       // and the ones off it; m: a cell each, the value and the status mark in its colour. A tap — «Здоровье».
@@ -14506,7 +14530,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       telegram: next.telegram || prefs.telegram, food: next.food !== undefined ? next.food : prefs.food,
       start: next.start !== undefined ? next.start : prefs.start, genshin: next.genshin !== undefined ? next.genshin : prefs.genshin,
       health: next.health !== undefined ? next.health : prefs.health, accent: next.accent || prefs.accent,
-      fitness: next.fitness !== undefined ? next.fitness : prefs.fitness };
+      fitness: next.fitness !== undefined ? next.fitness : prefs.fitness,
+      status_skip: next.status_skip !== undefined ? next.status_skip : prefs.status_skip };
     haptic();
     var was = JSON.stringify(prefs);
     prefsGen++;
@@ -15730,9 +15755,16 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (seg === 'fitness') { HJ = j; return add.apply(null, [clear(fit), hlFitness(j)].concat(hlFitTiles(j))); }
       var had = HJ && HJ.has_data;
       HJ = j;
-      add.apply(null, [clear(top)].concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
-        woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
-      }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+      var stRefresh = function () { cacheDrop('body:' + date); cacheDrop('home'); loadHealth(); };
+      add.apply(null, [clear(top), date === foodToday() || (j.status && j.status.status !== 'active') ? hlStatusPill(j.status, stRefresh) : null]
+        .concat(j.has_data ? [hlCard(j), hlStepsCard(j), hlStressCard(j), hlTimeline(j, openTl, function (ev) {
+          woAddSheet(date, ev.currentTarget, function () { load(); loadHealth(); });
+        }), hlMonitor(j.monitor || [])] : [hlEmpty()]));
+      // The suggestion (docs/specs/health-status.md, status-suggest.png): once a day while «Активен».
+      if (date === foodToday() && j.status_suggest && prefs.status_skip !== date && !HL_SUGGESTED[date]) {
+        HL_SUGGESTED[date] = true;
+        setTimeout(function () { if (top.isConnected) hlStatusSuggest(j, stRefresh); }, 400);
+      }
       // The food's cards drawn before the timeline lose (or get back) its entries and «Спорт».
       if (FJ && !had !== !j.has_data) render(FJ);
     }
@@ -17108,17 +17140,127 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   // The three rings with their names under them; vs: {load, recovery, sleep} as numbers or nulls; onTap(key, cell) —
   // a ring opens its sheet (left out on the board's widget). The numbers with «%», thin dividers between the rings.
+  // vs.load_hidden (a status day, docs/specs/health-status.md): the load's ring without its target band, the status's
+  // name under it.
   function hlRings(vs, size, onTap, bare) {
-    var row = el('div', 'hrings hdiv');
+    var row = el('div', 'hrings hdiv'), hid = !!vs.load_hidden, sn = hid && vs.status && vs.status.name;
     HL_RINGS.forEach(function (k) {
-      var band = k[0] === 'load' ? (vs.load_target || [28, 46]).map(function (x) { return x / 100; }) : null;
-      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band, true), bare ? null : el('div', 'hrl', size < 60 && k[0] === 'recovery' ? 'Восст.' : k[1]));
+      var band = k[0] === 'load' && !hid ? (vs.load_target || [28, 46]).map(function (x) { return x / 100; }) : null;
+      var lbl = k[0] === 'load' && sn ? sn : size < 60 && k[0] === 'recovery' ? 'Восст.' : k[1];
+      var v = vs[k[0]], cell = add(el('div', 'hrc'), hlRing(v, k[2], size, band, true), bare ? null : el('div', 'hrl' + (k[0] === 'load' && sn ? ' hst-' + vs.status.status : ''), lbl));
       if (onTap) tap(cell, function () { onTap(k[0], cell); });
       else cell.setAttribute('role', 'img');
       cell.setAttribute('aria-label', k[1] + ': ' + (v == null ? 'нет данных' : v + ' %') + (onTap ? ' — из чего' : ''));
       row.appendChild(cell);
     });
     return row;
+  }
+  // --- The activity status (docs/specs/health-status.md; docs/bevel/status-*.png) ---
+  // «Активен · Болею · Травма · Пауза»: a Lucide icon each (not taken by another meaning), our colours.
+  var HL_STATUS_DEF = { active: ['smile', 'Активен', 'Активный образ жизни и хорошее самочувствие'], sick: ['bed-double', 'Болею', 'Отдых из-за болезни'],
+    injury: ['bandage', 'Травма', 'Восстановление после травмы'], pause: ['tree-palm', 'Пауза', 'Отдых от тренировок'] };
+  var HL_KEEPS = [['change', 'До изменения'], ['tomorrow', 'До завтра'], ['7', '7 дней'], ['14', '14 дней']];
+  var HL_SUGGESTED = {};
+  function hlKeepName(k) {
+    var x = HL_KEEPS.filter(function (y) { return y[0] === k; })[0];
+    return x ? x[1] : 'до ' + Number(k.slice(8, 10)) + ' ' + MONTHS_G[Number(k.slice(5, 7)) - 1];
+  }
+  function hlStatusIc(st, cls) { return add(el('span', 'hsti hst-' + st + (cls ? ' ' + cls : '')), icon(HL_STATUS_DEF[st][0])); }
+  // The pill over the rings (status-list.png, left of Bevel's weather): the icon in its colour, the name, how long, ⌄.
+  function hlStatusPill(o, done) {
+    o = o || { status: 'active', name: 'Активен', keep: 'До изменения' };
+    var b = add(el('button', 'hstp'), hlStatusIc(o.status), add(el('span', 'tx'), el('b', '', o.name), el('span', 'mu', o.keep)), icon('chevron-down'));
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Статус: ' + o.name + ', ' + o.keep.toLowerCase() + ' — изменить');
+    b.onclick = function () { haptic(); hlStatusSheet(o, b, done); };
+    return add(el('div', 'hstw'), b);
+  }
+  function hlStatusSave(st, keep, btn, done) {
+    if (btn) btn.disabled = true;
+    return api('miniapp', { action: 'status_set' }, 15000, false, st === 'active' ? { status: st } : { status: st, keep: keep }).then(function (r) {
+      toast('Статус: ' + r.name + (st === 'active' ? '' : ' · ' + r.keep.toLowerCase()), HL_STATUS_DEF[st][0]);
+      if (done) done(r);
+    }, function () { if (btn) btn.disabled = false; });
+  }
+  // «Статус физической активности» (status-list.png, status-sick.png): four pill rows with a radio, «Сохранять статус» —
+  // the keep's sheet, «Обновить».
+  function hlStatusSheet(o, from, done) {
+    var pick = o.status, keep = o.status === 'active' || !o.until ? 'change' : o.until === foodToday() ? 'tomorrow' : o.until, close = noop;
+    var rows = el('div', 'hsts'), kv = el('span', 'hstk-v'), kr = add(el('button', 'hstk'), icon('hourglass'), el('span', 'tx', 'Сохранять статус'), kv, icon('chevron-right'));
+    kr.type = 'button';
+    function paint() {
+      clear(rows);
+      ['active', 'sick', 'injury', 'pause'].forEach(function (k) {
+        var d = HL_STATUS_DEF[k], on = k === pick, r = add(el('button', 'hsrw' + (on ? ' on' : '')), hlStatusIc(k), add(el('span', 'tx'), el('b', '', d[1]), el('span', 'mu', d[2])),
+          el('span', 'hstr-o'));
+        r.type = 'button';
+        r.setAttribute('role', 'radio');
+        r.setAttribute('aria-checked', String(on));
+        r.onclick = function () { haptic(); pick = k; if (k === 'sick' && keep === 'change' && o.status !== 'sick') keep = '7'; paint(); };
+        rows.appendChild(r);
+      });
+      kv.textContent = hlKeepName(keep);
+      kr.disabled = pick === 'active';
+      kr.classList.toggle('off', pick === 'active');
+    }
+    kr.onclick = function () { haptic(); hlKeepSheet(keep, kr, function (k) { keep = k; paint(); }); };
+    var up = foodBtn('btn wide', null, 'Обновить', function () { hlStatusSave(pick, keep, up, function () { close(); if (done) done(); }); });
+    paint();
+    close = legalSheet('Статус физической активности', [rows, kr, add(el('div', 'bar mact mstick'), up)], from);
+  }
+  // «Сохранять статус» (status-duration.png): four radios in one card, «Индивидуальная настройка» with a date, «Сохранить».
+  function hlKeepSheet(cur, from, put) {
+    var close = noop, k = cur, box = el('div', 'card hkps'), date = el('input'), own = el('button', 'hkp hkp-own');
+    date.type = 'date';
+    date.min = foodToday();
+    date.value = /^\d{4}-/.test(cur) ? cur : addDays(foodToday(), 2);
+    date.setAttribute('aria-label', 'Последний день статуса');
+    function row(key, name, ic) {
+      var r = add(el('button', 'hkp'), ic ? icon(ic) : null, el('span', 'tx', name), el('span', 'hstr-o'));
+      r.type = 'button';
+      r.setAttribute('role', 'radio');
+      r.onclick = function () { haptic(); k = key; paint(); };
+      r.k = key;
+      return r;
+    }
+    var rs = HL_KEEPS.map(function (x) { return row(x[0], x[1]); });
+    add.apply(null, [box].concat(rs));
+    own.type = 'button';
+    add(own, icon('calendar'), el('span', 'tx', 'Индивидуальная настройка'), el('span', 'hstr-o'));
+    own.setAttribute('role', 'radio');
+    own.onclick = function () { haptic(); k = date.value; paint(); };
+    date.onchange = function () { if (date.value) { k = date.value; paint(); } };
+    var dateRow = add(el('label', 'field hkp-d'), el('span', 'mu', 'Последний день'), date);
+    function paint() {
+      var custom = /^\d{4}-/.test(k);
+      rs.forEach(function (r) { r.classList.toggle('on', r.k === k); r.setAttribute('aria-checked', String(r.k === k)); });
+      own.classList.toggle('on', custom);
+      own.setAttribute('aria-checked', String(custom));
+      dateRow.hidden = !custom;
+    }
+    paint();
+    var ok = foodBtn('btn wide', null, 'Сохранить', function () {
+      if (/^\d{4}-/.test(k) && !(k >= foodToday())) { toast('Последний день — не раньше сегодня'); return; }
+      close();
+      put(k);
+    });
+    close = legalSheet('Сохранять статус', [box, add(el('div', 'card hkps'), own, dateRow), add(el('div', 'bar mact mstick'), ok)], from);
+  }
+  // The suggestion (status-suggest.png): «Активен › Пауза» (or «Болею»), the question and why, «Сохранять статус»,
+  // «Обновить», «Отклонить» (prefs.status_skip — not again today).
+  function hlStatusSuggest(j, done) {
+    var sg = j.status_suggest, close = noop, keep = sg.keep, to = HL_STATUS_DEF[sg.to][1];
+    var kv = el('span', 'hstk-v', hlKeepName(keep)), kr = add(el('button', 'hstk'), icon('hourglass'), el('span', 'tx', 'Сохранять статус'), kv, icon('chevron-right'));
+    kr.type = 'button';
+    kr.onclick = function () { haptic(); hlKeepSheet(keep, kr, function (k) { keep = k; kv.textContent = hlKeepName(k); }); };
+    var pair = add(el('div', 'hsgp'), hlStatusIc('active', 'big'), add(el('span', 'hsgc'), icon('chevron-right')), hlStatusIc(sg.to, 'big'));
+    pair.setAttribute('aria-hidden', 'true');
+    var why = sg.to === 'sick' ? 'Похоже на начало болезни: ' + sg.why + '.' : 'Сегодня уровень восстановления низкий (' + sg.why.replace('восстановление ', '') + ').';
+    var up = foodBtn('btn wide', null, 'Обновить', function () { hlStatusSave(sg.to, keep, up, function () { close(); done(); }); });
+    var no = foodBtn('btn ghost wide hsg-no', null, 'Отклонить', function () { close(); editPrefs({ status_skip: foodToday() }, null, true); });
+    close = legalSheet('Статус', [pair, el('h3', 'hsgt', 'Переключить статус на «' + to + '»?'),
+      add(el('p', 'mu hsgx'), document.createTextNode(why + ' Изменить статус с «'), el('b', '', 'Активен'), document.createTextNode('» на «'), el('b', '', to),
+        document.createTextNode('»?')), kr, add(el('div', 'bar mact mstick hsgbb'), up, no)], null);
   }
   // The one line instead of the cards while the iPhone sends nothing; a tap — the setup.
   function hlEmpty() {
@@ -17136,6 +17278,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var vs = { load: sc.load && sc.load.value, recovery: sc.recovery && sc.recovery.value, sleep: sc.sleep && sc.sleep.value };
     var today = (j.week || []).filter(function (d) { return d.day === j.date; })[0];
     vs.load_target = j.load_target;
+    vs.load_hidden = j.load_hidden;
+    vs.status = j.status;
     var rings = hlRings(vs, 100, function (k, cell) { hlRingSheet(k, j, cell); }), wrap = add(el('div', 'hbody'), rings);
     c.className += ' hcard';
     var adv = j.advice_model ? hlModel(j.advice_model, j.tip) : j.tip ? hlTip(j.tip, today && today.kinds) : el('div', 'hadv' + (j.advice ? '' : ' mu'),
@@ -17970,7 +18114,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var zone = hs && cur === 'sleep' && HL_SLEEP_ZONE[hs.word] ? HL_SLEEP_ZONE[hs.word] : hs && cur !== 'load' ? (stress ? hlStressZone(hs.value) : hs.value >= (cur === 'sleep' ? 85 : 67) ? 'good' : hs.value >= (cur === 'sleep' ? 70 : 34) ? 'mid' : 'bad') : null;
       var st = !hs ? null : cur === 'load' ? (hs.day ? HL_DAY_RU[hs.day] : HL_LOAD_RU[hs.status || 'calibration']) : stress ? hlStressWord(hs) : HL_ZONE_RU[cur][zone];
       var stCls = !hs ? '' : cur === 'load' ? 'hl-st-' + (hs.day ? HL_DAY_CLS[hs.day] : hs.status || 'calibration') : 'hz-st-' + zone;
-      var range = cur === 'load' ? (tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Хорошо от 70 %, отлично от 85 %' : stress ? 'Низкий до ' + HL_STRESS[0] + ', высокий от ' + HL_STRESS[1] : 'Высокое от 67 %';
+      // A status day (docs/specs/health-status.md): the load's target hidden, the status's name for its word.
+      if (cur === 'load' && j.load_hidden && j.status && hs) { st = j.status.name; stCls = 'hst-' + j.status.status; }
+      var range = cur === 'load' ? (j.load_hidden && j.status ? 'Цель скрыта: статус «' + j.status.name + '»' : tgt[1] === 0 ? 'Цель сегодня: отдых' : 'Цель сегодня: ' + tgt[0] + '–' + tgt[1] + ' %') : cur === 'sleep' ? 'Хорошо от 70 %, отлично от 85 %' : stress ? 'Низкий до ' + HL_STRESS[0] + ', высокий от ' + HL_STRESS[1] : 'Высокое от 67 %';
       var sub = sd ? (sd.now != null ? 'Сейчас — среднее за последний час, обновлено ' + foodTime(sd.at) : 'Среднее за день') : s && s.line && !stress ? s.line.replace(cur === 'load' && s.day ? /^\d+ % — [^:]+: / : /^\d+ % — /, '') : null;
       add(body, cur === 'recovery' && s ? hlRecHero(s, j, st, stCls, range, sub) : cur === 'sleep' && s ? hlSleepPill(s, hlDay(j.date), st, stCls, range, sub) : hlHead(hs ? String(hs.value) : '—', hs && !stress ? '%' : '', hlDay(j.date), st, stCls, range, sub),
         cur === 'load' ? loadTabs() : null);
@@ -18327,8 +18473,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // open ends, «≡ 28–46» under it all (the margin of safety a paler arc on either side); a tap — the load's sheet.
   // A score with no value (s {status: 'calibration', value: null} — no gym sets in 28 days) is calibrating: the word
   // «Калибровка» in the calibration colour, the arc empty, no number and no «≡», still a chevron and a tap.
-  function hlGauge(name, s, tgt, onTap, mg) {
-    var row = el('div', 'hgg hl-st-' + (s && s.day ? HL_DAY_CLS[s.day] : s && s.status || 'calibration')), v = s ? s.value : null, cal = !!s && v == null;
+  // hide — a status day's status {status, name} (docs/specs/health-status.md): its name in its colour instead of the
+  // word, no target arcs and no «≡».
+  function hlGauge(name, s, tgt, onTap, mg, hide) {
+    var row = el('div', 'hgg ' + (hide ? 'hst-' + hide.status : 'hl-st-' + (s && s.day ? HL_DAY_CLS[s.day] : s && s.status || 'calibration'))), v = s ? s.value : null, cal = !!s && v == null;
     var W = 140, H = 126, cx = 70, cy = 66, r = 46, N = 37;
     var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hgv', 'aria-hidden': 'true' });
     function pt(f, rad) { var a = Math.PI * (0.75 + 1.5 * Math.max(0, Math.min(1, f))); return [cx + rad * Math.cos(a), cy + rad * Math.sin(a)]; }
@@ -18339,11 +18487,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       if (on) tk.style.strokeOpacity = (0.45 + 0.55 * f).toFixed(2);
       box.appendChild(tk);
     }
-    if (mg && !cal) {
+    if (mg && !cal && !hide) {
       if (mg[0] < tgt[0]) box.appendChild(svg('path', { d: arc(mg[0] / 100, tgt[0] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
       if (mg[1] > tgt[1]) box.appendChild(svg('path', { d: arc(tgt[1] / 100, mg[1] / 100, r + 14), 'class': 'zone soft', 'stroke-width': 5 }));
     }
-    if (!cal) box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100, r + 14), 'class': 'zone', 'stroke-width': 5 }));
+    if (!cal && !hide) box.appendChild(svg('path', { d: arc(tgt[0] / 100, tgt[1] / 100, r + 14), 'class': 'zone', 'stroke-width': 5 }));
     if (v != null) {
       var m = pt(v / 100, r + 14);
       box.appendChild(svg('circle', { cx: m[0].toFixed(1), cy: m[1].toFixed(1), r: 9, 'class': 'mkh' }));
@@ -18355,13 +18503,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var e0 = pt(0, r + 14), e1 = pt(1, r + 14);
     box.appendChild(svg('text', { x: (e0[0] + 2).toFixed(1), y: (e0[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '0'));
     box.appendChild(svg('text', { x: (e1[0] - 2).toFixed(1), y: (e1[1] + 12).toFixed(1), 'class': 'ge', 'text-anchor': 'middle' }, '100'));
-    var where = v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели', rest = tgt[1] === 0;
-    var word = s && ((String(s.line || '').match(/— ([^:]+):/) || [])[1] || HL_LOAD_RU[s.status || 'calibration'].toLowerCase());
+    var where = hide ? 'цель скрыта' : v == null ? 'нет данных' : v < tgt[0] ? 'ниже цели' : v > tgt[1] ? 'выше цели' : 'в цели', rest = tgt[1] === 0;
+    var word = hide ? hide.name : s && ((String(s.line || '').match(/— ([^:]+):/) || [])[1] || HL_LOAD_RU[s.status || 'calibration'].toLowerCase());
     word = word ? word.charAt(0).toUpperCase() + word.slice(1) : null;
     add(row, add(el('div', 'hgh'), document.createTextNode(name), onTap ? icon('chevron-right') : null), word ? el('div', 'hgst', word) : null, box,
-      cal ? null : el('div', 'hgt', rest ? '≡ отдых' : '≡ ' + tgt[0] + '–' + tgt[1]));
-    row.setAttribute('aria-label', name + ': ' + (cal ? 'калибровка' : v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where + ', цель ' +
-      (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %')) + (onTap ? ' — из чего' : ''));
+      cal || hide ? null : el('div', 'hgt', rest ? '≡ отдых' : '≡ ' + tgt[0] + '–' + tgt[1]));
+    row.setAttribute('aria-label', name + ': ' + (cal ? 'калибровка' : v == null ? 'нет данных' : v + ' %, ' + (word ? word.toLowerCase() + ', ' : '') + where +
+      (hide ? '' : ', цель ' + (rest ? 'отдых' : tgt[0] + '–' + tgt[1] + ' %'))) + (onTap ? ' — из чего' : ''));
     return onTap ? tap(row, function () { haptic(); onTap(row); }) : row;
   }
   // «Мышечная нагрузка» (docs/specs/muscle-load.md, tour-7.jpg): the day's number (the gauge's) with its status word in
@@ -18588,7 +18736,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     // «Кардио» opens the load's sheet; «Мышцы» — the same sheet on its tab «Мышечная нагрузка» (docs/specs/muscle-load.md).
     function open(row) { hlRingSheet('load', j, row); }
     add(c, el('div', 'hgsh', 'Тренировочная нагрузка'),
-      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg), hlGauge('Мышцы', sc.muscle || { status: 'calibration', value: null }, [28, 46],
+      add(el('div', 'hgs'), hlGauge('Кардио', sc.load, tgt, sc.load ? open : null, mg, j.load_hidden && j.status ? j.status : null), hlGauge('Мышцы', sc.muscle || { status: 'calibration', value: null }, [28, 46],
         // No base yet: «Калибровка», and the tab says what it waits for.
         function (row) { hlRingSheet('load', j, row, 'muscle'); }, [24, 52])));
     if (fr.length) {
@@ -21369,7 +21517,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         what = rg[1].toLowerCase() + ' ' + (v == null ? 'нет данных' : v + (key === 'stress' ? '' : ' %'));
       }
       if (!bio && d <= today && J) tapIt = function () { close(); pick(d); };
-      var b = add(el(tapIt ? 'button' : 'span', 'fmd hmd' + (d === today ? ' today' : '') + (d === sel ? ' sel' : '') + (d > today ? ' fut' : '')), ring, el('span', 'hmn', String(n)), dots);
+      // A status day (docs/specs/health-status.md): its small icon at the corner.
+      var stb = !bio && seg !== 'nutrition' && by && by.status && HL_STATUS_DEF[by.status] ? hlStatusIc(by.status, 'hmsb') : null;
+      if (stb) what += (what ? ', ' : '') + HL_STATUS_DEF[by.status][1].toLowerCase();
+      var b = add(el(tapIt ? 'button' : 'span', 'fmd hmd' + (d === today ? ' today' : '') + (d === sel ? ' sel' : '') + (d > today ? ' fut' : '')), ring, el('span', 'hmn', String(n)), dots, stb);
       if (tapIt) { b.type = 'button'; b.onclick = tapIt; }
       b.setAttribute('aria-label', cap(WEEK[wd(d)]) + ' ' + dm(d) + (d === today ? ', сегодня' : '') + (what ? ': ' + what : ''));
       return b;
