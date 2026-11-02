@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 13:46">
+<meta name="published" content="2026-11-02 13:59">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -18319,7 +18319,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var BIO_MISSING_KEY = { 'Время сна': 'sleep', 'Регулярность сна': 'regularity', 'Шаги': 'steps', 'Зоны 2–3': 'z23', 'Зоны 4–5': 'z45',
     'Силовые': 'strength', 'Пульс покоя': 'rhr', 'VO2max': 'vo2max', 'Безжировая масса': 'lean', 'Питание': 'nutrition', 'Алкоголь': 'alcohol' };
   // A row as the group the sheet's pieces take (bioRing's share, bioGroupRow, bioFactorSheet): its icon, its years
-  // against his age, the factors with data (the snapshot's own value text where it has one — «53,2 · медиана 47,5»)
+  // against his age, the factors with data (the snapshot's own value text where it has one — «53,2 · медиана 47,5»,
+  // else the row's value_text — «≈ 2,5 напитка в неделю — в норме (до 4)»)
   // and the names of those without.
   function bioGroupOf(r, j) {
     var ic = BIO_GROUPS.filter(function (g) { return g[0] === r.key; })[0], raw = {};
@@ -18327,7 +18328,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     var fs = r.factors || [];
     return { key: r.key, name: r.label, ic: ic ? ic[2] : 'circle-dot', years: r.years == null ? null : r.delta, line: r.line,
       factors: fs.filter(function (f) { return f.years != null; }).map(function (f) {
-        return { key: f.key, label: f.label, years: f.years, value: raw[f.key] || f.text || '', rule: f.rule || '', source: f.source || '' };
+        return { key: f.key, label: f.label, years: f.years, value: raw[f.key] || f.value_text || f.text || '', rule: f.rule || '', source: f.source || '' };
       }),
       missing: fs.filter(function (f) { return f.years == null; }).map(function (f) { return f.label; }) };
   }
