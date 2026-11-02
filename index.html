@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 23:06">
+<meta name="published" content="2026-11-02 23:36">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1060,6 +1060,7 @@ button.pill{cursor:pointer;transition:border-color .12s,color .12s,background .1
 .nutl-p{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fwin{width:100%;font:700 28px/1.2 var(--font-num);text-align:center;font-variant-numeric:tabular-nums}
 .bl.bkg{display:flex;align-items:center;gap:4px}.bl.bkg .i{width:14px;height:14px}
+.btn.bcleft{flex:none;min-height:36px;padding:0 12px;font-size:13px}
 /* «Нагрузка» and «Монитор» on the board, Ж·У·Б under «Еда сегодня» (bevel-gap п. 12). */
 .bld{font-size:13px;font-weight:700;color:var(--st)}.bldw{margin-top:auto}.bldc{display:block;overflow:visible;max-width:100%}
 .bldc .bd{fill:color-mix(in srgb,var(--ring-recovery) 16%,transparent)}.bldc .ln{fill:none;stroke:var(--ring-sleep);stroke-width:2;stroke-linejoin:round}
@@ -1464,7 +1465,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
 .hxh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}.hxh .pr{font:800 17px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .row.hxr{padding-left:0;padding-right:0;min-height:44px}.row.hxr .pr{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
-.hmon{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 14px 14px}
+.hmon{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 14px 6px}
+.hmedw{display:flex;justify-content:center;padding:0 14px 8px}.hmed{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 10px;border:0;background:none;color:var(--muted);font:600 14px var(--font)}.hmed .i{width:16px;height:16px}
 @media (min-width:900px){.hmon{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .hmt{--st:var(--muted);display:flex;gap:10px;align-items:center;min-width:0;padding:10px 12px 10px 8px;border-radius:var(--r-b);background:var(--surface-2)}
 .hmt.hs-norm{--st:var(--ring-recovery)}.hmt.hs-above{--st:var(--hl-sky)}.hmt.hs-below{--st:var(--ring-load)}
@@ -2237,6 +2239,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-dices" viewBox="0 0 24 24"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></symbol>
 <symbol id="i-pen-line" viewBox="0 0 24 24"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
 <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
 <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
 <symbol id="i-weight" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></symbol>
 <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
@@ -2356,7 +2359,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-test-tube" viewBox="0 0 24 24"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5c-1.4 0-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></symbol>
 <symbol id="i-dna" viewBox="0 0 24 24"><path d="m10 16 1.5 1.5"/><path d="m14 8-1.5-1.5"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="m16.5 10.5 1 1"/><path d="m17 6-2.891-2.891"/><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="m20 9 .891.891"/><path d="M3.109 14.109 4 15"/><path d="m6.5 12.5 1 1"/><path d="m7 18 2.891 2.891"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol><symbol id="i-person-standing" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></symbol><symbol id="i-audio-waveform" viewBox="0 0 24 24"><path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/></symbol><symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol><symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="i-percent" viewBox="0 0 24 24"><line x1="19" x2="5" y1="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol><symbol id="i-calendar-days" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></symbol><symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
-<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></symbol><symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol><symbol id="i-bandage" viewBox="0 0 24 24"><path d="M10 10.01h.01"/><path d="M10 14.01h.01"/><path d="M14 10.01h.01"/><path d="M14 14.01h.01"/><path d="M18 6v12"/><path d="M6 6v12"/><rect x="2" y="6" width="20" height="12" rx="2"/></symbol><symbol id="i-tree-palm" viewBox="0 0 24 24"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></symbol><symbol id="i-chart-no-axes-column" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
+<symbol id="i-scan-barcode" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M17 7v10"/></symbol><symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol><symbol id="i-bean" viewBox="0 0 24 24"><path d="M10.165 6.598C9.954 7.478 9.64 8.36 9 9c-.64.64-1.521.954-2.402 1.165A6 6 0 0 0 8 22c7.732 0 14-6.268 14-14a6 6 0 0 0-11.835-1.402Z"/><path d="M5.341 10.62a4 4 0 1 0 5.279-5.28"/></symbol><symbol id="i-wine" viewBox="0 0 24 24"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15v7"/><path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/></symbol><symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol><symbol id="i-chart-column" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol><symbol id="i-chart-pie" viewBox="0 0 24 24"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></symbol><symbol id="i-diff" viewBox="0 0 24 24"><path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/></symbol><symbol id="i-atom" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"/><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"/></symbol><symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></symbol><symbol id="i-bed-double" viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></symbol><symbol id="i-bandage" viewBox="0 0 24 24"><path d="M10 10.01h.01"/><path d="M10 14.01h.01"/><path d="M14 10.01h.01"/><path d="M14 14.01h.01"/><path d="M18 6v12"/><path d="M6 6v12"/><rect x="2" y="6" width="20" height="12" rx="2"/></symbol><symbol id="i-tree-palm" viewBox="0 0 24 24"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol><symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></symbol><symbol id="i-chart-no-axes-column" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></symbol>
 </svg>
 <!-- Muscle silhouettes: react-body-highlighter 2.0.5 (MIT, (c) 2020 GV79), docs/specs/bevel-gap.md -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -3050,7 +3053,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       views: w && typeof w === 'object' && !Array.isArray(w) ? { wide: viewIn(w) } : {},
       cents: !!(p && p.cents === true), telegram: p && p.telegram === 'input' ? 'input' : 'full', food: foodNormIn(p && p.food),
       start: p && TAB_KEYS.indexOf(p.start) >= 0 ? p.start : null, genshin: genshinIn(p && p.genshin),
-      health: healthPrefsIn(p && p.health), fitness: fitPrefsIn(p && p.fitness),
+      health: healthPrefsIn(p && p.health), fitness: fitPrefsIn(p && p.fitness), monitor: monPrefsIn(p && p.monitor),
       status_skip: p && typeof p.status_skip === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(p.status_skip) ? p.status_skip : null,
       accent: { light: p && p.accent && p.accent.light === 'lime' ? 'lime' : 'purple', dark: p && p.accent && p.accent.dark === 'lime' ? 'lime' : 'purple' } };
   }
@@ -3059,9 +3062,13 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   var FIT_TILE_KEYS = ['all', 'energy', 'vo2', 'hrr', 'focus', 'zones', 'sets', 'volume'];
   // prefs.health.targets: «Целевые нутриенты» of the «Цели» sheet (NG_TARGET), the server's TARGET_KEYS.
   var NG_TARGET_KEYS = ['fiber', 'water', 'sodium', 'sugar'];
-  function fitPrefsIn(f) {
+  function fitPrefsIn(f) { return orderPrefsIn(f, FIT_TILE_KEYS); }
+  // prefs.monitor (bevel-gap п. 1): «Монитор»'s tiles hidden and in order, the same way.
+  var MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
+  function monPrefsIn(f) { return orderPrefsIn(f, MON_KEYS); }
+  function orderPrefsIn(f, keys) {
     if (!f || typeof f !== 'object') return null;
-    var o = { hidden: keysIn(f.hidden, FIT_TILE_KEYS), order: keysIn(f.order, FIT_TILE_KEYS) };
+    var o = { hidden: keysIn(f.hidden, keys), order: keysIn(f.order, keys) };
     return o.hidden.length || o.order.length ? o : null;
   }
   // prefs.health (docs/specs/nutrition-health.md, docs/specs/labs.md): the kcal goal (a whole 500–6000), his birth date
@@ -4477,7 +4484,33 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         }
         var foot = el('div', 'bcmf'), said = w.now ? 'сейчас → ' + (home ? 'дома ' : 'у офиса ') + hm(w.now.arrive) : '';
         if (!t.live) said = (said ? said + ' · ' : '') + 'по расписанию';
+        var said0 = said;
+        if (t.left) said = 'ушёл · без напоминания';
         foot.appendChild(el('div', 'bnt', said));
+        // «Я уже ушёл» (02.11.2026): on an office day from noon (the evening's way home planned), one tap cancels today's
+        // «🚋 Домой» and its push (transit_set {left}); after it «Ещё в офисе» takes it back.
+        if (!preview && tg0.arrive && t.evening !== undefined && gone >= 720 && (t.evening || t.left)) {
+          var lb = foodBtn('btn ghost bcleft', t.left ? 'undo-2' : 'house', t.left ? 'Ещё в офисе' : 'Я уже ушёл', function (ev) {
+            ev.stopPropagation();
+            if (hdr.classList.contains('bediting')) return;
+            var to = !t.left;
+            lb.disabled = true;
+            haptic();
+            api('miniapp', { action: 'transit_set' }, 15000, true, { left: to }).then(function () {
+              toast(to ? 'Ушёл — «Домой» убрал, напоминания не будет' : 'Ещё в офисе — напомню, когда выходить', to ? 'house' : 'tram-front');
+              // Drawn at once: the button turns and the line says it; the board's next answer agrees.
+              t.left = to;
+              lb.disabled = false;
+              label(lb, to ? 'undo-2' : 'house', to ? 'Ещё в офисе' : 'Я уже ушёл');
+              foot.firstChild.textContent = to ? 'ушёл · без напоминания' : said0;
+              bsrcPut('transit', function (x) { x.left = to; });
+              cacheDrop('cal');
+              bsrcAt.transit = 0;
+              boardAsk('transit');
+            }, function (e) { lb.disabled = false; if (!e.login) toast(ERRORS[e.code]); });
+          });
+          foot.appendChild(lb);
+        }
         if (!home && !preview) {
           var sel = el('select'), cur = tg0.source === 'override' ? tg0.arrive || 'off' : 'auto';
           var auto = tg0.source === 'override' ? 'как обычно' : tg0.arrive ? 'к ' + hm(tg0.arrive) + (tg0.source === 'calendar' ? ' · календарь' : '') : 'не еду';
@@ -14531,6 +14564,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       start: next.start !== undefined ? next.start : prefs.start, genshin: next.genshin !== undefined ? next.genshin : prefs.genshin,
       health: next.health !== undefined ? next.health : prefs.health, accent: next.accent || prefs.accent,
       fitness: next.fitness !== undefined ? next.fitness : prefs.fitness,
+      monitor: next.monitor !== undefined ? next.monitor : prefs.monitor,
       status_skip: next.status_skip !== undefined ? next.status_skip : prefs.status_skip };
     haptic();
     var was = JSON.stringify(prefs);
@@ -17723,14 +17757,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // line; a part with a sheet of its own opens it (chevron). The load adds «Разбивка за 30 дней» — a bar a status.
   var HL_SN = { resting_hr: 'Пульс покоя', hrv: 'ВСР', resp_rate: 'Дыхание', spo2: 'SpO2', wrist_temp: 'Температура', sleep_min: 'Сон',
     steps: 'Шаги', active_kcal: 'Активные ккал', vo2max: 'VO2max', weight: 'Вес', body_fat: 'Жир', lean_kg: 'Безжир. масса', kcal: 'Еда' };
-  var HL_IC = { resting_hr: 'heart', hrv: 'audio-waveform', resp_rate: 'wind', spo2: 'droplet', wrist_temp: 'thermometer', sleep_min: 'moon',
-    steps: 'footprints', active_kcal: 'flame', vo2max: 'wind', weight: 'scale', body_fat: 'percent', lean_kg: 'biceps-flexed', kcal: 'utensils',
+  var HL_IC = { resting_hr: 'heart', hrv: 'audio-waveform', resp_rate: 'wind', spo2: 'atom', wrist_temp: 'thermometer', sleep_min: 'moon',
+    steps: 'footprints', active_kcal: 'flame', vo2max: 'rocket', weight: 'scale', body_fat: 'percent', lean_kg: 'biceps-flexed', kcal: 'utensils',
     sleep: 'moon', recovery: 'activity', load: 'flame', muscle: 'biceps-flexed' };
   var HL_MON_KEYS = ['resp_rate', 'resting_hr', 'hrv', 'spo2', 'wrist_temp', 'sleep_min'];
   var HL_BIO_KEYS = ['weight', 'body_fat', 'lean_kg', 'hrv', 'resting_hr', 'vo2max', 'steps', 'active_kcal', 'kcal'];
   var HL_PERIODS = [[30, '30 Д'], [90, '3 М'], [180, '6 М'], [365, '1 Г']];
   // The part's icon by its label (the rings' parts).
-  var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer', 'SpO2': 'droplet',
+  var HL_PART_IC = { 'ВСР (SDNN)': 'audio-waveform', 'Пульс во сне': 'heart', 'Сон': 'moon', 'Дыхание': 'wind', 'Температура': 'thermometer', 'SpO2': 'atom',
     'Время сна': 'clock', 'Снижение пульса': 'heart-pulse', 'REM': 'eye', 'Глубокий сон': 'bed', 'Непрерывность': 'infinity', 'Эффективность': 'percent', 'Сегодня': 'flame', 'За 7 дней': 'calendar-range',
     'Обычно за 6 недель': 'calendar-days', 'Подходы за 7 дней': 'biceps-flexed', 'Нагрузка за 7 дней': 'biceps-flexed', 'ВСР к норме': 'audio-waveform', 'Пульс покоя к норме': 'heart' };
   var HL_ZONE_RU = { recovery: { good: 'Высокое', mid: 'Среднее', bad: 'Низкое' }, sleep: { good: 'Отлично', mid: 'Хорошо', bad: 'Низкий' } };
@@ -18456,9 +18490,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     box.appendChild(svg('circle', { cx: x(l).toFixed(1), cy: y(pts[l].v).toFixed(1), r: 3.5, 'class': 'dt' }));
     return box;
   }
+  // «Править» under the tiles (bevel-gap п. 1, monitor.jpg): which of the six and in what order — prefs.monitor.
   function hlMonitor(ms) {
-    var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon');
-    ms.forEach(function (t) {
+    var c = mkCard('watch', 'Монитор', 'к своей норме за 30 дней'), g = el('div', 'hmon'), hid = (prefs.monitor || {}).hidden || [];
+    var by = {};
+    ms.forEach(function (t) { by[t.key] = t; });
+    tileOrder('monitor', HL_MON_KEYS).forEach(function (k) {
+      var t = by[k];
+      if (!t || hid.indexOf(k) >= 0) return;
       var n = HL_MON[t.key], st = HL_STATUS[t.status], abs = t.key === 'wrist_temp' && t.value != null && typeof t.abs === 'number' ? hlC(t.abs) : null;
       var tile = add(el('div', 'hmt hmb' + (st ? ' hs-' + t.status : '')), add(el('div', 'hmx'), add(el('div', 'mu hml'), HL_IC[t.key] ? icon(HL_IC[t.key]) : null, el('span', '', n[0])),
         add(el('div', 'hmv'), document.createTextNode(abs || hlVal(t.key, t.value)), n[1] && t.value != null ? el('small', '', ' ' + n[1]) : null),
@@ -18468,7 +18507,14 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       tile.setAttribute('aria-label', n[0] + ': ' + (t.value == null ? 'нет данных' : (abs ? abs + ' ' + n[1] + ', отклонение ' : '') + hlVal(t.key, t.value) + ' ' + n[1] + (st ? ', ' + st : '')) + ' — график');
       g.appendChild(tile);
     });
-    c.appendChild(g);
+    var ed = add(el('button', 'hmed'), document.createTextNode('Править'), icon('chevron-right'));
+    ed.type = 'button';
+    ed.setAttribute('aria-label', 'Править «Монитор»: какие плитки и в каком порядке');
+    ed.onclick = function () {
+      tileOrderSheet({ key: 'monitor', keys: HL_MON_KEYS, title: 'Править «Монитор»', card: ['watch', 'Плитки «Монитора»'], where: 'в «Мониторе»',
+        name: function (k) { return HL_SN[k] || HL_MON[k][0]; }, note: 'Галочка — показывать плитку, ручка — порядок.' }, ed);
+    };
+    add(c, g, add(el('div', 'hmedw'), ed));
     return c;
   }
   // A load gauge as Bevel's: a half ring 0–100 %, the target in green, a marker at the value, the number in the middle,
@@ -18789,10 +18835,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     hrr: ['Кардио', 'Восст. пульса'], focus: ['Кардио', 'Кардиофокус'], zones: ['Кардио', 'Пульсовые зоны'], sets: ['Сила', 'Все мышцы'],
     volume: ['Сила', 'Общий объём'] };
   var FIT_FOCUS_ORDER = ['low', 'high', 'anaerobic'];
-  function fitOrder() {
-    var f = prefs.fitness || { hidden: [], order: [] };
-    return f.order.concat(FIT_TILE_KEYS.filter(function (k) { return f.order.indexOf(k) < 0; }));
-  }
+  function fitOrder() { return tileOrder('fitness', FIT_TILE_KEYS); }
   // «Править» in the head of «Кардио» and «Сила», as Bevel's (fitness-4-cardio-strength.png): the tiles' sheet.
   function fitEditHead(card) {
     var b = foodBtn('mlinkb', null, 'Править', function () { fitTilesSheet(b); });
@@ -18848,7 +18891,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       var cc = grid(fitEditHead(mkCard('heart-pulse', 'Кардио', sub)), [
         { k: 'all', ic: 'timer', v: n ? hlHm(ct.minutes) : '0', sub: 'время · ' + n + ' ' + ['занятие', 'занятия', 'занятий'][plural3(n)], line: fl && [fl.minutes, fl.prev_minutes] },
         { k: 'energy', ic: 'flame', v: ct.kcal == null ? '—' : grouped(ct.kcal), unit: 'ккал', sub: 'на тренировках', line: fl && [fl.kcal, fl.prev_kcal] },
-        { k: 'vo2', ic: 'wind', v: ct.vo2max ? woNum(ct.vo2max.v) : '—', word: ct.vo2max && ct.vo2max.norm, sub: ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
+        { k: 'vo2', ic: 'rocket', v: ct.vo2max ? woNum(ct.vo2max.v) : '—', word: ct.vo2max && ct.vo2max.norm, sub: ct.vo2max ? 'на ' + hlShort(ct.vo2max.day) : 'нет данных',
           tap: ct.vo2max ? function (t) { hlSeriesSheet('vo2max', HL_BIO_KEYS, t); } : null, line: fl && [(fl.vo2 || []).map(function (p) { return p.v; })] },
         { k: 'hrr', ic: 'heart', v: ct.recovery ? woNum(ct.recovery.v) : '—', unit: 'уд/мин', sub: ct.recovery ? 'за минуту, на ' + hlShort(ct.recovery.day) : 'нет данных' },
         { k: 'focus', ic: 'crosshair', v: top ? top.pct + ' %' : '—', sub: top ? WO_FOCUS[top.key] : 'нет пульса по минутам', extra: fbars },
@@ -18871,35 +18914,49 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // his order; «Сбросить» back to all in the app's order. Each change one prefs_set (prefs.fitness), the page under the
   // sheet redrawn by the food tab's prefsHook.
   function fitTilesSheet(from) {
-    var card = mkCard('pen-line', 'Плитки «Фитнеса»'), rows = el('div'), foot = el('div', 'foot');
-    var reset = foodBtn('btn ghost', null, 'Сбросить', function () { editPrefs({ fitness: null }, ['fit', 'reset']); paint(['fit', 'reset']); });
+    tileOrderSheet({ key: 'fitness', keys: FIT_TILE_KEYS, title: 'Редактировать «Фитнес»', card: ['pen-line', 'Плитки «Фитнеса»'], where: 'в «Фитнесе»',
+      name: function (k) { return FIT_TILES[k][1]; }, sub: function (k) { return FIT_TILES[k][0]; },
+      note: 'Галочка — показывать плитку, ручка — порядок. Карточка без плиток прячется.' }, from);
+  }
+  // A card's tiles shown or hidden (a tick) and in his order (the grip), «Сбросить» back to all in the app's order:
+  // prefs[o.key] = {hidden, order} (null for the default), one prefs_set a change, the page under the sheet redrawn by
+  // the tab's prefsHook. «Фитнес» (fitTilesSheet) and «Монитор» (bevel-gap п. 1).
+  function tileOrder(key, keys) {
+    var f = prefs[key] || { hidden: [], order: [] };
+    return f.order.concat(keys.filter(function (k) { return f.order.indexOf(k) < 0; }));
+  }
+  function tileOrderSheet(o, from) {
+    var card = mkCard(o.card[0], o.card[1]), rows = el('div'), foot = el('div', 'foot');
+    var reset = foodBtn('btn ghost', null, 'Сбросить', function () { var n = {}; n[o.key] = null; editPrefs(n, [o.key, 'reset']); paint([o.key, 'reset']); });
     foot.appendChild(reset);
-    add(card, el('div', 'sub', 'Галочка — показывать плитку, ручка — порядок. Карточка без плиток прячется.'), rows);
+    add(card, el('div', 'sub', o.note), rows);
     function save(hidden, order, focus) {
-      editPrefs({ fitness: hidden.length || order.length ? { hidden: hidden, order: order } : null }, focus);
+      var n = {};
+      n[o.key] = hidden.length || order.length ? { hidden: hidden, order: order } : null;
+      editPrefs(n, focus);
       paint(focus);
     }
     function paint(focus) {
-      var f = prefs.fitness || { hidden: [], order: [] };
+      var f = prefs[o.key] || { hidden: [], order: [] };
       clear(rows);
-      fitOrder().forEach(function (k) {
-        var on = f.hidden.indexOf(k) < 0, name = FIT_TILES[k][1], row = el('div', 'row');
-        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' в «Фитнесе»', on: on }, 'tog', false, function () {
-          save(on ? f.hidden.concat([k]) : f.hidden.filter(function (x) { return x !== k; }), f.order, ['fit', k, 'tog']);
-        }), add(el('span', 'tx'), el('div', 't', name), el('div', 'mu', FIT_TILES[k][0])), dragGrip(name));
+      tileOrder(o.key, o.keys).forEach(function (k) {
+        var on = f.hidden.indexOf(k) < 0, name = o.name(k), row = el('div', 'row');
+        add(row, rowBtn(on ? 'check-square' : 'square', { label: name + ' ' + o.where, on: on }, 'tog', false, function () {
+          save(on ? f.hidden.concat([k]) : f.hidden.filter(function (x) { return x !== k; }), f.order, [o.key, k, 'tog']);
+        }), add(el('span', 'tx'), el('div', 't', name), o.sub ? el('div', 'mu', o.sub(k)) : null), dragGrip(name));
         row.k = k;
         rows.appendChild(row);
       });
       if (f.hidden.length || f.order.length) card.appendChild(foot);
       else if (foot.parentNode) card.removeChild(foot);
-      refocus(rows, focus, 'fit');
+      refocus(rows, focus, o.key);
     }
-    dragSort(rows, function () { return [].slice.call(rows.children); }, function (o, k) {
-      save((prefs.fitness || { hidden: [] }).hidden, o, ['fit', k, 'grip']);
+    dragSort(rows, function () { return [].slice.call(rows.children); }, function (ord, k) {
+      save((prefs[o.key] || { hidden: [] }).hidden, ord, [o.key, k, 'grip']);
     });
     paint();
     var close = noop;
-    close = legalSheet('Редактировать «Фитнес»', [card, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Готово', function () { close(); }))], from);
+    close = legalSheet(o.title, [card, add(el('div', 'bar mact mstick'), foodBtn('btn', null, 'Готово', function () { close(); }))], from);
   }
   // A sparkline: the points of the window as one quiet line over a fading area, the last one a dot with a halo; no
   // axes, no grid.
@@ -22228,6 +22285,9 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function calGymLine(g) { return g && g.name ? g.name + ' · ' + g.n + ' ' + ['упражнение', 'упражнения', 'упражнений'][plural3(g.n)] : ''; }
   function calGrid() { return !!(calWideQ && calWideQ.matches) || store('calMonthOpen') === '1'; }
   function calKind(k) { return CAL_KINDS.filter(function (x) { return x[0] === k; })[0] || CAL_KINDS[0]; }
+  // A workout he skips (a status day's «пропуск · болею», or marked «не было») — the twin of _shared/calendar.ts
+  // isSkipped: not busy, it cuts no free time.
+  function calSkipped(x) { return !!x && (!!x.skip || (x.src === 'cal' && x.kind === 'sport' && x.done === false)); }
   function calHm(ts) { var p = wp(ts); return p.hour + ':' + p.minute; }
   function calDayName(d) { return WEEK[wd(d)] + ', ' + Number(d.slice(8, 10)) + ' ' + MONTHS_G[Number(d.slice(5, 7)) - 1]; }
   function calView() {
@@ -22677,7 +22737,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       (free || []).forEach(function (s) {
         var a = Number(s.from.slice(0, 2)) * 60 + Number(s.from.slice(3)), b = Number(s.to.slice(0, 2)) * 60 + Number(s.to.slice(3));
         es.forEach(function (p) {
-          if (p.a <= a || p.a >= b) return;
+          if (p.a <= a || p.a >= b || calSkipped(p.x)) return;
           if (p.a - a >= 30) freeLine(a, p.a);
           a = p.a;
         });
@@ -22864,7 +22924,19 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       // The free gaps: a task is a point that cuts one; the label kept a quarter hour off a task's pill and set between
       // two lines (at :15 or :45), never on one.
       function freeAt(a, b, ta, tb) {
-        var a2 = a + (ta ? 15 : 0), b2 = b - (tb ? 15 : 0), c = (a2 + b2) / 2, s = Math.round((c - 15) / 30) * 30 + 15;
+        var a2 = a + (ta ? 15 : 0), b2 = b - (tb ? 15 : 0);
+        // The label in the widest stretch no skipped workout covers (it is free time, but its struck block stays drawn).
+        var cut = es.filter(function (p) { return calSkipped(p.x) && p.e > a2 && p.a < b2; }).sort(function (p, q) { return p.a - q.a; });
+        if (cut.length) {
+          var best = null, at = a2;
+          cut.concat([{ a: b2, e: b2 }]).forEach(function (p) {
+            var q = [at, Math.min(p.a, b2)];
+            if (q[1] > q[0] && (!best || q[1] - q[0] > best[1] - best[0])) best = q;
+            at = Math.max(at, p.e);
+          });
+          if (best) { a2 = best[0]; b2 = best[1]; }
+        }
+        var c = (a2 + b2) / 2, s = Math.round((c - 15) / 30) * 30 + 15;
         var f = area.appendChild(el('span', 'chgf', 'свободно · ' + calDur(b - a)));
         f.style.top = y(s >= a2 && s <= b2 ? s : c) + 'px';
       }
@@ -22874,7 +22946,8 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       }
       // A night is no free time on screen either (no «свободно» across it).
       var last = t0, lastTask = false, empty = null;
-      es.concat(sl).sort(function (p, q) { return p.a - q.a; }).forEach(function (p) {
+      // A skipped workout (docs/specs/health-status.md) takes no time: no gap is cut by it.
+      es.concat(sl).filter(function (p) { return !calSkipped(p.x); }).sort(function (p, q) { return p.a - q.a; }).forEach(function (p) {
         if (p.a - last >= 60) freeOut(last, p.a, lastTask, p.task);
         if (p.task) { if (p.a >= last) { last = p.a; lastTask = true; } } else if (p.e > last) { last = p.e; lastTask = false; }
       });
