@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-02 14:50">
+<meta name="published" content="2026-11-02 15:24">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -1181,18 +1181,16 @@ button.nuf.numore{justify-content:center;width:100%;margin:8px 0 0;color:var(--f
 .gwhy{margin-top:6px;font-size:13px;line-height:1.35}
 .galts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.galts .pill{height:44px;padding:0 14px;font-size:14px;color:var(--fg);white-space:normal;text-align:left}
 /* «Зал по неделе» (docs/specs/gym-week.md): the intensity badge beside a day's name; the rest under the set line; a
-   hold's countdown; the Watch's sets as hollow dots on the pulse; «План» a card a day — the day to do ringed in the
-   accent, the meta (badge, minutes) at the head's right, the muscle chips, a row an exercise with its animation 48 px. */
+   hold's countdown; the Watch's sets as hollow dots on the pulse; an exercise's muscle chips, its swaps a row each with
+   the animation 48 px. */
 .pill.glv{height:22px;padding:0 9px;font-size:12px;font-weight:700;vertical-align:2px}
 .gym .gdw{display:flex;align-items:center;gap:8px;min-width:0}
 .gtip{margin-top:8px}.card>.sub.gtip,.wex .wl.gtip{color:var(--warn)}
 .wex .whrl{margin-top:-2px;font-size:12px}
 .chart.whr .sdot{fill:var(--solid);stroke:var(--mark);stroke-width:2}
 .gwch{margin:4px 0 6px}
-.card.gpday.on{box-shadow:inset 0 0 0 2px var(--mark)}
-.gpday .ch{flex-wrap:wrap}.gpmeta{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;white-space:nowrap}
 .gpch{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}.gpch .pill{height:24px;padding:0 9px;color:var(--fg)}
-.row.gprow{align-items:center;gap:12px}.gpalt{font-size:12px}
+.row.gprow{align-items:center;gap:12px}
 .gthumb{flex:none;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:48px;height:48px;border-radius:12px;background:#fff;overflow:hidden;border:1px solid color-mix(in srgb,var(--fg) 8%,transparent)}
 .gthumb img,.gthumb video{width:100%;height:100%;object-fit:contain;display:block}.gthumb[hidden]{display:none}
 .gthumb.none{background:var(--accent-soft);color:var(--mark);border-color:transparent}.gthumb.none .i{width:22px;height:22px}
@@ -1395,15 +1393,15 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
    pastel pills (норма — green, выше — sky, ниже — orange). «Фитнес» under a peach tint: the week as circles, the
    gauges as half rings with the green target and a marker; «Биология» under a teal tint: a sparkline a row on the right. */
 :root{--ring-load:#d47a00;--ring-load-2:#ffc23d;--ring-recovery:#10a370;--ring-recovery-2:#8ee05a;--ring-sleep:#887bff;--ring-sleep-2:#5fb4ff;
-  --hl-sky:#3399d8;--hl-bio:#14a898;--hl-peach:#ff9a62;--hl-teal:#2ec4b6;--wo-other:#d4a93a;--hl-tint:12%;--hl-tint2:18%;--hl-glow:url(#g-glow-d);
+  --hl-sky:#3399d8;--hl-bio:#14a898;--hl-peach:#ff9a62;--hl-teal:#2ec4b6;--hl-pink:#ff6fa6;--wo-other:#d4a93a;--hl-tint:12%;--hl-tint2:18%;--hl-glow:url(#g-glow-d);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 22%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 22%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 22%,transparent)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
-  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-pink:#e0407e;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}}
 :root[data-theme="light"]{--ring-load:#c97100;--ring-load-2:#f2a91c;--ring-recovery:#0e9a6c;--ring-recovery-2:#62c650;
-  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
+  --ring-sleep:#5d5cf2;--ring-sleep-2:#3f97f0;--hl-sky:#1f8fd0;--hl-bio:#0f9a8a;--hl-pink:#e0407e;--wo-other:#a8841a;--hl-tint:9%;--hl-tint2:14%;--hl-glow:url(#g-glow);
   --ring-load-soft:color-mix(in srgb,var(--ring-load) 14%,transparent);--ring-recovery-soft:color-mix(in srgb,var(--ring-recovery) 14%,transparent);
   --ring-sleep-soft:color-mix(in srgb,var(--ring-sleep) 14%,transparent)}
 .hring{display:block;overflow:visible}.hring .tr{fill:none}.hring .arc{fill:none;stroke-linecap:butt}.hring .arc.cap{stroke-linecap:round}.hring .arcs{filter:var(--hl-glow)}
@@ -1426,8 +1424,8 @@ body.gpill-on .main{padding-bottom:calc(var(--bar) + 86px + env(safe-area-inset-
 .bw .hrings{flex:1;align-items:center;margin-top:4px}.bw .hrl{font-size:11px}.bw .hrc{gap:4px}
 /* The small widget's three rings fill its width with their names: no room for dividers there (the wide one keeps them). */
 .bw .hrings.hdiv:not(.bsm){gap:4px}.bw .hrings.hdiv:not(.bsm)>.hrc+.hrc{border-left:0}
-/* m with the three lines under the rings (30.10.2026): the rings keep their own height, the lines a little tighter. */
-.bw .hrings.bsm{flex:none;margin:2px 0 4px}.bw .bl.bh3{font-size:12.5px;line-height:1.3}
+/* m with the advice under the rings: the rings keep their own height. */
+.bw .hrings.bsm{flex:none;margin:2px 0 4px}
 .hxs{margin:0 0 14px;padding:12px 0 0;border-top:1px solid var(--line)}.hxs:first-child{border-top:0;padding-top:0}
 .hxh{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}.hxh .pr{font:800 17px/1.2 var(--font-num);font-variant-numeric:tabular-nums}
 .row.hxr{padding-left:0;padding-right:0;min-height:44px}.row.hxr .pr{white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}
@@ -1678,6 +1676,13 @@ button.hmd:active{transform:scale(.95)}button.hmd{transition:transform .12s}
 .hrh-n{margin-top:4px;font-size:12px}
 .hsh-nav{margin:2px -8px 4px}.hsh-nav .mmon{font-variant-numeric:tabular-nums}.hwhat p{margin:4px 0 0;font-size:14px;line-height:1.5}
 .hsec{margin:20px 0 0}.hsec-h{font:800 17px/1.3 var(--font);margin:0 0 2px}.hsec-s{font-size:12px;margin:0 0 10px}.hsec-n{font-size:11px;margin:8px 0 0;text-align:center}
+/* «Сердечный ритм во сне» (docs/bevel/sleep-hr.jpg): the mean large with its unit, a caps caption, the samples as dots
+   (pulse pink, HRV sky) under the sleep's line, dashed levels with their values on the right, the night's ends as chips. */
+.hnc-v{display:flex;align-items:baseline;gap:6px;margin:6px 0 0}.hnc-v b{font:800 32px/1.1 var(--font-num);font-variant-numeric:tabular-nums}
+.hnc-v small{font:700 17px var(--font);color:var(--muted)}.hnc-c{font-size:11px;letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px}
+.hnc-ch .hnc-d{fill:var(--hl-pink);opacity:.85}.hnc-ch.hnc-hrv .hnc-d{fill:var(--hl-sky)}.hnc-ch .hnc-l{fill:none;stroke:var(--ring-sleep);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.hnc-e{display:flex;justify-content:space-between;margin:4px 0 0}.hnc-e span{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:7px;background:var(--surface-2);font:700 12px var(--font-num)}
+.hnc-e .i{width:13px;height:13px}.hpills.hnc-p{margin:14px 0 0}.hpills.hnc-p button{flex:1 1 0}
 /* «Что влияет» (recovery-factors.jpg): the legend, a card a habit — icon, name, the signed difference; a track from the
    middle dot to its side; short of data grey. */
 .hef-lg{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;font-size:12px}
@@ -2232,6 +2237,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
 <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+<symbol id="i-sunrise" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></symbol>
 <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
 <symbol id="i-cloud-sun" viewBox="0 0 24 24"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
 <symbol id="i-cloud-moon" viewBox="0 0 24 24"><path d="M13 16a3 3 0 0 1 0 6H7a5 5 0 1 1 4.9-6z"/><path d="M18.376 14.512a6 6 0 0 0 3.461-4.127c.148-.625-.659-.97-1.248-.714a4 4 0 0 1-5.259-5.26c.255-.589-.09-1.395-.716-1.248a6 6 0 0 0-4.594 5.36"/></symbol>
@@ -4621,29 +4627,25 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         if (sub) note(sub, left != null && left < 0 ? 'warn' : '');
       },
       // «Здоровье» (docs/specs/health-v2.md): the three rings of today (yesterday's until the night is in); m — the advice
-      // under them. No health row — «нет данных»; a tap opens «Здоровье».
-      // m — three lines under the rings (his ask 30.10.2026): the night with its word and length, the recovery with its
-      // word, today's load in its day's word (docs/specs/load-today.md); then the advice and the bio-age.
+      // under them. No health row — «нет данных»; a tap on the widget opens «Здоровье», on a ring — that ring's sheet
+      // (health_day of the rings' day, as a night in the calendar opens the sleep's; bevel-gap п. 12). The three lines
+      // that said the rings' numbers again under them on m are gone (bevel-gap п. 12).
       body: function () {
         var h = j.health;
         r.go = tab('food');
         if (!h) return quiet(h === null ? 'нет данных с iPhone' : 'нет данных');
         if (h.date !== today) name.textContent = 'Здоровье · вчера';
-        var rings = n.appendChild(hlRings(h, s === 'm' ? 40 : 44, null, s === 'm'));
+        var rings = n.appendChild(hlRings(h, s === 'm' ? 54 : 44, preview ? null : function (k, cell) {
+          if (cell.busy || n.closest('.bedit')) return;
+          cell.busy = true;
+          api('miniapp', { action: 'health_day' }, 15000, false, { date: h.date }).then(function (hj) {
+            cell.busy = false;
+            if (hj && hj.date) hlRingSheet(k, hj, cell);
+          }, function () { cell.busy = false; });
+        }));
+        if (!preview) rings.addEventListener('click', function (ev) { if (!n.closest('.bedit')) ev.stopPropagation(); });
         if (s === 'm') {
           rings.className += ' bsm';
-          var z = h.zones || {}, tg = h.load_target || [28, 46], ld = h.load_day;
-          if (h.sleep != null) add(line('', 'bkg bh3'), icon('moon'), document.createTextNode('Сон ' + h.sleep + ' %' +
-            (z.sleep ? ' · ' + HL_ZONE_RU.sleep[z.sleep].toLowerCase() : '') + (h.sleep_min ? ' · ' + woDur(h.sleep_min) : '') +
-            (h.sleep_need_min ? ' · нужно ' + needHm(h.sleep_need_min) : '')));
-          if (h.recovery != null) add(line('', 'bkg bh3'), icon('activity'), document.createTextNode('Восстановление ' + h.recovery + ' %' +
-            (z.recovery ? ' · ' + HL_ZONE_RU.recovery[z.recovery].toLowerCase() : '')));
-          if (h.load != null) {
-            var lw = ld === 'rest' ? 'сегодня отдых' : ld === 'under' ? 'можно больше · цель ' + tg[0] + '–' + tg[1]
-              : ld === 'in' ? 'в цели ' + tg[0] + '–' + tg[1] : HL_DAY_RU[ld] ? HL_DAY_RU[ld].toLowerCase() : '';
-            add(line('', 'bkg bh3' + (ld === 'above' || ld === 'over' ? ' bad' : '')), icon('flame'),
-              document.createTextNode('Нагрузка ' + h.load + ' %' + (lw ? ' · ' + lw : '')));
-          }
           note(h.advice_model ? h.advice_model.title : h.advice ? hlAdvice(h.advice) : 'мало данных для совета', h.advice_model || h.advice ? '' : 'mu');
         }
       },
@@ -17634,6 +17636,7 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
         if (offMin) parts.appendChild(add(el('div', 'mu hl-off'), icon('plug-zap'), el('span', '', 'Без часов ' + hlFmt('sleep_min', offMin) + ' — не в расчёте')));
       }
       body.appendChild(parts);
+      if (cur === 'sleep' && j.sleep_curve) body.appendChild(hlNightCurve(j.sleep_curve, Math.max(280, Math.min(720, body.clientWidth || (window.innerWidth || 375) - 32))));
       if (cur === 'sleep') {
         var go = add(el('div', 'hpr hgo'), add(el('span', 'hmini'), icon('moon')), add(el('div', 'hpr-m'), el('span', 'hpr-n', 'Время сна по дням'),
           el('div', 'mu', 'график за 30 дней — год, тенденции')), add(el('span', 'hpr-go'), icon('chevron-right')));
@@ -17665,6 +17668,61 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
     close = legalSheet(HL_NAMES[k], [pills, body, add(el('div', 'bar mact mstick'), foodBtn('btn ghost', null, 'Закрыть', function () { close(); }))], from);
     hlFrame(body);
     draw();
+  }
+  // «Сердечный ритм во сне» (docs/bevel/sleep-hr.jpg; bevel-gap п. 4) under the night's parts: health_day's sleep_curve.
+  // The night's mean large with its unit and «среднее за ночь · мин … · макс …»; the chart — every sample a dot, the
+  // pulse's 15-minute line over them (the HRV's few samples joined), four dashed levels with their values on the right,
+  // the sleep's start (moon) and end (sunrise) under it; the pills «Пульс · ВСР» under the chart pick the series, as
+  // Bevel's tiles. A finger on the chart — the nearest sample's time and value.
+  function hlNightCurve(sc, W) {
+    var KS = [['hr', 'Пульс', 'уд/мин', 'пульса'], ['hrv', 'ВСР', 'мс', 'ВСР']].filter(function (k) { return sc[k[0]]; });
+    var box = add(el('div', 'hsec hnc'), el('div', 'hsec-h', 'Сердечный ритм во сне')), view = el('div'), cur = KS[0][0];
+    function draw() {
+      var k = KS.filter(function (x) { return x[0] === cur; })[0], c = sc[cur];
+      add(clear(view), add(el('div', 'hnc-v'), el('b', '', woNum(c.mean)), el('small', '', k[2])),
+        el('div', 'mu hnc-c', 'Среднее за ночь · мин ' + woNum(c.min) + ' · макс ' + woNum(c.max)), hlNightChart(sc, c, k, W),
+        add(el('div', 'hnc-e'), add(el('span'), icon('moon'), document.createTextNode(foodTime(sc.start))),
+          add(el('span'), icon('sunrise'), document.createTextNode(foodTime(sc.end)))));
+    }
+    draw();
+    box.appendChild(view);
+    if (KS.length > 1) box.appendChild(hlPills(KS.map(function (k) { return [k[0], k[1]]; }), cur, function (x) { cur = x; draw(); }, 'hper hnc-p'));
+    return box;
+  }
+  function hlNightChart(sc, c, k, W) {
+    var H = 190, L = 2, R = 30, T = 8, B = 8, pw = W - L - R, ph = H - T - B, span = Math.max(1, sc.minutes);
+    var lo = Math.floor(c.min - 1), hi = Math.ceil(c.max + 1);
+    function x(m) { return L + Math.max(0, Math.min(1, m / span)) * pw; }
+    function y(v) { return T + (hi - v) / ((hi - lo) || 1) * ph; }
+    var box = svg('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, 'class': 'hen-ch hnc-ch hnc-' + k[0], role: 'img',
+      'aria-label': k[1] + ' во сне: среднее ' + woNum(c.mean) + ' ' + k[2] + ', от ' + woNum(c.min) + ' до ' + woNum(c.max) });
+    for (var i = 0; i < 4; i++) {
+      var v = lo + (hi - lo) * i / 3, yy = y(v).toFixed(1);
+      box.appendChild(svg('line', { x1: L, x2: L + pw, y1: yy, y2: yy, 'class': i % 3 ? 'hsx-z' : 'hen-gl' }));
+      box.appendChild(svg('text', { x: W - 2, y: (y(v) + 4).toFixed(1), 'class': 'ge', 'text-anchor': 'end' }, woNum(Math.round(v))));
+    }
+    box.appendChild(svg('line', { x1: L, x2: L, y1: T, y2: T + ph, 'class': 'hen-gl' }));
+    c.pts.forEach(function (p) { box.appendChild(svg('circle', { cx: x(p[0]).toFixed(1), cy: y(p[1]).toFixed(1), r: c.line ? 2.2 : 3.5, 'class': 'hnc-d' })); });
+    var ln = c.line || (c.pts.length > 1 ? c.pts : []);
+    if (ln.length > 1) box.appendChild(svg('path', { 'class': 'hnc-l', d: ln.map(function (p, i) { return (i ? 'L' : 'M') + x(p[0]).toFixed(1) + ' ' + y(p[1]).toFixed(1); }).join('') }));
+    var cross = svg('line', { y1: T, y2: T + ph, 'class': 'hen-x' }), tip = el('div', 'hen-tip'), wrap = add(el('div', 'hsh-ch hen-w'), box, tip);
+    cross.style.display = 'none';
+    box.appendChild(cross);
+    tip.hidden = true;
+    var t0 = Date.parse(sc.start);
+    box.addEventListener('pointermove', function (ev) {
+      var r = box.getBoundingClientRect(), px = (ev.clientX - r.left) * W / r.width, best = null;
+      c.pts.forEach(function (p) { if (!best || Math.abs(x(p[0]) - px) < Math.abs(x(best[0]) - px)) best = p; });
+      if (!best) return;
+      var cx = x(best[0]);
+      cross.setAttribute('x1', cx.toFixed(1)); cross.setAttribute('x2', cx.toFixed(1));
+      cross.style.display = '';
+      tip.hidden = false;
+      tip.textContent = foodTime(new Date(t0 + best[0] * 60000).toISOString()) + ' · ' + woNum(best[1]);
+      tip.style.left = Math.max(0, Math.min(r.width - 90, cx * r.width / W - 45)) + 'px';
+    });
+    box.addEventListener('pointerleave', function () { cross.style.display = 'none'; tip.hidden = true; });
+    return wrap;
   }
   // «Что влияет» (docs/specs/health-queue-2026-11-02.md, B; Bevel's recovery-factors.jpg and recovery-tags.jpg) at the foot of
   // the recovery's and the sleep's sheets: health_effects once a day (HL_EFF) — for each habit the next morning's recovery
@@ -19639,10 +19697,11 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   // («Продолжить · Вт», while a session waits in this phone) — the full-screen «Тренировка» — in place of «⋯». A tap on a
   // row (or its «⋯») opens the template (gymTplSheet). The days come cache-first from plan_get (gym:plan); until it
   // answers, food_day's next day alone, whose items (with this time's weights) stand for that day's either way. His
-  // weight of the 4 weeks with its sparkline under them. «План» opens the plan's sheet.
+  // weight of the 4 weeks with its sparkline under them. «Изменить» opens the plan's editor (planEdit): the plan's own
+  // sheet listed the same days again (bevel-gap п. 11), so it is gone — a day's exercises open from its row.
   function gymCard(g, w4, done) {
-    var c = mkCard('dumbbell', 'Режимы'), pb = foodBtn('mtoday', 'clipboard-list', 'План', function () { planSheet(pb, done); });
-    pb.setAttribute('aria-label', 'План тренировок');
+    var c = mkCard('dumbbell', 'Режимы'), pb = foodBtn('mtoday', 'pen-line', 'Изменить', function () { planEdit(pb, done); });
+    pb.setAttribute('aria-label', 'Изменить план тренировок');
     c.firstChild.appendChild(pb);
     var box = el('div', 'gtpls');
     c.appendChild(box);
@@ -21324,11 +21383,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
       body, add(el('div', 'bar'), note.field), w.ref ? el('div', 'mu msrc', 'Записано само по игре PNH. «Убрать» — если не играл: игра уйдёт и из «моих игр».') : null,
       add(el('div', 'bar mact mstick'), save, del)], from);
   }
-  // «План» (docs/specs/gym-week.md §9): a card a day — its weekday («Вторник», its name without one), the intensity
-  // badge, «~35 мин» (gymMinutes), its muscle groups as chips (plan_get's muscles: _shared/gym.ts musclesOf, the groups of
-  // «Мышечные группы»); then its exercises — the animation 48 px, the name, «3 × 10–12 · отдых 90 с», the swaps muted
-  // «или: …»; the day to do (plan_get's gym, today's by the calendar or the next by the round) marked. A tap opens the
-  // exercise (gymExSheet). «Изменить» — the editor (planEdit).
   var WEEK_FULL = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
   // A day's time: every set's work (40 s, a hold its own seconds) and rest (75 s when the plan has none), to 5 minutes.
   function gymMinutes(items) {
@@ -21339,40 +21393,6 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   }
   function gymPlanLine(i) { return (i.sets || 0) + ' × ' + i.reps + (i.unit === 's' && !/\sс$/.test(i.reps) ? ' с' : '') + ' · отдых ' + (i.rest_s || 75) + ' с'; }
   function gymThumb(u, name) { return gymMedia(u, name, 'gthumb') || add(el('span', 'gthumb none'), icon('dumbbell')); }
-  function planSheet(from, done) {
-    from.disabled = true;
-    api('miniapp', { action: 'plan_get' }, 15000, false, {}).then(function (j) {
-      from.disabled = false;
-      var gifs = j.gifs || {}, mus = j.muscles || {}, next = j.gym ? j.gym.id : null, close = noop, nodes = [];
-      var twd = wd(foodToday()) + 1;
-      (j.plan || []).forEach(function (d) {
-        var days = (d.weekday || []).filter(function (n) { return n >= 1 && n <= 7; });
-        var head = days.length ? days.map(function (n) { return WEEK_FULL[n - 1]; }).join(', ') : gymShort(d.name);
-        var on = d.id === next, c = mkCard('dumbbell', head), groups = [];
-        c.classList.add('gpday');
-        if (on) c.classList.add('on');
-        c.firstChild.appendChild(add(el('span', 'gpmeta'), on ? pill(days.indexOf(twd) >= 0 ? 'сегодня' : 'следующая', 'acc') : null,
-          gymBadge(gymLevelOf(d.name)), el('span', 'mu', '~' + gymMinutes(d.items) + ' мин')));
-        (d.items || []).forEach(function (i) { (mus[i.exercise] || []).forEach(function (g) { if (groups.indexOf(g) < 0) groups.push(g); }); });
-        if (groups.length) c.appendChild(add.apply(null, [el('div', 'chips gpch')].concat(groups.map(function (g) { return pill(g); }))));
-        (d.items || []).forEach(function (i) {
-          var alts = (i.alts || []).filter(Boolean);
-          var r = add(el('div', 'row frow gprow'), gymThumb(gifs[i.exercise], i.exercise),
-            add(el('span', 'tx'), el('div', 't', i.exercise), el('div', 'mu', gymPlanLine(i)), alts.length ? el('div', 'mu gpalt', 'или: ' + alts.join(', ')) : null),
-            icon('chevron-right', 'go'));
-          r.setAttribute('aria-label', i.exercise + ', ' + gymPlanLine(i) + (alts.length ? ', замены: ' + alts.join(', ') : '') + ' — как делать');
-          c.appendChild(tap(r, function () { haptic(); gymExSheet(i, gifs, mus, r); }));
-        });
-        nodes.push(c);
-      });
-      if (!nodes.length) nodes.push(el('div', 'mu msrc', 'В плане пока нет тренировок — нажми «Изменить».'));
-      nodes.push(el('div', 'mu msrc', 'Все подходы до верха повторов — в следующий раз +2,5 кг (ноги +5, со своим весом +1 повтор); второй подход ниже низа дважды подряд — −5 %.'));
-      if (Object.keys(gifs).length) nodes.push(el('div', 'mu gattr', 'Анимации: ExerciseDB · AscendAPI'));
-      var ed = foodBtn('btn ghost', 'pen-line', 'Изменить', function () { close(); planEdit(from, done); });
-      nodes.push(add(el('div', 'bar mact mstick'), ed, foodBtn('btn', null, 'Закрыть', function () { close(); })));
-      close = legalSheet('План', nodes, from);
-    }, function () { from.disabled = false; });
-  }
   // An exercise of the plan: its animation large, the sets and the rest, its muscle groups, and its swaps — each a row
   // with its own animation, a tap opens it the same way (the sheet closes back to this one).
   // `lines` (the «Зал» card's) stand for the plan's line: this time's sets, weight and rest, and why that weight.
