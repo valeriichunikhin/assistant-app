@@ -10,7 +10,7 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d14">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef0ff">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="published" content="2026-11-04 17:38">
+<meta name="published" content="2026-11-04 20:54">
 <meta name="color-scheme" content="dark light">
 <title>Помощник</title>
 <script>
@@ -891,6 +891,8 @@ body.capon #toast{top:calc(env(safe-area-inset-top) + 64px);bottom:auto}/* the f
    lifts a little before it moves; the dashed placeholder (.dhole::after, its place and size from the drag) stands where
    the lifted item will land */
 .dlp>*,.tabbar>button,.card.mf>.mfh,.hft>.hftl,.hmon>.hmt{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* On the phone the whole card lifts (his 04.11: a held card body only selected its text), so none of it selects; its fields do. */
+@media (max-width:899px){.card.mf{-webkit-user-select:none;user-select:none}.card.mf input,.card.mf textarea,.card.mf [contenteditable]{-webkit-user-select:text;user-select:text}}
 .dpress{position:relative;z-index:5;transform:scale(1.02);box-shadow:var(--shadow);transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
 .dhole::after{content:"";position:absolute;z-index:0;left:var(--dhx);top:var(--dhy);width:var(--dhw);height:var(--dhh);box-sizing:border-box;border:2px dashed color-mix(in srgb,var(--accent) 60%,transparent);border-radius:var(--dhr,14px);background:color-mix(in srgb,var(--accent) 8%,transparent);pointer-events:none;transition:left .2s var(--ease),top .2s var(--ease)}
 .tabbar>.dlift,.tabbar>.dpress{border-radius:16px}
@@ -16728,9 +16730,10 @@ body:has(.tsum.bfull:not(.out)) .tabbar{background:var(--solid);-webkit-backdrop
   function cardsDrag(s, list) {
     if (list.dragSort) return;
     list.dragSort = true;
+    // Anywhere on the card but its controls (his 04.11: held on the body, the card only selected its text).
     function node(t) {
-      var h = t.closest('.mfh'), c = h && h.parentNode;
-      return c && c.mfSec === s && !t.closest('button,a,input,select,textarea') ? FOLD[s].st.foldNodes[c.mfKey] : null;
+      var c = t.closest('.card.mf');
+      return c && c.mfSec === s && !t.closest('button,a,input,select,textarea,[contenteditable]') ? FOLD[s].st.foldNodes[c.mfKey] : null;
     }
     dragSort(list, function () { return reorderCards(s).filter(function (n) { return n.parentNode === list; }); }, function (keys) {
       foldEdit(s, { order: orderMerge(FOLD[s].order(), keys) }, null, true);
