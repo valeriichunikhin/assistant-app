@@ -400,6 +400,7 @@
       for (var k in segs) segs[k].className = k === p ? 'on' : '';
       setHer(p === 'tetyana');
       render();
+      if (olx) olx.paint();
     }
     for (var k in segs) segs[k].className = k === person ? 'on' : '';
     setHer(forHer);
@@ -428,8 +429,10 @@
         if (!e.code) load(); // a slow shop can outlast the timeout and still be added
       });
     };
-    var body = add(el('div'), A.skeleton(1));
-    add(main, seg, add(form, field('link', url, 'grow'), field('target', target, 'w180'), her, go), body);
+    var body = add(el('div'), A.skeleton(1)), olxBox = el('div');
+    add(main, seg, add(form, field('link', url, 'grow'), field('target', target, 'w180'), her, go), body, olxBox);
+    // «Поиски OLX» (docs/specs/olx-searches-app.md): the phone's card, under the table.
+    var olx = A.olxCard ? A.olxCard(olxBox, function () { return person; }) : null;
     var rows = [];
 
     function render() {
@@ -584,7 +587,11 @@
       var reg = label(el('button', 'btn ghost'), 'repeat', 'Регулярное');
       reg.type = 'button';
       reg.onclick = function () { A.moneyRegularSheet(reg); };
-      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), reg, menu, go);
+      // «Добавить чек» (docs/specs/receipts-any.md).
+      var rc = label(el('button', 'btn ghost'), 'receipt', 'Добавить чек');
+      rc.type = 'button';
+      rc.onclick = function () { A.moneyReceiptPick(rc, load); };
+      add(clear(tool), A.moneyNav(function (n) { A.moneyGo(n, load); }, j.month), reg, menu, rc, go);
       clear(body);
       var rows = j.rows || [], M = A.MONEY, d = Math.round(((j.total || 0) - (j.prev_total || 0)) * 100) / 100;
       var spends = rows.filter(function (r) { return (r.kind || 'expense') === 'expense'; }).length;
@@ -622,10 +629,11 @@
           if (f.cls) amt.className += f.cls;
           amt.className += ' nowrap';
           return [f.tile, add(el('div', 'tx'), el('div', 't', f.title), A.moneySubLine(r, f, '', 'mu')),
-            el('span', 'mu', f.label), el('span', 'num nowrap' + (A.moneyDayWord(r.at) === 'сегодня' ? ' mnext accent' : ''),
+            el('span', 'mu one', f.label), el('span', 'num nowrap' + (A.moneyDayWord(r.at) === 'сегодня' ? ' mnext accent' : ''),
               (A.moneyDayWord(r.at) || A.moneyDay(r.at) + (M.found ? ' ' + r.at.slice(0, 4) : '')) + ' · ' + A.moneyTime(r.at)), amt,
             hovActs(confirmed('trash', 'Удалить', function () { A.moneyDelete(r, load); }))];
         }), { onRow: function (k) { A.moneySheet(list[k], load, t.tBodies[0].rows[k]); } });
+        t.classList.add('fixed'); // so a long category ellipsizes in its column
         list.forEach(function (r, k) { if (A.moneyDayWord(r.at) === 'сегодня') t.tBodies[0].rows[k].className += ' mtd'; });
         add(clear(box), M.found ? A.moneyFoundChip(function () { render(data); }) : null, t,
           list.length ? null : el('div', 'mday', M.found ? 'Ничего не нашлось' : 'Таких записей нет'),

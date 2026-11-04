@@ -1,5 +1,5 @@
-// Lane 2 of the desktop layer (docs/specs/miniapp-desktop.md): the wide «Цены», «Кино», «Волейбол» and
-// «Статистика». Each view reads the same api() answers and writes through the same actions as its phone view in
+// Lane 2 of the desktop layer (docs/specs/miniapp-desktop.md): the wide «Цены», «Кино» and «Волейбол» («Статистика»
+// went with the receipts module, audit Н18). Each view reads the same api() answers and writes through the same actions as its phone view in
 // index.html; nodes are built with el()/add(), never from HTML strings.
 (function () {
   var A = window.APP, D = window.DESKTOP = window.DESKTOP || { views: {} };
@@ -553,92 +553,6 @@
       return api('miniapp', { action: 'volleyball' }, 25000, true).then(render, function (e) {
         if (!e.login && live('vb')) { A.failed(clear(top), load); clear(body); }
       });
-    }
-    load();
-  });
-
-  // --- stats ---
-  // The period as a toolbar, the period's numbers as tiles, the weekly chart beside the stores, the rest of
-  // statsView's cards in two columns.
-  view('stats', function () {
-    var period = A.store('period');
-    if (!/^(4w|12w|1y)$/.test(period)) period = '12w';
-    var seg = el('div', 'seg'), body = el('div'), segs = {};
-    seg.setAttribute('role', 'group');
-    seg.setAttribute('aria-label', 'Период');
-    A.PERIODS.forEach(function (p) {
-      segs[p[0]] = seg.appendChild(btn('', p[1], function () { period = p[0]; A.store('period', period); load(); }));
-    });
-    add(A.main, add(el('div', 'da-stats'), add(el('div', 'da-bar'), seg, el('span', 'mu', '')), body));
-    var range = seg.nextSibling;
-    function checks(n) { return n + ' ' + A.plural(n, ['чек', 'чека', 'чеков']); }
-    function qty(q) { return String(Math.round(Number(q) * 1000) / 1000).replace('.', ','); }
-    function buys(n) { return n + ' ' + A.plural(n, ['покупка', 'покупки', 'покупок']); }
-    function meter(part, whole) {
-      var m = el('div', 'meter'), f = el('i');
-      f.style.width = (whole > 0 ? Math.max(2, part / whole * 100) : 0) + '%';
-      return add(m, f);
-    }
-    function render(j) {
-      clear(body);
-      text(range, dm(j.from) + '.' + j.from.slice(0, 4) + ' – ' + dm(j.to) + '.' + j.to.slice(0, 4));
-      var t = j.totals, p = j.savings, w = j.wishlist, h = j.health, grid = el('div', 'dg'), c;
-      body.appendChild(grid);
-      function put(node, n) { grid.appendChild(D.span(node, n)); return node; }
-      if (!t.receipts) put(add(el('div', 'card'), A.state('receipt', 'Чеков за период нет. Присылай PDF из Moja Biedronka в тему Receipts.')), 12);
-      else {
-        put(D.tiles([{ k: 'потрачено за период', v: zl(t.spent) + ' zł' }, { k: 'чеков', v: String(t.receipts) },
-          { k: 'средний чек', v: zl(t.avg_basket) + ' zł' }, { k: 'скидки магазина', v: zl(t.discounts) + ' zł' },
-          { k: 'благодаря советам', v: zl(p.total) + ' zł', small: buys(p.items) }]), 12);
-        c = put(card('chart', 'По неделям'), 8);
-        c.appendChild(A.weekChart(j.by_week, A.addDays(j.to, -A.wd(j.to)), c.clientWidth - 16));
-        c = put(card('bag', 'По магазинам'), 4);
-        var top = j.by_store.length ? j.by_store[0].spent : 0;
-        c.appendChild(D.table([{ h: 'Магазин' }, { h: 'Сумма', r: true }], j.by_store.map(function (s) {
-          return [add(el('div', 'da-two'), el('div', 't', s.chain), el('div', 'mu', checks(s.receipts)), meter(s.spent, top)), num(zl(s.spent) + ' zł')];
-        })));
-        if (j.top_items.length) {
-          c = put(card('top', 'Топ товаров'), 6);
-          c.appendChild(D.table([{ h: 'Товар' }, { h: 'Кол-во', r: true }, { h: 'Скидка', r: true }, { h: 'Сумма', r: true }],
-            j.top_items.map(function (i) {
-              return [i.name, num('× ' + qty(i.qty)), num(i.discount > 0 ? zl(i.discount) : '—'), num(zl(i.spent) + ' zł')];
-            })));
-        }
-      }
-      var won = w.saved.reduce(function (a, s) { return a + s.first_price - s.target; }, 0);
-      if (t.receipts || p.items || w.reached) {
-        c = put(card('piggy', 'Экономия'), 6);
-        var best = p.by_category.length ? p.by_category[0].saved : 0, rows = [['Благодаря советам', 'за период · ' + buys(p.items), p.total, null]];
-        p.by_category.forEach(function (s) { rows.push([s.title, buys(s.items), s.saved, meter(s.saved, best)]); });
-        rows.push(['Скидки магазина по чекам', null, t.discounts, null]);
-        if (w.reached) {
-          rows.push(['Вишлист: ' + w.reached + ' ' + A.plural(w.reached, ['цель достигнута', 'цели достигнуты', 'целей достигнуто']),
-            null, won > 0 ? won : null, null]);
-        }
-        c.appendChild(D.table([{ h: 'Откуда' }, { h: 'Сэкономил', r: true }], rows.map(function (r) {
-          return [add(el('div', 'da-two'), el('div', 't', r[0]), r[1] ? el('div', 'mu', r[1]) : null, r[3]), num(r[2] == null ? '' : zl(r[2]) + ' zł')];
-        })));
-      }
-      if (h && h.days) {
-        var ht = [];
-        if (h.avg_steps != null) ht.push({ k: 'шаги в среднем', v: A.grouped(h.avg_steps) });
-        if (h.workouts) ht.push({ k: 'тренировки', v: String(h.workouts), small: h.workout_min + ' мин' });
-        if (h.avg_sleep_min != null) ht.push({ k: 'сон в среднем', v: A.sleepLine(h.avg_sleep_min) });
-        c = put(card('watch', 'Здоровье', 'дней с данными: ' + h.days), 6);
-        if (ht.length) c.appendChild(add(el('div', 'da-kv'), D.tiles(ht)));
-      }
-      if (j.cinema) {
-        c = put(card('film', 'Кино', 'Cinema City Unlimited · этот месяц и 3 месяца'), 6);
-        j.cinema.lines.forEach(function (l) { c.appendChild(A.hrow(l)); });
-      }
-    }
-    function load() {
-      for (var k in segs) segs[k].className = k === period ? 'on' : '';
-      var mine = period;
-      loading(body);
-      api('miniapp', { action: 'stats', period: period }, undefined, true).then(function (j) {
-        if (live('stats') && mine === period) render(j);
-      }, function (e) { if (!e.login && live('stats') && mine === period) A.failed(body, load); });
     }
     load();
   });
