@@ -65,8 +65,13 @@
   "name": "Starbucks"
  },
  {
+  "slug": "greencaffenero",
+  "re": "caff?e ?nero",
+  "name": "Green Caffè Nero"
+ },
+ {
   "slug": "kfc",
-  "re": "\\bkfc\\b",
+  "re": "\\bkfc",
   "name": "KFC"
  },
  {
@@ -316,7 +321,7 @@
  },
  {
   "slug": "mediaexpert",
-  "re": "media ?expert",
+  "re": "media ?expert|^me m\\d",
   "name": "Media Expert"
  },
  {
@@ -453,5 +458,75 @@
   "slug": "monobank",
   "re": "monobank",
   "name": "Monobank"
+ },
+ {
+  "slug": "pobudka",
+  "re": "pobudka",
+  "name": "Pobudka Catering"
+ },
+ {
+  "slug": "kuchniazasciana",
+  "re": "kuchnia za [śs]cian",
+  "name": "Kuchnia za ścianą"
+ },
+ {
+  "slug": "ergohestia",
+  "re": "ergo hestia",
+  "name": "ERGO Hestia"
+ },
+ {
+  "slug": "leroymerlin",
+  "re": "leroy[ -]?merl",
+  "name": "Leroy Merlin"
+ },
+ {
+  "slug": "upmenu",
+  "re": "upmenu",
+  "name": "UpMenu"
+ },
+ {
+  "slug": "buno",
+  "re": "\\bbuno\\b",
+  "name": "Buno"
+ },
+ {
+  "slug": "knightbarber",
+  "re": "knight barber",
+  "name": "Knight Barbershop"
+ },
+ {
+  "slug": "szaurmafia",
+  "re": "szaurmafia",
+  "name": "Szaurmafia"
+ },
+ {
+  "slug": "lucabakery",
+  "re": "luca bakery",
+  "name": "Luca Bakery"
+ },
+ {
+  "slug": "adobe",
+  "re": "\\badobe\\b",
+  "name": "Adobe"
+ },
+ {
+  "slug": "novapost",
+  "re": "nova ?post",
+  "name": "Nova Post"
+ },
+ {
+  "slug": "mediamarkt",
+  "re": "media ?markt",
+  "name": "MediaMarkt"
+ },
+ {
+  "slug": "empik",
+  "re": "\\bempik\\b",
+  "name": "Empik"
+ },
+ {
+  "slug": "upc",
+  "re": "\\bupc\\b",
+  "name": "UPC"
  }
 ]
