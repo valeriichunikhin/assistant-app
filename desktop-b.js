@@ -1,7 +1,7 @@
 // The desktop layer, lane 3 (docs/specs/miniapp-desktop.md): the wide views of «Список», «Акции», «Вишлист»,
-// «Дела», «Деньги», «Инбокс» and «Новости». Each reads and writes through the same APP.api calls as its phone view in
-// index.html (listView, picksView, wishView, delaView, inboxView, feedView) and checks APP.current before touching
-// the DOM after an answer. Nodes are built with el()/add(), never from HTML strings.
+// «Дела», «Деньги», «Инбокс», «Задачи» and «Новости». Each reads and writes through the same APP.api calls as its phone
+// view in index.html (listView, picksView, wishView, delaView, inboxView, tasksView, feedView) and checks APP.current
+// before touching the DOM after an answer. Nodes are built with el()/add(), never from HTML strings.
 (function () {
   var A = window.APP, D = window.DESKTOP = window.DESKTOP || { views: {} };
   if (!A) return;
@@ -748,6 +748,301 @@
       });
     }
     load();
+  });
+
+  // --- tasks (docs/specs/tasks-v4.md §3): the add row and the search over the area chips and the groups on the left,
+  // the selected task's detail (index.html taskDetail) in a sticky pane on the right, the keys in a bar at the bottom ---
+  var taskText = '', taskQ = '';
+  var taskKeys = null; // answers a key while «Задачи» is open; true: it was his
+  var TASK_ICON = { today: 'sun', over: 'alert', none: 'bookmark', done: 'check', d: 'calendar', m: 'layers', y: 'layers' };
+  // In the capture phase, so Space on a focused row is «сделано», not the row's own «open»; digits stay desktop.js's.
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if (!taskKeys || !on('tasks') || e.metaKey || e.ctrlKey || e.altKey) return;
+    // Esc in the pane's date row closes it; any other key there is typing.
+    var field = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+    if (field && !(e.key === 'Escape' && t.closest('.tpick'))) return;
+    if (e.key === ' ' && t && (t.tagName === 'BUTTON' || t.tagName === 'A')) return; // the focused button's own press
+    if (document.querySelector('.tmenu, .tsum:not(.out)')) return; // a menu or a sheet has the keys
+    if (taskKeys(e)) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+  view('tasks', function (main) {
+    var opened = A.takeTaskOpen ? A.takeTaskOpen() : null;
+    var tasks = [], areas = A.TASK_AREAS, area = opened != null ? '' : A.store('taskArea') || '';
+    // sel: the selected task's id; det: its detail in the pane; order: the rows on screen [{t, g (group key), r}],
+    // before: the order of the drawing before (where «Сделано» looks for the next row once the task left the list).
+    var sel = opened, det = null, order = [], before = [], late = [];
+    // Below 1440 px the phone's shorter words, so neither field is cut.
+    var narrow = window.innerWidth < 1440, form = el('form', 'dtool');
+    var inp = input(narrow ? 'Задача · завтра 10:00 #fba' : 'Новая задача · завтра 10:00 #fba', taskText), q = input(narrow ? 'Поиск' : 'Поиск по задачам', taskQ, 'search');
+    inp.maxLength = 300;
+    inp.enterKeyHint = 'done';
+    inp.oninput = function () { taskText = inp.value; };
+    q.oninput = function () { taskQ = q.value; render(); };
+    var plus = label(el('button', 'btn'), 'plus', 'Добавить');
+    plus.type = 'submit';
+    // feed: «Главная»'s calendar while it is hidden (index.html taskFeed), over the chips.
+    var feed = el('div'), chips = el('div', 'chips dchips'), body = add(el('div'), A.skeleton(2)), pane = el('div', 'card dtkp');
+    add(main, add(el('div', 'dtk'), add(el('div', 'dtkl'), add(form, field('check-square', inp, 'grow'), plus, field('search', q, 'dq')),
+      feed, chips, body, legend()), pane));
+
+    function legend() {
+      var b = el('div', 'dtkk');
+      // [keys, word, the word goes below 1440 px (wn), its tail that goes there (wx)]: one line at 1280 (desktop-b.css).
+      [[['↑', '↓'], 'выбор', 1], [['Space'], 'сделано'], [['T'], 'сегодня'], [['M'], 'завтра'], [['D'], 'дата'], [['N'], 'новая'],
+        [['/'], 'поиск', 1], [['Esc'], 'снять', 0, ' выбор']].forEach(function (x) {
+        b.appendChild(add.apply(null, [el('span')].concat(x[0].map(function (k) { return el('kbd', 'k', k); }),
+          [add(el('span', 'w' + (x[2] ? ' wn' : ''), x[1]), x[3] ? el('span', 'wx', x[3]) : null)])));
+      });
+      return b;
+    }
+    function today() { var p = A.wp(Date.now()); return p.year + '-' + p.month + '-' + p.day; }
+    function areaName(k) {
+      var a = areas.filter(function (x) { return x[0] === k; })[0];
+      return a ? a[1] : '';
+    }
+    function own(t) {
+      t.done = t.status === 'done';
+      return t;
+    }
+    function open(t) { return !t.done && t.status !== 'dropped'; }
+    // What the server understood: « · до пт 24.10 · 15:00 · Pomoc» (the phone's parsedLine).
+    function parsed(p) {
+      var s = [p.due_date ? 'до ' + A.WEEK[A.wd(p.due_date)] + ' ' + dm(p.due_date) : '', p.due_time ? String(p.due_time).slice(0, 5) : '',
+        areaName(p.area)].filter(Boolean).join(' · ');
+      return s ? ' · ' + s : '';
+    }
+    form.onsubmit = function (ev) {
+      ev.preventDefault();
+      var s = inp.value.trim();
+      if (!s) return;
+      plus.disabled = true;
+      A.haptic();
+      api('miniapp', { action: 'tasks_add' }, 15000, false, { text: s }).then(function (j) {
+        plus.disabled = false;
+        taskText = inp.value = '';
+        var t = (j && j.task) || j || {};
+        toast((t.title || s) + parsed((j && j.parsed) || t), 'check-square');
+        if (t.id != null && !tasks.some(function (x) { return x.id === t.id; })) tasks.push(own(t));
+        // A filter or a search that would hide the new task goes.
+        if (area && t.area !== area) {
+          area = '';
+          A.store('taskArea', area);
+        }
+        taskQ = q.value = '';
+        render();
+        load();
+      }, function (e) {
+        plus.disabled = false;
+        // The title left after the date and the hashtag is empty or over 200 characters.
+        if (e.code === 'bad request') toast('Нужно название, до 200 знаков');
+      });
+    };
+
+    // «Все 99 · ● FBA 66 · …»: the open tasks per area; the filter is the phone's (store('taskArea')).
+    function drawChips() {
+      var n = { '': 0 };
+      tasks.forEach(function (t) {
+        if (!open(t)) return;
+        n['']++;
+        n[t.area] = (n[t.area] || 0) + 1;
+      });
+      clear(chips);
+      [['', 'Все']].concat(areas).forEach(function (a) {
+        var b = add(el('button', 'pill' + (a[0] === area ? ' acc' : '') + (a[0] ? ' ar a-' + a[0] : '')), a[0] ? el('i', 'tdot') : null,
+          document.createTextNode(a[1]), el('span', 'num', String(n[a[0]] || 0)));
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(a[0] === area));
+        b.onclick = function () {
+          if (area === a[0]) return;
+          area = a[0];
+          A.store('taskArea', area);
+          render();
+        };
+        chips.appendChild(b);
+      });
+    }
+    // «→ все ▾» on «Просрочено» (§2.6): the phone's menu, a confirm sheet with the count, then tasks_move.
+    function overMenu(ts, day) {
+      var b = add(el('button', 'pill bad mv'), icon('arrow-right'), document.createTextNode('все'), icon('chevron-down'));
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Перенести все просроченные');
+      b.setAttribute('aria-haspopup', 'menu');
+      b.onclick = function () {
+        A.taskMenu(b, [['sun', 'На сегодня', function () { moveSheet(ts, day, day, b); }],
+          ['arrow-right', 'На завтра', function () { moveSheet(ts, A.addDays(day, 1), day, b); }],
+          ['x', 'Снять срок', function () { moveSheet(ts, null, day, b); }]]);
+      };
+      return b;
+    }
+    function moveSheet(ts, to, day, from) {
+      var n = ts.length, close = noop, word = to === day ? 'сегодня' : 'завтра';
+      var go = label(el('button', 'btn'), null, to ? 'Перенести ' + n : 'Снять срок у ' + n), no = label(el('button', 'btn ghost'), 'x', 'Отмена');
+      go.type = no.type = 'button';
+      no.onclick = function () { close(); };
+      go.onclick = function () {
+        go.disabled = true;
+        A.haptic();
+        // The open detail shows the moved day: it is drawn anew with the list.
+        A.taskMove(ts.map(function (t) { return { task: t, due_date: to }; }), 'Перенесено ' + n, function () {
+          det = null;
+          render();
+        }).then(function () { close(); }, function () { go.disabled = false; });
+      };
+      close = A.legalSheet(to ? 'Перенести на ' + word : 'Снять срок', [
+        el('div', 'sub bcsub', 'Просрочено ' + n + '. ' + (to ? 'Все получат срок «' + word + ', ' + A.WEEK[A.wd(to)] + ' ' + dm(to) +
+          '» — время, шаги и заметки останутся.' : 'Все останутся без срока и без времени — шаги и заметки останутся.')),
+        add(el('div', 'bar mact'), no, go)], from);
+    }
+
+    // The pane: the selected task's detail with the keys on its buttons, else «Просрочено N» (§3.4).
+    function side(t) {
+      clear(pane);
+      det = null;
+      if (t) {
+        det = A.taskDetail(t, { areas: areas, keys: true, onChange: function () { sync(t); render(); }, onClose: function () { closed(t); } });
+        return pane.appendChild(det);
+      }
+      if (!late.length) return pane.appendChild(A.state('check-square', 'Просроченных нет. Выбери задачу слева — она откроется здесь.'));
+      var c = add(el('div', 'dtko'), el('h3', '', 'Просрочено ' + late.length),
+        el('div', 'mu', 'Разбери по одной: ↓ к следующей, T — на сегодня, M — на завтра, Space — сделано.'));
+      areas.forEach(function (a) {
+        var n = late.filter(function (t) { return t.area === a[0]; }).length, f = el('i');
+        if (!n) return;
+        f.style.width = (n / late.length * 100).toFixed(1) + '%';
+        c.appendChild(add(el('div', 'dtkb a-' + a[0]), add(el('span'), el('i'), document.createTextNode(a[1])), add(el('span', 'dtkt'), f),
+          el('span', 'num', String(n))));
+      });
+      var go = label(el('button', 'btn'), 'arrow-right', 'Начать с первой');
+      go.type = 'button';
+      go.onclick = function () { pick(late[0], true); };
+      add(pane, add(c, go));
+    }
+    // A reload while the detail is open brings new task objects: a change goes onto the list's one too.
+    function sync(t) {
+      var cur = tasks.filter(function (x) { return x.id === t.id; })[0];
+      if (cur && cur !== t) for (var f in t) cur[f] = t[f];
+    }
+    // ✕ lets the task go; «Сделано» (a repeating one is rolling to its next day) and «Убрать» move the selection to the
+    // next row of its group, else the one before it, else the next row on screen.
+    function closed(t) {
+      if (!(t.done || t.rolling || t.status === 'dropped')) return pick(null);
+      var list = order.some(function (o) { return o.t.id === t.id && o.g !== 'done'; }) ? order : before, i = -1;
+      list.forEach(function (o, k) { if (o.t.id === t.id) i = k; });
+      if (i < 0) return pick(null);
+      var g = list[i].g, n = [list[i + 1], list[i - 1]].filter(function (o) { return o && o.g === g; })[0] || list[i + 1];
+      var now = n && order.filter(function (o) { return o.t.id === n.t.id && open(o.t); })[0];
+      pick(now ? now.t : null, true);
+    }
+    // A row picked (null: none): marked in the list (aria-selected), its detail in the pane; seen: scrolled into view.
+    function pick(t, seen) {
+      if (t && det && sel === t.id) return;
+      sel = t ? t.id : null;
+      var row = null;
+      order.forEach(function (o) {
+        var on = !!t && o.t.id === t.id;
+        o.r.classList.toggle('sel', on);
+        o.r.setAttribute('aria-selected', String(on));
+        if (on) row = o.r;
+      });
+      side(t);
+      if (seen && row) try { row.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    }
+    function step(d) {
+      if (!order.length) return;
+      var i = -1;
+      order.forEach(function (o, k) { if (o.t.id === sel) i = k; });
+      i = i < 0 ? (d > 0 ? 0 : order.length - 1) : Math.max(0, Math.min(order.length - 1, i + d));
+      pick(order[i].t, true);
+    }
+    // §3.5: ↑/↓ the selection, Space done, T today, M tomorrow, D the date, N the add row, / the search, Esc the date row
+    // or the selection. By the key's place (e.code), so the Russian layout works too; digits are never his.
+    taskKeys = function (e) {
+      if (!body.isConnected) return false;
+      var k = e.key, c = e.code;
+      if (k === 'ArrowDown' || k === 'ArrowUp') step(k === 'ArrowDown' ? 1 : -1);
+      else if (k === '/' || c === 'Slash') q.focus();
+      else if (c === 'KeyN') inp.focus();
+      else if (k === 'Escape') {
+        if (det && det.querySelector('.tpick')) det.date(false);
+        else if (sel != null) pick(null);
+        else return false;
+      } else if (!det) return false;
+      else if (k === ' ') det.done();
+      else if (c === 'KeyT') det.today();
+      else if (c === 'KeyM') det.tomorrow();
+      else if (c === 'KeyD') det.date(true);
+      else return false;
+      return true;
+    };
+
+    // The groups of the phone's «Все» (§3.3), each a card; the rows in one line with the meta on the right.
+    function render() {
+      if (!on('tasks') || !body.isConnected) return;
+      if (!areas.some(function (a) { return a[0] === area; })) area = '';
+      var day = today(), qs = taskQ.trim().toLowerCase();
+      var my = tasks.filter(function (t) {
+        return (!area || t.area === area) && (!qs || (String(t.title || '') + '\n' + String(t.note || '')).toLowerCase().indexOf(qs) >= 0);
+      });
+      var gs = A.taskGroups(my, day);
+      // The badge counts every area's overdue and today's, whatever the filter (as on the phone).
+      A.setTaskBadge(tasks.filter(function (t) { return open(t) && t.due_date && t.due_date <= day; }).length);
+      drawChips();
+      before = order;
+      order = [];
+      late = [];
+      clear(body);
+      gs.forEach(function (g) {
+        var k = g.key, c = A.mkCard(TASK_ICON[k] || TASK_ICON[k[0]], g.title), h = c.firstChild, ctx = k === 'today' ? 'today' : k[0] === 'd' ? 'day' : '';
+        h.appendChild(el('span', 'mu', String(g.tasks.length)));
+        if (k === 'over') {
+          late = g.tasks;
+          h.className += ' tred';
+          h.appendChild(overMenu(g.tasks, day));
+        }
+        if (k === 'done' || /^[my]:/.test(k)) {
+          h.appendChild(icon('chevron-down', 'go'));
+          h.setAttribute('aria-expanded', String(!g.folded));
+          A.tap(h, function () {
+            A.taskFold(k, !g.folded);
+            render();
+          });
+        }
+        if (!g.folded) g.tasks.forEach(function (t) {
+          // A ✓ on the selected row: its pane is drawn anew (det dropped), so Space and T/M act on what the row shows.
+          var r = A.taskRow(t, areas, day, { ctx: ctx, wide: true, onChange: function () { if (t.id === sel) det = null; render(); },
+            onOpen: function () { pick(t); } });
+          r.classList.toggle('sel', t.id === sel);
+          r.setAttribute('aria-selected', String(t.id === sel));
+          order.push({ t: t, g: k, r: r });
+          c.appendChild(r);
+        });
+        body.appendChild(c);
+      });
+      if (!gs.some(function (g) { return g.key !== 'done'; })) {
+        body.insertBefore(A.state(qs ? 'search' : 'check-square', qs ? 'Ничего не нашлось' : area ? 'В «' + areaName(area) + '» открытых задач нет'
+          : 'Задач нет — напиши первую в поле выше'), body.firstChild);
+      }
+      if (sel == null) return side(null);
+      if (det) return;
+      // A task to open (a push, #tasks/<id>) or the detail drawn anew after a move.
+      var st = tasks.filter(function (t) { return t.id === sel; })[0];
+      if (!st) return side(null); // not in the cached answer: the fresh one opens it
+      sel = null;
+      pick(st, true);
+    }
+    function load() {
+      A.swr({ key: 'tasks', box: body, n: 2, live: function () { return on('tasks'); },
+        fetch: function () { return api('miniapp', { action: 'tasks_list' }, 15000, true); },
+        render: function (j) {
+          var a = (j.areas || []).filter(function (x) { return Array.isArray(x) && x.length === 2; });
+          if (a.length) areas = a;
+          tasks = (j.tasks || []).map(own);
+          render();
+        }, retry: load });
+    }
+    load();
+    if (A.taskFeed) A.taskFeed(feed);
   });
 
   // --- feed: the digest and «Медицина» on the left, the stream on the right ---
