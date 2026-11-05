@@ -91,7 +91,7 @@ self.addEventListener('push', function (e) {
   var data = {};
   try { data = e.data ? e.data.json() : {}; } catch (err) { data = { body: e.data && e.data.text() }; }
   // iOS revokes the subscription after pushes that show nothing, so every push shows a notification.
-  e.waitUntil(self.registration.showNotification(data.title || 'Assistant', {
+  e.waitUntil(self.registration.showNotification(data.title || 'naL3ON', {
     body: data.body || '',
     icon: 'icons/icon-192.png',
     badge: 'icons/icon-192.png',
