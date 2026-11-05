@@ -65,6 +65,11 @@
   "name": "Starbucks"
  },
  {
+  "slug": "sushiicons",
+  "re": "sushi ?icons",
+  "name": "Sushi Icons"
+ },
+ {
   "slug": "greencaffenero",
   "re": "caff?e ?nero",
   "name": "Green Caffè Nero"
