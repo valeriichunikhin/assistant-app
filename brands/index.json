@@ -5,6 +5,11 @@
   "name": "Biedronka"
  },
  {
+  "slug": "jush",
+  "re": "\\bjush\\b|lite e-?commerce",
+  "name": "Żabka Jush"
+ },
+ {
   "slug": "zabka",
   "re": "żabka|zabka",
   "name": "Żabka"
